@@ -11,6 +11,7 @@ import { BookOpen } from "lucide-react";
 import { trackLogin, trackSignup } from "@/lib/analytics";
 import { SEO } from "@/components/SEO";
 import { recordReferralIfPending } from "@/lib/referrals";
+import { completeOAuthRedirect } from "@/lib/oauthCallback";
 
 const Auth = () => {
   const navigate = useNavigate();
@@ -25,17 +26,39 @@ const Auth = () => {
   const rawNext = params.get("next") ?? "";
   const next = safeRedirectPath(rawNext);
   const afterAuth = next || "/";
-  const returnUrl = window.location.origin + afterAuth;
+  // Always return through the auth page so OAuth/email-confirmation callbacks
+  // are completed in one predictable place before continuing to the target page.
+  const returnUrl = `${window.location.origin}/auth?next=${encodeURIComponent(afterAuth)}`;
 
   useEffect(() => {
-    document.title = "Sign in — BookInsight";
-    supabase.auth.getSession().then(({ data }) => {
-      if (data.session) {
-        if (next) window.location.href = next;
-        else navigate("/");
+    document.title = "Sign in — Booknomics";
+
+    const errorMessage = params.get("error_description") || params.get("error");
+    if (errorMessage) {
+      toast.error(errorMessage);
+    }
+
+    let cancelled = false;
+    (async () => {
+      try {
+        await completeOAuthRedirect();
+        const { data, error } = await supabase.auth.getSession();
+        if (error) throw error;
+        if (!cancelled && data.session?.user) {
+          await recordReferralIfPending(data.session.user.id);
+          navigate(afterAuth, { replace: true });
+        }
+      } catch (error) {
+        if (!cancelled) {
+          toast.error(error instanceof Error ? error.message : "Could not complete sign in");
+        }
       }
-    });
-  }, [navigate, next]);
+    })();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [afterAuth, navigate, params]);
 
 
   const sendWelcomeWebhook = async (u: { email?: string | null; user_metadata?: any } | null) => {
@@ -73,8 +96,17 @@ const Auth = () => {
       if (error) toast.error(error.message);
       else {
         trackSignup("email");
-        if (data.user) await recordReferralIfPending(data.user.id);
-        sendWelcomeWebhook(data.user ?? { email, user_metadata: { name } });
+
+        // If email confirmation is disabled, Supabase returns a session immediately.
+        // Otherwise the callback through /auth will finish referral/welcome handling.
+        if (data.session?.user) {
+          await recordReferralIfPending(data.session.user.id);
+          await sendWelcomeWebhook(data.session.user);
+          toast.success("Account created successfully");
+          navigate(afterAuth, { replace: true });
+          return;
+        }
+
         toast.success("Check your email to confirm your account");
       }
 
@@ -85,7 +117,6 @@ const Auth = () => {
         trackLogin("email");
         if (data.user) {
           await recordReferralIfPending(data.user.id);
-          sendWelcomeWebhook(data.user);
         }
         toast.success("Welcome back");
         if (next) window.location.href = next;
@@ -99,7 +130,11 @@ const Auth = () => {
     setLoading(true);
     try {
       const { error } = await supabase.auth.signInWithOAuth({
-        provider: "google", options: { redirectTo: returnUrl },
+        provider: "google",
+        options: {
+          redirectTo: returnUrl,
+          queryParams: { prompt: "select_account" },
+        },
       });
       if (error) throw error;
     } catch (error) {
