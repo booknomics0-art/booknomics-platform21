@@ -1,0 +1,2 @@
+-- Historical blanket admin seed intentionally disabled for new installations.
+-- Assign the verified owner explicitly after migrating users; see docs/DEPLOYMENT.md.

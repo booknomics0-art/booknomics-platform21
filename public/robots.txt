@@ -1,0 +1,59 @@
+User-agent: *
+Allow: /
+Disallow: /auth
+Disallow: /admin
+Disallow: /dashboard
+Disallow: /login
+Disallow: /signup
+Disallow: /account
+Disallow: /profile
+Disallow: /api
+Disallow: /functions
+Disallow: /checkout
+Disallow: /payment
+Disallow: /success
+Disallow: /cancel
+
+User-agent: GPTBot
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: ClaudeBot
+Allow: /
+
+User-agent: Google-Extended
+Allow: /
+
+User-agent: AhrefsBot
+Disallow: /
+
+User-agent: SemrushBot
+Disallow: /
+
+User-agent: MJ12bot
+Disallow: /
+
+User-agent: DotBot
+Disallow: /
+
+User-agent: Bytespider
+Disallow: /
+
+User-agent: CCBot
+Disallow: /
+
+User-agent: PetalBot
+Disallow: /
+
+User-agent: DataForSeoBot
+Disallow: /
+
+User-agent: Mozilla Compatible Agent
+Disallow: /
+
+Sitemap: https://booknomics.com/sitemap.xml
+Sitemap: https://booknomics.com/image-sitemap.xml
+
+

@@ -1,0 +1,17 @@
+project_id = "pbkfewrtdgiagytmcigb"
+
+[auth]
+site_url = "https://booknomics.com"
+additional_redirect_urls = ["https://booknomics.com/**", "https://www.booknomics.com/**", "http://localhost:8080/**"]
+
+[auth.oauth_server]
+enabled = true
+authorization_url_path = "/oauth/consent"
+allow_dynamic_registration = true
+
+[functions.mcp]
+# MCP verifies OAuth/JWKS itself, including authenticated RPCs.
+verify_jwt = false
+
+[functions.generate-sitemap]
+verify_jwt = false

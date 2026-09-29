@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="preconnect" href="https://aszjrlarrutzyripxacw.supabase.co" crossorigin />
+    <link rel="dns-prefetch" href="https://www.clarity.ms" />
+    <link rel="dns-prefetch" href="https://www.googletagmanager.com" />
+    <link rel="dns-prefetch" href="https://pagead2.googlesyndication.com" />
+    <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Fraunces:wght@600;700&family=Inter:wght@400;500;600&display=swap" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:wght@600;700&family=Inter:wght@400;500;600&display=swap" media="print" onload="this.media='all'" />
+    <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:wght@600;700&family=Inter:wght@400;500;600&display=swap" /></noscript>
+
+    <!-- Bot detection — must run before analytics -->
+    <script>
+      (function () {
+        var ua = navigator.userAgent || "";
+        var isBot =
+          /Mozilla Compatible Agent/i.test(ua) ||
+          /HeadlessChrome|PhantomJS|Selenium|Puppeteer|Playwright|Lighthouse/i.test(ua) ||
+          /bot|spider|crawler|scraper/i.test(ua) ||
+          navigator.webdriver === true ||
+          !navigator.languages || navigator.languages.length === 0;
+        window.__IS_BOT__ = isBot;
+      })();
+    </script>
+
+    <!-- All third-parties (Clarity, GA4, AdSense) deferred until first interaction or idle to protect LCP -->
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      window.gtag = gtag;
+      gtag('js', new Date());
+      function loadClarity(){
+        if (window.__IS_BOT__ || window.__clarityLoaded) return; window.__clarityLoaded = true;
+        (function(c,l,a,r,i,t,y){
+          c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+          t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+          y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+        })(window, document, "clarity", "script", "wsaflnarx1");
+      }
+      function loadGA(){
+        if (window.__IS_BOT__ || window.__gaLoaded) return; window.__gaLoaded = true;
+        var s = document.createElement('script');
+        s.async = true; s.src = 'https://www.googletagmanager.com/gtag/js?id=G-029CF4KFMM';
+        document.head.appendChild(s);
+        gtag('config', 'G-029CF4KFMM', { anonymize_ip: true });
+      }
+      function loadAds(){
+        if (window.__IS_BOT__ || window.__adsLoaded) return; window.__adsLoaded = true;
+        var s = document.createElement('script');
+        s.async = true; s.crossOrigin = 'anonymous';
+        s.src = 'https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3415243304589225';
+        document.head.appendChild(s);
+      }
+      function loadAdsterra(){
+        if (window.__IS_BOT__ || window.__adsterraLoaded) return; window.__adsterraLoaded = true;
+        // Social Bar — goes at the end of <body>. (Popunder removed to stay safe with AdSense policy.)
+        var sb = document.createElement('script');
+        sb.async = true;
+        sb.src = 'https://pl30862552.effectivecpmnetwork.com/99/75/7e/99757e95ae0ce1628a1772d662601e7a.js';
+        document.body.appendChild(sb);
+      }
+      var _tpFired = false;
+      function _tpTrigger(){ if(_tpFired) return; _tpFired = true; loadGA(); loadClarity(); loadAds(); loadAdsterra(); }
+      // Consent gate: non-essential scripts (GA4, Clarity, AdSense) only run once the visitor accepts.
+      function _tpConsent(){
+        try { return localStorage.getItem('bn-cookie-consent'); } catch (e) { return 'accepted'; }
+      }
+      window.__bnLoadThirdParties = _tpTrigger;
+      function _tpSchedule(){
+        if (_tpConsent() !== 'accepted') return;
+        ['pointerdown','keydown','scroll','touchstart'].forEach(function(e){
+          window.addEventListener(e, _tpTrigger, { once: true, passive: true });
+        });
+        if ('requestIdleCallback' in window) {
+          window.requestIdleCallback(_tpTrigger, { timeout: 8000 });
+        } else {
+          setTimeout(_tpTrigger, 6000);
+        }
+      }
+      _tpSchedule();
+    </script>
+
+
+    
+
+    <meta name="google-site-verification" content="M6qwobaePtnNuoJth9UeTI1oHuxTbm4k0grRhVsbORg" />
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Booknomics — Book Summaries in English & Hindi | Read Smarter, Apply Faster</title>
+    <meta
+      name="description"
+      content="Get practical book summaries, key insights, 7-day action trackers and reflection prompts in English & Hindi. Free to start."
+    />
+    <meta name="author" content="Booknomics" />
+    <script type="application/ld+json">
+      {"@context":"https://schema.org","@type":"Organization","name":"Booknomics","url":"https://booknomics.com","sameAs":["https://www.instagram.com/booknomics_official/","https://www.threads.com/@booknomics_official","https://www.facebook.com/profile.php?id=61590907565450","https://www.youtube.com/@booknomics_hindi","https://www.youtube.com/@BookNomicsOfficial","https://in.pinterest.com/booknomics_official/"]}
+    </script>
+
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Booknomics" />
+    <!-- No hardcoded canonical/og:url: each route sets its own via react-helmet-async (src/components/SEO.tsx). -->
+
+    <meta property="og:image" content="https://booknomics.com/og-default.svg" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:image" content="https://booknomics.com/og-default.svg" />
+    <meta property="og:title" content="Booknomics — Book Summaries in English & Hindi | Read Smarter, Apply Faster" />
+    <meta name="twitter:title" content="Booknomics — Book Summaries in English & Hindi | Read Smarter, Apply Faster" />
+    <meta
+      property="og:description"
+      content="Get practical book summaries, key insights, 7-day action trackers and reflection prompts in English & Hindi."
+    />
+    <meta
+      name="twitter:description"
+      content="Get practical book summaries, key insights, 7-day action trackers and reflection prompts in English & Hindi."
+    />
+    <!-- AdSense loaded via deferred third-parties block above -->
+
+  </head>
+
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

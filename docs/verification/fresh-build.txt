@@ -1,0 +1,127 @@
+npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm.
+
+> booknomics@1.0.0 prebuild
+> node --import tsx scripts/check-env.ts && node --import tsx scripts/generate-sitemap.ts
+
+Public environment configuration validated
+[sitemap] VITE_SUPABASE_URL present: true | VITE_SUPABASE_PUBLISHABLE_KEY present: true
+[sitemap] using Supabase URL: https://pbkfewrtdgiagytmcigb.supabase.co (env)
+[sitemap] static + blog entries: 21
+[sitemap] published books fetched: 0
+[sitemap] ✅ wrote sitemap.xml (21 URLs = 21 static + 0 books + categories) · books-sitemap.xml (0) · image-sitemap.xml (0) · _redirects (25 static aliases + 0 book redirects)
+
+> booknomics@1.0.0 build
+> vite build
+
+vite v5.4.21 building for production...
+transforming...
+✓ 3642 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/index.html                                   7.11 kB │ gzip:   2.50 kB
+dist/assets/hero-book-Bxfiz_YL.jpg              111.05 kB
+dist/assets/index-C7XvbB3j.css                  130.40 kB │ gzip:  20.28 kB
+dist/assets/message-circle-BFQRiRt2.js            0.32 kB │ gzip:   0.26 kB
+dist/assets/arrow-left-OSblb1zg.js                0.33 kB │ gzip:   0.26 kB
+dist/assets/circle-check-CVhS-w2u.js              0.34 kB │ gzip:   0.27 kB
+dist/assets/clock-CJZetF3t.js                     0.35 kB │ gzip:   0.27 kB
+dist/assets/message-square-DPcX5MDH.js            0.35 kB │ gzip:   0.27 kB
+dist/assets/circle-x-bA4bBczG.js                  0.37 kB │ gzip:   0.28 kB
+dist/assets/mail-BlwwDx3E.js                      0.38 kB │ gzip:   0.30 kB
+dist/assets/target-B7M7mxqd.js                    0.39 kB │ gzip:   0.26 kB
+dist/assets/copy-Btt4tdgE.js                      0.40 kB │ gzip:   0.31 kB
+dist/assets/link-2-BcrvcRCD.js                    0.41 kB │ gzip:   0.31 kB
+dist/assets/globe-DRbHLrBt.js                     0.41 kB │ gzip:   0.29 kB
+dist/assets/twitter-DczUpkHy.js                   0.42 kB │ gzip:   0.32 kB
+dist/assets/circle-alert-cdFYhWwX.js              0.42 kB │ gzip:   0.29 kB
+dist/assets/external-link-BorGkD_x.js             0.42 kB │ gzip:   0.30 kB
+dist/assets/triangle-alert-CXJz8oWe.js            0.43 kB │ gzip:   0.31 kB
+dist/assets/award-CSih-hkz.js                     0.44 kB │ gzip:   0.33 kB
+dist/assets/flame-C1t_LUNs.js                     0.45 kB │ gzip:   0.33 kB
+dist/assets/lightbulb-B5FEfTvW.js                 0.46 kB │ gzip:   0.33 kB
+dist/assets/send-DadpBg1r.js                      0.46 kB │ gzip:   0.33 kB
+dist/assets/thumbs-up-BItq0-wg.js                 0.47 kB │ gzip:   0.34 kB
+dist/assets/users-CLQnTJym.js                     0.47 kB │ gzip:   0.33 kB
+dist/assets/languages-k0iTHQwa.js                 0.49 kB │ gzip:   0.32 kB
+dist/assets/shield-check-CU-5z3RC.js              0.49 kB │ gzip:   0.35 kB
+dist/assets/refresh-cw-BL8SWJJw.js                0.49 kB │ gzip:   0.33 kB
+dist/assets/save-DAETOOab.js                      0.50 kB │ gzip:   0.33 kB
+dist/assets/file-text-Bk4D_kiZ.js                 0.50 kB │ gzip:   0.32 kB
+dist/assets/usePremium-DtomsnrE.js                0.51 kB │ gzip:   0.37 kB
+dist/assets/share-2-DXpwZQoZ.js                   0.52 kB │ gzip:   0.33 kB
+dist/assets/trash-2-D0HS_ouX.js                   0.53 kB │ gzip:   0.35 kB
+dist/assets/textarea-BG5LmnC1.js                  0.55 kB │ gzip:   0.35 kB
+dist/assets/label--xIRtpWE.js                     0.60 kB │ gzip:   0.40 kB
+dist/assets/trophy-BKwggLy8.js                    0.63 kB │ gzip:   0.39 kB
+dist/assets/wand-sparkles-BD-SZwZ9.js             0.68 kB │ gzip:   0.40 kB
+dist/assets/NotFound-xys3qkU2.js                  0.70 kB │ gzip:   0.42 kB
+dist/assets/badge-C_hNtfkW.js                     0.74 kB │ gzip:   0.39 kB
+dist/assets/analytics-C9EBB9oX.js                 0.78 kB │ gzip:   0.43 kB
+dist/assets/index-ZaMwUFUa.js                     0.79 kB │ gzip:   0.51 kB
+dist/assets/brain--dWukDnF.js                     0.90 kB │ gzip:   0.46 kB
+dist/assets/card-GnGFixGB.js                      1.04 kB │ gzip:   0.40 kB
+dist/assets/pencil-IiqzVFAW.js                    1.19 kB │ gzip:   0.51 kB
+dist/assets/PromotionHistory-D0P2xCuj.js          1.90 kB │ gzip:   0.95 kB
+dist/assets/progress-D3-jABc7.js                  1.97 kB │ gzip:   0.98 kB
+dist/assets/SettingsPanel-CYpUxaLk.js             2.32 kB │ gzip:   1.33 kB
+dist/assets/Blog-Bgcyz7PS.js                      2.63 kB │ gzip:   1.17 kB
+dist/assets/OAuthConsent-_iIWBMQu.js              2.67 kB │ gzip:   1.22 kB
+dist/assets/AdminShell-BfOX7jdI.js                2.90 kB │ gzip:   1.24 kB
+dist/assets/IndexingQueue-B-K4Kna_.js             2.91 kB │ gzip:   1.30 kB
+dist/assets/DocPage-SiKB8_SC.js                   3.11 kB │ gzip:   1.27 kB
+dist/assets/tabs-BXzg7jcS.js                      3.26 kB │ gzip:   1.38 kB
+dist/assets/BlogPost-Dv1S5_HD.js                  3.80 kB │ gzip:   1.62 kB
+dist/assets/ResourceShell-3KlCebMY.js             3.86 kB │ gzip:   1.48 kB
+dist/assets/Referrals-BvTnseGv.js                 4.10 kB │ gzip:   1.77 kB
+dist/assets/Contact-BOS3PZcK.js                   4.35 kB │ gzip:   1.62 kB
+dist/assets/Hindi-CJl7kPMy.js                     4.39 kB │ gzip:   2.29 kB
+dist/assets/Paths-DOf-qDrg.js                     4.40 kB │ gzip:   1.92 kB
+dist/assets/About-5I0Ws4Ae.js                     4.51 kB │ gzip:   1.95 kB
+dist/assets/HindiGuide-B8M8lNxK.js                4.53 kB │ gzip:   2.66 kB
+dist/assets/Library-Ch8bHYhL.js                   4.59 kB │ gzip:   1.94 kB
+dist/assets/GscDashboard-CdJHhwK_.js              4.62 kB │ gzip:   1.77 kB
+dist/assets/SlugOptimizer-BigGreQa.js             4.62 kB │ gzip:   2.20 kB
+dist/assets/seoSlugTools-CrG-_6Lr.js              4.94 kB │ gzip:   2.43 kB
+dist/assets/PathDetail-BX0Ndl4f.js                5.05 kB │ gzip:   1.97 kB
+dist/assets/SeoDashboard-CYMZYZXR.js              5.08 kB │ gzip:   2.04 kB
+dist/assets/Auth-DJWJs36V.js                      5.19 kB │ gzip:   2.38 kB
+dist/assets/CommunitySidebar-vqq8VJLe.js          5.28 kB │ gzip:   2.14 kB
+dist/assets/SummaryTemplate-CnaJv6Yy.js           5.28 kB │ gzip:   2.45 kB
+dist/assets/SeoLab-B2UyislY.js                    5.37 kB │ gzip:   2.14 kB
+dist/assets/ContentPolish-DmhW8vTv.js             5.48 kB │ gzip:   2.24 kB
+dist/assets/ReadingTracker-D4GvQMMq.js            5.62 kB │ gzip:   2.49 kB
+dist/assets/BestSummaryWebsites-JoH1pZK5.js       5.85 kB │ gzip:   2.56 kB
+dist/assets/accordion-B70q3rj9.js                 6.58 kB │ gzip:   2.44 kB
+dist/assets/MasteryTab-kIQnhaE3.js                6.61 kB │ gzip:   2.54 kB
+dist/assets/SocialPublisher-DdQJk5gD.js           6.77 kB │ gzip:   3.02 kB
+dist/assets/Resources-BwxiKSg-.js                 6.78 kB │ gzip:   2.76 kB
+dist/assets/BookReviews-yiNuNGwQ.js               7.54 kB │ gzip:   2.85 kB
+dist/assets/N8nDispatcher-CakB7TFT.js             7.86 kB │ gzip:   3.28 kB
+dist/assets/StickyAudioPlayer-ClNkd-kP.js         8.88 kB │ gzip:   3.05 kB
+dist/assets/Browse-Cs2-WbrG.js                    8.89 kB │ gzip:   3.32 kB
+dist/assets/blog-BqCBtygz.js                      9.24 kB │ gzip:   4.21 kB
+dist/assets/Press-pKG_e0b9.js                     9.51 kB │ gzip:   3.19 kB
+dist/assets/Community-CJsgmNjx.js                 9.60 kB │ gzip:   3.08 kB
+dist/assets/SeoPageDetail-Dl2ftT6z.js             9.88 kB │ gzip:   3.37 kB
+dist/assets/BookComments-fYhrhEAJ.js             10.18 kB │ gzip:   3.81 kB
+dist/assets/seoScore-CawHlXhi.js                 10.66 kB │ gzip:   4.70 kB
+dist/assets/formatDistanceToNow-2oizNfJj.js      13.15 kB │ gzip:   4.80 kB
+dist/assets/English-C6TTbQWY.js                  14.49 kB │ gzip:   4.74 kB
+dist/assets/ReadingView-oL5NMtk6.js              14.96 kB │ gzip:   4.92 kB
+dist/assets/BestHindiBookSummaries-B5ZNYzNM.js   16.50 kB │ gzip:   6.65 kB
+dist/assets/Legal-Ccvscnnn.js                    18.41 kB │ gzip:   5.92 kB
+dist/assets/helmet-zsCFzz8B.js                   24.29 kB │ gzip:   8.76 kB
+dist/assets/SeoManager-B_5cotnj.js               27.32 kB │ gzip:   8.48 kB
+dist/assets/purify.es-DP5U8-sc.js                29.17 kB │ gzip:  10.99 kB
+dist/assets/query-CEMbA5iP.js                    35.95 kB │ gzip:  11.11 kB
+dist/assets/Category-CpFmuh9p.js                 38.31 kB │ gzip:  14.96 kB
+dist/assets/Admin-BiPLTjTc.js                   107.70 kB │ gzip:  30.75 kB
+dist/assets/index.es-Bw1NhTcb.js                151.62 kB │ gzip:  52.01 kB
+dist/assets/markdown-D7Sz_yFd.js                156.85 kB │ gzip:  47.45 kB
+dist/assets/react-vendor-BpOFAtIk.js            156.96 kB │ gzip:  51.42 kB
+dist/assets/html2canvas.esm-BfxBtG_O.js         201.41 kB │ gzip:  48.03 kB
+dist/assets/supabase-CVEvWQFW.js                203.70 kB │ gzip:  53.10 kB
+dist/assets/index-DxtPR7BE.js                   252.51 kB │ gzip:  78.79 kB
+dist/assets/Dashboard-gW39pMdX.js               378.13 kB │ gzip: 106.18 kB
+dist/assets/BookDetail-CyMzMNyw.js              514.52 kB │ gzip: 168.89 kB
+✓ built in 7.88s

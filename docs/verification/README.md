@@ -1,0 +1,1 @@
+Run the SQL harness from a temporary copy with @electric-sql/pglite installed. It mocks auth/storage infrastructure and never connects to a hosted database. The normal npm test suite uses mocked Razorpay/Supabase calls; it is not a live payment test.

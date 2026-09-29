@@ -1,0 +1,4093 @@
+{
+  "summary": {
+    "checkedAt": "2026-07-06T17:32:44.049Z",
+    "sitemapTotal": 175,
+    "checked": 175,
+    "ok200": 175,
+    "failed": 0,
+    "canonicalMismatches": 174,
+    "noindex": 0,
+    "robotsBlocked": 0,
+    "discoverable": 1,
+    "nonDiscoverable": 174,
+    "bookLdMissing": 126,
+    "breadcrumbLdMissing": 126,
+    "problems": [
+      {
+        "url": "https://booknomics.com/browse",
+        "reasons": [
+          "canonical mismatch → https://booknomics.com/"
+        ]
+      },
+      {
+        "url": "https://booknomics.com/english",
+        "reasons": [
+          "canonical mismatch → https://booknomics.com/"
+        ]
+      },
+      {
+        "url": "https://booknomics.com/hindi",
+        "reasons": [
+          "canonical mismatch → https://booknomics.com/"
+        ]
+      },
+      {
+        "url": "https://booknomics.com/best-hindi-book-summaries",
+        "reasons": [
+          "canonical mismatch → https://booknomics.com/"
+        ]
+      },
+      {
+        "url": "https://booknomics.com/about",
+        "reasons": [
+          "canonical mismatch → https://booknomics.com/"
+        ]
+      },
+      {
+        "url": "https://booknomics.com/contact",
+        "reasons": [
+          "canonical mismatch → https://booknomics.com/"
+        ]
+      },
+      {
+        "url": "https://booknomics.com/blog",
+        "reasons": [
+          "canonical mismatch → https://booknomics.com/"
+        ]
+      },
+      {
+        "url": "https://booknomics.com/privacy",
+        "reasons": [
+          "canonical mismatch → https://booknomics.com/"
+        ]
+      },
+      {
+        "url": "https://booknomics.com/terms",
+        "reasons": [
+          "canonical mismatch → https://booknomics.com/"
+        ]
+      },
+      {
+        "url": "https://booknomics.com/blog/5-ways-to-build-a-morning-routine",
+        "reasons": [
+          "canonical mismatch → https://booknomics.com/"
+        ]
+      },
+      {
+        "url": "https://booknomics.com/blog/how-to-read-more-books-without-burning-out",
+        "reasons": [
+          "canonical mismatch → https://booknomics.com/"
+        ]
+      },
+      {
+        "url": "https://booknomics.com/blog/the-real-psychology-of-money",
+        "reasons": [
+          "canonical mismatch → https://booknomics.com/"
+        ]
+      },
+      {
+        "url": "https://booknomics.com/blog/stoicism-for-modern-anxiety",
+        "reasons": [
+          "canonical mismatch → https://booknomics.com/"
+        ]
+      },
+      {
+        "url": "https://booknomics.com/blog/build-deep-work-in-a-distracted-world",
+        "reasons": [
+          "canonical mismatch → https://booknomics.com/"
+        ]
+      },
+      {
+        "url": "https://booknomics.com/books/-etkl",
+        "reasons": [
+          "canonical mismatch → https://booknomics.com/",
+          "missing Book JSON-LD",
+          "missing BreadcrumbList JSON-LD"
+        ]
+      },
+      {
+        "url": "https://booknomics.com/books/-kawy",
+        "reasons": [
+          "canonical mismatch → https://booknomics.com/",
+          "missing Book JSON-LD",
+          "missing BreadcrumbList JSON-LD"
+        ]
+      },
+      {
+        "url": "https://booknomics.com/books/-j84e",
+        "reasons": [
+          "canonical mismatch → https://booknomics.com/",
+          "missing Book JSON-LD",
+          "missing BreadcrumbList JSON-LD"
+        ]
+      },
+      {
+        "url": "https://booknomics.com/books/-l6fg",
+        "reasons": [
+          "canonical mismatch → https://booknomics.com/",
+          "missing Book JSON-LD",
+          "missing BreadcrumbList JSON-LD"
+        ]
+      },
+      {
+        "url": "https://booknomics.com/books/-1eot",
+        "reasons": [
+          "canonical mismatch → https://booknomics.com/",
+          "missing Book JSON-LD",
+          "missing BreadcrumbList JSON-LD"
+        ]
+      },
+      {
+        "url": "https://booknomics.com/books/--apt8",
+        "reasons": [
+          "canonical mismatch → https://booknomics.com/",
+          "missing Book JSON-LD",
+          "missing BreadcrumbList JSON-LD"
+        ]
+      },
+      {
+        "url": "https://booknomics.com/books/don-quixote",
+        "reasons": [
+          "canonical mismatch → https://booknomics.com/",
+          "missing Book JSON-LD",
+          "missing BreadcrumbList JSON-LD"
+        ]
+      },
+      {
+        "url": "https://booknomics.com/books/les-miserables",
+        "reasons": [
+          "canonical mismatch → https://booknomics.com/",
+          "missing Book JSON-LD",
+          "missing BreadcrumbList JSON-LD"
+        ]
+      },
+      {
+        "url": "https://booknomics.com/books/moby-dick",
+        "reasons": [
+          "canonical mismatch → https://booknomics.com/",
+          "missing Book JSON-LD",
+          "missing BreadcrumbList JSON-LD"
+        ]
+      },
+      {
+        "url": "https://booknomics.com/books/the-scarlet-letter",
+        "reasons": [
+          "canonical mismatch → https://booknomics.com/",
+          "missing Book JSON-LD",
+          "missing BreadcrumbList JSON-LD"
+        ]
+      },
+      {
+        "url": "https://booknomics.com/books/crime-and-punishment",
+        "reasons": [
+          "canonical mismatch → https://booknomics.com/",
+          "missing Book JSON-LD",
+          "missing BreadcrumbList JSON-LD"
+        ]
+      },
+      {
+        "url": "https://booknomics.com/books/the-count-of-monte-cristo",
+        "reasons": [
+          "canonical mismatch → https://booknomics.com/",
+          "missing Book JSON-LD",
+          "missing BreadcrumbList JSON-LD"
+        ]
+      },
+      {
+        "url": "https://booknomics.com/books/anna-karenina",
+        "reasons": [
+          "canonical mismatch → https://booknomics.com/",
+          "missing Book JSON-LD",
+          "missing BreadcrumbList JSON-LD"
+        ]
+      },
+      {
+        "url": "https://booknomics.com/books/the-brothers-karamazov",
+        "reasons": [
+          "canonical mismatch → https://booknomics.com/",
+          "missing Book JSON-LD",
+          "missing BreadcrumbList JSON-LD"
+        ]
+      },
+      {
+        "url": "https://booknomics.com/books/war-and-peace",
+        "reasons": [
+          "canonical mismatch → https://booknomics.com/",
+          "missing Book JSON-LD",
+          "missing BreadcrumbList JSON-LD"
+        ]
+      },
+      {
+        "url": "https://booknomics.com/books/madame-bovary",
+        "reasons": [
+          "canonical mismatch → https://booknomics.com/",
+          "missing Book JSON-LD",
+          "missing BreadcrumbList JSON-LD"
+        ]
+      },
+      {
+        "url": "https://booknomics.com/books/pride-and-prejudice",
+        "reasons": [
+          "canonical mismatch → https://booknomics.com/",
+          "missing Book JSON-LD",
+          "missing BreadcrumbList JSON-LD"
+        ]
+      },
+      {
+        "url": "https://booknomics.com/books/frankenstein",
+        "reasons": [
+          "canonical mismatch → https://booknomics.com/",
+          "missing Book JSON-LD",
+          "missing BreadcrumbList JSON-LD"
+        ]
+      },
+      {
+        "url": "https://booknomics.com/books/wuthering-heights",
+        "reasons": [
+          "canonical mismatch → https://booknomics.com/",
+          "missing Book JSON-LD",
+          "missing BreadcrumbList JSON-LD"
+        ]
+      },
+      {
+        "url": "https://booknomics.com/books/a-tale-of-two-cities",
+        "reasons": [
+          "canonical mismatch → https://booknomics.com/",
+          "missing Book JSON-LD",
+          "missing BreadcrumbList JSON-LD"
+        ]
+      },
+      {
+        "url": "https://booknomics.com/books/dracula",
+        "reasons": [
+          "canonical mismatch → https://booknomics.com/",
+          "missing Book JSON-LD",
+          "missing BreadcrumbList JSON-LD"
+        ]
+      },
+      {
+        "url": "https://booknomics.com/books/the-great-gatsby",
+        "reasons": [
+          "canonical mismatch → https://booknomics.com/",
+          "missing Book JSON-LD",
+          "missing BreadcrumbList JSON-LD"
+        ]
+      },
+      {
+        "url": "https://booknomics.com/books/alices-adventures-in-wonderland",
+        "reasons": [
+          "canonical mismatch → https://booknomics.com/",
+          "missing Book JSON-LD",
+          "missing BreadcrumbList JSON-LD"
+        ]
+      },
+      {
+        "url": "https://booknomics.com/books/great-expectations",
+        "reasons": [
+          "canonical mismatch → https://booknomics.com/",
+          "missing Book JSON-LD",
+          "missing BreadcrumbList JSON-LD"
+        ]
+      },
+      {
+        "url": "https://booknomics.com/books/jane-eyre",
+        "reasons": [
+          "canonical mismatch → https://booknomics.com/",
+          "missing Book JSON-LD",
+          "missing BreadcrumbList JSON-LD"
+        ]
+      },
+      {
+        "url": "https://booknomics.com/books/the-picture-of-dorian-gray",
+        "reasons": [
+          "canonical mismatch → https://booknomics.com/",
+          "missing Book JSON-LD",
+          "missing BreadcrumbList JSON-LD"
+        ]
+      },
+      {
+        "url": "https://booknomics.com/books/panchatantra-hi",
+        "reasons": [
+          "canonical mismatch → https://booknomics.com/",
+          "missing Book JSON-LD",
+          "missing BreadcrumbList JSON-LD"
+        ]
+      },
+      {
+        "url": "https://booknomics.com/books/chandrakanta-hi",
+        "reasons": [
+          "canonical mismatch → https://booknomics.com/",
+          "missing Book JSON-LD",
+          "missing BreadcrumbList JSON-LD"
+        ]
+      },
+      {
+        "url": "https://booknomics.com/books/mitro-marjani-hi",
+        "reasons": [
+          "canonical mismatch → https://booknomics.com/",
+          "missing Book JSON-LD",
+          "missing BreadcrumbList JSON-LD"
+        ]
+      },
+      {
+        "url": "https://booknomics.com/books/anandmath-hi",
+        "reasons": [
+          "canonical mismatch → https://booknomics.com/",
+          "missing Book JSON-LD",
+          "missing BreadcrumbList JSON-LD"
+        ]
+      },
+      {
+        "url": "https://booknomics.com/books/shekhar-ek-jeevani-hi",
+        "reasons": [
+          "canonical mismatch → https://booknomics.com/",
+          "missing Book JSON-LD",
+          "missing BreadcrumbList JSON-LD"
+        ]
+      },
+      {
+        "url": "https://booknomics.com/books/devdas-hi",
+        "reasons": [
+          "canonical mismatch → https://booknomics.com/",
+          "missing Book JSON-LD",
+          "missing BreadcrumbList JSON-LD"
+        ]
+      },
+      {
+        "url": "https://booknomics.com/books/parineeta-hi",
+        "reasons": [
+          "canonical mismatch → https://booknomics.com/",
+          "missing Book JSON-LD",
+          "missing BreadcrumbList JSON-LD"
+        ]
+      },
+      {
+        "url": "https://booknomics.com/books/madhushala-hi",
+        "reasons": [
+          "canonical mismatch → https://booknomics.com/",
+          "missing Book JSON-LD",
+          "missing BreadcrumbList JSON-LD"
+        ]
+      },
+      {
+        "url": "https://booknomics.com/books/rashmirathi-hi",
+        "reasons": [
+          "canonical mismatch → https://booknomics.com/",
+          "missing Book JSON-LD",
+          "missing BreadcrumbList JSON-LD"
+        ]
+      },
+      {
+        "url": "https://booknomics.com/books/hitopadesha-hi",
+        "reasons": [
+          "canonical mismatch → https://booknomics.com/",
+          "missing Book JSON-LD",
+          "missing BreadcrumbList JSON-LD"
+        ]
+      },
+      {
+        "url": "https://booknomics.com/books/animal-farm-orwell-en",
+        "reasons": [
+          "canonical mismatch → https://booknomics.com/",
+          "missing Book JSON-LD",
+          "missing BreadcrumbList JSON-LD"
+        ]
+      },
+      {
+        "url": "https://booknomics.com/books/the-richest-man-in-babylon-en",
+        "reasons": [
+          "canonical mismatch → https://booknomics.com/",
+          "missing Book JSON-LD",
+          "missing BreadcrumbList JSON-LD"
+        ]
+      },
+      {
+        "url": "https://booknomics.com/books/romeo-and-juliet-en",
+        "reasons": [
+          "canonical mismatch → https://booknomics.com/",
+          "missing Book JSON-LD",
+          "missing BreadcrumbList JSON-LD"
+        ]
+      },
+      {
+        "url": "https://booknomics.com/books/1984-orwell-en",
+        "reasons": [
+          "canonical mismatch → https://booknomics.com/",
+          "missing Book JSON-LD",
+          "missing BreadcrumbList JSON-LD"
+        ]
+      },
+      {
+        "url": "https://booknomics.com/books/the-science-of-getting-rich-en",
+        "reasons": [
+          "canonical mismatch → https://booknomics.com/",
+          "missing Book JSON-LD",
+          "missing BreadcrumbList JSON-LD"
+        ]
+      },
+      {
+        "url": "https://booknomics.com/books/hamlet-shakespeare-en",
+        "reasons": [
+          "canonical mismatch → https://booknomics.com/",
+          "missing Book JSON-LD",
+          "missing BreadcrumbList JSON-LD"
+        ]
+      },
+      {
+        "url": "https://booknomics.com/books/macbeth-shakespeare-en",
+        "reasons": [
+          "canonical mismatch → https://booknomics.com/",
+          "missing Book JSON-LD",
+          "missing BreadcrumbList JSON-LD"
+        ]
+      },
+      {
+        "url": "https://booknomics.com/books/the-lord-of-the-rings-en",
+        "reasons": [
+          "canonical mismatch → https://booknomics.com/",
+          "missing Book JSON-LD",
+          "missing BreadcrumbList JSON-LD"
+        ]
+      },
+      {
+        "url": "https://booknomics.com/books/think-and-grow-rich-en",
+        "reasons": [
+          "canonical mismatch → https://booknomics.com/",
+          "missing Book JSON-LD",
+          "missing BreadcrumbList JSON-LD"
+        ]
+      },
+      {
+        "url": "https://booknomics.com/books/the-power-of-positive-thinking-en",
+        "reasons": [
+          "canonical mismatch → https://booknomics.com/",
+          "missing Book JSON-LD",
+          "missing BreadcrumbList JSON-LD"
+        ]
+      },
+      {
+        "url": "https://booknomics.com/books/the-mountain-is-you-a2fg",
+        "reasons": [
+          "canonical mismatch → https://booknomics.com/",
+          "missing Book JSON-LD",
+          "missing BreadcrumbList JSON-LD"
+        ]
+      },
+      {
+        "url": "https://booknomics.com/books/the-power-of-your-subconscious-mind-6znj",
+        "reasons": [
+          "canonical mismatch → https://booknomics.com/",
+          "missing Book JSON-LD",
+          "missing BreadcrumbList JSON-LD"
+        ]
+      },
+      {
+        "url": "https://booknomics.com/books/tyagpatra",
+        "reasons": [
+          "canonical mismatch → https://booknomics.com/",
+          "missing Book JSON-LD",
+          "missing BreadcrumbList JSON-LD"
+        ]
+      },
+      {
+        "url": "https://booknomics.com/books/kurukshetra",
+        "reasons": [
+          "canonical mismatch → https://booknomics.com/",
+          "missing Book JSON-LD",
+          "missing BreadcrumbList JSON-LD"
+        ]
+      },
+      {
+        "url": "https://booknomics.com/books/aadha-gaon",
+        "reasons": [
+          "canonical mismatch → https://booknomics.com/",
+          "missing Book JSON-LD",
+          "missing BreadcrumbList JSON-LD"
+        ]
+      },
+      {
+        "url": "https://booknomics.com/books/vairagya-shatak",
+        "reasons": [
+          "canonical mismatch → https://booknomics.com/",
+          "missing Book JSON-LD",
+          "missing BreadcrumbList JSON-LD"
+        ]
+      },
+      {
+        "url": "https://booknomics.com/books/sevasadan",
+        "reasons": [
+          "canonical mismatch → https://booknomics.com/",
+          "missing Book JSON-LD",
+          "missing BreadcrumbList JSON-LD"
+        ]
+      },
+      {
+        "url": "https://booknomics.com/books/tamas",
+        "reasons": [
+          "canonical mismatch → https://booknomics.com/",
+          "missing Book JSON-LD",
+          "missing BreadcrumbList JSON-LD"
+        ]
+      },
+      {
+        "url": "https://booknomics.com/books/krishna-smriti",
+        "reasons": [
+          "canonical mismatch → https://booknomics.com/",
+          "missing Book JSON-LD",
+          "missing BreadcrumbList JSON-LD"
+        ]
+      },
+      {
+        "url": "https://booknomics.com/books/parakh",
+        "reasons": [
+          "canonical mismatch → https://booknomics.com/",
+          "missing Book JSON-LD",
+          "missing BreadcrumbList JSON-LD"
+        ]
+      },
+      {
+        "url": "https://booknomics.com/books/urvashi",
+        "reasons": [
+          "canonical mismatch → https://booknomics.com/",
+          "missing Book JSON-LD",
+          "missing BreadcrumbList JSON-LD"
+        ]
+      },
+      {
+        "url": "https://booknomics.com/books/suraj-ka-satvan-ghoda",
+        "reasons": [
+          "canonical mismatch → https://booknomics.com/",
+          "missing Book JSON-LD",
+          "missing BreadcrumbList JSON-LD"
+        ]
+      },
+      {
+        "url": "https://booknomics.com/books/aansu",
+        "reasons": [
+          "canonical mismatch → https://booknomics.com/",
+          "missing Book JSON-LD",
+          "missing BreadcrumbList JSON-LD"
+        ]
+      },
+      {
+        "url": "https://booknomics.com/books/jeevan-ki-khoj",
+        "reasons": [
+          "canonical mismatch → https://booknomics.com/",
+          "missing Book JSON-LD",
+          "missing BreadcrumbList JSON-LD"
+        ]
+      },
+      {
+        "url": "https://booknomics.com/books/ashtavakra-gita",
+        "reasons": [
+          "canonical mismatch → https://booknomics.com/",
+          "missing Book JSON-LD",
+          "missing BreadcrumbList JSON-LD"
+        ]
+      },
+      {
+        "url": "https://booknomics.com/books/yama",
+        "reasons": [
+          "canonical mismatch → https://booknomics.com/",
+          "missing Book JSON-LD",
+          "missing BreadcrumbList JSON-LD"
+        ]
+      },
+      {
+        "url": "https://booknomics.com/books/karmabhoomi",
+        "reasons": [
+          "canonical mismatch → https://booknomics.com/",
+          "missing Book JSON-LD",
+          "missing BreadcrumbList JSON-LD"
+        ]
+      },
+      {
+        "url": "https://booknomics.com/books/kayakalp",
+        "reasons": [
+          "canonical mismatch → https://booknomics.com/",
+          "missing Book JSON-LD",
+          "missing BreadcrumbList JSON-LD"
+        ]
+      },
+      {
+        "url": "https://booknomics.com/books/jeevan-vidya",
+        "reasons": [
+          "canonical mismatch → https://booknomics.com/",
+          "missing Book JSON-LD",
+          "missing BreadcrumbList JSON-LD"
+        ]
+      },
+      {
+        "url": "https://booknomics.com/books/maila-anchal",
+        "reasons": [
+          "canonical mismatch → https://booknomics.com/",
+          "missing Book JSON-LD",
+          "missing BreadcrumbList JSON-LD"
+        ]
+      },
+      {
+        "url": "https://booknomics.com/books/nirmala",
+        "reasons": [
+          "canonical mismatch → https://booknomics.com/",
+          "missing Book JSON-LD",
+          "missing BreadcrumbList JSON-LD"
+        ]
+      },
+      {
+        "url": "https://booknomics.com/books/kamayani",
+        "reasons": [
+          "canonical mismatch → https://booknomics.com/",
+          "missing Book JSON-LD",
+          "missing BreadcrumbList JSON-LD"
+        ]
+      },
+      {
+        "url": "https://booknomics.com/books/gandhi-autobiography-hi",
+        "reasons": [
+          "canonical mismatch → https://booknomics.com/",
+          "missing Book JSON-LD",
+          "missing BreadcrumbList JSON-LD"
+        ]
+      },
+      {
+        "url": "https://booknomics.com/books/bhagavad-gita-hi",
+        "reasons": [
+          "canonical mismatch → https://booknomics.com/",
+          "missing Book JSON-LD",
+          "missing BreadcrumbList JSON-LD"
+        ]
+      },
+      {
+        "url": "https://booknomics.com/books/chanakya-niti",
+        "reasons": [
+          "canonical mismatch → https://booknomics.com/",
+          "missing Book JSON-LD",
+          "missing BreadcrumbList JSON-LD"
+        ]
+      },
+      {
+        "url": "https://booknomics.com/books/upanishads",
+        "reasons": [
+          "canonical mismatch → https://booknomics.com/",
+          "missing Book JSON-LD",
+          "missing BreadcrumbList JSON-LD"
+        ]
+      },
+      {
+        "url": "https://booknomics.com/books/wings-of-fire",
+        "reasons": [
+          "canonical mismatch → https://booknomics.com/",
+          "missing Book JSON-LD",
+          "missing BreadcrumbList JSON-LD"
+        ]
+      },
+      {
+        "url": "https://booknomics.com/books/ramcharitmanas",
+        "reasons": [
+          "canonical mismatch → https://booknomics.com/",
+          "missing Book JSON-LD",
+          "missing BreadcrumbList JSON-LD"
+        ]
+      },
+      {
+        "url": "https://booknomics.com/books/gaban",
+        "reasons": [
+          "canonical mismatch → https://booknomics.com/",
+          "missing Book JSON-LD",
+          "missing BreadcrumbList JSON-LD"
+        ]
+      },
+      {
+        "url": "https://booknomics.com/books/godan",
+        "reasons": [
+          "canonical mismatch → https://booknomics.com/",
+          "missing Book JSON-LD",
+          "missing BreadcrumbList JSON-LD"
+        ]
+      },
+      {
+        "url": "https://booknomics.com/books/sapiens",
+        "reasons": [
+          "canonical mismatch → https://booknomics.com/",
+          "missing Book JSON-LD",
+          "missing BreadcrumbList JSON-LD"
+        ]
+      },
+      {
+        "url": "https://booknomics.com/books/the-power-of-now",
+        "reasons": [
+          "canonical mismatch → https://booknomics.com/",
+          "missing Book JSON-LD",
+          "missing BreadcrumbList JSON-LD"
+        ]
+      },
+      {
+        "url": "https://booknomics.com/books/man-search-meaning",
+        "reasons": [
+          "canonical mismatch → https://booknomics.com/",
+          "missing Book JSON-LD",
+          "missing BreadcrumbList JSON-LD"
+        ]
+      },
+      {
+        "url": "https://booknomics.com/books/grit",
+        "reasons": [
+          "canonical mismatch → https://booknomics.com/",
+          "missing Book JSON-LD",
+          "missing BreadcrumbList JSON-LD"
+        ]
+      },
+      {
+        "url": "https://booknomics.com/books/the-alchemist",
+        "reasons": [
+          "canonical mismatch → https://booknomics.com/",
+          "missing Book JSON-LD",
+          "missing BreadcrumbList JSON-LD"
+        ]
+      },
+      {
+        "url": "https://booknomics.com/books/meditations",
+        "reasons": [
+          "canonical mismatch → https://booknomics.com/",
+          "missing Book JSON-LD",
+          "missing BreadcrumbList JSON-LD"
+        ]
+      },
+      {
+        "url": "https://booknomics.com/books/the-7-habits",
+        "reasons": [
+          "canonical mismatch → https://booknomics.com/",
+          "missing Book JSON-LD",
+          "missing BreadcrumbList JSON-LD"
+        ]
+      },
+      {
+        "url": "https://booknomics.com/books/zero-to-one",
+        "reasons": [
+          "canonical mismatch → https://booknomics.com/",
+          "missing Book JSON-LD",
+          "missing BreadcrumbList JSON-LD"
+        ]
+      },
+      {
+        "url": "https://booknomics.com/books/the-hard-thing",
+        "reasons": [
+          "canonical mismatch → https://booknomics.com/",
+          "missing Book JSON-LD",
+          "missing BreadcrumbList JSON-LD"
+        ]
+      },
+      {
+        "url": "https://booknomics.com/books/the-obstacle-is-the-way",
+        "reasons": [
+          "canonical mismatch → https://booknomics.com/",
+          "missing Book JSON-LD",
+          "missing BreadcrumbList JSON-LD"
+        ]
+      },
+      {
+        "url": "https://booknomics.com/books/outliers",
+        "reasons": [
+          "canonical mismatch → https://booknomics.com/",
+          "missing Book JSON-LD",
+          "missing BreadcrumbList JSON-LD"
+        ]
+      },
+      {
+        "url": "https://booknomics.com/books/mindset",
+        "reasons": [
+          "canonical mismatch → https://booknomics.com/",
+          "missing Book JSON-LD",
+          "missing BreadcrumbList JSON-LD"
+        ]
+      },
+      {
+        "url": "https://booknomics.com/books/start-with-why",
+        "reasons": [
+          "canonical mismatch → https://booknomics.com/",
+          "missing Book JSON-LD",
+          "missing BreadcrumbList JSON-LD"
+        ]
+      },
+      {
+        "url": "https://booknomics.com/books/principles",
+        "reasons": [
+          "canonical mismatch → https://booknomics.com/",
+          "missing Book JSON-LD",
+          "missing BreadcrumbList JSON-LD"
+        ]
+      },
+      {
+        "url": "https://booknomics.com/books/the-four-agreements",
+        "reasons": [
+          "canonical mismatch → https://booknomics.com/",
+          "missing Book JSON-LD",
+          "missing BreadcrumbList JSON-LD"
+        ]
+      },
+      {
+        "url": "https://booknomics.com/books/predictably-irrational",
+        "reasons": [
+          "canonical mismatch → https://booknomics.com/",
+          "missing Book JSON-LD",
+          "missing BreadcrumbList JSON-LD"
+        ]
+      },
+      {
+        "url": "https://booknomics.com/books/antifragile",
+        "reasons": [
+          "canonical mismatch → https://booknomics.com/",
+          "missing Book JSON-LD",
+          "missing BreadcrumbList JSON-LD"
+        ]
+      },
+      {
+        "url": "https://booknomics.com/books/shoe-dog",
+        "reasons": [
+          "canonical mismatch → https://booknomics.com/",
+          "missing Book JSON-LD",
+          "missing BreadcrumbList JSON-LD"
+        ]
+      },
+      {
+        "url": "https://booknomics.com/books/the-subtle-art",
+        "reasons": [
+          "canonical mismatch → https://booknomics.com/",
+          "missing Book JSON-LD",
+          "missing BreadcrumbList JSON-LD"
+        ]
+      },
+      {
+        "url": "https://booknomics.com/books/why-we-sleep",
+        "reasons": [
+          "canonical mismatch → https://booknomics.com/",
+          "missing Book JSON-LD",
+          "missing BreadcrumbList JSON-LD"
+        ]
+      },
+      {
+        "url": "https://booknomics.com/books/atomic-habits",
+        "reasons": [
+          "canonical mismatch → https://booknomics.com/",
+          "missing Book JSON-LD",
+          "missing BreadcrumbList JSON-LD"
+        ]
+      },
+      {
+        "url": "https://booknomics.com/books/the-body-keeps-score",
+        "reasons": [
+          "canonical mismatch → https://booknomics.com/",
+          "missing Book JSON-LD",
+          "missing BreadcrumbList JSON-LD"
+        ]
+      },
+      {
+        "url": "https://booknomics.com/books/the-war-of-art",
+        "reasons": [
+          "canonical mismatch → https://booknomics.com/",
+          "missing Book JSON-LD",
+          "missing BreadcrumbList JSON-LD"
+        ]
+      },
+      {
+        "url": "https://booknomics.com/books/good-to-great",
+        "reasons": [
+          "canonical mismatch → https://booknomics.com/",
+          "missing Book JSON-LD",
+          "missing BreadcrumbList JSON-LD"
+        ]
+      },
+      {
+        "url": "https://booknomics.com/books/influence",
+        "reasons": [
+          "canonical mismatch → https://booknomics.com/",
+          "missing Book JSON-LD",
+          "missing BreadcrumbList JSON-LD"
+        ]
+      },
+      {
+        "url": "https://booknomics.com/books/the-e-myth",
+        "reasons": [
+          "canonical mismatch → https://booknomics.com/",
+          "missing Book JSON-LD",
+          "missing BreadcrumbList JSON-LD"
+        ]
+      },
+      {
+        "url": "https://booknomics.com/books/the-100-startup",
+        "reasons": [
+          "canonical mismatch → https://booknomics.com/",
+          "missing Book JSON-LD",
+          "missing BreadcrumbList JSON-LD"
+        ]
+      },
+      {
+        "url": "https://booknomics.com/books/hooked",
+        "reasons": [
+          "canonical mismatch → https://booknomics.com/",
+          "missing Book JSON-LD",
+          "missing BreadcrumbList JSON-LD"
+        ]
+      },
+      {
+        "url": "https://booknomics.com/books/nudge",
+        "reasons": [
+          "canonical mismatch → https://booknomics.com/",
+          "missing Book JSON-LD",
+          "missing BreadcrumbList JSON-LD"
+        ]
+      },
+      {
+        "url": "https://booknomics.com/books/deep-work",
+        "reasons": [
+          "canonical mismatch → https://booknomics.com/",
+          "missing Book JSON-LD",
+          "missing BreadcrumbList JSON-LD"
+        ]
+      },
+      {
+        "url": "https://booknomics.com/books/range",
+        "reasons": [
+          "canonical mismatch → https://booknomics.com/",
+          "missing Book JSON-LD",
+          "missing BreadcrumbList JSON-LD"
+        ]
+      },
+      {
+        "url": "https://booknomics.com/books/the-tipping-point",
+        "reasons": [
+          "canonical mismatch → https://booknomics.com/",
+          "missing Book JSON-LD",
+          "missing BreadcrumbList JSON-LD"
+        ]
+      },
+      {
+        "url": "https://booknomics.com/books/educated",
+        "reasons": [
+          "canonical mismatch → https://booknomics.com/",
+          "missing Book JSON-LD",
+          "missing BreadcrumbList JSON-LD"
+        ]
+      },
+      {
+        "url": "https://booknomics.com/books/rich-dad-poor-dad",
+        "reasons": [
+          "canonical mismatch → https://booknomics.com/",
+          "missing Book JSON-LD",
+          "missing BreadcrumbList JSON-LD"
+        ]
+      },
+      {
+        "url": "https://booknomics.com/books/getting-things-done",
+        "reasons": [
+          "canonical mismatch → https://booknomics.com/",
+          "missing Book JSON-LD",
+          "missing BreadcrumbList JSON-LD"
+        ]
+      },
+      {
+        "url": "https://booknomics.com/books/essentialism",
+        "reasons": [
+          "canonical mismatch → https://booknomics.com/",
+          "missing Book JSON-LD",
+          "missing BreadcrumbList JSON-LD"
+        ]
+      },
+      {
+        "url": "https://booknomics.com/books/flow",
+        "reasons": [
+          "canonical mismatch → https://booknomics.com/",
+          "missing Book JSON-LD",
+          "missing BreadcrumbList JSON-LD"
+        ]
+      },
+      {
+        "url": "https://booknomics.com/books/the-one-thing",
+        "reasons": [
+          "canonical mismatch → https://booknomics.com/",
+          "missing Book JSON-LD",
+          "missing BreadcrumbList JSON-LD"
+        ]
+      },
+      {
+        "url": "https://booknomics.com/books/the-lean-startup",
+        "reasons": [
+          "canonical mismatch → https://booknomics.com/",
+          "missing Book JSON-LD",
+          "missing BreadcrumbList JSON-LD"
+        ]
+      },
+      {
+        "url": "https://booknomics.com/books/the-courage-to-be-disliked",
+        "reasons": [
+          "canonical mismatch → https://booknomics.com/",
+          "missing Book JSON-LD",
+          "missing BreadcrumbList JSON-LD"
+        ]
+      },
+      {
+        "url": "https://booknomics.com/books/thinking-fast-and-slow",
+        "reasons": [
+          "canonical mismatch → https://booknomics.com/",
+          "missing Book JSON-LD",
+          "missing BreadcrumbList JSON-LD"
+        ]
+      },
+      {
+        "url": "https://booknomics.com/books/when-breath-becomes-air",
+        "reasons": [
+          "canonical mismatch → https://booknomics.com/",
+          "missing Book JSON-LD",
+          "missing BreadcrumbList JSON-LD"
+        ]
+      },
+      {
+        "url": "https://booknomics.com/books/ego-is-the-enemy",
+        "reasons": [
+          "canonical mismatch → https://booknomics.com/",
+          "missing Book JSON-LD",
+          "missing BreadcrumbList JSON-LD"
+        ]
+      },
+      {
+        "url": "https://booknomics.com/books/black-swan",
+        "reasons": [
+          "canonical mismatch → https://booknomics.com/",
+          "missing Book JSON-LD",
+          "missing BreadcrumbList JSON-LD"
+        ]
+      },
+      {
+        "url": "https://booknomics.com/books/blink",
+        "reasons": [
+          "canonical mismatch → https://booknomics.com/",
+          "missing Book JSON-LD",
+          "missing BreadcrumbList JSON-LD"
+        ]
+      },
+      {
+        "url": "https://booknomics.com/books/can-t-hurt-me",
+        "reasons": [
+          "canonical mismatch → https://booknomics.com/",
+          "missing Book JSON-LD",
+          "missing BreadcrumbList JSON-LD"
+        ]
+      },
+      {
+        "url": "https://booknomics.com/books/freakonomics",
+        "reasons": [
+          "canonical mismatch → https://booknomics.com/",
+          "missing Book JSON-LD",
+          "missing BreadcrumbList JSON-LD"
+        ]
+      },
+      {
+        "url": "https://booknomics.com/books/how-to-win-friends",
+        "reasons": [
+          "canonical mismatch → https://booknomics.com/",
+          "missing Book JSON-LD",
+          "missing BreadcrumbList JSON-LD"
+        ]
+      },
+      {
+        "url": "https://booknomics.com/books/never-split-the-difference",
+        "reasons": [
+          "canonical mismatch → https://booknomics.com/",
+          "missing Book JSON-LD",
+          "missing BreadcrumbList JSON-LD"
+        ]
+      },
+      {
+        "url": "https://booknomics.com/books/bhagavad-gita",
+        "reasons": [
+          "canonical mismatch → https://booknomics.com/",
+          "missing Book JSON-LD",
+          "missing BreadcrumbList JSON-LD"
+        ]
+      },
+      {
+        "url": "https://booknomics.com/category/poetry",
+        "reasons": [
+          "canonical mismatch → https://booknomics.com/"
+        ]
+      },
+      {
+        "url": "https://booknomics.com/category/novel",
+        "reasons": [
+          "canonical mismatch → https://booknomics.com/"
+        ]
+      },
+      {
+        "url": "https://booknomics.com/category/social-novel",
+        "reasons": [
+          "canonical mismatch → https://booknomics.com/"
+        ]
+      },
+      {
+        "url": "https://booknomics.com/category/classic-novel",
+        "reasons": [
+          "canonical mismatch → https://booknomics.com/"
+        ]
+      },
+      {
+        "url": "https://booknomics.com/category/devotional-poetry",
+        "reasons": [
+          "canonical mismatch → https://booknomics.com/"
+        ]
+      },
+      {
+        "url": "https://booknomics.com/category/fables",
+        "reasons": [
+          "canonical mismatch → https://booknomics.com/"
+        ]
+      },
+      {
+        "url": "https://booknomics.com/category/fantasy",
+        "reasons": [
+          "canonical mismatch → https://booknomics.com/"
+        ]
+      },
+      {
+        "url": "https://booknomics.com/category/psychological-novel",
+        "reasons": [
+          "canonical mismatch → https://booknomics.com/"
+        ]
+      },
+      {
+        "url": "https://booknomics.com/category/romance-novel",
+        "reasons": [
+          "canonical mismatch → https://booknomics.com/"
+        ]
+      },
+      {
+        "url": "https://booknomics.com/category/epic-poetry",
+        "reasons": [
+          "canonical mismatch → https://booknomics.com/"
+        ]
+      },
+      {
+        "url": "https://booknomics.com/category/moral-stories",
+        "reasons": [
+          "canonical mismatch → https://booknomics.com/"
+        ]
+      },
+      {
+        "url": "https://booknomics.com/category/classic-literature",
+        "reasons": [
+          "canonical mismatch → https://booknomics.com/"
+        ]
+      },
+      {
+        "url": "https://booknomics.com/category/self-help",
+        "reasons": [
+          "canonical mismatch → https://booknomics.com/"
+        ]
+      },
+      {
+        "url": "https://booknomics.com/category/self-help-emotional-healing-self-sabotage-personal-transformation",
+        "reasons": [
+          "canonical mismatch → https://booknomics.com/"
+        ]
+      },
+      {
+        "url": "https://booknomics.com/category/mindset-psychology",
+        "reasons": [
+          "canonical mismatch → https://booknomics.com/"
+        ]
+      },
+      {
+        "url": "https://booknomics.com/category/classic",
+        "reasons": [
+          "canonical mismatch → https://booknomics.com/"
+        ]
+      },
+      {
+        "url": "https://booknomics.com/category/spiritual",
+        "reasons": [
+          "canonical mismatch → https://booknomics.com/"
+        ]
+      },
+      {
+        "url": "https://booknomics.com/category/osho",
+        "reasons": [
+          "canonical mismatch → https://booknomics.com/"
+        ]
+      },
+      {
+        "url": "https://booknomics.com/category/hindi-literature",
+        "reasons": [
+          "canonical mismatch → https://booknomics.com/"
+        ]
+      },
+      {
+        "url": "https://booknomics.com/category/biography",
+        "reasons": [
+          "canonical mismatch → https://booknomics.com/"
+        ]
+      },
+      {
+        "url": "https://booknomics.com/category/philosophy",
+        "reasons": [
+          "canonical mismatch → https://booknomics.com/"
+        ]
+      },
+      {
+        "url": "https://booknomics.com/category/history",
+        "reasons": [
+          "canonical mismatch → https://booknomics.com/"
+        ]
+      },
+      {
+        "url": "https://booknomics.com/category/spirituality",
+        "reasons": [
+          "canonical mismatch → https://booknomics.com/"
+        ]
+      },
+      {
+        "url": "https://booknomics.com/category/psychology",
+        "reasons": [
+          "canonical mismatch → https://booknomics.com/"
+        ]
+      },
+      {
+        "url": "https://booknomics.com/category/fiction",
+        "reasons": [
+          "canonical mismatch → https://booknomics.com/"
+        ]
+      },
+      {
+        "url": "https://booknomics.com/category/business",
+        "reasons": [
+          "canonical mismatch → https://booknomics.com/"
+        ]
+      },
+      {
+        "url": "https://booknomics.com/category/leadership",
+        "reasons": [
+          "canonical mismatch → https://booknomics.com/"
+        ]
+      },
+      {
+        "url": "https://booknomics.com/category/memoir",
+        "reasons": [
+          "canonical mismatch → https://booknomics.com/"
+        ]
+      },
+      {
+        "url": "https://booknomics.com/category/health",
+        "reasons": [
+          "canonical mismatch → https://booknomics.com/"
+        ]
+      },
+      {
+        "url": "https://booknomics.com/category/creativity",
+        "reasons": [
+          "canonical mismatch → https://booknomics.com/"
+        ]
+      },
+      {
+        "url": "https://booknomics.com/category/economics",
+        "reasons": [
+          "canonical mismatch → https://booknomics.com/"
+        ]
+      },
+      {
+        "url": "https://booknomics.com/category/productivity",
+        "reasons": [
+          "canonical mismatch → https://booknomics.com/"
+        ]
+      },
+      {
+        "url": "https://booknomics.com/category/finance",
+        "reasons": [
+          "canonical mismatch → https://booknomics.com/"
+        ]
+      },
+      {
+        "url": "https://booknomics.com/category/communication",
+        "reasons": [
+          "canonical mismatch → https://booknomics.com/"
+        ]
+      }
+    ]
+  },
+  "rows": [
+    {
+      "url": "https://booknomics.com/",
+      "status": 200,
+      "ok": true,
+      "canonical": "https://booknomics.com/",
+      "canonicalMatches": true,
+      "noindex": false,
+      "robotsBlocked": false,
+      "discoverable": true,
+      "reasons": []
+    },
+    {
+      "url": "https://booknomics.com/browse",
+      "status": 200,
+      "ok": true,
+      "canonical": "https://booknomics.com/",
+      "canonicalMatches": false,
+      "noindex": false,
+      "robotsBlocked": false,
+      "discoverable": false,
+      "reasons": [
+        "canonical mismatch → https://booknomics.com/"
+      ]
+    },
+    {
+      "url": "https://booknomics.com/english",
+      "status": 200,
+      "ok": true,
+      "canonical": "https://booknomics.com/",
+      "canonicalMatches": false,
+      "noindex": false,
+      "robotsBlocked": false,
+      "discoverable": false,
+      "reasons": [
+        "canonical mismatch → https://booknomics.com/"
+      ]
+    },
+    {
+      "url": "https://booknomics.com/hindi",
+      "status": 200,
+      "ok": true,
+      "canonical": "https://booknomics.com/",
+      "canonicalMatches": false,
+      "noindex": false,
+      "robotsBlocked": false,
+      "discoverable": false,
+      "reasons": [
+        "canonical mismatch → https://booknomics.com/"
+      ]
+    },
+    {
+      "url": "https://booknomics.com/best-hindi-book-summaries",
+      "status": 200,
+      "ok": true,
+      "canonical": "https://booknomics.com/",
+      "canonicalMatches": false,
+      "noindex": false,
+      "robotsBlocked": false,
+      "discoverable": false,
+      "reasons": [
+        "canonical mismatch → https://booknomics.com/"
+      ]
+    },
+    {
+      "url": "https://booknomics.com/about",
+      "status": 200,
+      "ok": true,
+      "canonical": "https://booknomics.com/",
+      "canonicalMatches": false,
+      "noindex": false,
+      "robotsBlocked": false,
+      "discoverable": false,
+      "reasons": [
+        "canonical mismatch → https://booknomics.com/"
+      ]
+    },
+    {
+      "url": "https://booknomics.com/contact",
+      "status": 200,
+      "ok": true,
+      "canonical": "https://booknomics.com/",
+      "canonicalMatches": false,
+      "noindex": false,
+      "robotsBlocked": false,
+      "discoverable": false,
+      "reasons": [
+        "canonical mismatch → https://booknomics.com/"
+      ]
+    },
+    {
+      "url": "https://booknomics.com/blog",
+      "status": 200,
+      "ok": true,
+      "canonical": "https://booknomics.com/",
+      "canonicalMatches": false,
+      "noindex": false,
+      "robotsBlocked": false,
+      "discoverable": false,
+      "reasons": [
+        "canonical mismatch → https://booknomics.com/"
+      ]
+    },
+    {
+      "url": "https://booknomics.com/privacy",
+      "status": 200,
+      "ok": true,
+      "canonical": "https://booknomics.com/",
+      "canonicalMatches": false,
+      "noindex": false,
+      "robotsBlocked": false,
+      "discoverable": false,
+      "reasons": [
+        "canonical mismatch → https://booknomics.com/"
+      ]
+    },
+    {
+      "url": "https://booknomics.com/terms",
+      "status": 200,
+      "ok": true,
+      "canonical": "https://booknomics.com/",
+      "canonicalMatches": false,
+      "noindex": false,
+      "robotsBlocked": false,
+      "discoverable": false,
+      "reasons": [
+        "canonical mismatch → https://booknomics.com/"
+      ]
+    },
+    {
+      "url": "https://booknomics.com/blog/5-ways-to-build-a-morning-routine",
+      "status": 200,
+      "ok": true,
+      "canonical": "https://booknomics.com/",
+      "canonicalMatches": false,
+      "noindex": false,
+      "robotsBlocked": false,
+      "discoverable": false,
+      "reasons": [
+        "canonical mismatch → https://booknomics.com/"
+      ]
+    },
+    {
+      "url": "https://booknomics.com/blog/how-to-read-more-books-without-burning-out",
+      "status": 200,
+      "ok": true,
+      "canonical": "https://booknomics.com/",
+      "canonicalMatches": false,
+      "noindex": false,
+      "robotsBlocked": false,
+      "discoverable": false,
+      "reasons": [
+        "canonical mismatch → https://booknomics.com/"
+      ]
+    },
+    {
+      "url": "https://booknomics.com/blog/the-real-psychology-of-money",
+      "status": 200,
+      "ok": true,
+      "canonical": "https://booknomics.com/",
+      "canonicalMatches": false,
+      "noindex": false,
+      "robotsBlocked": false,
+      "discoverable": false,
+      "reasons": [
+        "canonical mismatch → https://booknomics.com/"
+      ]
+    },
+    {
+      "url": "https://booknomics.com/blog/stoicism-for-modern-anxiety",
+      "status": 200,
+      "ok": true,
+      "canonical": "https://booknomics.com/",
+      "canonicalMatches": false,
+      "noindex": false,
+      "robotsBlocked": false,
+      "discoverable": false,
+      "reasons": [
+        "canonical mismatch → https://booknomics.com/"
+      ]
+    },
+    {
+      "url": "https://booknomics.com/blog/build-deep-work-in-a-distracted-world",
+      "status": 200,
+      "ok": true,
+      "canonical": "https://booknomics.com/",
+      "canonicalMatches": false,
+      "noindex": false,
+      "robotsBlocked": false,
+      "discoverable": false,
+      "reasons": [
+        "canonical mismatch → https://booknomics.com/"
+      ]
+    },
+    {
+      "url": "https://booknomics.com/books/-etkl",
+      "status": 200,
+      "ok": true,
+      "canonical": "https://booknomics.com/",
+      "canonicalMatches": false,
+      "noindex": false,
+      "robotsBlocked": false,
+      "discoverable": false,
+      "reasons": [
+        "canonical mismatch → https://booknomics.com/",
+        "missing Book JSON-LD",
+        "missing BreadcrumbList JSON-LD"
+      ],
+      "hasBookLd": false,
+      "hasBreadcrumbLd": false
+    },
+    {
+      "url": "https://booknomics.com/books/-kawy",
+      "status": 200,
+      "ok": true,
+      "canonical": "https://booknomics.com/",
+      "canonicalMatches": false,
+      "noindex": false,
+      "robotsBlocked": false,
+      "discoverable": false,
+      "reasons": [
+        "canonical mismatch → https://booknomics.com/",
+        "missing Book JSON-LD",
+        "missing BreadcrumbList JSON-LD"
+      ],
+      "hasBookLd": false,
+      "hasBreadcrumbLd": false
+    },
+    {
+      "url": "https://booknomics.com/books/-j84e",
+      "status": 200,
+      "ok": true,
+      "canonical": "https://booknomics.com/",
+      "canonicalMatches": false,
+      "noindex": false,
+      "robotsBlocked": false,
+      "discoverable": false,
+      "reasons": [
+        "canonical mismatch → https://booknomics.com/",
+        "missing Book JSON-LD",
+        "missing BreadcrumbList JSON-LD"
+      ],
+      "hasBookLd": false,
+      "hasBreadcrumbLd": false
+    },
+    {
+      "url": "https://booknomics.com/books/-l6fg",
+      "status": 200,
+      "ok": true,
+      "canonical": "https://booknomics.com/",
+      "canonicalMatches": false,
+      "noindex": false,
+      "robotsBlocked": false,
+      "discoverable": false,
+      "reasons": [
+        "canonical mismatch → https://booknomics.com/",
+        "missing Book JSON-LD",
+        "missing BreadcrumbList JSON-LD"
+      ],
+      "hasBookLd": false,
+      "hasBreadcrumbLd": false
+    },
+    {
+      "url": "https://booknomics.com/books/-1eot",
+      "status": 200,
+      "ok": true,
+      "canonical": "https://booknomics.com/",
+      "canonicalMatches": false,
+      "noindex": false,
+      "robotsBlocked": false,
+      "discoverable": false,
+      "reasons": [
+        "canonical mismatch → https://booknomics.com/",
+        "missing Book JSON-LD",
+        "missing BreadcrumbList JSON-LD"
+      ],
+      "hasBookLd": false,
+      "hasBreadcrumbLd": false
+    },
+    {
+      "url": "https://booknomics.com/books/--apt8",
+      "status": 200,
+      "ok": true,
+      "canonical": "https://booknomics.com/",
+      "canonicalMatches": false,
+      "noindex": false,
+      "robotsBlocked": false,
+      "discoverable": false,
+      "reasons": [
+        "canonical mismatch → https://booknomics.com/",
+        "missing Book JSON-LD",
+        "missing BreadcrumbList JSON-LD"
+      ],
+      "hasBookLd": false,
+      "hasBreadcrumbLd": false
+    },
+    {
+      "url": "https://booknomics.com/books/don-quixote",
+      "status": 200,
+      "ok": true,
+      "canonical": "https://booknomics.com/",
+      "canonicalMatches": false,
+      "noindex": false,
+      "robotsBlocked": false,
+      "discoverable": false,
+      "reasons": [
+        "canonical mismatch → https://booknomics.com/",
+        "missing Book JSON-LD",
+        "missing BreadcrumbList JSON-LD"
+      ],
+      "hasBookLd": false,
+      "hasBreadcrumbLd": false
+    },
+    {
+      "url": "https://booknomics.com/books/les-miserables",
+      "status": 200,
+      "ok": true,
+      "canonical": "https://booknomics.com/",
+      "canonicalMatches": false,
+      "noindex": false,
+      "robotsBlocked": false,
+      "discoverable": false,
+      "reasons": [
+        "canonical mismatch → https://booknomics.com/",
+        "missing Book JSON-LD",
+        "missing BreadcrumbList JSON-LD"
+      ],
+      "hasBookLd": false,
+      "hasBreadcrumbLd": false
+    },
+    {
+      "url": "https://booknomics.com/books/moby-dick",
+      "status": 200,
+      "ok": true,
+      "canonical": "https://booknomics.com/",
+      "canonicalMatches": false,
+      "noindex": false,
+      "robotsBlocked": false,
+      "discoverable": false,
+      "reasons": [
+        "canonical mismatch → https://booknomics.com/",
+        "missing Book JSON-LD",
+        "missing BreadcrumbList JSON-LD"
+      ],
+      "hasBookLd": false,
+      "hasBreadcrumbLd": false
+    },
+    {
+      "url": "https://booknomics.com/books/the-scarlet-letter",
+      "status": 200,
+      "ok": true,
+      "canonical": "https://booknomics.com/",
+      "canonicalMatches": false,
+      "noindex": false,
+      "robotsBlocked": false,
+      "discoverable": false,
+      "reasons": [
+        "canonical mismatch → https://booknomics.com/",
+        "missing Book JSON-LD",
+        "missing BreadcrumbList JSON-LD"
+      ],
+      "hasBookLd": false,
+      "hasBreadcrumbLd": false
+    },
+    {
+      "url": "https://booknomics.com/books/crime-and-punishment",
+      "status": 200,
+      "ok": true,
+      "canonical": "https://booknomics.com/",
+      "canonicalMatches": false,
+      "noindex": false,
+      "robotsBlocked": false,
+      "discoverable": false,
+      "reasons": [
+        "canonical mismatch → https://booknomics.com/",
+        "missing Book JSON-LD",
+        "missing BreadcrumbList JSON-LD"
+      ],
+      "hasBookLd": false,
+      "hasBreadcrumbLd": false
+    },
+    {
+      "url": "https://booknomics.com/books/the-count-of-monte-cristo",
+      "status": 200,
+      "ok": true,
+      "canonical": "https://booknomics.com/",
+      "canonicalMatches": false,
+      "noindex": false,
+      "robotsBlocked": false,
+      "discoverable": false,
+      "reasons": [
+        "canonical mismatch → https://booknomics.com/",
+        "missing Book JSON-LD",
+        "missing BreadcrumbList JSON-LD"
+      ],
+      "hasBookLd": false,
+      "hasBreadcrumbLd": false
+    },
+    {
+      "url": "https://booknomics.com/books/anna-karenina",
+      "status": 200,
+      "ok": true,
+      "canonical": "https://booknomics.com/",
+      "canonicalMatches": false,
+      "noindex": false,
+      "robotsBlocked": false,
+      "discoverable": false,
+      "reasons": [
+        "canonical mismatch → https://booknomics.com/",
+        "missing Book JSON-LD",
+        "missing BreadcrumbList JSON-LD"
+      ],
+      "hasBookLd": false,
+      "hasBreadcrumbLd": false
+    },
+    {
+      "url": "https://booknomics.com/books/the-brothers-karamazov",
+      "status": 200,
+      "ok": true,
+      "canonical": "https://booknomics.com/",
+      "canonicalMatches": false,
+      "noindex": false,
+      "robotsBlocked": false,
+      "discoverable": false,
+      "reasons": [
+        "canonical mismatch → https://booknomics.com/",
+        "missing Book JSON-LD",
+        "missing BreadcrumbList JSON-LD"
+      ],
+      "hasBookLd": false,
+      "hasBreadcrumbLd": false
+    },
+    {
+      "url": "https://booknomics.com/books/war-and-peace",
+      "status": 200,
+      "ok": true,
+      "canonical": "https://booknomics.com/",
+      "canonicalMatches": false,
+      "noindex": false,
+      "robotsBlocked": false,
+      "discoverable": false,
+      "reasons": [
+        "canonical mismatch → https://booknomics.com/",
+        "missing Book JSON-LD",
+        "missing BreadcrumbList JSON-LD"
+      ],
+      "hasBookLd": false,
+      "hasBreadcrumbLd": false
+    },
+    {
+      "url": "https://booknomics.com/books/madame-bovary",
+      "status": 200,
+      "ok": true,
+      "canonical": "https://booknomics.com/",
+      "canonicalMatches": false,
+      "noindex": false,
+      "robotsBlocked": false,
+      "discoverable": false,
+      "reasons": [
+        "canonical mismatch → https://booknomics.com/",
+        "missing Book JSON-LD",
+        "missing BreadcrumbList JSON-LD"
+      ],
+      "hasBookLd": false,
+      "hasBreadcrumbLd": false
+    },
+    {
+      "url": "https://booknomics.com/books/pride-and-prejudice",
+      "status": 200,
+      "ok": true,
+      "canonical": "https://booknomics.com/",
+      "canonicalMatches": false,
+      "noindex": false,
+      "robotsBlocked": false,
+      "discoverable": false,
+      "reasons": [
+        "canonical mismatch → https://booknomics.com/",
+        "missing Book JSON-LD",
+        "missing BreadcrumbList JSON-LD"
+      ],
+      "hasBookLd": false,
+      "hasBreadcrumbLd": false
+    },
+    {
+      "url": "https://booknomics.com/books/frankenstein",
+      "status": 200,
+      "ok": true,
+      "canonical": "https://booknomics.com/",
+      "canonicalMatches": false,
+      "noindex": false,
+      "robotsBlocked": false,
+      "discoverable": false,
+      "reasons": [
+        "canonical mismatch → https://booknomics.com/",
+        "missing Book JSON-LD",
+        "missing BreadcrumbList JSON-LD"
+      ],
+      "hasBookLd": false,
+      "hasBreadcrumbLd": false
+    },
+    {
+      "url": "https://booknomics.com/books/wuthering-heights",
+      "status": 200,
+      "ok": true,
+      "canonical": "https://booknomics.com/",
+      "canonicalMatches": false,
+      "noindex": false,
+      "robotsBlocked": false,
+      "discoverable": false,
+      "reasons": [
+        "canonical mismatch → https://booknomics.com/",
+        "missing Book JSON-LD",
+        "missing BreadcrumbList JSON-LD"
+      ],
+      "hasBookLd": false,
+      "hasBreadcrumbLd": false
+    },
+    {
+      "url": "https://booknomics.com/books/a-tale-of-two-cities",
+      "status": 200,
+      "ok": true,
+      "canonical": "https://booknomics.com/",
+      "canonicalMatches": false,
+      "noindex": false,
+      "robotsBlocked": false,
+      "discoverable": false,
+      "reasons": [
+        "canonical mismatch → https://booknomics.com/",
+        "missing Book JSON-LD",
+        "missing BreadcrumbList JSON-LD"
+      ],
+      "hasBookLd": false,
+      "hasBreadcrumbLd": false
+    },
+    {
+      "url": "https://booknomics.com/books/dracula",
+      "status": 200,
+      "ok": true,
+      "canonical": "https://booknomics.com/",
+      "canonicalMatches": false,
+      "noindex": false,
+      "robotsBlocked": false,
+      "discoverable": false,
+      "reasons": [
+        "canonical mismatch → https://booknomics.com/",
+        "missing Book JSON-LD",
+        "missing BreadcrumbList JSON-LD"
+      ],
+      "hasBookLd": false,
+      "hasBreadcrumbLd": false
+    },
+    {
+      "url": "https://booknomics.com/books/the-great-gatsby",
+      "status": 200,
+      "ok": true,
+      "canonical": "https://booknomics.com/",
+      "canonicalMatches": false,
+      "noindex": false,
+      "robotsBlocked": false,
+      "discoverable": false,
+      "reasons": [
+        "canonical mismatch → https://booknomics.com/",
+        "missing Book JSON-LD",
+        "missing BreadcrumbList JSON-LD"
+      ],
+      "hasBookLd": false,
+      "hasBreadcrumbLd": false
+    },
+    {
+      "url": "https://booknomics.com/books/alices-adventures-in-wonderland",
+      "status": 200,
+      "ok": true,
+      "canonical": "https://booknomics.com/",
+      "canonicalMatches": false,
+      "noindex": false,
+      "robotsBlocked": false,
+      "discoverable": false,
+      "reasons": [
+        "canonical mismatch → https://booknomics.com/",
+        "missing Book JSON-LD",
+        "missing BreadcrumbList JSON-LD"
+      ],
+      "hasBookLd": false,
+      "hasBreadcrumbLd": false
+    },
+    {
+      "url": "https://booknomics.com/books/great-expectations",
+      "status": 200,
+      "ok": true,
+      "canonical": "https://booknomics.com/",
+      "canonicalMatches": false,
+      "noindex": false,
+      "robotsBlocked": false,
+      "discoverable": false,
+      "reasons": [
+        "canonical mismatch → https://booknomics.com/",
+        "missing Book JSON-LD",
+        "missing BreadcrumbList JSON-LD"
+      ],
+      "hasBookLd": false,
+      "hasBreadcrumbLd": false
+    },
+    {
+      "url": "https://booknomics.com/books/jane-eyre",
+      "status": 200,
+      "ok": true,
+      "canonical": "https://booknomics.com/",
+      "canonicalMatches": false,
+      "noindex": false,
+      "robotsBlocked": false,
+      "discoverable": false,
+      "reasons": [
+        "canonical mismatch → https://booknomics.com/",
+        "missing Book JSON-LD",
+        "missing BreadcrumbList JSON-LD"
+      ],
+      "hasBookLd": false,
+      "hasBreadcrumbLd": false
+    },
+    {
+      "url": "https://booknomics.com/books/the-picture-of-dorian-gray",
+      "status": 200,
+      "ok": true,
+      "canonical": "https://booknomics.com/",
+      "canonicalMatches": false,
+      "noindex": false,
+      "robotsBlocked": false,
+      "discoverable": false,
+      "reasons": [
+        "canonical mismatch → https://booknomics.com/",
+        "missing Book JSON-LD",
+        "missing BreadcrumbList JSON-LD"
+      ],
+      "hasBookLd": false,
+      "hasBreadcrumbLd": false
+    },
+    {
+      "url": "https://booknomics.com/books/panchatantra-hi",
+      "status": 200,
+      "ok": true,
+      "canonical": "https://booknomics.com/",
+      "canonicalMatches": false,
+      "noindex": false,
+      "robotsBlocked": false,
+      "discoverable": false,
+      "reasons": [
+        "canonical mismatch → https://booknomics.com/",
+        "missing Book JSON-LD",
+        "missing BreadcrumbList JSON-LD"
+      ],
+      "hasBookLd": false,
+      "hasBreadcrumbLd": false
+    },
+    {
+      "url": "https://booknomics.com/books/chandrakanta-hi",
+      "status": 200,
+      "ok": true,
+      "canonical": "https://booknomics.com/",
+      "canonicalMatches": false,
+      "noindex": false,
+      "robotsBlocked": false,
+      "discoverable": false,
+      "reasons": [
+        "canonical mismatch → https://booknomics.com/",
+        "missing Book JSON-LD",
+        "missing BreadcrumbList JSON-LD"
+      ],
+      "hasBookLd": false,
+      "hasBreadcrumbLd": false
+    },
+    {
+      "url": "https://booknomics.com/books/mitro-marjani-hi",
+      "status": 200,
+      "ok": true,
+      "canonical": "https://booknomics.com/",
+      "canonicalMatches": false,
+      "noindex": false,
+      "robotsBlocked": false,
+      "discoverable": false,
+      "reasons": [
+        "canonical mismatch → https://booknomics.com/",
+        "missing Book JSON-LD",
+        "missing BreadcrumbList JSON-LD"
+      ],
+      "hasBookLd": false,
+      "hasBreadcrumbLd": false
+    },
+    {
+      "url": "https://booknomics.com/books/anandmath-hi",
+      "status": 200,
+      "ok": true,
+      "canonical": "https://booknomics.com/",
+      "canonicalMatches": false,
+      "noindex": false,
+      "robotsBlocked": false,
+      "discoverable": false,
+      "reasons": [
+        "canonical mismatch → https://booknomics.com/",
+        "missing Book JSON-LD",
+        "missing BreadcrumbList JSON-LD"
+      ],
+      "hasBookLd": false,
+      "hasBreadcrumbLd": false
+    },
+    {
+      "url": "https://booknomics.com/books/shekhar-ek-jeevani-hi",
+      "status": 200,
+      "ok": true,
+      "canonical": "https://booknomics.com/",
+      "canonicalMatches": false,
+      "noindex": false,
+      "robotsBlocked": false,
+      "discoverable": false,
+      "reasons": [
+        "canonical mismatch → https://booknomics.com/",
+        "missing Book JSON-LD",
+        "missing BreadcrumbList JSON-LD"
+      ],
+      "hasBookLd": false,
+      "hasBreadcrumbLd": false
+    },
+    {
+      "url": "https://booknomics.com/books/devdas-hi",
+      "status": 200,
+      "ok": true,
+      "canonical": "https://booknomics.com/",
+      "canonicalMatches": false,
+      "noindex": false,
+      "robotsBlocked": false,
+      "discoverable": false,
+      "reasons": [
+        "canonical mismatch → https://booknomics.com/",
+        "missing Book JSON-LD",
+        "missing BreadcrumbList JSON-LD"
+      ],
+      "hasBookLd": false,
+      "hasBreadcrumbLd": false
+    },
+    {
+      "url": "https://booknomics.com/books/parineeta-hi",
+      "status": 200,
+      "ok": true,
+      "canonical": "https://booknomics.com/",
+      "canonicalMatches": false,
+      "noindex": false,
+      "robotsBlocked": false,
+      "discoverable": false,
+      "reasons": [
+        "canonical mismatch → https://booknomics.com/",
+        "missing Book JSON-LD",
+        "missing BreadcrumbList JSON-LD"
+      ],
+      "hasBookLd": false,
+      "hasBreadcrumbLd": false
+    },
+    {
+      "url": "https://booknomics.com/books/madhushala-hi",
+      "status": 200,
+      "ok": true,
+      "canonical": "https://booknomics.com/",
+      "canonicalMatches": false,
+      "noindex": false,
+      "robotsBlocked": false,
+      "discoverable": false,
+      "reasons": [
+        "canonical mismatch → https://booknomics.com/",
+        "missing Book JSON-LD",
+        "missing BreadcrumbList JSON-LD"
+      ],
+      "hasBookLd": false,
+      "hasBreadcrumbLd": false
+    },
+    {
+      "url": "https://booknomics.com/books/rashmirathi-hi",
+      "status": 200,
+      "ok": true,
+      "canonical": "https://booknomics.com/",
+      "canonicalMatches": false,
+      "noindex": false,
+      "robotsBlocked": false,
+      "discoverable": false,
+      "reasons": [
+        "canonical mismatch → https://booknomics.com/",
+        "missing Book JSON-LD",
+        "missing BreadcrumbList JSON-LD"
+      ],
+      "hasBookLd": false,
+      "hasBreadcrumbLd": false
+    },
+    {
+      "url": "https://booknomics.com/books/hitopadesha-hi",
+      "status": 200,
+      "ok": true,
+      "canonical": "https://booknomics.com/",
+      "canonicalMatches": false,
+      "noindex": false,
+      "robotsBlocked": false,
+      "discoverable": false,
+      "reasons": [
+        "canonical mismatch → https://booknomics.com/",
+        "missing Book JSON-LD",
+        "missing BreadcrumbList JSON-LD"
+      ],
+      "hasBookLd": false,
+      "hasBreadcrumbLd": false
+    },
+    {
+      "url": "https://booknomics.com/books/animal-farm-orwell-en",
+      "status": 200,
+      "ok": true,
+      "canonical": "https://booknomics.com/",
+      "canonicalMatches": false,
+      "noindex": false,
+      "robotsBlocked": false,
+      "discoverable": false,
+      "reasons": [
+        "canonical mismatch → https://booknomics.com/",
+        "missing Book JSON-LD",
+        "missing BreadcrumbList JSON-LD"
+      ],
+      "hasBookLd": false,
+      "hasBreadcrumbLd": false
+    },
+    {
+      "url": "https://booknomics.com/books/the-richest-man-in-babylon-en",
+      "status": 200,
+      "ok": true,
+      "canonical": "https://booknomics.com/",
+      "canonicalMatches": false,
+      "noindex": false,
+      "robotsBlocked": false,
+      "discoverable": false,
+      "reasons": [
+        "canonical mismatch → https://booknomics.com/",
+        "missing Book JSON-LD",
+        "missing BreadcrumbList JSON-LD"
+      ],
+      "hasBookLd": false,
+      "hasBreadcrumbLd": false
+    },
+    {
+      "url": "https://booknomics.com/books/romeo-and-juliet-en",
+      "status": 200,
+      "ok": true,
+      "canonical": "https://booknomics.com/",
+      "canonicalMatches": false,
+      "noindex": false,
+      "robotsBlocked": false,
+      "discoverable": false,
+      "reasons": [
+        "canonical mismatch → https://booknomics.com/",
+        "missing Book JSON-LD",
+        "missing BreadcrumbList JSON-LD"
+      ],
+      "hasBookLd": false,
+      "hasBreadcrumbLd": false
+    },
+    {
+      "url": "https://booknomics.com/books/1984-orwell-en",
+      "status": 200,
+      "ok": true,
+      "canonical": "https://booknomics.com/",
+      "canonicalMatches": false,
+      "noindex": false,
+      "robotsBlocked": false,
+      "discoverable": false,
+      "reasons": [
+        "canonical mismatch → https://booknomics.com/",
+        "missing Book JSON-LD",
+        "missing BreadcrumbList JSON-LD"
+      ],
+      "hasBookLd": false,
+      "hasBreadcrumbLd": false
+    },
+    {
+      "url": "https://booknomics.com/books/the-science-of-getting-rich-en",
+      "status": 200,
+      "ok": true,
+      "canonical": "https://booknomics.com/",
+      "canonicalMatches": false,
+      "noindex": false,
+      "robotsBlocked": false,
+      "discoverable": false,
+      "reasons": [
+        "canonical mismatch → https://booknomics.com/",
+        "missing Book JSON-LD",
+        "missing BreadcrumbList JSON-LD"
+      ],
+      "hasBookLd": false,
+      "hasBreadcrumbLd": false
+    },
+    {
+      "url": "https://booknomics.com/books/hamlet-shakespeare-en",
+      "status": 200,
+      "ok": true,
+      "canonical": "https://booknomics.com/",
+      "canonicalMatches": false,
+      "noindex": false,
+      "robotsBlocked": false,
+      "discoverable": false,
+      "reasons": [
+        "canonical mismatch → https://booknomics.com/",
+        "missing Book JSON-LD",
+        "missing BreadcrumbList JSON-LD"
+      ],
+      "hasBookLd": false,
+      "hasBreadcrumbLd": false
+    },
+    {
+      "url": "https://booknomics.com/books/macbeth-shakespeare-en",
+      "status": 200,
+      "ok": true,
+      "canonical": "https://booknomics.com/",
+      "canonicalMatches": false,
+      "noindex": false,
+      "robotsBlocked": false,
+      "discoverable": false,
+      "reasons": [
+        "canonical mismatch → https://booknomics.com/",
+        "missing Book JSON-LD",
+        "missing BreadcrumbList JSON-LD"
+      ],
+      "hasBookLd": false,
+      "hasBreadcrumbLd": false
+    },
+    {
+      "url": "https://booknomics.com/books/the-lord-of-the-rings-en",
+      "status": 200,
+      "ok": true,
+      "canonical": "https://booknomics.com/",
+      "canonicalMatches": false,
+      "noindex": false,
+      "robotsBlocked": false,
+      "discoverable": false,
+      "reasons": [
+        "canonical mismatch → https://booknomics.com/",
+        "missing Book JSON-LD",
+        "missing BreadcrumbList JSON-LD"
+      ],
+      "hasBookLd": false,
+      "hasBreadcrumbLd": false
+    },
+    {
+      "url": "https://booknomics.com/books/think-and-grow-rich-en",
+      "status": 200,
+      "ok": true,
+      "canonical": "https://booknomics.com/",
+      "canonicalMatches": false,
+      "noindex": false,
+      "robotsBlocked": false,
+      "discoverable": false,
+      "reasons": [
+        "canonical mismatch → https://booknomics.com/",
+        "missing Book JSON-LD",
+        "missing BreadcrumbList JSON-LD"
+      ],
+      "hasBookLd": false,
+      "hasBreadcrumbLd": false
+    },
+    {
+      "url": "https://booknomics.com/books/the-power-of-positive-thinking-en",
+      "status": 200,
+      "ok": true,
+      "canonical": "https://booknomics.com/",
+      "canonicalMatches": false,
+      "noindex": false,
+      "robotsBlocked": false,
+      "discoverable": false,
+      "reasons": [
+        "canonical mismatch → https://booknomics.com/",
+        "missing Book JSON-LD",
+        "missing BreadcrumbList JSON-LD"
+      ],
+      "hasBookLd": false,
+      "hasBreadcrumbLd": false
+    },
+    {
+      "url": "https://booknomics.com/books/the-mountain-is-you-a2fg",
+      "status": 200,
+      "ok": true,
+      "canonical": "https://booknomics.com/",
+      "canonicalMatches": false,
+      "noindex": false,
+      "robotsBlocked": false,
+      "discoverable": false,
+      "reasons": [
+        "canonical mismatch → https://booknomics.com/",
+        "missing Book JSON-LD",
+        "missing BreadcrumbList JSON-LD"
+      ],
+      "hasBookLd": false,
+      "hasBreadcrumbLd": false
+    },
+    {
+      "url": "https://booknomics.com/books/the-power-of-your-subconscious-mind-6znj",
+      "status": 200,
+      "ok": true,
+      "canonical": "https://booknomics.com/",
+      "canonicalMatches": false,
+      "noindex": false,
+      "robotsBlocked": false,
+      "discoverable": false,
+      "reasons": [
+        "canonical mismatch → https://booknomics.com/",
+        "missing Book JSON-LD",
+        "missing BreadcrumbList JSON-LD"
+      ],
+      "hasBookLd": false,
+      "hasBreadcrumbLd": false
+    },
+    {
+      "url": "https://booknomics.com/books/tyagpatra",
+      "status": 200,
+      "ok": true,
+      "canonical": "https://booknomics.com/",
+      "canonicalMatches": false,
+      "noindex": false,
+      "robotsBlocked": false,
+      "discoverable": false,
+      "reasons": [
+        "canonical mismatch → https://booknomics.com/",
+        "missing Book JSON-LD",
+        "missing BreadcrumbList JSON-LD"
+      ],
+      "hasBookLd": false,
+      "hasBreadcrumbLd": false
+    },
+    {
+      "url": "https://booknomics.com/books/kurukshetra",
+      "status": 200,
+      "ok": true,
+      "canonical": "https://booknomics.com/",
+      "canonicalMatches": false,
+      "noindex": false,
+      "robotsBlocked": false,
+      "discoverable": false,
+      "reasons": [
+        "canonical mismatch → https://booknomics.com/",
+        "missing Book JSON-LD",
+        "missing BreadcrumbList JSON-LD"
+      ],
+      "hasBookLd": false,
+      "hasBreadcrumbLd": false
+    },
+    {
+      "url": "https://booknomics.com/books/aadha-gaon",
+      "status": 200,
+      "ok": true,
+      "canonical": "https://booknomics.com/",
+      "canonicalMatches": false,
+      "noindex": false,
+      "robotsBlocked": false,
+      "discoverable": false,
+      "reasons": [
+        "canonical mismatch → https://booknomics.com/",
+        "missing Book JSON-LD",
+        "missing BreadcrumbList JSON-LD"
+      ],
+      "hasBookLd": false,
+      "hasBreadcrumbLd": false
+    },
+    {
+      "url": "https://booknomics.com/books/vairagya-shatak",
+      "status": 200,
+      "ok": true,
+      "canonical": "https://booknomics.com/",
+      "canonicalMatches": false,
+      "noindex": false,
+      "robotsBlocked": false,
+      "discoverable": false,
+      "reasons": [
+        "canonical mismatch → https://booknomics.com/",
+        "missing Book JSON-LD",
+        "missing BreadcrumbList JSON-LD"
+      ],
+      "hasBookLd": false,
+      "hasBreadcrumbLd": false
+    },
+    {
+      "url": "https://booknomics.com/books/sevasadan",
+      "status": 200,
+      "ok": true,
+      "canonical": "https://booknomics.com/",
+      "canonicalMatches": false,
+      "noindex": false,
+      "robotsBlocked": false,
+      "discoverable": false,
+      "reasons": [
+        "canonical mismatch → https://booknomics.com/",
+        "missing Book JSON-LD",
+        "missing BreadcrumbList JSON-LD"
+      ],
+      "hasBookLd": false,
+      "hasBreadcrumbLd": false
+    },
+    {
+      "url": "https://booknomics.com/books/tamas",
+      "status": 200,
+      "ok": true,
+      "canonical": "https://booknomics.com/",
+      "canonicalMatches": false,
+      "noindex": false,
+      "robotsBlocked": false,
+      "discoverable": false,
+      "reasons": [
+        "canonical mismatch → https://booknomics.com/",
+        "missing Book JSON-LD",
+        "missing BreadcrumbList JSON-LD"
+      ],
+      "hasBookLd": false,
+      "hasBreadcrumbLd": false
+    },
+    {
+      "url": "https://booknomics.com/books/krishna-smriti",
+      "status": 200,
+      "ok": true,
+      "canonical": "https://booknomics.com/",
+      "canonicalMatches": false,
+      "noindex": false,
+      "robotsBlocked": false,
+      "discoverable": false,
+      "reasons": [
+        "canonical mismatch → https://booknomics.com/",
+        "missing Book JSON-LD",
+        "missing BreadcrumbList JSON-LD"
+      ],
+      "hasBookLd": false,
+      "hasBreadcrumbLd": false
+    },
+    {
+      "url": "https://booknomics.com/books/parakh",
+      "status": 200,
+      "ok": true,
+      "canonical": "https://booknomics.com/",
+      "canonicalMatches": false,
+      "noindex": false,
+      "robotsBlocked": false,
+      "discoverable": false,
+      "reasons": [
+        "canonical mismatch → https://booknomics.com/",
+        "missing Book JSON-LD",
+        "missing BreadcrumbList JSON-LD"
+      ],
+      "hasBookLd": false,
+      "hasBreadcrumbLd": false
+    },
+    {
+      "url": "https://booknomics.com/books/urvashi",
+      "status": 200,
+      "ok": true,
+      "canonical": "https://booknomics.com/",
+      "canonicalMatches": false,
+      "noindex": false,
+      "robotsBlocked": false,
+      "discoverable": false,
+      "reasons": [
+        "canonical mismatch → https://booknomics.com/",
+        "missing Book JSON-LD",
+        "missing BreadcrumbList JSON-LD"
+      ],
+      "hasBookLd": false,
+      "hasBreadcrumbLd": false
+    },
+    {
+      "url": "https://booknomics.com/books/suraj-ka-satvan-ghoda",
+      "status": 200,
+      "ok": true,
+      "canonical": "https://booknomics.com/",
+      "canonicalMatches": false,
+      "noindex": false,
+      "robotsBlocked": false,
+      "discoverable": false,
+      "reasons": [
+        "canonical mismatch → https://booknomics.com/",
+        "missing Book JSON-LD",
+        "missing BreadcrumbList JSON-LD"
+      ],
+      "hasBookLd": false,
+      "hasBreadcrumbLd": false
+    },
+    {
+      "url": "https://booknomics.com/books/aansu",
+      "status": 200,
+      "ok": true,
+      "canonical": "https://booknomics.com/",
+      "canonicalMatches": false,
+      "noindex": false,
+      "robotsBlocked": false,
+      "discoverable": false,
+      "reasons": [
+        "canonical mismatch → https://booknomics.com/",
+        "missing Book JSON-LD",
+        "missing BreadcrumbList JSON-LD"
+      ],
+      "hasBookLd": false,
+      "hasBreadcrumbLd": false
+    },
+    {
+      "url": "https://booknomics.com/books/jeevan-ki-khoj",
+      "status": 200,
+      "ok": true,
+      "canonical": "https://booknomics.com/",
+      "canonicalMatches": false,
+      "noindex": false,
+      "robotsBlocked": false,
+      "discoverable": false,
+      "reasons": [
+        "canonical mismatch → https://booknomics.com/",
+        "missing Book JSON-LD",
+        "missing BreadcrumbList JSON-LD"
+      ],
+      "hasBookLd": false,
+      "hasBreadcrumbLd": false
+    },
+    {
+      "url": "https://booknomics.com/books/ashtavakra-gita",
+      "status": 200,
+      "ok": true,
+      "canonical": "https://booknomics.com/",
+      "canonicalMatches": false,
+      "noindex": false,
+      "robotsBlocked": false,
+      "discoverable": false,
+      "reasons": [
+        "canonical mismatch → https://booknomics.com/",
+        "missing Book JSON-LD",
+        "missing BreadcrumbList JSON-LD"
+      ],
+      "hasBookLd": false,
+      "hasBreadcrumbLd": false
+    },
+    {
+      "url": "https://booknomics.com/books/yama",
+      "status": 200,
+      "ok": true,
+      "canonical": "https://booknomics.com/",
+      "canonicalMatches": false,
+      "noindex": false,
+      "robotsBlocked": false,
+      "discoverable": false,
+      "reasons": [
+        "canonical mismatch → https://booknomics.com/",
+        "missing Book JSON-LD",
+        "missing BreadcrumbList JSON-LD"
+      ],
+      "hasBookLd": false,
+      "hasBreadcrumbLd": false
+    },
+    {
+      "url": "https://booknomics.com/books/karmabhoomi",
+      "status": 200,
+      "ok": true,
+      "canonical": "https://booknomics.com/",
+      "canonicalMatches": false,
+      "noindex": false,
+      "robotsBlocked": false,
+      "discoverable": false,
+      "reasons": [
+        "canonical mismatch → https://booknomics.com/",
+        "missing Book JSON-LD",
+        "missing BreadcrumbList JSON-LD"
+      ],
+      "hasBookLd": false,
+      "hasBreadcrumbLd": false
+    },
+    {
+      "url": "https://booknomics.com/books/kayakalp",
+      "status": 200,
+      "ok": true,
+      "canonical": "https://booknomics.com/",
+      "canonicalMatches": false,
+      "noindex": false,
+      "robotsBlocked": false,
+      "discoverable": false,
+      "reasons": [
+        "canonical mismatch → https://booknomics.com/",
+        "missing Book JSON-LD",
+        "missing BreadcrumbList JSON-LD"
+      ],
+      "hasBookLd": false,
+      "hasBreadcrumbLd": false
+    },
+    {
+      "url": "https://booknomics.com/books/jeevan-vidya",
+      "status": 200,
+      "ok": true,
+      "canonical": "https://booknomics.com/",
+      "canonicalMatches": false,
+      "noindex": false,
+      "robotsBlocked": false,
+      "discoverable": false,
+      "reasons": [
+        "canonical mismatch → https://booknomics.com/",
+        "missing Book JSON-LD",
+        "missing BreadcrumbList JSON-LD"
+      ],
+      "hasBookLd": false,
+      "hasBreadcrumbLd": false
+    },
+    {
+      "url": "https://booknomics.com/books/maila-anchal",
+      "status": 200,
+      "ok": true,
+      "canonical": "https://booknomics.com/",
+      "canonicalMatches": false,
+      "noindex": false,
+      "robotsBlocked": false,
+      "discoverable": false,
+      "reasons": [
+        "canonical mismatch → https://booknomics.com/",
+        "missing Book JSON-LD",
+        "missing BreadcrumbList JSON-LD"
+      ],
+      "hasBookLd": false,
+      "hasBreadcrumbLd": false
+    },
+    {
+      "url": "https://booknomics.com/books/nirmala",
+      "status": 200,
+      "ok": true,
+      "canonical": "https://booknomics.com/",
+      "canonicalMatches": false,
+      "noindex": false,
+      "robotsBlocked": false,
+      "discoverable": false,
+      "reasons": [
+        "canonical mismatch → https://booknomics.com/",
+        "missing Book JSON-LD",
+        "missing BreadcrumbList JSON-LD"
+      ],
+      "hasBookLd": false,
+      "hasBreadcrumbLd": false
+    },
+    {
+      "url": "https://booknomics.com/books/kamayani",
+      "status": 200,
+      "ok": true,
+      "canonical": "https://booknomics.com/",
+      "canonicalMatches": false,
+      "noindex": false,
+      "robotsBlocked": false,
+      "discoverable": false,
+      "reasons": [
+        "canonical mismatch → https://booknomics.com/",
+        "missing Book JSON-LD",
+        "missing BreadcrumbList JSON-LD"
+      ],
+      "hasBookLd": false,
+      "hasBreadcrumbLd": false
+    },
+    {
+      "url": "https://booknomics.com/books/gandhi-autobiography-hi",
+      "status": 200,
+      "ok": true,
+      "canonical": "https://booknomics.com/",
+      "canonicalMatches": false,
+      "noindex": false,
+      "robotsBlocked": false,
+      "discoverable": false,
+      "reasons": [
+        "canonical mismatch → https://booknomics.com/",
+        "missing Book JSON-LD",
+        "missing BreadcrumbList JSON-LD"
+      ],
+      "hasBookLd": false,
+      "hasBreadcrumbLd": false
+    },
+    {
+      "url": "https://booknomics.com/books/bhagavad-gita-hi",
+      "status": 200,
+      "ok": true,
+      "canonical": "https://booknomics.com/",
+      "canonicalMatches": false,
+      "noindex": false,
+      "robotsBlocked": false,
+      "discoverable": false,
+      "reasons": [
+        "canonical mismatch → https://booknomics.com/",
+        "missing Book JSON-LD",
+        "missing BreadcrumbList JSON-LD"
+      ],
+      "hasBookLd": false,
+      "hasBreadcrumbLd": false
+    },
+    {
+      "url": "https://booknomics.com/books/chanakya-niti",
+      "status": 200,
+      "ok": true,
+      "canonical": "https://booknomics.com/",
+      "canonicalMatches": false,
+      "noindex": false,
+      "robotsBlocked": false,
+      "discoverable": false,
+      "reasons": [
+        "canonical mismatch → https://booknomics.com/",
+        "missing Book JSON-LD",
+        "missing BreadcrumbList JSON-LD"
+      ],
+      "hasBookLd": false,
+      "hasBreadcrumbLd": false
+    },
+    {
+      "url": "https://booknomics.com/books/upanishads",
+      "status": 200,
+      "ok": true,
+      "canonical": "https://booknomics.com/",
+      "canonicalMatches": false,
+      "noindex": false,
+      "robotsBlocked": false,
+      "discoverable": false,
+      "reasons": [
+        "canonical mismatch → https://booknomics.com/",
+        "missing Book JSON-LD",
+        "missing BreadcrumbList JSON-LD"
+      ],
+      "hasBookLd": false,
+      "hasBreadcrumbLd": false
+    },
+    {
+      "url": "https://booknomics.com/books/wings-of-fire",
+      "status": 200,
+      "ok": true,
+      "canonical": "https://booknomics.com/",
+      "canonicalMatches": false,
+      "noindex": false,
+      "robotsBlocked": false,
+      "discoverable": false,
+      "reasons": [
+        "canonical mismatch → https://booknomics.com/",
+        "missing Book JSON-LD",
+        "missing BreadcrumbList JSON-LD"
+      ],
+      "hasBookLd": false,
+      "hasBreadcrumbLd": false
+    },
+    {
+      "url": "https://booknomics.com/books/ramcharitmanas",
+      "status": 200,
+      "ok": true,
+      "canonical": "https://booknomics.com/",
+      "canonicalMatches": false,
+      "noindex": false,
+      "robotsBlocked": false,
+      "discoverable": false,
+      "reasons": [
+        "canonical mismatch → https://booknomics.com/",
+        "missing Book JSON-LD",
+        "missing BreadcrumbList JSON-LD"
+      ],
+      "hasBookLd": false,
+      "hasBreadcrumbLd": false
+    },
+    {
+      "url": "https://booknomics.com/books/gaban",
+      "status": 200,
+      "ok": true,
+      "canonical": "https://booknomics.com/",
+      "canonicalMatches": false,
+      "noindex": false,
+      "robotsBlocked": false,
+      "discoverable": false,
+      "reasons": [
+        "canonical mismatch → https://booknomics.com/",
+        "missing Book JSON-LD",
+        "missing BreadcrumbList JSON-LD"
+      ],
+      "hasBookLd": false,
+      "hasBreadcrumbLd": false
+    },
+    {
+      "url": "https://booknomics.com/books/godan",
+      "status": 200,
+      "ok": true,
+      "canonical": "https://booknomics.com/",
+      "canonicalMatches": false,
+      "noindex": false,
+      "robotsBlocked": false,
+      "discoverable": false,
+      "reasons": [
+        "canonical mismatch → https://booknomics.com/",
+        "missing Book JSON-LD",
+        "missing BreadcrumbList JSON-LD"
+      ],
+      "hasBookLd": false,
+      "hasBreadcrumbLd": false
+    },
+    {
+      "url": "https://booknomics.com/books/sapiens",
+      "status": 200,
+      "ok": true,
+      "canonical": "https://booknomics.com/",
+      "canonicalMatches": false,
+      "noindex": false,
+      "robotsBlocked": false,
+      "discoverable": false,
+      "reasons": [
+        "canonical mismatch → https://booknomics.com/",
+        "missing Book JSON-LD",
+        "missing BreadcrumbList JSON-LD"
+      ],
+      "hasBookLd": false,
+      "hasBreadcrumbLd": false
+    },
+    {
+      "url": "https://booknomics.com/books/the-power-of-now",
+      "status": 200,
+      "ok": true,
+      "canonical": "https://booknomics.com/",
+      "canonicalMatches": false,
+      "noindex": false,
+      "robotsBlocked": false,
+      "discoverable": false,
+      "reasons": [
+        "canonical mismatch → https://booknomics.com/",
+        "missing Book JSON-LD",
+        "missing BreadcrumbList JSON-LD"
+      ],
+      "hasBookLd": false,
+      "hasBreadcrumbLd": false
+    },
+    {
+      "url": "https://booknomics.com/books/man-search-meaning",
+      "status": 200,
+      "ok": true,
+      "canonical": "https://booknomics.com/",
+      "canonicalMatches": false,
+      "noindex": false,
+      "robotsBlocked": false,
+      "discoverable": false,
+      "reasons": [
+        "canonical mismatch → https://booknomics.com/",
+        "missing Book JSON-LD",
+        "missing BreadcrumbList JSON-LD"
+      ],
+      "hasBookLd": false,
+      "hasBreadcrumbLd": false
+    },
+    {
+      "url": "https://booknomics.com/books/grit",
+      "status": 200,
+      "ok": true,
+      "canonical": "https://booknomics.com/",
+      "canonicalMatches": false,
+      "noindex": false,
+      "robotsBlocked": false,
+      "discoverable": false,
+      "reasons": [
+        "canonical mismatch → https://booknomics.com/",
+        "missing Book JSON-LD",
+        "missing BreadcrumbList JSON-LD"
+      ],
+      "hasBookLd": false,
+      "hasBreadcrumbLd": false
+    },
+    {
+      "url": "https://booknomics.com/books/the-alchemist",
+      "status": 200,
+      "ok": true,
+      "canonical": "https://booknomics.com/",
+      "canonicalMatches": false,
+      "noindex": false,
+      "robotsBlocked": false,
+      "discoverable": false,
+      "reasons": [
+        "canonical mismatch → https://booknomics.com/",
+        "missing Book JSON-LD",
+        "missing BreadcrumbList JSON-LD"
+      ],
+      "hasBookLd": false,
+      "hasBreadcrumbLd": false
+    },
+    {
+      "url": "https://booknomics.com/books/meditations",
+      "status": 200,
+      "ok": true,
+      "canonical": "https://booknomics.com/",
+      "canonicalMatches": false,
+      "noindex": false,
+      "robotsBlocked": false,
+      "discoverable": false,
+      "reasons": [
+        "canonical mismatch → https://booknomics.com/",
+        "missing Book JSON-LD",
+        "missing BreadcrumbList JSON-LD"
+      ],
+      "hasBookLd": false,
+      "hasBreadcrumbLd": false
+    },
+    {
+      "url": "https://booknomics.com/books/the-7-habits",
+      "status": 200,
+      "ok": true,
+      "canonical": "https://booknomics.com/",
+      "canonicalMatches": false,
+      "noindex": false,
+      "robotsBlocked": false,
+      "discoverable": false,
+      "reasons": [
+        "canonical mismatch → https://booknomics.com/",
+        "missing Book JSON-LD",
+        "missing BreadcrumbList JSON-LD"
+      ],
+      "hasBookLd": false,
+      "hasBreadcrumbLd": false
+    },
+    {
+      "url": "https://booknomics.com/books/zero-to-one",
+      "status": 200,
+      "ok": true,
+      "canonical": "https://booknomics.com/",
+      "canonicalMatches": false,
+      "noindex": false,
+      "robotsBlocked": false,
+      "discoverable": false,
+      "reasons": [
+        "canonical mismatch → https://booknomics.com/",
+        "missing Book JSON-LD",
+        "missing BreadcrumbList JSON-LD"
+      ],
+      "hasBookLd": false,
+      "hasBreadcrumbLd": false
+    },
+    {
+      "url": "https://booknomics.com/books/the-hard-thing",
+      "status": 200,
+      "ok": true,
+      "canonical": "https://booknomics.com/",
+      "canonicalMatches": false,
+      "noindex": false,
+      "robotsBlocked": false,
+      "discoverable": false,
+      "reasons": [
+        "canonical mismatch → https://booknomics.com/",
+        "missing Book JSON-LD",
+        "missing BreadcrumbList JSON-LD"
+      ],
+      "hasBookLd": false,
+      "hasBreadcrumbLd": false
+    },
+    {
+      "url": "https://booknomics.com/books/the-obstacle-is-the-way",
+      "status": 200,
+      "ok": true,
+      "canonical": "https://booknomics.com/",
+      "canonicalMatches": false,
+      "noindex": false,
+      "robotsBlocked": false,
+      "discoverable": false,
+      "reasons": [
+        "canonical mismatch → https://booknomics.com/",
+        "missing Book JSON-LD",
+        "missing BreadcrumbList JSON-LD"
+      ],
+      "hasBookLd": false,
+      "hasBreadcrumbLd": false
+    },
+    {
+      "url": "https://booknomics.com/books/outliers",
+      "status": 200,
+      "ok": true,
+      "canonical": "https://booknomics.com/",
+      "canonicalMatches": false,
+      "noindex": false,
+      "robotsBlocked": false,
+      "discoverable": false,
+      "reasons": [
+        "canonical mismatch → https://booknomics.com/",
+        "missing Book JSON-LD",
+        "missing BreadcrumbList JSON-LD"
+      ],
+      "hasBookLd": false,
+      "hasBreadcrumbLd": false
+    },
+    {
+      "url": "https://booknomics.com/books/mindset",
+      "status": 200,
+      "ok": true,
+      "canonical": "https://booknomics.com/",
+      "canonicalMatches": false,
+      "noindex": false,
+      "robotsBlocked": false,
+      "discoverable": false,
+      "reasons": [
+        "canonical mismatch → https://booknomics.com/",
+        "missing Book JSON-LD",
+        "missing BreadcrumbList JSON-LD"
+      ],
+      "hasBookLd": false,
+      "hasBreadcrumbLd": false
+    },
+    {
+      "url": "https://booknomics.com/books/start-with-why",
+      "status": 200,
+      "ok": true,
+      "canonical": "https://booknomics.com/",
+      "canonicalMatches": false,
+      "noindex": false,
+      "robotsBlocked": false,
+      "discoverable": false,
+      "reasons": [
+        "canonical mismatch → https://booknomics.com/",
+        "missing Book JSON-LD",
+        "missing BreadcrumbList JSON-LD"
+      ],
+      "hasBookLd": false,
+      "hasBreadcrumbLd": false
+    },
+    {
+      "url": "https://booknomics.com/books/principles",
+      "status": 200,
+      "ok": true,
+      "canonical": "https://booknomics.com/",
+      "canonicalMatches": false,
+      "noindex": false,
+      "robotsBlocked": false,
+      "discoverable": false,
+      "reasons": [
+        "canonical mismatch → https://booknomics.com/",
+        "missing Book JSON-LD",
+        "missing BreadcrumbList JSON-LD"
+      ],
+      "hasBookLd": false,
+      "hasBreadcrumbLd": false
+    },
+    {
+      "url": "https://booknomics.com/books/the-four-agreements",
+      "status": 200,
+      "ok": true,
+      "canonical": "https://booknomics.com/",
+      "canonicalMatches": false,
+      "noindex": false,
+      "robotsBlocked": false,
+      "discoverable": false,
+      "reasons": [
+        "canonical mismatch → https://booknomics.com/",
+        "missing Book JSON-LD",
+        "missing BreadcrumbList JSON-LD"
+      ],
+      "hasBookLd": false,
+      "hasBreadcrumbLd": false
+    },
+    {
+      "url": "https://booknomics.com/books/predictably-irrational",
+      "status": 200,
+      "ok": true,
+      "canonical": "https://booknomics.com/",
+      "canonicalMatches": false,
+      "noindex": false,
+      "robotsBlocked": false,
+      "discoverable": false,
+      "reasons": [
+        "canonical mismatch → https://booknomics.com/",
+        "missing Book JSON-LD",
+        "missing BreadcrumbList JSON-LD"
+      ],
+      "hasBookLd": false,
+      "hasBreadcrumbLd": false
+    },
+    {
+      "url": "https://booknomics.com/books/antifragile",
+      "status": 200,
+      "ok": true,
+      "canonical": "https://booknomics.com/",
+      "canonicalMatches": false,
+      "noindex": false,
+      "robotsBlocked": false,
+      "discoverable": false,
+      "reasons": [
+        "canonical mismatch → https://booknomics.com/",
+        "missing Book JSON-LD",
+        "missing BreadcrumbList JSON-LD"
+      ],
+      "hasBookLd": false,
+      "hasBreadcrumbLd": false
+    },
+    {
+      "url": "https://booknomics.com/books/shoe-dog",
+      "status": 200,
+      "ok": true,
+      "canonical": "https://booknomics.com/",
+      "canonicalMatches": false,
+      "noindex": false,
+      "robotsBlocked": false,
+      "discoverable": false,
+      "reasons": [
+        "canonical mismatch → https://booknomics.com/",
+        "missing Book JSON-LD",
+        "missing BreadcrumbList JSON-LD"
+      ],
+      "hasBookLd": false,
+      "hasBreadcrumbLd": false
+    },
+    {
+      "url": "https://booknomics.com/books/the-subtle-art",
+      "status": 200,
+      "ok": true,
+      "canonical": "https://booknomics.com/",
+      "canonicalMatches": false,
+      "noindex": false,
+      "robotsBlocked": false,
+      "discoverable": false,
+      "reasons": [
+        "canonical mismatch → https://booknomics.com/",
+        "missing Book JSON-LD",
+        "missing BreadcrumbList JSON-LD"
+      ],
+      "hasBookLd": false,
+      "hasBreadcrumbLd": false
+    },
+    {
+      "url": "https://booknomics.com/books/why-we-sleep",
+      "status": 200,
+      "ok": true,
+      "canonical": "https://booknomics.com/",
+      "canonicalMatches": false,
+      "noindex": false,
+      "robotsBlocked": false,
+      "discoverable": false,
+      "reasons": [
+        "canonical mismatch → https://booknomics.com/",
+        "missing Book JSON-LD",
+        "missing BreadcrumbList JSON-LD"
+      ],
+      "hasBookLd": false,
+      "hasBreadcrumbLd": false
+    },
+    {
+      "url": "https://booknomics.com/books/atomic-habits",
+      "status": 200,
+      "ok": true,
+      "canonical": "https://booknomics.com/",
+      "canonicalMatches": false,
+      "noindex": false,
+      "robotsBlocked": false,
+      "discoverable": false,
+      "reasons": [
+        "canonical mismatch → https://booknomics.com/",
+        "missing Book JSON-LD",
+        "missing BreadcrumbList JSON-LD"
+      ],
+      "hasBookLd": false,
+      "hasBreadcrumbLd": false
+    },
+    {
+      "url": "https://booknomics.com/books/the-body-keeps-score",
+      "status": 200,
+      "ok": true,
+      "canonical": "https://booknomics.com/",
+      "canonicalMatches": false,
+      "noindex": false,
+      "robotsBlocked": false,
+      "discoverable": false,
+      "reasons": [
+        "canonical mismatch → https://booknomics.com/",
+        "missing Book JSON-LD",
+        "missing BreadcrumbList JSON-LD"
+      ],
+      "hasBookLd": false,
+      "hasBreadcrumbLd": false
+    },
+    {
+      "url": "https://booknomics.com/books/the-war-of-art",
+      "status": 200,
+      "ok": true,
+      "canonical": "https://booknomics.com/",
+      "canonicalMatches": false,
+      "noindex": false,
+      "robotsBlocked": false,
+      "discoverable": false,
+      "reasons": [
+        "canonical mismatch → https://booknomics.com/",
+        "missing Book JSON-LD",
+        "missing BreadcrumbList JSON-LD"
+      ],
+      "hasBookLd": false,
+      "hasBreadcrumbLd": false
+    },
+    {
+      "url": "https://booknomics.com/books/good-to-great",
+      "status": 200,
+      "ok": true,
+      "canonical": "https://booknomics.com/",
+      "canonicalMatches": false,
+      "noindex": false,
+      "robotsBlocked": false,
+      "discoverable": false,
+      "reasons": [
+        "canonical mismatch → https://booknomics.com/",
+        "missing Book JSON-LD",
+        "missing BreadcrumbList JSON-LD"
+      ],
+      "hasBookLd": false,
+      "hasBreadcrumbLd": false
+    },
+    {
+      "url": "https://booknomics.com/books/influence",
+      "status": 200,
+      "ok": true,
+      "canonical": "https://booknomics.com/",
+      "canonicalMatches": false,
+      "noindex": false,
+      "robotsBlocked": false,
+      "discoverable": false,
+      "reasons": [
+        "canonical mismatch → https://booknomics.com/",
+        "missing Book JSON-LD",
+        "missing BreadcrumbList JSON-LD"
+      ],
+      "hasBookLd": false,
+      "hasBreadcrumbLd": false
+    },
+    {
+      "url": "https://booknomics.com/books/the-e-myth",
+      "status": 200,
+      "ok": true,
+      "canonical": "https://booknomics.com/",
+      "canonicalMatches": false,
+      "noindex": false,
+      "robotsBlocked": false,
+      "discoverable": false,
+      "reasons": [
+        "canonical mismatch → https://booknomics.com/",
+        "missing Book JSON-LD",
+        "missing BreadcrumbList JSON-LD"
+      ],
+      "hasBookLd": false,
+      "hasBreadcrumbLd": false
+    },
+    {
+      "url": "https://booknomics.com/books/the-100-startup",
+      "status": 200,
+      "ok": true,
+      "canonical": "https://booknomics.com/",
+      "canonicalMatches": false,
+      "noindex": false,
+      "robotsBlocked": false,
+      "discoverable": false,
+      "reasons": [
+        "canonical mismatch → https://booknomics.com/",
+        "missing Book JSON-LD",
+        "missing BreadcrumbList JSON-LD"
+      ],
+      "hasBookLd": false,
+      "hasBreadcrumbLd": false
+    },
+    {
+      "url": "https://booknomics.com/books/hooked",
+      "status": 200,
+      "ok": true,
+      "canonical": "https://booknomics.com/",
+      "canonicalMatches": false,
+      "noindex": false,
+      "robotsBlocked": false,
+      "discoverable": false,
+      "reasons": [
+        "canonical mismatch → https://booknomics.com/",
+        "missing Book JSON-LD",
+        "missing BreadcrumbList JSON-LD"
+      ],
+      "hasBookLd": false,
+      "hasBreadcrumbLd": false
+    },
+    {
+      "url": "https://booknomics.com/books/nudge",
+      "status": 200,
+      "ok": true,
+      "canonical": "https://booknomics.com/",
+      "canonicalMatches": false,
+      "noindex": false,
+      "robotsBlocked": false,
+      "discoverable": false,
+      "reasons": [
+        "canonical mismatch → https://booknomics.com/",
+        "missing Book JSON-LD",
+        "missing BreadcrumbList JSON-LD"
+      ],
+      "hasBookLd": false,
+      "hasBreadcrumbLd": false
+    },
+    {
+      "url": "https://booknomics.com/books/deep-work",
+      "status": 200,
+      "ok": true,
+      "canonical": "https://booknomics.com/",
+      "canonicalMatches": false,
+      "noindex": false,
+      "robotsBlocked": false,
+      "discoverable": false,
+      "reasons": [
+        "canonical mismatch → https://booknomics.com/",
+        "missing Book JSON-LD",
+        "missing BreadcrumbList JSON-LD"
+      ],
+      "hasBookLd": false,
+      "hasBreadcrumbLd": false
+    },
+    {
+      "url": "https://booknomics.com/books/range",
+      "status": 200,
+      "ok": true,
+      "canonical": "https://booknomics.com/",
+      "canonicalMatches": false,
+      "noindex": false,
+      "robotsBlocked": false,
+      "discoverable": false,
+      "reasons": [
+        "canonical mismatch → https://booknomics.com/",
+        "missing Book JSON-LD",
+        "missing BreadcrumbList JSON-LD"
+      ],
+      "hasBookLd": false,
+      "hasBreadcrumbLd": false
+    },
+    {
+      "url": "https://booknomics.com/books/the-tipping-point",
+      "status": 200,
+      "ok": true,
+      "canonical": "https://booknomics.com/",
+      "canonicalMatches": false,
+      "noindex": false,
+      "robotsBlocked": false,
+      "discoverable": false,
+      "reasons": [
+        "canonical mismatch → https://booknomics.com/",
+        "missing Book JSON-LD",
+        "missing BreadcrumbList JSON-LD"
+      ],
+      "hasBookLd": false,
+      "hasBreadcrumbLd": false
+    },
+    {
+      "url": "https://booknomics.com/books/educated",
+      "status": 200,
+      "ok": true,
+      "canonical": "https://booknomics.com/",
+      "canonicalMatches": false,
+      "noindex": false,
+      "robotsBlocked": false,
+      "discoverable": false,
+      "reasons": [
+        "canonical mismatch → https://booknomics.com/",
+        "missing Book JSON-LD",
+        "missing BreadcrumbList JSON-LD"
+      ],
+      "hasBookLd": false,
+      "hasBreadcrumbLd": false
+    },
+    {
+      "url": "https://booknomics.com/books/rich-dad-poor-dad",
+      "status": 200,
+      "ok": true,
+      "canonical": "https://booknomics.com/",
+      "canonicalMatches": false,
+      "noindex": false,
+      "robotsBlocked": false,
+      "discoverable": false,
+      "reasons": [
+        "canonical mismatch → https://booknomics.com/",
+        "missing Book JSON-LD",
+        "missing BreadcrumbList JSON-LD"
+      ],
+      "hasBookLd": false,
+      "hasBreadcrumbLd": false
+    },
+    {
+      "url": "https://booknomics.com/books/getting-things-done",
+      "status": 200,
+      "ok": true,
+      "canonical": "https://booknomics.com/",
+      "canonicalMatches": false,
+      "noindex": false,
+      "robotsBlocked": false,
+      "discoverable": false,
+      "reasons": [
+        "canonical mismatch → https://booknomics.com/",
+        "missing Book JSON-LD",
+        "missing BreadcrumbList JSON-LD"
+      ],
+      "hasBookLd": false,
+      "hasBreadcrumbLd": false
+    },
+    {
+      "url": "https://booknomics.com/books/essentialism",
+      "status": 200,
+      "ok": true,
+      "canonical": "https://booknomics.com/",
+      "canonicalMatches": false,
+      "noindex": false,
+      "robotsBlocked": false,
+      "discoverable": false,
+      "reasons": [
+        "canonical mismatch → https://booknomics.com/",
+        "missing Book JSON-LD",
+        "missing BreadcrumbList JSON-LD"
+      ],
+      "hasBookLd": false,
+      "hasBreadcrumbLd": false
+    },
+    {
+      "url": "https://booknomics.com/books/flow",
+      "status": 200,
+      "ok": true,
+      "canonical": "https://booknomics.com/",
+      "canonicalMatches": false,
+      "noindex": false,
+      "robotsBlocked": false,
+      "discoverable": false,
+      "reasons": [
+        "canonical mismatch → https://booknomics.com/",
+        "missing Book JSON-LD",
+        "missing BreadcrumbList JSON-LD"
+      ],
+      "hasBookLd": false,
+      "hasBreadcrumbLd": false
+    },
+    {
+      "url": "https://booknomics.com/books/the-one-thing",
+      "status": 200,
+      "ok": true,
+      "canonical": "https://booknomics.com/",
+      "canonicalMatches": false,
+      "noindex": false,
+      "robotsBlocked": false,
+      "discoverable": false,
+      "reasons": [
+        "canonical mismatch → https://booknomics.com/",
+        "missing Book JSON-LD",
+        "missing BreadcrumbList JSON-LD"
+      ],
+      "hasBookLd": false,
+      "hasBreadcrumbLd": false
+    },
+    {
+      "url": "https://booknomics.com/books/the-lean-startup",
+      "status": 200,
+      "ok": true,
+      "canonical": "https://booknomics.com/",
+      "canonicalMatches": false,
+      "noindex": false,
+      "robotsBlocked": false,
+      "discoverable": false,
+      "reasons": [
+        "canonical mismatch → https://booknomics.com/",
+        "missing Book JSON-LD",
+        "missing BreadcrumbList JSON-LD"
+      ],
+      "hasBookLd": false,
+      "hasBreadcrumbLd": false
+    },
+    {
+      "url": "https://booknomics.com/books/the-courage-to-be-disliked",
+      "status": 200,
+      "ok": true,
+      "canonical": "https://booknomics.com/",
+      "canonicalMatches": false,
+      "noindex": false,
+      "robotsBlocked": false,
+      "discoverable": false,
+      "reasons": [
+        "canonical mismatch → https://booknomics.com/",
+        "missing Book JSON-LD",
+        "missing BreadcrumbList JSON-LD"
+      ],
+      "hasBookLd": false,
+      "hasBreadcrumbLd": false
+    },
+    {
+      "url": "https://booknomics.com/books/thinking-fast-and-slow",
+      "status": 200,
+      "ok": true,
+      "canonical": "https://booknomics.com/",
+      "canonicalMatches": false,
+      "noindex": false,
+      "robotsBlocked": false,
+      "discoverable": false,
+      "reasons": [
+        "canonical mismatch → https://booknomics.com/",
+        "missing Book JSON-LD",
+        "missing BreadcrumbList JSON-LD"
+      ],
+      "hasBookLd": false,
+      "hasBreadcrumbLd": false
+    },
+    {
+      "url": "https://booknomics.com/books/when-breath-becomes-air",
+      "status": 200,
+      "ok": true,
+      "canonical": "https://booknomics.com/",
+      "canonicalMatches": false,
+      "noindex": false,
+      "robotsBlocked": false,
+      "discoverable": false,
+      "reasons": [
+        "canonical mismatch → https://booknomics.com/",
+        "missing Book JSON-LD",
+        "missing BreadcrumbList JSON-LD"
+      ],
+      "hasBookLd": false,
+      "hasBreadcrumbLd": false
+    },
+    {
+      "url": "https://booknomics.com/books/ego-is-the-enemy",
+      "status": 200,
+      "ok": true,
+      "canonical": "https://booknomics.com/",
+      "canonicalMatches": false,
+      "noindex": false,
+      "robotsBlocked": false,
+      "discoverable": false,
+      "reasons": [
+        "canonical mismatch → https://booknomics.com/",
+        "missing Book JSON-LD",
+        "missing BreadcrumbList JSON-LD"
+      ],
+      "hasBookLd": false,
+      "hasBreadcrumbLd": false
+    },
+    {
+      "url": "https://booknomics.com/books/black-swan",
+      "status": 200,
+      "ok": true,
+      "canonical": "https://booknomics.com/",
+      "canonicalMatches": false,
+      "noindex": false,
+      "robotsBlocked": false,
+      "discoverable": false,
+      "reasons": [
+        "canonical mismatch → https://booknomics.com/",
+        "missing Book JSON-LD",
+        "missing BreadcrumbList JSON-LD"
+      ],
+      "hasBookLd": false,
+      "hasBreadcrumbLd": false
+    },
+    {
+      "url": "https://booknomics.com/books/blink",
+      "status": 200,
+      "ok": true,
+      "canonical": "https://booknomics.com/",
+      "canonicalMatches": false,
+      "noindex": false,
+      "robotsBlocked": false,
+      "discoverable": false,
+      "reasons": [
+        "canonical mismatch → https://booknomics.com/",
+        "missing Book JSON-LD",
+        "missing BreadcrumbList JSON-LD"
+      ],
+      "hasBookLd": false,
+      "hasBreadcrumbLd": false
+    },
+    {
+      "url": "https://booknomics.com/books/can-t-hurt-me",
+      "status": 200,
+      "ok": true,
+      "canonical": "https://booknomics.com/",
+      "canonicalMatches": false,
+      "noindex": false,
+      "robotsBlocked": false,
+      "discoverable": false,
+      "reasons": [
+        "canonical mismatch → https://booknomics.com/",
+        "missing Book JSON-LD",
+        "missing BreadcrumbList JSON-LD"
+      ],
+      "hasBookLd": false,
+      "hasBreadcrumbLd": false
+    },
+    {
+      "url": "https://booknomics.com/books/freakonomics",
+      "status": 200,
+      "ok": true,
+      "canonical": "https://booknomics.com/",
+      "canonicalMatches": false,
+      "noindex": false,
+      "robotsBlocked": false,
+      "discoverable": false,
+      "reasons": [
+        "canonical mismatch → https://booknomics.com/",
+        "missing Book JSON-LD",
+        "missing BreadcrumbList JSON-LD"
+      ],
+      "hasBookLd": false,
+      "hasBreadcrumbLd": false
+    },
+    {
+      "url": "https://booknomics.com/books/how-to-win-friends",
+      "status": 200,
+      "ok": true,
+      "canonical": "https://booknomics.com/",
+      "canonicalMatches": false,
+      "noindex": false,
+      "robotsBlocked": false,
+      "discoverable": false,
+      "reasons": [
+        "canonical mismatch → https://booknomics.com/",
+        "missing Book JSON-LD",
+        "missing BreadcrumbList JSON-LD"
+      ],
+      "hasBookLd": false,
+      "hasBreadcrumbLd": false
+    },
+    {
+      "url": "https://booknomics.com/books/never-split-the-difference",
+      "status": 200,
+      "ok": true,
+      "canonical": "https://booknomics.com/",
+      "canonicalMatches": false,
+      "noindex": false,
+      "robotsBlocked": false,
+      "discoverable": false,
+      "reasons": [
+        "canonical mismatch → https://booknomics.com/",
+        "missing Book JSON-LD",
+        "missing BreadcrumbList JSON-LD"
+      ],
+      "hasBookLd": false,
+      "hasBreadcrumbLd": false
+    },
+    {
+      "url": "https://booknomics.com/books/bhagavad-gita",
+      "status": 200,
+      "ok": true,
+      "canonical": "https://booknomics.com/",
+      "canonicalMatches": false,
+      "noindex": false,
+      "robotsBlocked": false,
+      "discoverable": false,
+      "reasons": [
+        "canonical mismatch → https://booknomics.com/",
+        "missing Book JSON-LD",
+        "missing BreadcrumbList JSON-LD"
+      ],
+      "hasBookLd": false,
+      "hasBreadcrumbLd": false
+    },
+    {
+      "url": "https://booknomics.com/category/poetry",
+      "status": 200,
+      "ok": true,
+      "canonical": "https://booknomics.com/",
+      "canonicalMatches": false,
+      "noindex": false,
+      "robotsBlocked": false,
+      "discoverable": false,
+      "reasons": [
+        "canonical mismatch → https://booknomics.com/"
+      ]
+    },
+    {
+      "url": "https://booknomics.com/category/novel",
+      "status": 200,
+      "ok": true,
+      "canonical": "https://booknomics.com/",
+      "canonicalMatches": false,
+      "noindex": false,
+      "robotsBlocked": false,
+      "discoverable": false,
+      "reasons": [
+        "canonical mismatch → https://booknomics.com/"
+      ]
+    },
+    {
+      "url": "https://booknomics.com/category/social-novel",
+      "status": 200,
+      "ok": true,
+      "canonical": "https://booknomics.com/",
+      "canonicalMatches": false,
+      "noindex": false,
+      "robotsBlocked": false,
+      "discoverable": false,
+      "reasons": [
+        "canonical mismatch → https://booknomics.com/"
+      ]
+    },
+    {
+      "url": "https://booknomics.com/category/classic-novel",
+      "status": 200,
+      "ok": true,
+      "canonical": "https://booknomics.com/",
+      "canonicalMatches": false,
+      "noindex": false,
+      "robotsBlocked": false,
+      "discoverable": false,
+      "reasons": [
+        "canonical mismatch → https://booknomics.com/"
+      ]
+    },
+    {
+      "url": "https://booknomics.com/category/devotional-poetry",
+      "status": 200,
+      "ok": true,
+      "canonical": "https://booknomics.com/",
+      "canonicalMatches": false,
+      "noindex": false,
+      "robotsBlocked": false,
+      "discoverable": false,
+      "reasons": [
+        "canonical mismatch → https://booknomics.com/"
+      ]
+    },
+    {
+      "url": "https://booknomics.com/category/fables",
+      "status": 200,
+      "ok": true,
+      "canonical": "https://booknomics.com/",
+      "canonicalMatches": false,
+      "noindex": false,
+      "robotsBlocked": false,
+      "discoverable": false,
+      "reasons": [
+        "canonical mismatch → https://booknomics.com/"
+      ]
+    },
+    {
+      "url": "https://booknomics.com/category/fantasy",
+      "status": 200,
+      "ok": true,
+      "canonical": "https://booknomics.com/",
+      "canonicalMatches": false,
+      "noindex": false,
+      "robotsBlocked": false,
+      "discoverable": false,
+      "reasons": [
+        "canonical mismatch → https://booknomics.com/"
+      ]
+    },
+    {
+      "url": "https://booknomics.com/category/psychological-novel",
+      "status": 200,
+      "ok": true,
+      "canonical": "https://booknomics.com/",
+      "canonicalMatches": false,
+      "noindex": false,
+      "robotsBlocked": false,
+      "discoverable": false,
+      "reasons": [
+        "canonical mismatch → https://booknomics.com/"
+      ]
+    },
+    {
+      "url": "https://booknomics.com/category/romance-novel",
+      "status": 200,
+      "ok": true,
+      "canonical": "https://booknomics.com/",
+      "canonicalMatches": false,
+      "noindex": false,
+      "robotsBlocked": false,
+      "discoverable": false,
+      "reasons": [
+        "canonical mismatch → https://booknomics.com/"
+      ]
+    },
+    {
+      "url": "https://booknomics.com/category/epic-poetry",
+      "status": 200,
+      "ok": true,
+      "canonical": "https://booknomics.com/",
+      "canonicalMatches": false,
+      "noindex": false,
+      "robotsBlocked": false,
+      "discoverable": false,
+      "reasons": [
+        "canonical mismatch → https://booknomics.com/"
+      ]
+    },
+    {
+      "url": "https://booknomics.com/category/moral-stories",
+      "status": 200,
+      "ok": true,
+      "canonical": "https://booknomics.com/",
+      "canonicalMatches": false,
+      "noindex": false,
+      "robotsBlocked": false,
+      "discoverable": false,
+      "reasons": [
+        "canonical mismatch → https://booknomics.com/"
+      ]
+    },
+    {
+      "url": "https://booknomics.com/category/classic-literature",
+      "status": 200,
+      "ok": true,
+      "canonical": "https://booknomics.com/",
+      "canonicalMatches": false,
+      "noindex": false,
+      "robotsBlocked": false,
+      "discoverable": false,
+      "reasons": [
+        "canonical mismatch → https://booknomics.com/"
+      ]
+    },
+    {
+      "url": "https://booknomics.com/category/self-help",
+      "status": 200,
+      "ok": true,
+      "canonical": "https://booknomics.com/",
+      "canonicalMatches": false,
+      "noindex": false,
+      "robotsBlocked": false,
+      "discoverable": false,
+      "reasons": [
+        "canonical mismatch → https://booknomics.com/"
+      ]
+    },
+    {
+      "url": "https://booknomics.com/category/self-help-emotional-healing-self-sabotage-personal-transformation",
+      "status": 200,
+      "ok": true,
+      "canonical": "https://booknomics.com/",
+      "canonicalMatches": false,
+      "noindex": false,
+      "robotsBlocked": false,
+      "discoverable": false,
+      "reasons": [
+        "canonical mismatch → https://booknomics.com/"
+      ]
+    },
+    {
+      "url": "https://booknomics.com/category/mindset-psychology",
+      "status": 200,
+      "ok": true,
+      "canonical": "https://booknomics.com/",
+      "canonicalMatches": false,
+      "noindex": false,
+      "robotsBlocked": false,
+      "discoverable": false,
+      "reasons": [
+        "canonical mismatch → https://booknomics.com/"
+      ]
+    },
+    {
+      "url": "https://booknomics.com/category/classic",
+      "status": 200,
+      "ok": true,
+      "canonical": "https://booknomics.com/",
+      "canonicalMatches": false,
+      "noindex": false,
+      "robotsBlocked": false,
+      "discoverable": false,
+      "reasons": [
+        "canonical mismatch → https://booknomics.com/"
+      ]
+    },
+    {
+      "url": "https://booknomics.com/category/spiritual",
+      "status": 200,
+      "ok": true,
+      "canonical": "https://booknomics.com/",
+      "canonicalMatches": false,
+      "noindex": false,
+      "robotsBlocked": false,
+      "discoverable": false,
+      "reasons": [
+        "canonical mismatch → https://booknomics.com/"
+      ]
+    },
+    {
+      "url": "https://booknomics.com/category/osho",
+      "status": 200,
+      "ok": true,
+      "canonical": "https://booknomics.com/",
+      "canonicalMatches": false,
+      "noindex": false,
+      "robotsBlocked": false,
+      "discoverable": false,
+      "reasons": [
+        "canonical mismatch → https://booknomics.com/"
+      ]
+    },
+    {
+      "url": "https://booknomics.com/category/hindi-literature",
+      "status": 200,
+      "ok": true,
+      "canonical": "https://booknomics.com/",
+      "canonicalMatches": false,
+      "noindex": false,
+      "robotsBlocked": false,
+      "discoverable": false,
+      "reasons": [
+        "canonical mismatch → https://booknomics.com/"
+      ]
+    },
+    {
+      "url": "https://booknomics.com/category/biography",
+      "status": 200,
+      "ok": true,
+      "canonical": "https://booknomics.com/",
+      "canonicalMatches": false,
+      "noindex": false,
+      "robotsBlocked": false,
+      "discoverable": false,
+      "reasons": [
+        "canonical mismatch → https://booknomics.com/"
+      ]
+    },
+    {
+      "url": "https://booknomics.com/category/philosophy",
+      "status": 200,
+      "ok": true,
+      "canonical": "https://booknomics.com/",
+      "canonicalMatches": false,
+      "noindex": false,
+      "robotsBlocked": false,
+      "discoverable": false,
+      "reasons": [
+        "canonical mismatch → https://booknomics.com/"
+      ]
+    },
+    {
+      "url": "https://booknomics.com/category/history",
+      "status": 200,
+      "ok": true,
+      "canonical": "https://booknomics.com/",
+      "canonicalMatches": false,
+      "noindex": false,
+      "robotsBlocked": false,
+      "discoverable": false,
+      "reasons": [
+        "canonical mismatch → https://booknomics.com/"
+      ]
+    },
+    {
+      "url": "https://booknomics.com/category/spirituality",
+      "status": 200,
+      "ok": true,
+      "canonical": "https://booknomics.com/",
+      "canonicalMatches": false,
+      "noindex": false,
+      "robotsBlocked": false,
+      "discoverable": false,
+      "reasons": [
+        "canonical mismatch → https://booknomics.com/"
+      ]
+    },
+    {
+      "url": "https://booknomics.com/category/psychology",
+      "status": 200,
+      "ok": true,
+      "canonical": "https://booknomics.com/",
+      "canonicalMatches": false,
+      "noindex": false,
+      "robotsBlocked": false,
+      "discoverable": false,
+      "reasons": [
+        "canonical mismatch → https://booknomics.com/"
+      ]
+    },
+    {
+      "url": "https://booknomics.com/category/fiction",
+      "status": 200,
+      "ok": true,
+      "canonical": "https://booknomics.com/",
+      "canonicalMatches": false,
+      "noindex": false,
+      "robotsBlocked": false,
+      "discoverable": false,
+      "reasons": [
+        "canonical mismatch → https://booknomics.com/"
+      ]
+    },
+    {
+      "url": "https://booknomics.com/category/business",
+      "status": 200,
+      "ok": true,
+      "canonical": "https://booknomics.com/",
+      "canonicalMatches": false,
+      "noindex": false,
+      "robotsBlocked": false,
+      "discoverable": false,
+      "reasons": [
+        "canonical mismatch → https://booknomics.com/"
+      ]
+    },
+    {
+      "url": "https://booknomics.com/category/leadership",
+      "status": 200,
+      "ok": true,
+      "canonical": "https://booknomics.com/",
+      "canonicalMatches": false,
+      "noindex": false,
+      "robotsBlocked": false,
+      "discoverable": false,
+      "reasons": [
+        "canonical mismatch → https://booknomics.com/"
+      ]
+    },
+    {
+      "url": "https://booknomics.com/category/memoir",
+      "status": 200,
+      "ok": true,
+      "canonical": "https://booknomics.com/",
+      "canonicalMatches": false,
+      "noindex": false,
+      "robotsBlocked": false,
+      "discoverable": false,
+      "reasons": [
+        "canonical mismatch → https://booknomics.com/"
+      ]
+    },
+    {
+      "url": "https://booknomics.com/category/health",
+      "status": 200,
+      "ok": true,
+      "canonical": "https://booknomics.com/",
+      "canonicalMatches": false,
+      "noindex": false,
+      "robotsBlocked": false,
+      "discoverable": false,
+      "reasons": [
+        "canonical mismatch → https://booknomics.com/"
+      ]
+    },
+    {
+      "url": "https://booknomics.com/category/creativity",
+      "status": 200,
+      "ok": true,
+      "canonical": "https://booknomics.com/",
+      "canonicalMatches": false,
+      "noindex": false,
+      "robotsBlocked": false,
+      "discoverable": false,
+      "reasons": [
+        "canonical mismatch → https://booknomics.com/"
+      ]
+    },
+    {
+      "url": "https://booknomics.com/category/economics",
+      "status": 200,
+      "ok": true,
+      "canonical": "https://booknomics.com/",
+      "canonicalMatches": false,
+      "noindex": false,
+      "robotsBlocked": false,
+      "discoverable": false,
+      "reasons": [
+        "canonical mismatch → https://booknomics.com/"
+      ]
+    },
+    {
+      "url": "https://booknomics.com/category/productivity",
+      "status": 200,
+      "ok": true,
+      "canonical": "https://booknomics.com/",
+      "canonicalMatches": false,
+      "noindex": false,
+      "robotsBlocked": false,
+      "discoverable": false,
+      "reasons": [
+        "canonical mismatch → https://booknomics.com/"
+      ]
+    },
+    {
+      "url": "https://booknomics.com/category/finance",
+      "status": 200,
+      "ok": true,
+      "canonical": "https://booknomics.com/",
+      "canonicalMatches": false,
+      "noindex": false,
+      "robotsBlocked": false,
+      "discoverable": false,
+      "reasons": [
+        "canonical mismatch → https://booknomics.com/"
+      ]
+    },
+    {
+      "url": "https://booknomics.com/category/communication",
+      "status": 200,
+      "ok": true,
+      "canonical": "https://booknomics.com/",
+      "canonicalMatches": false,
+      "noindex": false,
+      "robotsBlocked": false,
+      "discoverable": false,
+      "reasons": [
+        "canonical mismatch → https://booknomics.com/"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,19 @@
+npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm.
+
+> booknomics@1.0.0 test
+> vitest run
+
+
+ RUN  v3.2.7 <project>
+
+ ✓ tests/payment.test.ts (6 tests) 80ms
+ ✓ src/test/example.test.ts (1 test) 2ms
+ ✓ src/test/bilingualScore.test.ts (11 tests) 13ms
+ ✓ src/test/devanagariSlug.test.ts (8 tests) 10ms
+ ✓ tests/security.test.ts (8 tests) 25ms
+
+ Test Files  5 passed (5)
+      Tests  34 passed (34)
+   Start at  16:33:54
+   Duration  757ms (transform 185ms, setup 249ms, collect 215ms, tests 130ms, environment 1.34s, prepare 690ms)
+

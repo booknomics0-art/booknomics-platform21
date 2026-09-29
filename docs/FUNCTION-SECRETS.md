@@ -1,0 +1,28 @@
+# Backend function secrets
+
+Values are intentionally not included. Supabase injects its own runtime credentials.
+
+| Function | Referenced environment variables |
+|---|---|
+| admin-gsc | GOOGLE_SEARCH_CONSOLE_API_KEY, LOVABLE_API_KEY, SUPABASE_ANON_KEY, SUPABASE_URL |
+| book-audio | ELEVENLABS_API_KEY, SUPABASE_ANON_KEY, SUPABASE_SERVICE_ROLE_KEY, SUPABASE_URL |
+| dispatch-n8n | SUPABASE_ANON_KEY, SUPABASE_SERVICE_ROLE_KEY, SUPABASE_URL |
+| generate-action-plan | LOVABLE_API_KEY, SUPABASE_ANON_KEY, SUPABASE_SERVICE_ROLE_KEY, SUPABASE_URL |
+| generate-book-content | GEMINI_API_KEY, SUPABASE_ANON_KEY, SUPABASE_SERVICE_ROLE_KEY, SUPABASE_URL |
+| generate-book-cover | SUPABASE_ANON_KEY, SUPABASE_SERVICE_ROLE_KEY, SUPABASE_URL, XAI_API_KEY |
+| generate-book-modules | LOVABLE_API_KEY, SUPABASE_ANON_KEY, SUPABASE_SERVICE_ROLE_KEY, SUPABASE_URL |
+| generate-expert-perspective | GEMINI_API_KEY, SUPABASE_ANON_KEY, SUPABASE_SERVICE_ROLE_KEY, SUPABASE_URL |
+| generate-mastery-assets | LOVABLE_API_KEY, SUPABASE_ANON_KEY, SUPABASE_SERVICE_ROLE_KEY, SUPABASE_URL |
+| generate-sitemap | SUPABASE_ANON_KEY, SUPABASE_URL |
+| indexnow-submit | SUPABASE_ANON_KEY, SUPABASE_URL |
+| mcp | SUPABASE_PUBLISHABLE_KEYS |
+| polish-book-content | LOVABLE_API_KEY, SUPABASE_ANON_KEY, SUPABASE_SERVICE_ROLE_KEY, SUPABASE_URL |
+| razorpay-create-order | RAZORPAY_KEY_ID, RAZORPAY_KEY_SECRET, SUPABASE_ANON_KEY, SUPABASE_SERVICE_ROLE_KEY, SUPABASE_URL |
+| razorpay-verify | RAZORPAY_KEY_ID, RAZORPAY_KEY_SECRET, SUPABASE_ANON_KEY, SUPABASE_SERVICE_ROLE_KEY, SUPABASE_URL |
+| seo-marketing | LOVABLE_API_KEY, SUPABASE_ANON_KEY, SUPABASE_SERVICE_ROLE_KEY, SUPABASE_URL |
+| translate-to-hindi | LOVABLE_API_KEY, SUPABASE_ANON_KEY, SUPABASE_URL |
+| welcome-email | SUPABASE_ANON_KEY, SUPABASE_URL |
+
+Shared security helper also reads CORS_ALLOWED_ORIGINS. welcome-email uses N8N_WELCOME_WEBHOOK_URL.
+The MCP helper additionally supports SUPABASE_PUBLISHABLE_KEY and SUPABASE_PUBLISHABLE_KEYS.
+Lovable AI and Google Search Console gateway keys require valid source-provider access; no credentials were invented.

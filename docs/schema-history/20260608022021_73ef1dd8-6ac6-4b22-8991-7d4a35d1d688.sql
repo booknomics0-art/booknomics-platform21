@@ -1,0 +1,1 @@
+ALTER TABLE public.book_assets ADD COLUMN IF NOT EXISTS chapter_markers JSONB NOT NULL DEFAULT '[]'::jsonb;

@@ -1,0 +1,25 @@
+# Booknomics
+
+> Practical book summaries with key insights, action plans, and reflection prompts across psychology, philosophy, business, and self-growth — in English and Hindi.
+
+Booknomics curates a structured library of book summaries. Every book follows the same shape: overview, key ideas, deep analysis, daily application, action system, and reflection questions. Premium readers also get a 7-day habit tracker and personal notes.
+
+## Pages
+
+- [Home](/): Introduction, featured books, popular categories.
+- [Browse](/browse): The full library with filters by category, language, and sort.
+- [Hindi Library](/hindi): हिंदी पुस्तक सारांश — Hindi book summaries.
+- [Community](/community): Reader discussions, leaderboard, trending questions.
+- [About](/about): What Booknomics is and how we choose books.
+- [Sign in](/auth): Account access for library, notes, and premium features.
+
+## Examples
+
+- [Atomic Habits](/books/atomic-habits): Sample book summary structure.
+- [The Psychology of Money](/books/the-psychology-of-money): Sample finance summary.
+
+## Optional
+
+- [Privacy Policy](/privacy)
+- [Terms of Service](/terms)
+- [Disclaimer](/disclaimer)
