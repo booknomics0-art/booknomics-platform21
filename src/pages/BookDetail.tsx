@@ -50,7 +50,7 @@ const CommunityFallback = () => <div className="h-32 rounded-xl bg-muted/40 anim
 interface Book {
   id: string; slug: string; title: string; author: string; category: string;
   cover_color: string; cover_url: string | null; tagline: string | null; overview: string | null;
-  key_ideas: string | null; deep_analysis: string | null; daily_application: string | null;
+  deep_summary: string | null; key_ideas: string | null; deep_analysis: string | null; daily_application: string | null;
   action_system: string | null; practice_tracker: string | null; reflection_questions: string | null;
   real_life_example: string | null;
   rating: number | null; reading_time: number | null; year: number | null; language: string;
@@ -520,9 +520,9 @@ const BookDetail = () => {
               {(() => {
                 const src = lang === "hi" && hiContent ? hiContent : book;
                 const labels = lang === "hi"
-                  ? ["एक नज़र में", "मूल अवधारणाएँ", "क्यों मायने रखता है", "विचारों के साथ जीना"]
-                  : ["The book at a glance", "The core concepts", "What makes it matter", "Living with the ideas"];
-                const parts = [src.overview, src.key_ideas, src.deep_analysis, src.daily_application]
+                  ? ["एक नज़र में", "विस्तृत सारांश", "मूल अवधारणाएँ", "गहरा विश्लेषण", "विचारों के साथ जीना"]
+                  : ["The book at a glance", "Detailed summary", "The core concepts", "Deeper analysis", "Living with the ideas"];
+                const parts = [src.overview, src.deep_summary, src.key_ideas, src.deep_analysis, src.daily_application]
                   .map((t, i) => (t ? `## ${labels[i]}\n\n${t}` : ""))
                   .filter(Boolean);
                 const merged = linkifyMarkdown(parts.join("\n\n---\n\n"), linkTargets, 1);

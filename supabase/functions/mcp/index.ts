@@ -203,17 +203,126 @@ var admin_update_book_default = defineTool5({
   }
 });
 
+// src/lib/mcp/tools/admin-book-workflow.ts
+var admin_fail = (text) => ({ content: [{ type: "text", text }], isError: true });
+async function admin_db(ctx) {
+  if (!ctx.isAuthenticated()) throw new Error("Authentication required");
+  const db = supabaseForUser(ctx);
+  const { data: allowed, error } = await db.rpc("has_role", { _user_id: ctx.getUserId(), _role: "admin" });
+  if (error || allowed !== true) throw new Error("Administrator role required");
+  return db;
+}
+async function invoke_admin_function(ctx, functionName, body) {
+  await admin_db(ctx);
+  const response = await fetch(`${supabaseProjectUrl()}/functions/v1/${functionName}`, {
+    method: "POST",
+    headers: { Authorization: `Bearer ${ctx.getToken()}`, "Content-Type": "application/json" },
+    body: JSON.stringify(body)
+  });
+  const contentType = response.headers.get("content-type") ?? "";
+  const payload = contentType.includes("application/json") ? await response.json() : { ok: response.ok, content_type: contentType };
+  if (!response.ok || payload?.error) throw new Error(payload?.error || `${functionName} failed`);
+  return payload;
+}
+var admin_create_book_default = defineTool5({
+  name: "admin_create_book",
+  title: "Create a Booknomics book draft (admin only)",
+  description: "Create a new draft before generating its long summary, cover and podcast. It stays private until admin_publish_book is called.",
+  inputSchema: {
+    title: z4.string().trim().min(1).max(300),
+    author: z4.string().trim().min(1).max(200),
+    slug: z4.string().trim().min(1).max(160).regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/),
+    category: z4.string().trim().min(1).max(100),
+    language: z4.enum(["en","hi"]),
+    year: z4.number().int().min(0).max(2200).optional(),
+    tagline: z4.string().trim().max(500).optional()
+  },
+  annotations: { readOnlyHint: false, destructiveHint: false, idempotentHint: false, openWorldHint: false },
+  handler: async ({ title, author, slug, category, language, year, tagline }, ctx) => {
+    try {
+      const db = await admin_db(ctx);
+      const { data, error } = await db.from("books").insert({
+        title, author, slug, category, language, year: year ?? null, tagline: tagline ?? null,
+        is_draft: true, status: "pending", seo_slug: slug
+      }).select("id,slug,title,author,category,language,year,is_draft,status").single();
+      if (error) return admin_fail(error.code === "23505" ? "A book with this slug already exists" : "Book creation failed");
+      return { content: [{ type: "text", text: JSON.stringify(data) }], structuredContent: { book: data } };
+    } catch (e) { return admin_fail(e instanceof Error ? e.message : "Book creation failed"); }
+  }
+});
+var admin_generate_book_content_default = defineTool5({
+  name: "admin_generate_book_content",
+  title: "Generate Booknomics long-form book content (admin only)",
+  description: "Generate overview, approximately 1,800-2,200 word deep summary, key ideas, analysis, applications, reflection questions and a 7-day reading plan.",
+  inputSchema: { book_id: z4.string().uuid(), language: z4.enum(["en","hi"]).optional() },
+  annotations: { readOnlyHint: false, destructiveHint: true, idempotentHint: false, openWorldHint: true },
+  handler: async ({ book_id, language }, ctx) => {
+    try {
+      const data = await invoke_admin_function(ctx, "generate-book-content", { book_id, language });
+      return { content: [{ type: "text", text: JSON.stringify(data) }], structuredContent: { result: data } };
+    } catch (e) { return admin_fail(e instanceof Error ? e.message : "Content generation failed"); }
+  }
+});
+var admin_generate_book_cover_default = defineTool5({
+  name: "admin_generate_book_cover",
+  title: "Generate and attach a premium book cover (admin only)",
+  description: "Generate a portrait cover, upload it to Booknomics storage, and save its URL on the book.",
+  inputSchema: { book_id: z4.string().uuid(), prompt: z4.string().trim().max(2000).optional() },
+  annotations: { readOnlyHint: false, destructiveHint: true, idempotentHint: false, openWorldHint: true },
+  handler: async ({ book_id, prompt }, ctx) => {
+    try {
+      const data = await invoke_admin_function(ctx, "generate-book-cover", { book_id, prompt });
+      return { content: [{ type: "text", text: JSON.stringify(data) }], structuredContent: { result: data } };
+    } catch (e) { return admin_fail(e instanceof Error ? e.message : "Cover generation failed"); }
+  }
+});
+var admin_generate_book_podcast_default = defineTool5({
+  name: "admin_generate_book_podcast",
+  title: "Generate and attach a book podcast (admin only)",
+  description: "Generate a persistent Hindi or English single-host podcast, 8-20 minutes long and 15 minutes by default. Saves the MP3 to book_assets.audio_url.",
+  inputSchema: {
+    book_id: z4.string().uuid(),
+    language: z4.enum(["en","hi"]).optional(),
+    duration_minutes: z4.number().int().min(8).max(20).default(15)
+  },
+  annotations: { readOnlyHint: false, destructiveHint: true, idempotentHint: false, openWorldHint: true },
+  handler: async ({ book_id, language, duration_minutes }, ctx) => {
+    try {
+      const data = await invoke_admin_function(ctx, "generate-book-podcast", { book_id, language, duration_minutes });
+      return { content: [{ type: "text", text: JSON.stringify(data) }], structuredContent: { result: data } };
+    } catch (e) { return admin_fail(e instanceof Error ? e.message : "Podcast generation failed"); }
+  }
+});
+var admin_publish_book_default = defineTool5({
+  name: "admin_publish_book",
+  title: "Publish a Booknomics book (admin only)",
+  description: "Publish a reviewed book. Requires overview, deep summary and cover before making it public.",
+  inputSchema: { book_id: z4.string().uuid() },
+  annotations: { readOnlyHint: false, destructiveHint: true, idempotentHint: true, openWorldHint: false },
+  handler: async ({ book_id }, ctx) => {
+    try {
+      const db = await admin_db(ctx);
+      const { data: book, error: readError } = await db.from("books").select("id,slug,title,overview,deep_summary,cover_url").eq("id", book_id).maybeSingle();
+      if (readError || !book) return admin_fail("Book not found");
+      if (!book.overview || !book.deep_summary || !book.cover_url) return admin_fail("Book needs overview, deep summary and cover before publication");
+      const { data, error } = await db.from("books").update({ is_draft: false, status: "published" }).eq("id", book_id).select("id,slug,title,is_draft,status,cover_url").single();
+      if (error) return admin_fail("Book publication failed");
+      return { content: [{ type: "text", text: JSON.stringify(data) }], structuredContent: { book: data } };
+    } catch (e) { return admin_fail(e instanceof Error ? e.message : "Book publication failed"); }
+  }
+});
+
 // src/lib/mcp/index.ts
 var mcp_default = defineMcp({
   name: "book-insight-hub",
   title: "Book Insight Hub",
-  version: "0.2.0",
-  instructions: "Tools for Booknomics (Book Insight Hub), a library of AI-curated book summaries in English and Hindi. Use `search_books` to find books, `get_book_summary` to read a full summary, `list_my_library` to see the signed-in user's saved books and progress, and `add_book_to_library` to save a book for them. Admins can use admin_update_book to edit public book content. It does not edit website code or deployment settings.",
+  version: "0.3.0",
+  instructions: "Tools for Booknomics. Readers can search summaries and manage their library. Admins can create drafts, generate approximately 2,000-word editorial summaries, generate premium covers, create persistent 8-20 minute audio podcasts (15 minutes by default), edit content, and publish after review. Do not publish incomplete content or regenerate billable assets unless requested.",
   auth: auth.oauth.issuer({
     issuer: `${supabaseProjectUrl()}/auth/v1`,
     acceptedAudiences: "authenticated"
   }),
-  tools: [search_books_default, get_book_summary_default, list_my_library_default, add_book_to_library_default, admin_update_book_default]
+  tools: [search_books_default, get_book_summary_default, list_my_library_default, add_book_to_library_default, admin_update_book_default, admin_create_book_default, admin_generate_book_content_default, admin_generate_book_cover_default, admin_generate_book_podcast_default, admin_publish_book_default]
 });
 
 // lovable-mcp-supabase-entry.ts
