@@ -1,1 +1,128 @@
-
+{
+  "version": 1,
+  "sdk_version": "0.26.1",
+  "path": "/functions/v1/mcp",
+  "auth": {
+    "type": "oauth",
+    "issuer": "https://aszjrlarrutzyripxacw.supabase.co/auth/v1",
+    "accepted_audiences": [
+      "authenticated"
+    ]
+  },
+  "mcp": {
+    "server": {
+      "name": "book-insight-hub",
+      "version": "0.1.0",
+      "title": "Book Insight Hub"
+    },
+    "tools": [
+      {
+        "name": "search_books",
+        "title": "Search books",
+        "description": "Search Booknomics published book summaries by title, author, or category. Returns slug, title, author, category and language.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {
+            "query": {
+              "type": "string",
+              "description": "Search text matched against book title and author."
+            },
+            "language": {
+              "description": "Filter by language code.",
+              "type": "string",
+              "enum": [
+                "en",
+                "hi"
+              ]
+            },
+            "category": {
+              "description": "Filter by category name.",
+              "type": "string"
+            },
+            "limit": {
+              "description": "Max results, default 10, max 50.",
+              "type": "integer",
+              "minimum": -9007199254740991,
+              "maximum": 9007199254740991
+            }
+          },
+          "required": [
+            "query"
+          ]
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "get_book_summary",
+        "title": "Get book summary",
+        "description": "Fetch the public summary content for one Booknomics book by its slug (overview and metadata). Premium sections (action system, trackers) require a paid subscription on booknomics.com and are not returned here.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {
+            "slug": {
+              "type": "string",
+              "description": "Book slug, e.g. 'atomic-habits'."
+            }
+          },
+          "required": [
+            "slug"
+          ]
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "list_my_library",
+        "title": "List my library",
+        "description": "List the books saved in the signed-in user's Booknomics library, with reading progress.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {}
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "add_book_to_library",
+        "title": "Add book to my library",
+        "description": "Save a published Booknomics book to the signed-in user's library, by book slug.",
+        "annotations": {
+          "readOnlyHint": false,
+          "destructiveHint": false,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {
+            "slug": {
+              "type": "string",
+              "description": "Book slug to save, e.g. 'atomic-habits'."
+            }
+          },
+          "required": [
+            "slug"
+          ]
+        },
+        "outputSchema": null
+      }
+    ]
+  }
+}
