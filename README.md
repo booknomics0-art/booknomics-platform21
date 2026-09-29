@@ -31,7 +31,11 @@ npm test
 npm run typecheck
 npm run build
 npm run lint
+npm run books:count        # read-only: repo + production sitemaps + Supabase book counts
 ```
+
+`docs/CATALOG-COUNT-REPORT.md` records the current catalog evidence, what is
+limiting growth, and the fixes ordered by impact.
 
 Production builds fetch the published catalog and stop if it is unavailable or
 below `SITEMAP_MIN_BOOKS` (50 by default). `ALLOW_STATIC_SITEMAP=true` is explicitly

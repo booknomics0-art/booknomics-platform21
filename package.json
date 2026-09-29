@@ -13,6 +13,7 @@
     "preview": "vite preview",
     "test": "vitest run",
     "test:watch": "vitest",
+    "books:count": "node scripts/book-count-audit.mjs",
     "check:sitemap:prod": "node --import tsx scripts/check-sitemap-prod.ts",
     "monitor:indexing": "node --import tsx scripts/monitor-indexing.ts",
     "check:image-sitemap": "node --import tsx scripts/check-image-sitemap.ts",

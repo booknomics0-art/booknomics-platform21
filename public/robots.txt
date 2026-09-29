@@ -54,6 +54,7 @@ User-agent: Mozilla Compatible Agent
 Disallow: /
 
 Sitemap: https://booknomics.com/sitemap.xml
+Sitemap: https://booknomics.com/books-sitemap.xml
 Sitemap: https://booknomics.com/image-sitemap.xml
 
 

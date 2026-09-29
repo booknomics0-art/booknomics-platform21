@@ -108,6 +108,11 @@ const BookDetail = () => {
   const { user } = useAuth();
   const { isPremium } = useTier();
   const [book, setBook] = useState<Book | null>(null);
+  // "loading" → still fetching, "missing" → query succeeded but the book does not
+  // exist (draft/renamed/deleted), "error" → the request itself failed. The three
+  // must be told apart: a missing book is not a slow one, and a temporary outage
+  // must never be treated as "this page is gone".
+  const [loadState, setLoadState] = useState<"loading" | "ready" | "missing" | "error">("loading");
   const [related, setRelated] = useState<any[]>([]);
   const [sameLang, setSameLang] = useState<any[]>([]);
   const [inLibrary, setInLibrary] = useState(false);
@@ -129,30 +134,43 @@ const BookDetail = () => {
       navigate(`/books/${aliasTarget}`, { replace: true });
       return;
     }
+    setLoadState("loading");
     (async () => {
-      // Try canonical slug first, then seo_slug (keyword URL), then any book that has this slug in old_slugs.
-      let { data } = await supabase.from("books").select("id,slug,title,author,category,cover_color,tagline,overview,reading_time,rating,year,created_at,cover_url,language,affiliate_link,is_draft,status,meta_title,meta_description,og_image,seo_slug,seo_keywords,old_slugs").eq("slug", slug).eq("is_draft", false).maybeSingle();
-      if (!data) {
-        const bySeo = await supabase.from("books").select("id,slug,title,author,category,cover_color,tagline,overview,reading_time,rating,year,created_at,cover_url,language,affiliate_link,is_draft,status,meta_title,meta_description,og_image,seo_slug,seo_keywords,old_slugs").eq("seo_slug", slug).eq("is_draft", false).maybeSingle();
-        data = bySeo.data;
-      }
-      if (!data) {
-        const byOld = await supabase.from("books").select("id,slug,title,author,category,cover_color,tagline,overview,reading_time,rating,year,created_at,cover_url,language,affiliate_link,is_draft,status,meta_title,meta_description,og_image,seo_slug,seo_keywords,old_slugs").contains("old_slugs", [slug]).eq("is_draft", false).limit(1).maybeSingle();
-        if (byOld.data) {
-          const target = (byOld.data as any).seo_slug || (byOld.data as any).slug;
-          if (target && target !== slug) {
-            navigate(`/books/${target}`, { replace: true });
-            return;
-          }
-          data = byOld.data;
+      try {
+        // Try canonical slug first, then seo_slug (keyword URL), then any book that has this slug in old_slugs.
+        const { data: bySlug, error: slugError } = await supabase.from("books").select("id,slug,title,author,category,cover_color,tagline,overview,reading_time,rating,year,created_at,cover_url,language,affiliate_link,is_draft,status,meta_title,meta_description,og_image,seo_slug,seo_keywords,old_slugs").eq("slug", slug).eq("is_draft", false).maybeSingle();
+        if (slugError) throw slugError;
+        let data = bySlug;
+        if (!data) {
+          const bySeo = await supabase.from("books").select("id,slug,title,author,category,cover_color,tagline,overview,reading_time,rating,year,created_at,cover_url,language,affiliate_link,is_draft,status,meta_title,meta_description,og_image,seo_slug,seo_keywords,old_slugs").eq("seo_slug", slug).eq("is_draft", false).maybeSingle();
+          if (bySeo.error) throw bySeo.error;
+          data = bySeo.data;
         }
-      }
-      setBook(data as unknown as Book);
-      // Premium sections are fetched server-side and only returned to paying members.
-      if (data) {
-        const { data: prem } = await supabase.rpc("get_premium_summary", { p_book_id: (data as any).id });
-        const row = Array.isArray(prem) ? prem[0] : prem;
-        if (row) setBook((prev) => (prev ? ({ ...prev, ...row } as Book) : prev));
+        if (!data) {
+          const byOld = await supabase.from("books").select("id,slug,title,author,category,cover_color,tagline,overview,reading_time,rating,year,created_at,cover_url,language,affiliate_link,is_draft,status,meta_title,meta_description,og_image,seo_slug,seo_keywords,old_slugs").contains("old_slugs", [slug]).eq("is_draft", false).limit(1).maybeSingle();
+          if (byOld.error) throw byOld.error;
+          if (byOld.data) {
+            const target = (byOld.data as any).seo_slug || (byOld.data as any).slug;
+            if (target && target !== slug) {
+              navigate(`/books/${target}`, { replace: true });
+              return;
+            }
+            data = byOld.data;
+          }
+        }
+        setBook(data as unknown as Book);
+        // The query succeeded, so no row genuinely means "no such book" — not "keep loading".
+        setLoadState(data ? "ready" : "missing");
+        // Premium sections are fetched server-side and only returned to paying members.
+        if (data) {
+          const { data: prem } = await supabase.rpc("get_premium_summary", { p_book_id: (data as any).id });
+          const row = Array.isArray(prem) ? prem[0] : prem;
+          if (row) setBook((prev) => (prev ? ({ ...prev, ...row } as Book) : prev));
+        }
+      } catch (e) {
+        // Network / RLS failure: temporary. Never claim the page is gone here.
+        console.error("[BookDetail] failed to load book", e);
+        setLoadState("error");
       }
     })();
   }, [slug, navigate]);
@@ -300,7 +318,47 @@ const BookDetail = () => {
     }
   };
 
-  if (!book) return <Layout><div className="container py-20 text-center text-muted-foreground">Loading…</div></Layout>;
+  if (loadState === "loading") {
+    return (
+      <Layout>
+        <div className="container py-20 text-center text-muted-foreground" aria-live="polite">Loading…</div>
+      </Layout>
+    );
+  }
+
+  if (!book) {
+    const missing = loadState === "missing";
+    return (
+      <Layout>
+        <Helmet>
+          <title>{missing ? "Summary not available | Booknomics" : "Temporarily unavailable | Booknomics"}</title>
+          {/* Only a confirmed "no such book" is kept out of the index. A failed request is not a verdict. */}
+          {missing && <meta name="robots" content="noindex,follow" />}
+        </Helmet>
+        <div className="container py-20 text-center max-w-xl mx-auto" aria-live="polite">
+          <h1 className="font-serif text-3xl md:text-4xl font-bold tracking-tight mb-3">
+            {missing ? "This summary isn't available" : "We couldn't load this summary"}
+          </h1>
+          <p className="text-muted-foreground mb-8">
+            {missing
+              ? "This book may still be in review, or its URL has changed. The rest of the library is untouched."
+              : "This looks temporary — a connection problem on our side. Please try again in a moment."}
+          </p>
+          <div className="flex flex-wrap gap-3 justify-center">
+            {!missing && (
+              <Button onClick={() => window.location.reload()} className="rounded-full">Retry</Button>
+            )}
+            <Button asChild variant={missing ? "default" : "outline"} className="rounded-full">
+              <Link to="/browse">Browse all summaries</Link>
+            </Button>
+            <Button asChild variant="outline" className="rounded-full">
+              <Link to="/">Back home</Link>
+            </Button>
+          </div>
+        </div>
+      </Layout>
+    );
+  }
 
   const isHi = book.language === "hi";
   const bookAny = book as any;

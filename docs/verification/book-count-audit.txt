@@ -1,0 +1,63 @@
+Booknomics — book count audit verification
+Generated: 2026-09-29T09:24:31Z
+Branch: arena/01a0ec77-booknomics-platform21  Base: f341a43
+
+### 1. node scripts/book-count-audit.mjs --local
+
+Booknomics book count audit
+==============================================================
+
+[1] Local repo files (what this checkout can prove)
+  cover stubs — English              30
+  cover stubs — Hindi                20
+  cover stubs — total                50
+  content-drafts summary files       2
+  committed sitemap book URLs        0
+  committed books-sitemap URLs       0
+  note: Cover stubs are asset.json placeholders, not book text. This repo holds no book content and no book seed rows.
+
+Findings
+  none — catalog looks consistent.
+
+Next: docs/CATALOG-COUNT-REPORT.md has the SQL and the ordered fix list.
+
+
+### 2. node scripts/book-count-audit.mjs --live  (sandbox has no egress to booknomics.com; expected to degrade)
+
+Booknomics book count audit
+==============================================================
+
+[2] Production — skipped: fetch failed
+
+Findings
+  ! live check failed: fetch failed
+
+Next: docs/CATALOG-COUNT-REPORT.md has the SQL and the ordered fix list.
+
+
+### 3. npx vitest run
+ ✓ tests/security.test.ts (8 tests) 30ms
+ ✓ src/test/bilingualScore.test.ts (11 tests) 15ms
+ ✓ src/test/devanagariSlug.test.ts (8 tests) 15ms
+ ✓ tests/robots-sitemap.test.ts (3 tests) 4ms
+ ✓ src/test/example.test.ts (1 test) 2ms
+ ✓ tests/payment.test.ts (6 tests) 67ms
+
+ Test Files  6 passed (6)
+      Tests  37 passed (37)
+   Start at  09:24:32
+   Duration  4.43s (transform 235ms, setup 357ms, collect 286ms, tests 133ms, environment 1.90s, prepare 686ms)
+
+
+### 4. npx tsc --noEmit -p tsconfig.app.json
+typecheck: PASS (0 errors)
+
+### 5. npx eslint src/pages/BookDetail.tsx  (before/after: 16 errors both, no new ones)
+
+✖ 16 problems (16 errors, 0 warnings)
+
+
+### 6. npx vite build --mode development
+dist/assets/Dashboard-C3cYvdl3.js               378.13 kB │ gzip: 106.19 kB
+dist/assets/BookDetail-6zQKugdQ.js              516.01 kB │ gzip: 169.38 kB
+✓ built in 14.01s
