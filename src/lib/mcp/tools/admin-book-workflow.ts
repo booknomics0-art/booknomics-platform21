@@ -115,7 +115,7 @@ export const generateBookPodcast = defineTool({
     try {
       const data = await invokeAdminFunction(ctx, "generate-book-podcast", {
         book_id,
-        lang: language,
+        language,
         duration_minutes,
       });
       return { content: [{ type: "text" as const, text: JSON.stringify(data) }], structuredContent: { result: data } };
