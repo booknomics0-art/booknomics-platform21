@@ -1,0 +1,40 @@
+name: Indexing Monitor
+
+on:
+  schedule:
+    # Daily at 06:00 UTC (~11:30 IST). Adjust cron for a different cadence (12–24h window).
+    - cron: "0 6 * * *"
+  workflow_dispatch: {}
+
+jobs:
+  monitor:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install deps
+        run: npm ci
+
+      - name: Run indexing monitor (SAMPLE=all)
+        env:
+          SAMPLE: all
+        run: npx tsx scripts/monitor-indexing.ts
+
+      - name: Verify image sitemap URLs
+        if: always()
+        run: npx tsx scripts/check-image-sitemap.ts
+
+      - name: Upload report artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: indexing-report-${{ github.run_id }}
+          path: reports/
+          if-no-files-found: warn
+          retention-days: 30
