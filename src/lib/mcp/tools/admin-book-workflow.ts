@@ -113,10 +113,9 @@ export const generateBookPodcast = defineTool({
   annotations: { readOnlyHint: false, destructiveHint: true, idempotentHint: false, openWorldHint: true },
   handler: async ({ book_id, language, duration_minutes }, ctx) => {
     try {
-      const data = await invokeAdminFunction(ctx, "book-audio", {
+      const data = await invokeAdminFunction(ctx, "generate-book-podcast", {
         book_id,
         lang: language,
-        mode: "admin_podcast",
         duration_minutes,
       });
       return { content: [{ type: "text" as const, text: JSON.stringify(data) }], structuredContent: { result: data } };
