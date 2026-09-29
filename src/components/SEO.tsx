@@ -1,0 +1,92 @@
+import { Helmet } from "react-helmet-async";
+
+const SITE = "https://booknomics.com";
+const DEFAULT_OG = `${SITE}/og-default.svg`;
+
+interface SEOProps {
+  title: string;
+  description: string;
+  /** Either provide a `canonical` absolute URL, or a `path` (will be prefixed with site URL). */
+  canonical?: string;
+  path?: string;
+  ogImage?: string;
+  /** Backward-compat alias for ogImage */
+  image?: string;
+  ogType?: "website" | "article" | "book";
+  lang?: "en" | "hi";
+  jsonLd?: object | object[];
+  /** Auto-build BreadcrumbList JSON-LD. Each item path is relative (e.g. "/browse"). The final item should be the current page. */
+  breadcrumbs?: Array<{ name: string; path: string }>;
+  noindex?: boolean;
+  /**
+   * hreflang alternates. Absolute or relative URLs.
+   * If omitted, self-referencing hreflang ({lang} + x-default) is emitted automatically.
+   * Pass `false`-y values to skip a language. xDefault falls back to the `en` URL, then the page URL.
+   */
+  alternates?: { en?: string; hi?: string; xDefault?: string };
+}
+
+const abs = (u: string) => (u.startsWith("http") ? u : `${SITE}${u}`);
+
+export const SEO = ({
+  title,
+  description,
+  canonical,
+  path = "/",
+  ogImage,
+  image,
+  ogType = "website",
+  lang = "en",
+  jsonLd,
+  breadcrumbs,
+  noindex = false,
+  alternates,
+}: SEOProps) => {
+  const url = canonical ?? `${SITE}${path}`;
+  const ogImg = ogImage ?? image ?? DEFAULT_OG;
+  const ld = jsonLd ? (Array.isArray(jsonLd) ? [...jsonLd] : [jsonLd]) : [];
+  if (breadcrumbs && breadcrumbs.length > 0) {
+    ld.push({
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      itemListElement: breadcrumbs.map((b, i) => ({
+        "@type": "ListItem",
+        position: i + 1,
+        name: b.name,
+        item: b.path.startsWith("http") ? b.path : `${SITE}${b.path}`,
+      })),
+    });
+  }
+  // hreflang: explicit pairs when provided, otherwise self-referencing for the page language.
+  const hrefEn = alternates ? (alternates.en ? abs(alternates.en) : undefined) : (lang === "en" ? url : undefined);
+  const hrefHi = alternates ? (alternates.hi ? abs(alternates.hi) : undefined) : (lang === "hi" ? url : undefined);
+  const hrefDefault = alternates?.xDefault ? abs(alternates.xDefault) : (hrefEn ?? url);
+  return (
+    <Helmet>
+      <html lang={lang} />
+      <title>{title}</title>
+      <meta name="description" content={description} />
+      <link rel="canonical" href={url} />
+      {hrefEn && <link rel="alternate" hrefLang="en" href={hrefEn} />}
+      {hrefHi && <link rel="alternate" hrefLang="hi" href={hrefHi} />}
+      <link rel="alternate" hrefLang="x-default" href={hrefDefault} />
+      {noindex && <meta name="robots" content="noindex, nofollow" />}
+      <meta property="og:type" content={ogType} />
+      <meta property="og:title" content={title} />
+      <meta property="og:description" content={description} />
+      <meta property="og:url" content={url} />
+      <meta property="og:image" content={ogImg} />
+      <meta property="og:image:width" content="1200" />
+      <meta property="og:image:height" content="630" />
+      <meta property="og:site_name" content="Booknomics" />
+      <meta property="og:locale" content={lang === "hi" ? "hi_IN" : "en_US"} />
+      <meta name="twitter:card" content="summary_large_image" />
+      <meta name="twitter:title" content={title} />
+      <meta name="twitter:description" content={description} />
+      <meta name="twitter:image" content={ogImg} />
+      {ld.map((obj, i) => (
+        <script key={i} type="application/ld+json">{JSON.stringify(obj)}</script>
+      ))}
+    </Helmet>
+  );
+};
