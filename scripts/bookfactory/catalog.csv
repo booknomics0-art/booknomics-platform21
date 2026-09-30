@@ -9,17 +9,17 @@ The Great Gatsby,F. Scott Fitzgerald,1925,Literary Fiction,done
 Zero to One,Peter Thiel,2014,Business,done
 Sapiens: A Brief History of Humankind,Yuval Noah Harari,2011,History,done
 Man's Search for Meaning,Viktor E. Frankl,1946,Memoir,done
-The 7 Habits of Highly Effective People,Stephen R. Covey,1989,Self-Help,queued
-How to Win Friends and Influence People,Dale Carnegie,1936,Self-Help,queued
+The 7 Habits of Highly Effective People,Stephen R. Covey,1989,Self-Help,done
+How to Win Friends and Influence People,Dale Carnegie,1936,Self-Help,done
 The Power of Now,Eckhart Tolle,1997,Self-Help,queued
-Deep Work,Cal Newport,2016,Self-Help,queued
+Deep Work,Cal Newport,2016,Self-Help,done
 Grit,Angela Duckworth,2016,Self-Help,queued
 Essentialism,Greg McKeown,2014,Self-Help,queued
-Mindset,Carol S. Dweck,2006,Self-Help,queued
+Mindset,Carol S. Dweck,2006,Self-Help,done
 Think and Grow Rich,Napoleon Hill,1937,Self-Help,queued
 Getting Things Done,David Allen,2001,Self-Help,queued
 Make Your Bed,William H. McRaven,2017,Self-Help,queued
-The Lean Startup,Eric Ries,2011,Business,queued
+The Lean Startup,Eric Ries,2011,Business,done
 Good to Great,Jim Collins,2001,Business,queued
 The Hard Thing About Hard Things,Ben Horowitz,2014,Business,queued
 Start with Why,Simon Sinek,2009,Business,queued
@@ -31,7 +31,7 @@ Measure What Matters,John Doerr,2018,Business,queued
 The Innovator's Dilemma,Clayton M. Christensen,1997,Business,queued
 High Output Management,Andrew S. Grove,1983,Business,queued
 Built to Last,Jim Collins and Jerry I. Porras,1994,Business,queued
-Influence,Robert B. Cialdini,1984,Psychology,queued
+Influence,Robert B. Cialdini,1984,Psychology,done
 Predictably Irrational,Dan Ariely,2008,Psychology,queued
 The Body Keeps the Score,Bessel van der Kolk,2014,Psychology,queued
 Flow,Mihaly Csikszentmihalyi,1990,Psychology,queued
@@ -43,7 +43,7 @@ Why We Sleep,Matthew Walker,2017,Psychology,queued
 Blink,Malcolm Gladwell,2005,Psychology,queued
 Outliers,Malcolm Gladwell,2008,Psychology,queued
 The Tipping Point,Malcolm Gladwell,2000,Psychology,queued
-The Prince,Niccolo Machiavelli,1532,Philosophy,queued
+The Prince,Niccolo Machiavelli,1532,Philosophy,done
 Beyond Good and Evil,Friedrich Nietzsche,1886,Philosophy,queued
 Walden,Henry David Thoreau,1854,Philosophy,queued
 The Myth of Sisyphus,Albert Camus,1942,Philosophy,queued
@@ -59,7 +59,7 @@ Middlemarch,George Eliot,1871,Classic Literature,queued
 Emma,Jane Austen,1815,Classic Literature,queued
 Sense and Sensibility,Jane Austen,1811,Classic Literature,queued
 Brave New World,Aldous Huxley,1932,Dystopian Fiction,queued
-Animal Farm,George Orwell,1945,Dystopian Fiction,queued
+Animal Farm,George Orwell,1945,Dystopian Fiction,done
 Fahrenheit 451,Ray Bradbury,1953,Dystopian Fiction,queued
 The Handmaid's Tale,Margaret Atwood,1985,Dystopian Fiction,queued
 Lord of the Flies,William Golding,1954,Dystopian Fiction,queued

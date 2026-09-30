@@ -10,20 +10,20 @@ catalog.csv ──► generate.cjs ──► check.cjs ──► upload.cjs (--s
 
 ## What is already done
 
-- `content-drafts/en/` holds 10 finished books (3,368–3,699 words each), all passing the gate.
-- `content-drafts/en/_sql/english-top10-books.sql` is a paste-ready, idempotent SQL file for those 10.
+- `content-drafts/en/` holds 18 finished books (3,400–4,500 words each), all passing the gate. The SQL file is cumulative and idempotent: always run the newest version, and re-running it is safe.
+- `content-drafts/en/_sql/english-books.sql` is a paste-ready, idempotent SQL file for those 10.
   Everything is inserted with `is_draft = true`, so nothing goes public by accident.
-- Format is accepted by the Admin bulk importer (`parseBulkBooks`: 10 books, 0 errors) but use `upload.cjs` or the
+- Format is accepted by the Admin bulk importer (`parseBulkBooks`: 0 errors on the first 10 books) but use `upload.cjs` or the
   SQL instead: the Admin parser adds a random 4-char suffix to slugs and ignores the `Slug:` header.
 
 ## Load the first 10 (no keys needed)
 
-1. Supabase dashboard → SQL Editor → paste `content-drafts/en/_sql/english-top10-books.sql` → Run.
+1. Supabase dashboard → SQL Editor → paste `content-drafts/en/_sql/english-books.sql` → Run.
 2. Open the Admin UI and read 2–3 books on the real page layout.
 3. Publish: `update books set is_draft = false where language = 'en' and status = 'done';`
 
 The SQL was tested on a local Postgres-compatible engine against a minimal mirror of the schema (idempotent,
-10 rows, all assets present). It was **not** run on your live project, so run step 1 once and check the row count.
+rows and assets present). It was **not** run on your live project, so run step 1 once and check the row count.
 
 ## Scale to 2,000 books
 

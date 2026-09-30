@@ -1,0 +1,176 @@
+#BOOK_START
+Title: Mindset: The New Psychology of Success
+Author: Carol S. Dweck
+Language: English
+Category: Psychology
+Genre: Psychology
+Year: 2006
+Slug: mindset-the-new-psychology-of-success-summary-key-lessons
+Keywords: mindset summary, carol dweck, growth mindset, fixed mindset, growth mindset vs fixed mindset, the power of yet, praise effort not talent
+MetaTitle: Mindset Summary: Growth vs Fixed Mindset | Booknomics
+MetaDescription: Mindset by Carol Dweck explained: fixed versus growth mindset, the key studies, what research supports and what it does not, with a 7-day self-observation plan.
+#HOOK
+Do you believe your abilities are fixed, or can they grow? Carol Dweck's decades of research suggest that the answer changes how you handle failure, feedback and effort, and, at least sometimes, how well you do.
+
+#SUMMARY
+### A puzzle you can try on yourself
+
+Imagine two ten-year-olds are given a set of puzzles that are a little too hard. One child frowns, sighs and says the puzzles are stupid. The other rubs his hands together and says, "I love a challenge." Both children are equally bright. What separates them?
+
+In the 1970s, Carol Dweck, now a psychologist at Stanford University, began watching children respond to failure. Some, which she called helpless, gave up as soon as the work got hard and often lost the skills they had shown earlier. Others, the mastery-oriented, treated difficulty as a puzzle to solve. Dweck thought that intelligence could not explain the difference. Instead, she suggested it was what the children believed about intelligence.
+
+That idea became the book Mindset, published in 2006. Dweck proposes two beliefs. In a fixed mindset, people think that qualities like intelligence, talent and personality are carved in stone. You have a certain amount, and the job is to prove it. In a growth mindset, people think that these qualities are starting points and can be developed through effort, strategies and help from others. The difference, she says, reaches into school, sport, business and relationships.
+
+### The fixed mindset and the need to prove yourself
+
+If you believe your ability is fixed, every task becomes a test of who you are. A failure does not say "I did not do that well." It says "I am a failure." So people in a fixed mindset seek situations where they will look smart and avoid those where they might not. They see effort as a bad sign, because if you were truly gifted, you would not need it. They also tend to ignore useful criticism or to feel threatened by others' success.
+
+Dweck offers many examples. One of the best known is a study with Claudia Mueller in the late 1990s. Fifth graders solved a set of reasonably easy puzzles, and afterward, some were praised for their intelligence ("You must be smart at this") while others were praised for effort ("You must have worked hard"). The children then chose their next task. Most of those praised for intelligence chose an easy puzzle, one that would keep their record clean. Most of those praised for effort chose a harder one, from which they could learn. After a difficult round that they mostly failed, the intelligence-praised children lost interest and performed worse on an easy final round, and a notable share of them lied about their scores when reporting to other children. The praise had seemingly taught them that the goal was to look smart.
+
+### The growth mindset and the love of learning
+
+People with a growth mindset do not assume that everyone is the same. They acknowledge that people start with different talents and aptitudes. The difference is what they do with difficulty. They see failure as information about what to work on, and they read feedback to improve rather than to judge themselves. They also find inspiration in other people's success.
+
+Dweck tells many stories. In one, at a Chicago high school, students who did not pass a course received the grade "Not Yet" instead of a failure. The phrase shifts the picture from a verdict to a path. In another, she described a study with Lisa Blackwell and Kali Trzesniewski in 2007. Seventh graders in New York learned about how the brain forms new connections when a person learns, and that intelligence can be developed. Compared with a control group, who learned about memory, those students' math grades improved, while the control group's continued to fall.
+
+Dweck is careful to add that a growth mindset is not just being positive and is not a promise that anyone can do anything. It is a belief that progress is possible with effort and good strategies, not a replacement for those strategies.
+
+### Sports, business and the trap of talent
+
+The book looks at how mindset appears in other fields. In sport, Dweck argues that champions often have a growth mindset, focusing on improvement and on learning from defeat, while some talented athletes with a fixed mindset fall apart after losing because defeat threatens their identity. She mentions coaches such as John Wooden, who emphasized the process of preparation over winning.
+
+In business, she criticizes cultures that worship natural talent. She discusses the energy company Enron, whose famously talent-obsessed culture, described in a widely read magazine article on the "talent myth," encouraged employees to appear brilliant rather than to learn or to admit problems. She contrasts this with Lou Gerstner, who turned around IBM in the 1990s and emphasized teamwork and learning over stars. She also notes that fixed-mindset leaders tend to surround themselves with people who flatter them and to blame others for failures, a pattern she links to executives such as Lee Iacocca in his later years at Chrysler.
+
+The pattern repeats in relationships. A fixed-mindset partner may think that a good relationship should come naturally, so problems are a sign of incompatibility. A growth-minded partner regards a relationship as something that requires continued work and communication.
+
+### Parents, teachers and coaches
+
+The second half of the book is about how to pass a mindset on to children and students. The most famous advice is to praise process, not person. Saying "You're so smart" creates pressure to keep up the image. Saying "I like the way you tried different strategies on that problem" points to something the child can control. Dweck suggests that parents and teachers should describe effort, strategy, persistence and improvement, and ask questions such as "What did you learn?" and "What will you try next?"
+
+She also says that adults must watch their own mindsets. A teacher who believes that some students are just not capable will treat them differently, and the students may live up to it. A coach who treats mistakes as shameful will get athletes who hide them. She also criticizes the idea of protecting children's self-esteem by lowering standards, because it tells them that they cannot handle challenges.
+
+### Changing your mindset
+
+The final chapter describes how people can move toward a growth mindset. The first step is to recognize your own fixed-mindset voice. Dweck suggests giving it a name, such as a persona, so that you can notice when it speaks. It might say "Don't try, you'll look stupid," or "If you were any good, it would be easy." Then you talk back, in a growth voice, with "Everyone struggles at first, and I can learn what I need."
+
+She also recommends that you think about specific triggers, such as receiving criticism or seeing a colleague succeed, and plan in advance how a growth-minded person would respond. The change does not happen overnight, and Dweck warns that most people have a mix of mindsets, varying by area. You may have a growth mindset about sport and a fixed one about public speaking.
+
+### What research has and has not shown
+
+Mindset has been widely popular, and it is important to be honest about the evidence. Dweck's early experiments are well cited. However, later large studies have found smaller effects than the book suggests. A 2018 meta-analysis by Victoria Sisk and colleagues found that the link between mindset and achievement was weak, and that short interventions had small effects on most students. A large national study in the United States, published in 2019 by David Yeager and colleagues, found a modest improvement in grades among lower-achieving students, of about a tenth of a grade point, and effects were stronger in supportive school environments.
+
+Dweck herself has warned of what she calls a false growth mindset, such as praising effort even when a child is not making progress, or claiming a growth mindset without changing how one teaches. The mindset idea works best as a tool for noticing how you respond to difficulty, not as a cure-all. Other weaknesses are that the book divides people into two camps, when in reality beliefs are more of a spectrum, and that it gives too little weight to structural factors like poverty, which no mindset can remove.
+
+#KEY_INSIGHTS
+**1. Your beliefs about ability shape your behavior under difficulty.** The effect, as Dweck describes it, is that a belief in fixed ability leads you to avoid risks, while a belief in growth leads you to seek them. The study behind it is her 1970s work with helpless and mastery-oriented children. To catch it in yourself, notice what you say when a task gets hard. Do you explain it as proof of limits, or as a signal to change strategy?
+
+**2. Praise shapes goals.** Mueller and Dweck's fifth-grade study found that praising intelligence led many children to pick easy tasks and to hide poor results, while praising effort led to seeking challenge. Catch it in yourself by noticing what kind of compliments you crave and what kind you give. Try replacing "You're brilliant" with a description of what the person did.
+
+**3. A failure is an event, not an identity.** People in a fixed mindset read failure as a verdict. The Chicago "Not Yet" grade reframes the same result as a point on a path. To test it in yourself, finish the sentence "I failed" with an event, such as "I failed that exam," rather than "I am a failure."
+
+**4. Effort is not a sign of weakness.** Many people feel that needing to try hard means lacking talent. In practice, experts in every field put in years of hard work. Next time you feel embarrassed by effort, remind yourself that it is what skill looks like from the inside.
+
+**5. Criticism can be useful data.** A fixed mindset hears criticism as an attack, while a growth mindset hears information. Dweck notes that people with a fixed mindset often dismiss or dispute feedback that would help them. After the next piece of feedback, write down the single most useful point before you react to the rest.
+
+**6. Other people's success can be a lesson.** Fixed-mindset people feel threatened by those who do better, but growth-minded people study them. Catch it by watching how you feel when a colleague is promoted. Ask what that person did that you could learn from.
+
+**7. Talent cultures can backfire.** Dweck's discussion of Enron suggests that a culture obsessed with brilliance discourages honest discussion of weakness. It is worth remembering that this is her interpretation, not an experiment. Ask whether your team rewards learning and candor as much as it rewards polish.
+
+**8. The brain can change with learning.** The 2007 study by Blackwell, Trzesniewski and Dweck taught students that intelligence develops and saw a change in math grades. The finding suggests that explaining how learning works may help. Try telling yourself, when stuck, that the feeling of struggle is what building a new connection feels like.
+
+**9. Add the word "yet."** It turns a fixed statement into a direction. "I can't do statistics" becomes "I can't do statistics yet." The word alone does not change anything, but it keeps the question open and invites a next step. Use it in your self-talk for one week, and notice whether you start to plan the next small step instead of closing the subject. A sentence such as "I can't give feedback yet, so I will practice with one person this month" turns a wall into a staircase.
+
+**10. A growth mindset is not just positivity.** Dweck warns against the false growth mindset, where people praise effort without progress or claim a mindset without changing their strategies. Real growth means trying new approaches, asking for help and checking whether they work. Ask what you will do differently, not only how you will feel.
+
+**11. The size of the effect is modest, so use it wisely.** Large studies find small but real benefits, especially for students who struggle, and strongest where the environment supports learning. Treat mindset as one tool among many. Combine it with good teaching, clear feedback and time. A child who believes she can improve still needs a teacher who explains the material well, a quiet place to work and enough hours in the day. Mindset is the belief that makes using those resources worthwhile, but it does not create them, so ask what support would make your own effort pay off.
+
+#APPLY_TODAY
+Think of one thing you avoid because you fear looking bad at it, such as a presentation, a language or a sport. Write down what your fixed-mindset voice says about it, then write a growth reply that includes the word "yet" and one specific next step. Take that step today, even if it lasts only ten minutes. Notice how you feel while doing it, and whether the voice loses some of its volume once you begin. If you cannot find a ten-minute step, make it smaller, such as opening the document or looking up one phrase. Afterward, write a single line about what you learned, because a written lesson is harder to forget than a passing feeling of relief. Tell one friend what you tried, and ask them to check in next week.
+
+#REFLECTION
+1. In what area of your life do you most believe that ability is fixed, and what evidence would change your mind?
+2. When you fail at something, what is the first sentence you tell yourself?
+3. Whose success makes you feel threatened, and what could you learn from that person?
+4. What kind of praise did you receive as a child, and how did it shape what you try?
+5. How do you respond to criticism from someone you respect, and how do you respond to criticism from someone you do not?
+6. Where might you be using a growth-minded slogan without changing your actual strategies?
+7. Which person around you needs to hear praise for their process rather than for their talent?
+8. What is one skill you once assumed you could never learn, and what finally changed?
+
+#ACTION_SYSTEM
+This is a seven-day self-observation plan. The pattern is notice, record, test and reflect. Each day takes about ten minutes, and you need only a notebook.
+
+### Day 1: Notice your triggers
+List three situations in which you feel defensive or anxious about your ability, such as receiving feedback, starting something new or seeing a peer succeed. Write what you told yourself in each. Do not try to fix anything.
+
+### Day 2: Name your fixed-mindset voice
+Give the voice a name and describe it in a sentence. Record the exact words it uses, such as "You'll embarrass yourself." Today, each time it speaks, write a tally mark. Awareness is the first step.
+
+### Day 3: Write the growth reply
+For each of the three triggers, draft a growth response in your own words, including one specific strategy. For example, "I'm not good at public speaking yet. I can practice the first two minutes with a friend."
+
+### Day 4: Test a small challenge
+Choose a task that feels slightly uncomfortable and do it. Record the outcome and how you felt before and after. Look for the difference between what you predicted and what happened.
+
+### Day 5: Change your praise
+Give someone process-focused praise, as in "I noticed how you kept trying different ways." Also do it for yourself, noting one effort or strategy you used today. Record how the person responded.
+
+### Day 6: Ask for useful feedback
+Ask a colleague or friend for one specific piece of feedback on something you have done. Listen without defending. Write down the single point you could act on.
+
+### Day 7: Review and plan
+Read your notes. Which triggers appeared most often? Which replies felt truest? Choose one trigger and one growth reply to use for the next month, and set a reminder to check your progress in four weeks. Write the reply on a small card and keep it where you will see it, such as inside your notebook or on your phone's lock screen. Add one sentence about who could help you, since Dweck stresses that growth depends on other people as well as on effort.
+
+### A note for parents, teachers and managers
+If you guide others, repeat the plan with them in mind. Notice how you praise, how you react to their mistakes and what you say when they ask for help. Replace one sentence of person-praise this week with a sentence about process, and watch what they do next.
+
+#AUDIO_SCRIPT
+I want to start with an experiment you can picture easily. Two children are given puzzles that are a bit too hard. One says, "This is boring and stupid." The other says, "I love a challenge." Same puzzles, similar intelligence. What is going on?
+
+That question is the starting point for Carol Dweck, a psychologist at Stanford University. She began studying it in the 1970s, and she eventually wrote a book called Mindset, published in 2006. Her central idea is that people hold one of two broad beliefs about their abilities. In a fixed mindset, you believe that qualities like intelligence and talent are set. In a growth mindset, you believe that they can be developed through effort, good strategies and help from others.
+
+Why does that matter? Because the beliefs change what you do when things get hard. If you think ability is fixed, every task is a test of who you are. Failure feels like a verdict. So you avoid risks, hide mistakes and read effort as a sign that you are not gifted. If you think ability can grow, failure becomes information. You ask what to try next.
+
+The study most people remember involves praise. Dweck and a colleague, Claudia Mueller, gave fifth graders a set of puzzles and then praised some for being smart and others for working hard. Then the children were offered a choice between an easy task and a hard one. Most of the children praised for intelligence chose the easy one. Most of those praised for effort chose the hard one. After a difficult round, the intelligence-praised children enjoyed the puzzles less and did worse on the next easy set. A notable number of them also lied about their scores. One sentence of praise seems to have taught them that the goal was to look smart.
+
+Another example is a high school in Chicago where, instead of a failing grade, students got the grade "Not Yet." It is a tiny change in wording. But it says that the student is on a path, not at a dead end. That is why Dweck likes the word yet. I can't do this yet.
+
+The book also looks at business and sport. Dweck describes company cultures that worship talent and punish admitting weakness. She points to Enron as an example, and she contrasts it with Lou Gerstner, who turned around IBM in the nineties by building a culture of teamwork and learning. She also talks about athletes who treat a defeat as a lesson rather than a judgment.
+
+Now comes the most important part, which is honesty about the research. Mindset became hugely popular, and some schools adopted it with great enthusiasm. But later large studies found that the effects are smaller than the book suggests. A 2018 meta-analysis found weak links between mindset and achievement overall. A big national study in the United States in 2019 found a modest gain for lower-achieving students, about a tenth of a grade point, and stronger results in supportive schools. Dweck herself warns about what she calls a false growth mindset, like praising effort when a child is not making progress, or saying you believe in growth without changing how you teach. So treat mindset as a useful lens, not a miracle.
+
+How can you use it? Start by noticing your fixed-mindset voice. You might even give it a name. It says things like, "Don't try, you'll look stupid." Write down what it says. Then write the reply from your growth voice, and include the word yet. Then do one small, specific thing. Maybe you practice the first two minutes of a presentation with a friend. Maybe you ask a colleague for one piece of feedback and write down what you can use.
+
+And if you are a parent or a teacher, try changing your praise. Instead of "You're so smart," say, "I noticed how you kept trying different ways." Ask, "What did you learn? What will you try next?"
+
+Let me add a small scene. Imagine a young manager, Priya, who is asked to present to senior leaders for the first time. Her fixed-mindset voice says, "You'll freeze, and everyone will see that you were promoted too early." Her first instinct is to ask a colleague to present instead. Now imagine she hears the voice, names it, and replies, "I haven't done this yet. I can rehearse with two friends and ask for feedback on the first three slides." She is still nervous on the day. But she treats the nerves as part of learning, and afterward she writes down two things that went well and one to try next time. Notice that nothing magical happened. She simply changed what a wobble meant.
+
+And a reminder about the limits. Some obstacles are not about belief at all. If a student has no quiet place to study, or a worker has no time to train, telling them to think differently is not enough. Dweck's ideas work best when the environment gives people a real chance to improve.
+
+Here is the single takeaway. The point of the book is not to tell you that you can be anything. It is to help you notice the moment when a belief about yourself makes you stop. In that moment, you have a choice. You can treat the difficulty as a verdict, or as information. Which you choose, again and again, shapes what you attempt.
+
+#QUIZ_JSON
+[
+  {"id":"q1","question":"What does a fixed mindset assume about ability?","options":["It can be developed with effort","It depends only on luck","It is largely carved in stone","It is unimportant"],"correct_option":2,"explanation":"In a fixed mindset, people treat intelligence and talent as set amounts that they must prove."},
+  {"id":"q2","question":"In the Mueller and Dweck study, which children more often chose the harder task?","options":["Those praised for effort","Those praised for intelligence","Those given no praise","Those who failed first"],"correct_option":0,"explanation":"Children praised for effort tended to choose a challenging puzzle from which they could learn."},
+  {"id":"q3","question":"What does the grade 'Not Yet' illustrate?","options":["A way to hide failure","A reward system","A stricter standard","Seeing failure as a point on a path to learning"],"correct_option":3,"explanation":"It turns a verdict into a direction, which fits a growth mindset."},
+  {"id":"q4","question":"What is a 'false growth mindset'?","options":["A fixed mindset in disguise only","Praising effort without progress or claiming growth without changing strategy","A belief in intelligence","A type of meditation"],"correct_option":1,"explanation":"Dweck warns that simply praising effort, or declaring a growth mindset, is not enough without better strategies."},
+  {"id":"q5","question":"What did a large 2019 national study find about mindset interventions?","options":["No effect at all","A huge improvement for all","A modest improvement in grades for lower-achieving students","A decline in grades"],"correct_option":2,"explanation":"The study found a small gain of about a tenth of a grade point, with stronger effects in supportive environments."},
+  {"id":"q6","question":"What kind of praise does Dweck recommend?","options":["Praise for strategy, effort and persistence","Praise for being smart","No praise","Praise only for winning"],"correct_option":0,"explanation":"Praising process gives children something they can control and repeat."}
+]
+
+#FLASHCARDS_JSON
+[
+  {"id":"f1","front":"What is a fixed mindset?","back":"The belief that intelligence and talent are set traits that you must prove."},
+  {"id":"f2","front":"What is a growth mindset?","back":"The belief that abilities can be developed through effort, strategies and help."},
+  {"id":"f3","front":"Who wrote Mindset and when?","back":"Carol S. Dweck, a Stanford psychologist, in 2006."},
+  {"id":"f4","front":"What did the Mueller and Dweck praise study show?","back":"Children praised for intelligence avoided challenges, while those praised for effort chose harder tasks."},
+  {"id":"f5","front":"What is the 'Not Yet' grade?","back":"A grade used at a Chicago high school that treats a fail as a point on a learning path."},
+  {"id":"f6","front":"What did Blackwell, Trzesniewski and Dweck study in 2007?","back":"Students taught that the brain can grow through learning improved their math grades compared with a control group."},
+  {"id":"f7","front":"What is process praise?","back":"Praise for effort, strategy and persistence rather than talent."},
+  {"id":"f8","front":"What is a false growth mindset?","back":"Praising effort without progress or claiming a growth mindset without changing strategies."},
+  {"id":"f9","front":"What do large studies say about effect size?","back":"Effects are modest, stronger for lower-achieving students and in supportive settings."},
+  {"id":"f10","front":"How can you notice your fixed-mindset voice?","back":"Give it a name, record what it says and write a growth reply with a next step."}
+]
+
+#BOOK_END
