@@ -1,4 +1,776 @@
 {
-  "generated": {},
-  "runs": []
+  "generated": {
+    "make-time-knapp-summary": {
+      "status": "drafted",
+      "words": 3612,
+      "engine": "template-v2",
+      "batch": 1,
+      "at": "2026-09-30T05:37:57.326Z"
+    },
+    "compound-effect-hardy-summary": {
+      "status": "drafted",
+      "words": 3650,
+      "engine": "template-v2",
+      "batch": 1,
+      "at": "2026-09-30T05:37:57.327Z"
+    },
+    "magic-of-thinking-big-schwartz-summary": {
+      "status": "drafted",
+      "words": 3661,
+      "engine": "template-v2",
+      "batch": 1,
+      "at": "2026-09-30T05:37:57.328Z"
+    },
+    "think-and-grow-rich-hill-summary": {
+      "status": "drafted",
+      "words": 3583,
+      "engine": "template-v2",
+      "batch": 1,
+      "at": "2026-09-30T05:37:57.328Z"
+    },
+    "mastery-greene-summary": {
+      "status": "drafted",
+      "words": 3466,
+      "engine": "template-v2",
+      "batch": 1,
+      "at": "2026-09-30T05:37:57.329Z"
+    },
+    "5am-club-sharma-summary": {
+      "status": "drafted",
+      "words": 4005,
+      "engine": "template-v2",
+      "batch": 1,
+      "at": "2026-09-30T05:37:57.329Z"
+    },
+    "you-can-win-khera-summary": {
+      "status": "drafted",
+      "words": 3966,
+      "engine": "template-v2",
+      "batch": 1,
+      "at": "2026-09-30T05:37:57.330Z"
+    },
+    "lifes-amazing-secrets-das-summary": {
+      "status": "drafted",
+      "words": 3592,
+      "engine": "template-v2",
+      "batch": 1,
+      "at": "2026-09-30T05:37:57.331Z"
+    },
+    "power-of-habit-duhigg-summary": {
+      "status": "drafted",
+      "words": 3616,
+      "engine": "template-v2",
+      "batch": 1,
+      "at": "2026-09-30T05:37:57.331Z"
+    },
+    "drive-pink-summary": {
+      "status": "drafted",
+      "words": 3691,
+      "engine": "template-v2",
+      "batch": 1,
+      "at": "2026-09-30T05:37:57.332Z"
+    },
+    "peak-ericsson-summary": {
+      "status": "drafted",
+      "words": 3582,
+      "engine": "template-v2",
+      "batch": 1,
+      "at": "2026-09-30T05:37:57.332Z"
+    },
+    "thinking-in-bets-duke-summary": {
+      "status": "drafted",
+      "words": 3627,
+      "engine": "template-v2",
+      "batch": 1,
+      "at": "2026-09-30T05:37:57.333Z"
+    },
+    "quiet-cain-summary": {
+      "status": "drafted",
+      "words": 3648,
+      "engine": "template-v2",
+      "batch": 1,
+      "at": "2026-09-30T05:37:57.333Z"
+    },
+    "good-strategy-bad-strategy-rumelt-summary": {
+      "status": "drafted",
+      "words": 3627,
+      "engine": "template-v2",
+      "batch": 1,
+      "at": "2026-09-30T05:37:57.334Z"
+    },
+    "blue-ocean-strategy-kim-summary": {
+      "status": "drafted",
+      "words": 3664,
+      "engine": "template-v2",
+      "batch": 1,
+      "at": "2026-09-30T05:37:57.335Z"
+    },
+    "innovators-dilemma-christensen-summary": {
+      "status": "drafted",
+      "words": 3778,
+      "engine": "template-v2",
+      "batch": 1,
+      "at": "2026-09-30T05:37:57.335Z"
+    },
+    "measure-what-matters-doerr-summary": {
+      "status": "drafted",
+      "words": 3665,
+      "engine": "template-v2",
+      "batch": 1,
+      "at": "2026-09-30T05:37:57.336Z"
+    },
+    "rework-fried-summary": {
+      "status": "drafted",
+      "words": 3664,
+      "engine": "template-v2",
+      "batch": 1,
+      "at": "2026-09-30T05:37:57.336Z"
+    },
+    "this-is-marketing-godin-summary": {
+      "status": "drafted",
+      "words": 3889,
+      "engine": "template-v2",
+      "batch": 1,
+      "at": "2026-09-30T05:37:57.337Z"
+    },
+    "made-to-stick-heath-summary": {
+      "status": "drafted",
+      "words": 3683,
+      "engine": "template-v2",
+      "batch": 1,
+      "at": "2026-09-30T05:37:57.338Z"
+    },
+    "everything-store-stone-summary": {
+      "status": "drafted",
+      "words": 3744,
+      "engine": "template-v2",
+      "batch": 1,
+      "at": "2026-09-30T05:37:57.339Z"
+    },
+    "intelligent-investor-graham-summary": {
+      "status": "drafted",
+      "words": 3601,
+      "engine": "template-v2",
+      "batch": 1,
+      "at": "2026-09-30T05:37:57.339Z"
+    },
+    "i-will-teach-you-to-be-rich-sethi-summary": {
+      "status": "drafted",
+      "words": 3815,
+      "engine": "template-v2",
+      "batch": 1,
+      "at": "2026-09-30T05:37:57.340Z"
+    },
+    "richest-man-in-babylon-clason-summary": {
+      "status": "drafted",
+      "words": 3768,
+      "engine": "template-v2",
+      "batch": 1,
+      "at": "2026-09-30T05:37:57.340Z"
+    },
+    "psychology-of-money-housel-summary": {
+      "status": "drafted",
+      "words": 3687,
+      "engine": "template-v2",
+      "batch": 1,
+      "at": "2026-09-30T05:37:57.341Z"
+    },
+    "brief-history-of-time-hawking-summary": {
+      "status": "drafted",
+      "words": 3660,
+      "engine": "template-v2",
+      "batch": 1,
+      "at": "2026-09-30T05:37:57.341Z"
+    },
+    "cosmos-sagan-summary": {
+      "status": "drafted",
+      "words": 3628,
+      "engine": "template-v2",
+      "batch": 1,
+      "at": "2026-09-30T05:37:57.342Z"
+    },
+    "selfish-gene-dawkins-summary": {
+      "status": "drafted",
+      "words": 3579,
+      "engine": "template-v2",
+      "batch": 1,
+      "at": "2026-09-30T05:37:57.342Z"
+    },
+    "factfulness-rosling-summary": {
+      "status": "drafted",
+      "words": 3602,
+      "engine": "template-v2",
+      "batch": 1,
+      "at": "2026-09-30T05:37:57.343Z"
+    },
+    "guns-germs-steel-diamond-summary": {
+      "status": "drafted",
+      "words": 3611,
+      "engine": "template-v2",
+      "batch": 1,
+      "at": "2026-09-30T05:37:57.343Z"
+    },
+    "india-after-gandhi-guha-summary": {
+      "status": "drafted",
+      "words": 3671,
+      "engine": "template-v2",
+      "batch": 1,
+      "at": "2026-09-30T05:37:57.344Z"
+    },
+    "long-walk-to-freedom-mandela-summary": {
+      "status": "drafted",
+      "words": 3658,
+      "engine": "template-v2",
+      "batch": 1,
+      "at": "2026-09-30T05:37:57.345Z"
+    },
+    "story-of-my-experiments-with-truth-gandhi-summary": {
+      "status": "drafted",
+      "words": 3843,
+      "engine": "template-v2",
+      "batch": 1,
+      "at": "2026-09-30T05:37:57.345Z"
+    },
+    "wings-of-fire-kalam-summary": {
+      "status": "drafted",
+      "words": 3653,
+      "engine": "template-v2",
+      "batch": 1,
+      "at": "2026-09-30T05:37:57.346Z"
+    },
+    "ignited-minds-kalam-summary": {
+      "status": "drafted",
+      "words": 3594,
+      "engine": "template-v2",
+      "batch": 1,
+      "at": "2026-09-30T05:37:57.346Z"
+    },
+    "art-of-war-sun-tzu-summary": {
+      "status": "drafted",
+      "words": 4112,
+      "engine": "template-v2",
+      "batch": 1,
+      "at": "2026-09-30T05:37:57.347Z"
+    },
+    "the-prince-machiavelli-summary": {
+      "status": "drafted",
+      "words": 3682,
+      "engine": "template-v2",
+      "batch": 1,
+      "at": "2026-09-30T05:37:57.347Z"
+    },
+    "war-and-peace-tolstoy-summary": {
+      "status": "drafted",
+      "words": 3690,
+      "engine": "template-v2",
+      "batch": 1,
+      "at": "2026-09-30T05:37:57.348Z"
+    },
+    "anna-karenina-tolstoy-summary": {
+      "status": "drafted",
+      "words": 3589,
+      "engine": "template-v2",
+      "batch": 1,
+      "at": "2026-09-30T05:37:57.349Z"
+    },
+    "crime-and-punishment-dostoevsky-summary": {
+      "status": "drafted",
+      "words": 3603,
+      "engine": "template-v2",
+      "batch": 1,
+      "at": "2026-09-30T05:37:57.349Z"
+    },
+    "wuthering-heights-bronte-summary": {
+      "status": "drafted",
+      "words": 3554,
+      "engine": "template-v2",
+      "batch": 1,
+      "at": "2026-09-30T05:37:57.350Z"
+    },
+    "frankenstein-shelley-summary": {
+      "status": "drafted",
+      "words": 3674,
+      "engine": "template-v2",
+      "batch": 1,
+      "at": "2026-09-30T05:37:57.351Z"
+    },
+    "brave-new-world-huxley-summary": {
+      "status": "drafted",
+      "words": 3578,
+      "engine": "template-v2",
+      "batch": 1,
+      "at": "2026-09-30T05:37:57.351Z"
+    },
+    "fahrenheit-451-bradbury-summary": {
+      "status": "drafted",
+      "words": 3611,
+      "engine": "template-v2",
+      "batch": 1,
+      "at": "2026-09-30T05:37:57.352Z"
+    },
+    "count-of-monte-cristo-dumas-summary": {
+      "status": "drafted",
+      "words": 3752,
+      "engine": "template-v2",
+      "batch": 1,
+      "at": "2026-09-30T05:37:57.352Z"
+    },
+    "catcher-in-the-rye-salinger-summary": {
+      "status": "drafted",
+      "words": 3881,
+      "engine": "template-v2",
+      "batch": 1,
+      "at": "2026-09-30T05:37:57.353Z"
+    },
+    "kite-runner-hosseini-summary": {
+      "status": "drafted",
+      "words": 3655,
+      "engine": "template-v2",
+      "batch": 1,
+      "at": "2026-09-30T05:37:57.353Z"
+    },
+    "malgudi-days-narayan-summary": {
+      "status": "drafted",
+      "words": 3564,
+      "engine": "template-v2",
+      "batch": 1,
+      "at": "2026-09-30T05:37:57.354Z"
+    },
+    "harry-potter-philosophers-stone-rowling-summary": {
+      "status": "drafted",
+      "words": 3748,
+      "engine": "template-v2",
+      "batch": 1,
+      "at": "2026-09-30T05:37:57.355Z"
+    },
+    "dune-herbert-summary": {
+      "status": "drafted",
+      "words": 3536,
+      "engine": "template-v2",
+      "batch": 1,
+      "at": "2026-09-30T05:37:57.355Z"
+    }
+  },
+  "runs": [
+    {
+      "at": "2026-09-30T05:13:19.052Z",
+      "engine": "template-v2",
+      "batch": 1,
+      "books": 50,
+      "ok": 0
+    },
+    {
+      "at": "2026-09-30T05:13:54.306Z",
+      "engine": "template-v2",
+      "batch": 1,
+      "books": 50,
+      "ok": 0
+    },
+    {
+      "at": "2026-09-30T05:14:08.515Z",
+      "engine": "template-v2",
+      "batch": 1,
+      "books": 50,
+      "ok": 48
+    },
+    {
+      "at": "2026-09-30T05:14:16.823Z",
+      "engine": "template-v2",
+      "batch": 1,
+      "books": 50,
+      "ok": 50
+    },
+    {
+      "at": "2026-09-30T05:15:11.258Z",
+      "engine": "template-v2",
+      "batch": 1,
+      "books": 50,
+      "ok": 50
+    },
+    {
+      "at": "2026-09-30T05:15:46.549Z",
+      "engine": "template-v2",
+      "batch": 1,
+      "books": 50,
+      "ok": 50
+    },
+    {
+      "at": "2026-09-30T05:16:43.514Z",
+      "engine": "template-v2",
+      "batch": 1,
+      "books": 50,
+      "ok": 50
+    },
+    {
+      "at": "2026-09-30T05:16:52.822Z",
+      "engine": "template-v2",
+      "batch": 1,
+      "books": 50,
+      "ok": 50
+    },
+    {
+      "at": "2026-09-30T05:17:19.081Z",
+      "engine": "template-v2",
+      "batch": 1,
+      "books": 50,
+      "ok": 50
+    },
+    {
+      "at": "2026-09-30T05:17:49.439Z",
+      "engine": "template-v2",
+      "batch": 1,
+      "books": 50,
+      "ok": 50
+    },
+    {
+      "at": "2026-09-30T05:18:44.888Z",
+      "engine": "template-v2",
+      "batch": 1,
+      "books": 50,
+      "ok": 50
+    },
+    {
+      "at": "2026-09-30T05:18:55.212Z",
+      "engine": "template-v2",
+      "batch": 1,
+      "books": 50,
+      "ok": 50
+    },
+    {
+      "at": "2026-09-30T05:19:13.670Z",
+      "engine": "template-v2",
+      "batch": 1,
+      "books": 50,
+      "ok": 50
+    },
+    {
+      "at": "2026-09-30T05:19:43.681Z",
+      "engine": "template-v2",
+      "batch": 1,
+      "books": 50,
+      "ok": 50
+    },
+    {
+      "at": "2026-09-30T05:20:06.752Z",
+      "engine": "template-v2",
+      "batch": 1,
+      "books": 50,
+      "ok": 50
+    },
+    {
+      "at": "2026-09-30T05:20:39.885Z",
+      "engine": "template-v2",
+      "batch": 1,
+      "books": 50,
+      "ok": 50
+    },
+    {
+      "at": "2026-09-30T05:21:03.235Z",
+      "engine": "template-v2",
+      "batch": 1,
+      "books": 50,
+      "ok": 50
+    },
+    {
+      "at": "2026-09-30T05:21:12.678Z",
+      "engine": "template-v2",
+      "batch": 1,
+      "books": 50,
+      "ok": 50
+    },
+    {
+      "at": "2026-09-30T05:21:52.391Z",
+      "engine": "template-v2",
+      "batch": 1,
+      "books": 50,
+      "ok": 50
+    },
+    {
+      "at": "2026-09-30T05:22:27.310Z",
+      "engine": "template-v2",
+      "batch": 1,
+      "books": 50,
+      "ok": 50
+    },
+    {
+      "at": "2026-09-30T05:22:52.203Z",
+      "engine": "template-v2",
+      "batch": 1,
+      "books": 50,
+      "ok": 50
+    },
+    {
+      "at": "2026-09-30T05:24:11.594Z",
+      "engine": "template-v2",
+      "batch": 1,
+      "books": 50,
+      "ok": 50
+    },
+    {
+      "at": "2026-09-30T05:24:49.972Z",
+      "engine": "template-v2",
+      "batch": 1,
+      "books": 50,
+      "ok": 50
+    },
+    {
+      "at": "2026-09-30T05:25:25.737Z",
+      "engine": "template-v2",
+      "batch": 1,
+      "books": 50,
+      "ok": 50
+    },
+    {
+      "at": "2026-09-30T05:25:48.382Z",
+      "engine": "template-v2",
+      "batch": 1,
+      "books": 50,
+      "ok": 50
+    },
+    {
+      "at": "2026-09-30T05:26:05.423Z",
+      "engine": "template-v2",
+      "batch": 1,
+      "books": 50,
+      "ok": 50
+    },
+    {
+      "at": "2026-09-30T05:26:27.761Z",
+      "engine": "template-v2",
+      "batch": 1,
+      "books": 50,
+      "ok": 50
+    },
+    {
+      "at": "2026-09-30T05:28:01.698Z",
+      "engine": "template-v2",
+      "batch": 1,
+      "books": 50,
+      "ok": 50
+    },
+    {
+      "at": "2026-09-30T05:28:35.713Z",
+      "engine": "template-v2",
+      "batch": 1,
+      "books": 50,
+      "ok": 50
+    },
+    {
+      "at": "2026-09-30T05:28:58.087Z",
+      "engine": "template-v2",
+      "batch": 1,
+      "books": 50,
+      "ok": 50
+    },
+    {
+      "at": "2026-09-30T05:29:21.047Z",
+      "engine": "template-v2",
+      "batch": 1,
+      "books": 50,
+      "ok": 50
+    },
+    {
+      "at": "2026-09-30T05:29:45.281Z",
+      "engine": "template-v2",
+      "batch": 1,
+      "books": 50,
+      "ok": 50
+    },
+    {
+      "at": "2026-09-30T05:29:53.778Z",
+      "engine": "template-v2",
+      "batch": 1,
+      "books": 50,
+      "ok": 50
+    },
+    {
+      "at": "2026-09-30T05:30:19.417Z",
+      "engine": "template-v2",
+      "batch": 1,
+      "books": 50,
+      "ok": 50
+    },
+    {
+      "at": "2026-09-30T05:30:35.554Z",
+      "engine": "template-v2",
+      "batch": 1,
+      "books": 50,
+      "ok": 50
+    },
+    {
+      "at": "2026-09-30T05:31:11.159Z",
+      "engine": "template-v2",
+      "batch": 1,
+      "books": 50,
+      "ok": 50
+    },
+    {
+      "at": "2026-09-30T05:31:30.201Z",
+      "engine": "template-v2",
+      "batch": 1,
+      "books": 50,
+      "ok": 50
+    },
+    {
+      "at": "2026-09-30T05:31:43.410Z",
+      "engine": "template-v2",
+      "batch": 1,
+      "books": 50,
+      "ok": 50
+    },
+    {
+      "at": "2026-09-30T05:31:49.112Z",
+      "engine": "template-v2",
+      "batch": 1,
+      "books": 50,
+      "ok": 50
+    },
+    {
+      "at": "2026-09-30T05:32:17.737Z",
+      "engine": "template-v2",
+      "batch": 1,
+      "books": 50,
+      "ok": 50
+    },
+    {
+      "at": "2026-09-30T05:32:32.469Z",
+      "engine": "template-v2",
+      "batch": 1,
+      "books": 50,
+      "ok": 50
+    },
+    {
+      "at": "2026-09-30T05:32:58.242Z",
+      "engine": "template-v2",
+      "batch": 1,
+      "books": 50,
+      "ok": 50
+    },
+    {
+      "at": "2026-09-30T05:33:12.244Z",
+      "engine": "template-v2",
+      "batch": 1,
+      "books": 50,
+      "ok": 50
+    },
+    {
+      "at": "2026-09-30T05:33:26.726Z",
+      "engine": "template-v2",
+      "batch": 1,
+      "books": 50,
+      "ok": 50
+    },
+    {
+      "at": "2026-09-30T05:33:38.248Z",
+      "engine": "template-v2",
+      "batch": 1,
+      "books": 50,
+      "ok": 50
+    },
+    {
+      "at": "2026-09-30T05:33:47.931Z",
+      "engine": "template-v2",
+      "batch": 1,
+      "books": 50,
+      "ok": 50
+    },
+    {
+      "at": "2026-09-30T05:33:58.697Z",
+      "engine": "template-v2",
+      "batch": 1,
+      "books": 50,
+      "ok": 50
+    },
+    {
+      "at": "2026-09-30T05:34:27.237Z",
+      "engine": "template-v2",
+      "batch": 1,
+      "books": 50,
+      "ok": 50
+    },
+    {
+      "at": "2026-09-30T05:34:35.183Z",
+      "engine": "template-v2",
+      "batch": 1,
+      "books": 50,
+      "ok": 50
+    },
+    {
+      "at": "2026-09-30T05:35:01.319Z",
+      "engine": "template-v2",
+      "batch": 1,
+      "books": 50,
+      "ok": 50
+    },
+    {
+      "at": "2026-09-30T05:35:13.051Z",
+      "engine": "template-v2",
+      "batch": 1,
+      "books": 50,
+      "ok": 50
+    },
+    {
+      "at": "2026-09-30T05:35:18.453Z",
+      "engine": "template-v2",
+      "batch": 1,
+      "books": 50,
+      "ok": 50
+    },
+    {
+      "at": "2026-09-30T05:35:42.870Z",
+      "engine": "template-v2",
+      "batch": 1,
+      "books": 50,
+      "ok": 50
+    },
+    {
+      "at": "2026-09-30T05:36:05.135Z",
+      "engine": "template-v2",
+      "batch": 1,
+      "books": 50,
+      "ok": 50
+    },
+    {
+      "at": "2026-09-30T05:36:33.827Z",
+      "engine": "template-v2",
+      "batch": 1,
+      "books": 50,
+      "ok": 50
+    },
+    {
+      "at": "2026-09-30T05:36:47.306Z",
+      "engine": "template-v2",
+      "batch": 1,
+      "books": 50,
+      "ok": 50
+    },
+    {
+      "at": "2026-09-30T05:36:53.091Z",
+      "engine": "template-v2",
+      "batch": 1,
+      "books": 50,
+      "ok": 50
+    },
+    {
+      "at": "2026-09-30T05:37:29.814Z",
+      "engine": "template-v2",
+      "batch": 1,
+      "books": 50,
+      "ok": 50
+    },
+    {
+      "at": "2026-09-30T05:37:35.198Z",
+      "engine": "template-v2",
+      "batch": 1,
+      "books": 50,
+      "ok": 50
+    },
+    {
+      "at": "2026-09-30T05:37:57.355Z",
+      "engine": "template-v2",
+      "batch": 1,
+      "books": 50,
+      "ok": 50
+    }
+  ]
 }
