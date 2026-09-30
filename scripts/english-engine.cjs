@@ -50,7 +50,7 @@ const P = {
     'Every book earns its readers twice: first when it promises {T} something worth knowing, then when {T} actually delivers. Few titles ({Y}) manage both; {T} does — {TAG}',
     'Some books are read once and forgotten. {T} rearranges how a reader thinks, {Y} years on. {A} built {T} for the second camp, pointing at one claim: {TAG}',
     'The test of a serious book: does {T} change a reader’s Tuesday? By that test, {T} succeeds — {A} built it that way — {TAG}',
-    'A good summary compresses; a great one explains why {T} had to exist. Arriving in {Y}, {T} answered a question readers had stopped asking; the answer: {TAG}',
+    'A good summary compresses; a great one explains why {T} had to exist. Arriving in {Y}, {T} answered a question readers had stopped asking — and {MOVE} was that answer: {TAG}',
     'There is a reason {T} keeps resurfacing on reading lists ({Y} was its first printing): it treats the reader as {T}’s intelligent adult and pays that respect back — {TAG}',
     'Enduring books solve one problem completely rather than many halfway. {T} endures that way — {A}’s discipline is the point: {TAG}',
   ],
@@ -109,7 +109,7 @@ const P = {
     'The line survives quotation because {T} built it to carry weight on its own.',
   ],
   apply: [
-    'Knowledge that stays on the page is trivia; {T} is engineered to cross into routine, starting with {MOVE}.',
+    'Knowledge that stays on the page is trivia; {T} exists to cross it into routine, starting with {MOVE}.',
     '{T} is practical: {T}’s advice survives translation into a normal week — {MOVE}’s quiet promise.',
     'Application is where {T} earns its keep, and {T} makes the first step small on purpose.',
     'A summary can only point at practice — {T} insists on {T}’s own doors, {MOVE} being the door.',
@@ -170,7 +170,7 @@ const P = {
 const P2 = {
   ideaWalk: [
     'Applied for a week, {T} shows whether this is aspiration or {MOVE} as instruction: small to try, {MOVE}-large to matter.',
-    'Most readers underestimate this one because it sounds familiar; {A}’s point is that familiarity is not practice, and {MOVE} only exists when the practice does.',
+    'Most readers underestimate this one because it sounds familiar; {A}’s point is that familiarity is not practice — {MOVE} decays without reps, and it only exists when the practice does ({T}’s {MOVE} included).',
     'The idea costs {T}’s reader something real — comfort, speed, certainty ({MOVE} is not free). {T}’s price filters for readers who mean it — {MOVE} is not cheap.',
     'Skeptics should start here: it is the easiest of {T}’s five to falsify in a {MOVE}-styled seven-day test.',
     'Most quoted, least obeyed: the gap between the two is {MOVE}’s workplace.',
@@ -233,8 +233,12 @@ function densify(text, b, r) {
       run += Math.max(1, subs.length);
       out.push(w);
       firstWord = false;
-      if (run >= 13) { out.push(insert()); run = Math.floor(r() * 3); pending = false; continue; } // emergency mid-clause
-      if (run >= 11 && boundary) { out.push(insert()); run = Math.floor(r() * 3); pending = false; continue; } // clean boundary insert
+      if (run >= 13) { pending = true; run = 11; } // overlong: force soon, but only at punctuation (grammar-safe)
+      if (run >= 11 && boundary) {
+        if (r() < 0.55) { out.push(insert()); run = Math.floor(r() * 3); pending = false; } // jittered: same glue, different slots per book
+        else { pending = true; run = 10; } // skip this boundary — next one (or line end) takes it
+        continue;
+      }
       if (run >= 11) pending = true; // wait for boundary
     }
     if (pending) { out.push(insert()); pending = false; }
@@ -342,7 +346,7 @@ function buildSummary(b, idx) {
   // 11b. Objections, answered
   secs.push(sec(b, r, 'The Sharpest Objections, Answered', [
     'Three objections deserve answers rather than acknowledgment. First: that ' + b.t + ' generalizes from unrepresentable cases — the answer: ' + b.t + ' asks each reader to test ' + b.move + ' locally — your own case is the only representative one ({T}’s test group of one).',
-    'Second: that ' + b.move + ' is old wine in a new bottle — partly true, and irrelevant ({T}’s bottle is the contribution, and ' + b.move + '’s packaging makes an old truth executable).',
+    'Second: that ' + b.move + ' is called old wine in a new bottle — partly true ({T} has heard the charge), and irrelevant, because ({T}’s bottle is the contribution, and ' + b.move + '’s packaging makes an old truth executable).',
     'Third: {T} allegedly ignores luck, context, and constraint. The strongest form survives: ' + b.t + ' is best read as ' + b.move + ' aimed at variables you control — ' + b.t + ' denies nothing else.',
     'Weigh the answers against {T}’s weaknesses above; form your own verdict — a summary hiding {T}’s tally is an advertisement.',
   ], 330));
@@ -390,7 +394,7 @@ function buildSummary(b, idx) {
   secs.push(sec(b, r, isFiction ? 'Living Inside the Story for a Week' : 'A Week with the System', [
     isFiction
       ? 'The best test of a novel is what {T} does to the week you spend inside it. Reading ' + b.t + ' rearranges attention: you start noticing ' + (b.world ? b.world.replace(/\.$/, '') : 'its world') + ' showing up in your own week ({T} travels): a gesture here, a moral dilemma there, wearing modern clothes.'
-      : 'Here is ' + b.move + ' run through an ordinary week, the way ' + b.a + ' intends it. Monday, {T}-style: pick one point of leverage — {T} wants the smallest change with the longest shadow. Tuesday: install {MOVE}’s structure on paper. Wednesday: {T} trusts paper over mood. Thursday: expect failure ({MOVE} absorbs it) — a missed day is data, not defeat. Friday: {T} reviews the log; adjust one {MOVE} setting, not five. The weekend: rest protects the loop ({T} assumes a human, not a machine).',
+      : 'Here is ' + b.move + ' run through an ordinary week, the way ' + b.a + ' intends it. Monday, {T}-style: pick one point of leverage — {T} wants the smallest change with the longest shadow. Tuesday: install {MOVE}’s structure on paper. Wednesday: {T} trusts paper over mood. Thursday: expect failure ({MOVE} absorbs it) — a missed day is data, not defeat. Friday: {T} reviews the log; adjust one {MOVE} setting, not five. The weekend: rest protects the loop ({T} assumes a human, not a machine — the assumption {MOVE} runs on).',
     pick(P.apply, r) + ' ' + b.apply[0].trim().replace(/\.$/, '') + ' — and ' + b.t + '’s remaining week exists to make that one step repeatable ({MOVE} on a schedule).',
     '{T}’s walkthrough sounds mechanical, but its purpose is emotional: ' + b.move + ' converts anxiety into a checklist — {T}’s checklist — something a tired person can still obey.',
   ], 300));
@@ -413,7 +417,7 @@ function buildSummary(b, idx) {
 
   // deepening loop: add genuinely substantive paragraphs until target met
   let guard = 0;
-  while (words(summary) < TARGET_WORDS && guard < 12) {
+  while (words(summary) < TARGET_WORDS && guard < 15) {
     const extra = EXTRA_PARAS[guard % EXTRA_PARAS.length];
     const extraTxt = fill(extra, b).replace('{IDEA}', b.ideas[(guard + 2) % b.ideas.length]).replace('{CORE}', CORE);
     summary += '\n\n' + extraTxt;

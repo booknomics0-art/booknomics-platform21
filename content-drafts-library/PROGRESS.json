@@ -2,353 +2,752 @@
   "generated": {
     "make-time-knapp-summary": {
       "status": "drafted",
-      "words": 3612,
+      "words": 3554,
       "engine": "template-v2",
       "batch": 1,
-      "at": "2026-09-30T05:37:57.326Z"
+      "at": "2026-09-30T05:47:32.059Z"
     },
     "compound-effect-hardy-summary": {
       "status": "drafted",
-      "words": 3650,
+      "words": 3533,
       "engine": "template-v2",
       "batch": 1,
-      "at": "2026-09-30T05:37:57.327Z"
+      "at": "2026-09-30T05:47:32.059Z"
     },
     "magic-of-thinking-big-schwartz-summary": {
       "status": "drafted",
-      "words": 3661,
+      "words": 3557,
       "engine": "template-v2",
       "batch": 1,
-      "at": "2026-09-30T05:37:57.328Z"
+      "at": "2026-09-30T05:47:32.060Z"
     },
     "think-and-grow-rich-hill-summary": {
-      "status": "drafted",
-      "words": 3583,
-      "engine": "template-v2",
-      "batch": 1,
-      "at": "2026-09-30T05:37:57.328Z"
-    },
-    "mastery-greene-summary": {
-      "status": "drafted",
-      "words": 3466,
-      "engine": "template-v2",
-      "batch": 1,
-      "at": "2026-09-30T05:37:57.329Z"
-    },
-    "5am-club-sharma-summary": {
-      "status": "drafted",
-      "words": 4005,
-      "engine": "template-v2",
-      "batch": 1,
-      "at": "2026-09-30T05:37:57.329Z"
-    },
-    "you-can-win-khera-summary": {
-      "status": "drafted",
-      "words": 3966,
-      "engine": "template-v2",
-      "batch": 1,
-      "at": "2026-09-30T05:37:57.330Z"
-    },
-    "lifes-amazing-secrets-das-summary": {
-      "status": "drafted",
-      "words": 3592,
-      "engine": "template-v2",
-      "batch": 1,
-      "at": "2026-09-30T05:37:57.331Z"
-    },
-    "power-of-habit-duhigg-summary": {
-      "status": "drafted",
-      "words": 3616,
-      "engine": "template-v2",
-      "batch": 1,
-      "at": "2026-09-30T05:37:57.331Z"
-    },
-    "drive-pink-summary": {
-      "status": "drafted",
-      "words": 3691,
-      "engine": "template-v2",
-      "batch": 1,
-      "at": "2026-09-30T05:37:57.332Z"
-    },
-    "peak-ericsson-summary": {
-      "status": "drafted",
-      "words": 3582,
-      "engine": "template-v2",
-      "batch": 1,
-      "at": "2026-09-30T05:37:57.332Z"
-    },
-    "thinking-in-bets-duke-summary": {
-      "status": "drafted",
-      "words": 3627,
-      "engine": "template-v2",
-      "batch": 1,
-      "at": "2026-09-30T05:37:57.333Z"
-    },
-    "quiet-cain-summary": {
-      "status": "drafted",
-      "words": 3648,
-      "engine": "template-v2",
-      "batch": 1,
-      "at": "2026-09-30T05:37:57.333Z"
-    },
-    "good-strategy-bad-strategy-rumelt-summary": {
-      "status": "drafted",
-      "words": 3627,
-      "engine": "template-v2",
-      "batch": 1,
-      "at": "2026-09-30T05:37:57.334Z"
-    },
-    "blue-ocean-strategy-kim-summary": {
-      "status": "drafted",
-      "words": 3664,
-      "engine": "template-v2",
-      "batch": 1,
-      "at": "2026-09-30T05:37:57.335Z"
-    },
-    "innovators-dilemma-christensen-summary": {
-      "status": "drafted",
-      "words": 3778,
-      "engine": "template-v2",
-      "batch": 1,
-      "at": "2026-09-30T05:37:57.335Z"
-    },
-    "measure-what-matters-doerr-summary": {
-      "status": "drafted",
-      "words": 3665,
-      "engine": "template-v2",
-      "batch": 1,
-      "at": "2026-09-30T05:37:57.336Z"
-    },
-    "rework-fried-summary": {
-      "status": "drafted",
-      "words": 3664,
-      "engine": "template-v2",
-      "batch": 1,
-      "at": "2026-09-30T05:37:57.336Z"
-    },
-    "this-is-marketing-godin-summary": {
-      "status": "drafted",
-      "words": 3889,
-      "engine": "template-v2",
-      "batch": 1,
-      "at": "2026-09-30T05:37:57.337Z"
-    },
-    "made-to-stick-heath-summary": {
-      "status": "drafted",
-      "words": 3683,
-      "engine": "template-v2",
-      "batch": 1,
-      "at": "2026-09-30T05:37:57.338Z"
-    },
-    "everything-store-stone-summary": {
-      "status": "drafted",
-      "words": 3744,
-      "engine": "template-v2",
-      "batch": 1,
-      "at": "2026-09-30T05:37:57.339Z"
-    },
-    "intelligent-investor-graham-summary": {
-      "status": "drafted",
-      "words": 3601,
-      "engine": "template-v2",
-      "batch": 1,
-      "at": "2026-09-30T05:37:57.339Z"
-    },
-    "i-will-teach-you-to-be-rich-sethi-summary": {
-      "status": "drafted",
-      "words": 3815,
-      "engine": "template-v2",
-      "batch": 1,
-      "at": "2026-09-30T05:37:57.340Z"
-    },
-    "richest-man-in-babylon-clason-summary": {
-      "status": "drafted",
-      "words": 3768,
-      "engine": "template-v2",
-      "batch": 1,
-      "at": "2026-09-30T05:37:57.340Z"
-    },
-    "psychology-of-money-housel-summary": {
-      "status": "drafted",
-      "words": 3687,
-      "engine": "template-v2",
-      "batch": 1,
-      "at": "2026-09-30T05:37:57.341Z"
-    },
-    "brief-history-of-time-hawking-summary": {
-      "status": "drafted",
-      "words": 3660,
-      "engine": "template-v2",
-      "batch": 1,
-      "at": "2026-09-30T05:37:57.341Z"
-    },
-    "cosmos-sagan-summary": {
-      "status": "drafted",
-      "words": 3628,
-      "engine": "template-v2",
-      "batch": 1,
-      "at": "2026-09-30T05:37:57.342Z"
-    },
-    "selfish-gene-dawkins-summary": {
-      "status": "drafted",
-      "words": 3579,
-      "engine": "template-v2",
-      "batch": 1,
-      "at": "2026-09-30T05:37:57.342Z"
-    },
-    "factfulness-rosling-summary": {
       "status": "drafted",
       "words": 3602,
       "engine": "template-v2",
       "batch": 1,
-      "at": "2026-09-30T05:37:57.343Z"
+      "at": "2026-09-30T05:47:32.060Z"
     },
-    "guns-germs-steel-diamond-summary": {
+    "mastery-greene-summary": {
       "status": "drafted",
-      "words": 3611,
+      "words": 3599,
       "engine": "template-v2",
       "batch": 1,
-      "at": "2026-09-30T05:37:57.343Z"
+      "at": "2026-09-30T05:47:32.061Z"
     },
-    "india-after-gandhi-guha-summary": {
+    "5am-club-sharma-summary": {
       "status": "drafted",
-      "words": 3671,
+      "words": 3818,
       "engine": "template-v2",
       "batch": 1,
-      "at": "2026-09-30T05:37:57.344Z"
+      "at": "2026-09-30T05:47:32.061Z"
     },
-    "long-walk-to-freedom-mandela-summary": {
+    "you-can-win-khera-summary": {
       "status": "drafted",
-      "words": 3658,
+      "words": 3755,
       "engine": "template-v2",
       "batch": 1,
-      "at": "2026-09-30T05:37:57.345Z"
+      "at": "2026-09-30T05:47:32.063Z"
     },
-    "story-of-my-experiments-with-truth-gandhi-summary": {
+    "lifes-amazing-secrets-das-summary": {
       "status": "drafted",
-      "words": 3843,
+      "words": 3538,
       "engine": "template-v2",
       "batch": 1,
-      "at": "2026-09-30T05:37:57.345Z"
+      "at": "2026-09-30T05:47:32.063Z"
     },
-    "wings-of-fire-kalam-summary": {
+    "power-of-habit-duhigg-summary": {
       "status": "drafted",
-      "words": 3653,
+      "words": 3574,
       "engine": "template-v2",
       "batch": 1,
-      "at": "2026-09-30T05:37:57.346Z"
+      "at": "2026-09-30T05:47:32.064Z"
     },
-    "ignited-minds-kalam-summary": {
+    "drive-pink-summary": {
       "status": "drafted",
-      "words": 3594,
+      "words": 3566,
       "engine": "template-v2",
       "batch": 1,
-      "at": "2026-09-30T05:37:57.346Z"
+      "at": "2026-09-30T05:47:32.064Z"
     },
-    "art-of-war-sun-tzu-summary": {
+    "peak-ericsson-summary": {
       "status": "drafted",
-      "words": 4112,
+      "words": 3562,
       "engine": "template-v2",
       "batch": 1,
-      "at": "2026-09-30T05:37:57.347Z"
+      "at": "2026-09-30T05:47:32.065Z"
     },
-    "the-prince-machiavelli-summary": {
+    "thinking-in-bets-duke-summary": {
       "status": "drafted",
-      "words": 3682,
+      "words": 3630,
       "engine": "template-v2",
       "batch": 1,
-      "at": "2026-09-30T05:37:57.347Z"
+      "at": "2026-09-30T05:47:32.065Z"
     },
-    "war-and-peace-tolstoy-summary": {
+    "quiet-cain-summary": {
       "status": "drafted",
-      "words": 3690,
+      "words": 3543,
       "engine": "template-v2",
       "batch": 1,
-      "at": "2026-09-30T05:37:57.348Z"
+      "at": "2026-09-30T05:47:32.066Z"
     },
-    "anna-karenina-tolstoy-summary": {
+    "good-strategy-bad-strategy-rumelt-summary": {
       "status": "drafted",
-      "words": 3589,
+      "words": 3601,
       "engine": "template-v2",
       "batch": 1,
-      "at": "2026-09-30T05:37:57.349Z"
+      "at": "2026-09-30T05:47:32.066Z"
     },
-    "crime-and-punishment-dostoevsky-summary": {
+    "blue-ocean-strategy-kim-summary": {
+      "status": "drafted",
+      "words": 3530,
+      "engine": "template-v2",
+      "batch": 1,
+      "at": "2026-09-30T05:47:32.067Z"
+    },
+    "innovators-dilemma-christensen-summary": {
+      "status": "drafted",
+      "words": 3666,
+      "engine": "template-v2",
+      "batch": 1,
+      "at": "2026-09-30T05:47:32.067Z"
+    },
+    "measure-what-matters-doerr-summary": {
+      "status": "drafted",
+      "words": 3647,
+      "engine": "template-v2",
+      "batch": 1,
+      "at": "2026-09-30T05:47:32.068Z"
+    },
+    "rework-fried-summary": {
+      "status": "drafted",
+      "words": 3565,
+      "engine": "template-v2",
+      "batch": 1,
+      "at": "2026-09-30T05:47:32.069Z"
+    },
+    "this-is-marketing-godin-summary": {
       "status": "drafted",
       "words": 3603,
       "engine": "template-v2",
       "batch": 1,
-      "at": "2026-09-30T05:37:57.349Z"
+      "at": "2026-09-30T05:47:32.069Z"
+    },
+    "made-to-stick-heath-summary": {
+      "status": "drafted",
+      "words": 3643,
+      "engine": "template-v2",
+      "batch": 1,
+      "at": "2026-09-30T05:47:32.070Z"
+    },
+    "everything-store-stone-summary": {
+      "status": "drafted",
+      "words": 3670,
+      "engine": "template-v2",
+      "batch": 1,
+      "at": "2026-09-30T05:47:32.070Z"
+    },
+    "intelligent-investor-graham-summary": {
+      "status": "drafted",
+      "words": 3622,
+      "engine": "template-v2",
+      "batch": 1,
+      "at": "2026-09-30T05:47:32.071Z"
+    },
+    "i-will-teach-you-to-be-rich-sethi-summary": {
+      "status": "drafted",
+      "words": 3673,
+      "engine": "template-v2",
+      "batch": 1,
+      "at": "2026-09-30T05:47:32.071Z"
+    },
+    "richest-man-in-babylon-clason-summary": {
+      "status": "drafted",
+      "words": 3598,
+      "engine": "template-v2",
+      "batch": 1,
+      "at": "2026-09-30T05:47:32.072Z"
+    },
+    "psychology-of-money-housel-summary": {
+      "status": "drafted",
+      "words": 3645,
+      "engine": "template-v2",
+      "batch": 1,
+      "at": "2026-09-30T05:47:32.072Z"
+    },
+    "brief-history-of-time-hawking-summary": {
+      "status": "drafted",
+      "words": 3595,
+      "engine": "template-v2",
+      "batch": 1,
+      "at": "2026-09-30T05:47:32.073Z"
+    },
+    "cosmos-sagan-summary": {
+      "status": "drafted",
+      "words": 3617,
+      "engine": "template-v2",
+      "batch": 1,
+      "at": "2026-09-30T05:47:32.073Z"
+    },
+    "selfish-gene-dawkins-summary": {
+      "status": "drafted",
+      "words": 3542,
+      "engine": "template-v2",
+      "batch": 1,
+      "at": "2026-09-30T05:47:32.074Z"
+    },
+    "factfulness-rosling-summary": {
+      "status": "drafted",
+      "words": 3574,
+      "engine": "template-v2",
+      "batch": 1,
+      "at": "2026-09-30T05:47:32.074Z"
+    },
+    "guns-germs-steel-diamond-summary": {
+      "status": "drafted",
+      "words": 3542,
+      "engine": "template-v2",
+      "batch": 1,
+      "at": "2026-09-30T05:47:32.075Z"
+    },
+    "india-after-gandhi-guha-summary": {
+      "status": "drafted",
+      "words": 3650,
+      "engine": "template-v2",
+      "batch": 1,
+      "at": "2026-09-30T05:47:32.076Z"
+    },
+    "long-walk-to-freedom-mandela-summary": {
+      "status": "drafted",
+      "words": 3620,
+      "engine": "template-v2",
+      "batch": 1,
+      "at": "2026-09-30T05:47:32.076Z"
+    },
+    "story-of-my-experiments-with-truth-gandhi-summary": {
+      "status": "drafted",
+      "words": 3589,
+      "engine": "template-v2",
+      "batch": 1,
+      "at": "2026-09-30T05:47:32.077Z"
+    },
+    "wings-of-fire-kalam-summary": {
+      "status": "drafted",
+      "words": 3634,
+      "engine": "template-v2",
+      "batch": 1,
+      "at": "2026-09-30T05:47:32.077Z"
+    },
+    "ignited-minds-kalam-summary": {
+      "status": "drafted",
+      "words": 3590,
+      "engine": "template-v2",
+      "batch": 1,
+      "at": "2026-09-30T05:47:32.078Z"
+    },
+    "art-of-war-sun-tzu-summary": {
+      "status": "drafted",
+      "words": 3884,
+      "engine": "template-v2",
+      "batch": 1,
+      "at": "2026-09-30T05:47:32.079Z"
+    },
+    "the-prince-machiavelli-summary": {
+      "status": "drafted",
+      "words": 3627,
+      "engine": "template-v2",
+      "batch": 1,
+      "at": "2026-09-30T05:47:32.079Z"
+    },
+    "war-and-peace-tolstoy-summary": {
+      "status": "drafted",
+      "words": 3576,
+      "engine": "template-v2",
+      "batch": 1,
+      "at": "2026-09-30T05:47:32.080Z"
+    },
+    "anna-karenina-tolstoy-summary": {
+      "status": "drafted",
+      "words": 3580,
+      "engine": "template-v2",
+      "batch": 1,
+      "at": "2026-09-30T05:47:32.080Z"
+    },
+    "crime-and-punishment-dostoevsky-summary": {
+      "status": "drafted",
+      "words": 3546,
+      "engine": "template-v2",
+      "batch": 1,
+      "at": "2026-09-30T05:47:32.081Z"
     },
     "wuthering-heights-bronte-summary": {
       "status": "drafted",
-      "words": 3554,
+      "words": 3557,
       "engine": "template-v2",
       "batch": 1,
-      "at": "2026-09-30T05:37:57.350Z"
+      "at": "2026-09-30T05:47:32.082Z"
     },
     "frankenstein-shelley-summary": {
       "status": "drafted",
-      "words": 3674,
+      "words": 3541,
       "engine": "template-v2",
       "batch": 1,
-      "at": "2026-09-30T05:37:57.351Z"
+      "at": "2026-09-30T05:47:32.082Z"
     },
     "brave-new-world-huxley-summary": {
       "status": "drafted",
-      "words": 3578,
+      "words": 3542,
       "engine": "template-v2",
       "batch": 1,
-      "at": "2026-09-30T05:37:57.351Z"
+      "at": "2026-09-30T05:47:32.083Z"
     },
     "fahrenheit-451-bradbury-summary": {
       "status": "drafted",
-      "words": 3611,
+      "words": 3567,
       "engine": "template-v2",
       "batch": 1,
-      "at": "2026-09-30T05:37:57.352Z"
+      "at": "2026-09-30T05:47:32.083Z"
     },
     "count-of-monte-cristo-dumas-summary": {
       "status": "drafted",
-      "words": 3752,
+      "words": 3552,
       "engine": "template-v2",
       "batch": 1,
-      "at": "2026-09-30T05:37:57.352Z"
+      "at": "2026-09-30T05:47:32.084Z"
     },
     "catcher-in-the-rye-salinger-summary": {
       "status": "drafted",
-      "words": 3881,
+      "words": 3604,
       "engine": "template-v2",
       "batch": 1,
-      "at": "2026-09-30T05:37:57.353Z"
+      "at": "2026-09-30T05:47:32.084Z"
     },
     "kite-runner-hosseini-summary": {
       "status": "drafted",
-      "words": 3655,
+      "words": 3576,
       "engine": "template-v2",
       "batch": 1,
-      "at": "2026-09-30T05:37:57.353Z"
+      "at": "2026-09-30T05:47:32.085Z"
     },
     "malgudi-days-narayan-summary": {
       "status": "drafted",
-      "words": 3564,
+      "words": 3540,
       "engine": "template-v2",
       "batch": 1,
-      "at": "2026-09-30T05:37:57.354Z"
+      "at": "2026-09-30T05:47:32.085Z"
     },
     "harry-potter-philosophers-stone-rowling-summary": {
       "status": "drafted",
-      "words": 3748,
+      "words": 3691,
       "engine": "template-v2",
       "batch": 1,
-      "at": "2026-09-30T05:37:57.355Z"
+      "at": "2026-09-30T05:47:32.086Z"
     },
     "dune-herbert-summary": {
       "status": "drafted",
-      "words": 3536,
+      "words": 3555,
       "engine": "template-v2",
       "batch": 1,
-      "at": "2026-09-30T05:37:57.355Z"
+      "at": "2026-09-30T05:47:32.087Z"
+    },
+    "atomic-habits-clear-summary": {
+      "status": "drafted",
+      "words": 3549,
+      "engine": "template-v2",
+      "batch": 2,
+      "at": "2026-09-30T05:47:31.769Z"
+    },
+    "deep-work-newport-summary": {
+      "status": "drafted",
+      "words": 3510,
+      "engine": "template-v2",
+      "batch": 2,
+      "at": "2026-09-30T05:47:31.769Z"
+    },
+    "grit-duckworth-summary": {
+      "status": "drafted",
+      "words": 3529,
+      "engine": "template-v2",
+      "batch": 2,
+      "at": "2026-09-30T05:47:31.770Z"
+    },
+    "mindset-dweck-summary": {
+      "status": "drafted",
+      "words": 3525,
+      "engine": "template-v2",
+      "batch": 2,
+      "at": "2026-09-30T05:47:31.771Z"
+    },
+    "subtle-art-manson-summary": {
+      "status": "drafted",
+      "words": 3615,
+      "engine": "template-v2",
+      "batch": 2,
+      "at": "2026-09-30T05:47:31.771Z"
+    },
+    "7-habits-covey-summary": {
+      "status": "drafted",
+      "words": 3628,
+      "engine": "template-v2",
+      "batch": 2,
+      "at": "2026-09-30T05:47:31.771Z"
+    },
+    "how-to-win-friends-carnegie-summary": {
+      "status": "drafted",
+      "words": 3631,
+      "engine": "template-v2",
+      "batch": 2,
+      "at": "2026-09-30T05:47:31.772Z"
+    },
+    "power-of-now-tolle-summary": {
+      "status": "drafted",
+      "words": 3658,
+      "engine": "template-v2",
+      "batch": 2,
+      "at": "2026-09-30T05:47:31.772Z"
+    },
+    "mans-search-for-meaning-frankl-summary": {
+      "status": "drafted",
+      "words": 3599,
+      "engine": "template-v2",
+      "batch": 2,
+      "at": "2026-09-30T05:47:31.773Z"
+    },
+    "flow-csikszentmihalyi-summary": {
+      "status": "drafted",
+      "words": 3646,
+      "engine": "template-v2",
+      "batch": 2,
+      "at": "2026-09-30T05:47:31.774Z"
+    },
+    "thinking-fast-and-slow-kahneman-summary": {
+      "status": "drafted",
+      "words": 3636,
+      "engine": "template-v2",
+      "batch": 2,
+      "at": "2026-09-30T05:47:31.774Z"
+    },
+    "predictably-irrational-ariely-summary": {
+      "status": "drafted",
+      "words": 3578,
+      "engine": "template-v2",
+      "batch": 2,
+      "at": "2026-09-30T05:47:31.775Z"
+    },
+    "influence-cialdini-summary": {
+      "status": "drafted",
+      "words": 3560,
+      "engine": "template-v2",
+      "batch": 2,
+      "at": "2026-09-30T05:47:31.775Z"
+    },
+    "zero-to-one-thiel-summary": {
+      "status": "drafted",
+      "words": 3635,
+      "engine": "template-v2",
+      "batch": 2,
+      "at": "2026-09-30T05:47:31.776Z"
+    },
+    "lean-startup-ries-summary": {
+      "status": "drafted",
+      "words": 3497,
+      "engine": "template-v2",
+      "batch": 2,
+      "at": "2026-09-30T05:47:31.776Z"
+    },
+    "good-to-great-collins-summary": {
+      "status": "drafted",
+      "words": 3680,
+      "engine": "template-v2",
+      "batch": 2,
+      "at": "2026-09-30T05:47:31.777Z"
+    },
+    "4-hour-workweek-ferriss-summary": {
+      "status": "drafted",
+      "words": 3526,
+      "engine": "template-v2",
+      "batch": 2,
+      "at": "2026-09-30T05:47:31.777Z"
+    },
+    "shoe-dog-knight-summary": {
+      "status": "drafted",
+      "words": 3624,
+      "engine": "template-v2",
+      "batch": 2,
+      "at": "2026-09-30T05:47:31.778Z"
+    },
+    "steve-jobs-isaacson-summary": {
+      "status": "drafted",
+      "words": 3519,
+      "engine": "template-v2",
+      "batch": 2,
+      "at": "2026-09-30T05:47:31.778Z"
+    },
+    "hard-things-horowitz-summary": {
+      "status": "drafted",
+      "words": 3515,
+      "engine": "template-v2",
+      "batch": 2,
+      "at": "2026-09-30T05:47:31.779Z"
+    },
+    "hooked-eyal-summary": {
+      "status": "drafted",
+      "words": 3612,
+      "engine": "template-v2",
+      "batch": 2,
+      "at": "2026-09-30T05:47:31.779Z"
+    },
+    "rich-dad-poor-dad-kiyosaki-summary": {
+      "status": "drafted",
+      "words": 3607,
+      "engine": "template-v2",
+      "batch": 2,
+      "at": "2026-09-30T05:47:31.780Z"
+    },
+    "millionaire-next-door-stanley-summary": {
+      "status": "drafted",
+      "words": 3562,
+      "engine": "template-v2",
+      "batch": 2,
+      "at": "2026-09-30T05:47:31.780Z"
+    },
+    "random-walk-wall-street-malkiel-summary": {
+      "status": "drafted",
+      "words": 3569,
+      "engine": "template-v2",
+      "batch": 2,
+      "at": "2026-09-30T05:47:31.781Z"
+    },
+    "one-up-on-wall-street-lynch-summary": {
+      "status": "drafted",
+      "words": 3565,
+      "engine": "template-v2",
+      "batch": 2,
+      "at": "2026-09-30T05:47:31.781Z"
+    },
+    "sapiens-harari-summary": {
+      "status": "drafted",
+      "words": 3576,
+      "engine": "template-v2",
+      "batch": 2,
+      "at": "2026-09-30T05:47:31.782Z"
+    },
+    "gene-mukherjee-summary": {
+      "status": "drafted",
+      "words": 3528,
+      "engine": "template-v2",
+      "batch": 2,
+      "at": "2026-09-30T05:47:31.782Z"
+    },
+    "body-bryson-summary": {
+      "status": "drafted",
+      "words": 3661,
+      "engine": "template-v2",
+      "batch": 2,
+      "at": "2026-09-30T05:47:31.783Z"
+    },
+    "short-history-nearly-everything-bryson-summary": {
+      "status": "drafted",
+      "words": 3647,
+      "engine": "template-v2",
+      "batch": 2,
+      "at": "2026-09-30T05:47:31.783Z"
+    },
+    "discovery-of-india-nehru-summary": {
+      "status": "drafted",
+      "words": 3601,
+      "engine": "template-v2",
+      "batch": 2,
+      "at": "2026-09-30T05:47:31.784Z"
+    },
+    "postwar-judt-summary": {
+      "status": "drafted",
+      "words": 3638,
+      "engine": "template-v2",
+      "batch": 2,
+      "at": "2026-09-30T05:47:31.784Z"
+    },
+    "elon-musk-isaacson-summary": {
+      "status": "drafted",
+      "words": 3532,
+      "engine": "template-v2",
+      "batch": 2,
+      "at": "2026-09-30T05:47:31.785Z"
+    },
+    "open-agassi-summary": {
+      "status": "drafted",
+      "words": 3525,
+      "engine": "template-v2",
+      "batch": 2,
+      "at": "2026-09-30T05:47:31.785Z"
+    },
+    "benjamin-franklin-isaacson-summary": {
+      "status": "drafted",
+      "words": 3642,
+      "engine": "template-v2",
+      "batch": 2,
+      "at": "2026-09-30T05:47:31.786Z"
+    },
+    "leonardo-da-vinci-isaacson-summary": {
+      "status": "drafted",
+      "words": 3623,
+      "engine": "template-v2",
+      "batch": 2,
+      "at": "2026-09-30T05:47:31.786Z"
+    },
+    "meditations-marcus-aurelius-summary": {
+      "status": "drafted",
+      "words": 3593,
+      "engine": "template-v2",
+      "batch": 2,
+      "at": "2026-09-30T05:47:31.787Z"
+    },
+    "republic-plato-summary": {
+      "status": "drafted",
+      "words": 3648,
+      "engine": "template-v2",
+      "batch": 2,
+      "at": "2026-09-30T05:47:31.788Z"
+    },
+    "moby-dick-melville-summary": {
+      "status": "drafted",
+      "words": 3585,
+      "engine": "template-v2",
+      "batch": 2,
+      "at": "2026-09-30T05:47:31.788Z"
+    },
+    "great-expectations-dickens-summary": {
+      "status": "drafted",
+      "words": 3536,
+      "engine": "template-v2",
+      "batch": 2,
+      "at": "2026-09-30T05:47:31.789Z"
+    },
+    "brothers-karamazov-dostoevsky-summary": {
+      "status": "drafted",
+      "words": 3536,
+      "engine": "template-v2",
+      "batch": 2,
+      "at": "2026-09-30T05:47:31.789Z"
+    },
+    "les-miserables-hugo-summary": {
+      "status": "drafted",
+      "words": 3754,
+      "engine": "template-v2",
+      "batch": 2,
+      "at": "2026-09-30T05:47:31.790Z"
+    },
+    "odyssey-homer-summary": {
+      "status": "drafted",
+      "words": 3668,
+      "engine": "template-v2",
+      "batch": 2,
+      "at": "2026-09-30T05:47:31.790Z"
+    },
+    "dracula-stoker-summary": {
+      "status": "drafted",
+      "words": 3525,
+      "engine": "template-v2",
+      "batch": 2,
+      "at": "2026-09-30T05:47:31.791Z"
+    },
+    "picture-of-dorian-gray-wilde-summary": {
+      "status": "drafted",
+      "words": 3607,
+      "engine": "template-v2",
+      "batch": 2,
+      "at": "2026-09-30T05:47:31.791Z"
+    },
+    "don-quixote-cervantes-summary": {
+      "status": "drafted",
+      "words": 3633,
+      "engine": "template-v2",
+      "batch": 2,
+      "at": "2026-09-30T05:47:31.792Z"
+    },
+    "alchemist-coelho-summary": {
+      "status": "drafted",
+      "words": 3560,
+      "engine": "template-v2",
+      "batch": 2,
+      "at": "2026-09-30T05:47:31.792Z"
+    },
+    "life-of-pi-martel-summary": {
+      "status": "drafted",
+      "words": 3592,
+      "engine": "template-v2",
+      "batch": 2,
+      "at": "2026-09-30T05:47:31.793Z"
+    },
+    "god-of-small-things-roy-summary": {
+      "status": "drafted",
+      "words": 3560,
+      "engine": "template-v2",
+      "batch": 2,
+      "at": "2026-09-30T05:47:31.794Z"
+    },
+    "fine-balance-mistry-summary": {
+      "status": "drafted",
+      "words": 3574,
+      "engine": "template-v2",
+      "batch": 2,
+      "at": "2026-09-30T05:47:31.794Z"
+    },
+    "midnights-children-rushdie-summary": {
+      "status": "drafted",
+      "words": 3613,
+      "engine": "template-v2",
+      "batch": 2,
+      "at": "2026-09-30T05:47:31.795Z"
+    },
+    "white-tiger-adiga-summary": {
+      "status": "drafted",
+      "words": 3522,
+      "engine": "template-v2",
+      "batch": 2,
+      "at": "2026-09-30T05:47:31.795Z"
+    },
+    "foundation-asimov-summary": {
+      "status": "drafted",
+      "words": 3556,
+      "engine": "template-v2",
+      "batch": 2,
+      "at": "2026-09-30T05:47:31.796Z"
+    },
+    "martian-weir-summary": {
+      "status": "drafted",
+      "words": 3676,
+      "engine": "template-v2",
+      "batch": 2,
+      "at": "2026-09-30T05:47:31.796Z"
+    },
+    "neuromancer-gibson-summary": {
+      "status": "drafted",
+      "words": 3561,
+      "engine": "template-v2",
+      "batch": 2,
+      "at": "2026-09-30T05:47:31.797Z"
+    },
+    "left-hand-of-darkness-le-guin-summary": {
+      "status": "drafted",
+      "words": 3582,
+      "engine": "template-v2",
+      "batch": 2,
+      "at": "2026-09-30T05:47:31.797Z"
+    },
+    "game-of-thrones-martin-summary": {
+      "status": "drafted",
+      "words": 3549,
+      "engine": "template-v2",
+      "batch": 2,
+      "at": "2026-09-30T05:47:31.797Z"
+    },
+    "name-of-the-wind-rothfuss-summary": {
+      "status": "drafted",
+      "words": 3584,
+      "engine": "template-v2",
+      "batch": 2,
+      "at": "2026-09-30T05:47:31.798Z"
     }
   },
   "runs": [
@@ -767,6 +1166,153 @@
     },
     {
       "at": "2026-09-30T05:37:57.355Z",
+      "engine": "template-v2",
+      "batch": 1,
+      "books": 50,
+      "ok": 50
+    },
+    {
+      "at": "2026-09-30T05:43:20.674Z",
+      "engine": "template-v2",
+      "batch": 2,
+      "books": 57,
+      "ok": 57
+    },
+    {
+      "at": "2026-09-30T05:44:46.559Z",
+      "engine": "template-v2",
+      "batch": 2,
+      "books": 57,
+      "ok": 57
+    },
+    {
+      "at": "2026-09-30T05:44:46.868Z",
+      "engine": "template-v2",
+      "batch": 1,
+      "books": 50,
+      "ok": 50
+    },
+    {
+      "at": "2026-09-30T05:45:06.059Z",
+      "engine": "template-v2",
+      "batch": 2,
+      "books": 57,
+      "ok": 57
+    },
+    {
+      "at": "2026-09-30T05:45:06.349Z",
+      "engine": "template-v2",
+      "batch": 1,
+      "books": 50,
+      "ok": 50
+    },
+    {
+      "at": "2026-09-30T05:45:19.601Z",
+      "engine": "template-v2",
+      "batch": 2,
+      "books": 57,
+      "ok": 57
+    },
+    {
+      "at": "2026-09-30T05:45:19.899Z",
+      "engine": "template-v2",
+      "batch": 1,
+      "books": 50,
+      "ok": 50
+    },
+    {
+      "at": "2026-09-30T05:45:45.843Z",
+      "engine": "template-v2",
+      "batch": 2,
+      "books": 57,
+      "ok": 57
+    },
+    {
+      "at": "2026-09-30T05:45:46.137Z",
+      "engine": "template-v2",
+      "batch": 1,
+      "books": 50,
+      "ok": 50
+    },
+    {
+      "at": "2026-09-30T05:45:55.205Z",
+      "engine": "template-v2",
+      "batch": 2,
+      "books": 57,
+      "ok": 57
+    },
+    {
+      "at": "2026-09-30T05:45:55.496Z",
+      "engine": "template-v2",
+      "batch": 1,
+      "books": 50,
+      "ok": 50
+    },
+    {
+      "at": "2026-09-30T05:46:07.124Z",
+      "engine": "template-v2",
+      "batch": 2,
+      "books": 57,
+      "ok": 57
+    },
+    {
+      "at": "2026-09-30T05:46:07.425Z",
+      "engine": "template-v2",
+      "batch": 1,
+      "books": 50,
+      "ok": 50
+    },
+    {
+      "at": "2026-09-30T05:46:32.405Z",
+      "engine": "template-v2",
+      "batch": 2,
+      "books": 57,
+      "ok": 57
+    },
+    {
+      "at": "2026-09-30T05:46:32.686Z",
+      "engine": "template-v2",
+      "batch": 1,
+      "books": 50,
+      "ok": 50
+    },
+    {
+      "at": "2026-09-30T05:46:41.132Z",
+      "engine": "template-v2",
+      "batch": 2,
+      "books": 57,
+      "ok": 57
+    },
+    {
+      "at": "2026-09-30T05:46:41.379Z",
+      "engine": "template-v2",
+      "batch": 1,
+      "books": 50,
+      "ok": 50
+    },
+    {
+      "at": "2026-09-30T05:47:19.052Z",
+      "engine": "template-v2",
+      "batch": 2,
+      "books": 57,
+      "ok": 57
+    },
+    {
+      "at": "2026-09-30T05:47:19.332Z",
+      "engine": "template-v2",
+      "batch": 1,
+      "books": 50,
+      "ok": 50
+    },
+    {
+      "at": "2026-09-30T05:47:31.798Z",
+      "engine": "template-v2",
+      "batch": 2,
+      "books": 57,
+      "ok": 57
+    },
+    {
+      "at": "2026-09-30T05:47:32.087Z",
       "engine": "template-v2",
       "batch": 1,
       "books": 50,
