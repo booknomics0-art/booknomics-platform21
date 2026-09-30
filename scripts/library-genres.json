@@ -1,0 +1,54 @@
+{
+  "self_help": {
+    "label": "Self-Help / Productivity",
+    "sections": ["the author's credibility", "the core promise", "the mechanism", "case studies", "the criticism", "application", "verdict"]
+  },
+  "business": {
+    "label": "Business / Marketing",
+    "sections": ["the problem the book solves", "the core argument", "the frameworks", "evidence and cases", "where it fails", "application today", "verdict"]
+  },
+  "psychology": {
+    "label": "Psychology",
+    "sections": ["the science background", "the central findings", "the experiments", "applications", "criticism and replication", "verdict"]
+  },
+  "science": {
+    "label": "Science",
+    "sections": ["the question the book answers", "the scientific story", "key discoveries", "the people behind it", "what it changed", "limitations", "why read it now"]
+  },
+  "history": {
+    "label": "History",
+    "sections": ["the period and stakes", "the thesis", "the narrative arc", "key evidence", "counterarguments", "relevance today", "verdict"]
+  },
+  "biography": {
+    "label": "Biography",
+    "sections": ["the life in context", "origins", "the rise", "the defining struggles", "the methods", "the legacy", "lessons"]
+  },
+  "finance": {
+    "label": "Money & Investing",
+    "sections": ["the money philosophy", "the core principles", "the mechanics", "historical evidence", "risks and criticisms", "a practical system", "verdict"]
+  },
+  "philosophy": {
+    "label": "Philosophy",
+    "sections": ["the author and era", "the central question", "the argument", "key ideas", "objections", "influence", "living with the ideas"]
+  },
+  "health": {
+    "label": "Health",
+    "sections": ["the claim", "the science", "the mechanism", "the evidence", "safety and criticism", "the practice", "verdict"]
+  },
+  "fiction_classic": {
+    "label": "Classic Fiction",
+    "sections": ["the world of the book", "the characters", "the plot's turn", "the themes", "the craft", "reception and legacy", "reading it today"]
+  },
+  "fiction_modern": {
+    "label": "Modern Fiction",
+    "sections": ["the setting and stakes", "the characters", "the plot's turn", "the themes", "the craft", "reception and prizes", "reading it today"]
+  },
+  "scifi_fantasy": {
+    "label": "Sci-Fi & Fantasy",
+    "sections": ["the worldbuilding", "the characters", "the plot's engine", "the big idea", "the themes", "influence on the genre", "reading it today"]
+  },
+  "hindi_literature": {
+    "label": "Hindi Literature",
+    "sections": ["परिवेश", "लेखक परिचय", "कथा का सार", "पात्र", "विषय और संदेश", "शिल्प और शैली", "विरासत"]
+  }
+}

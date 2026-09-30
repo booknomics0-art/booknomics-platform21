@@ -1,0 +1,43 @@
+name: Batch generate book summaries
+
+on:
+  workflow_dispatch:
+    inputs:
+      limit:
+        description: "Books to generate this run"
+        default: "25"
+      tier:
+        description: "Tiers to include (e.g. 1 or 1,2)"
+        default: "1"
+  schedule:
+    - cron: "0 1 * * *" # daily 01:00 UTC (06:30 IST)
+
+permissions:
+  contents: write
+
+jobs:
+  generate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Generate drafts
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          GEMINI_MODEL: gemini-2.0-flash
+        run: node scripts/batch-generate-books.cjs --engine=gemini --limit=${{ github.event.inputs.limit || 25 }} --tier=${{ github.event.inputs.tier || '1' }}
+
+      - name: Quality gate (word count, structure, originality)
+        run: node scripts/verify-library.cjs
+
+      - name: Commit drafts + progress
+        run: |
+          git config user.name "booknomics-bot"
+          git config user.email "bot@booknomics.local"
+          git add content-drafts-library/
+          git commit -m "batch: generate book summaries ($(date -u +%F))" || echo "nothing to commit"
+          git push
