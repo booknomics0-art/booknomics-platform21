@@ -129,7 +129,7 @@ const P = {
   today: [
     'Reread now, {T} holds up: {T}’s subject is a pattern, not a trend. {MOVE} has not dated; {T}’s contemporaries have.',
     '{T} ages well: {T}’s examples date, the mechanism does not.',
-    'New books have nibbled at {T}’s territory for years; none has displaced it.',
+    'New books have nibbled at {T}’s territory ({Y} still prints); none has displaced it.',
     'A first-time reader today gets {T}’s best version: the imitators are visible, which makes {T}’s clarity more obvious.',
   ],
   verdict: [
@@ -170,7 +170,7 @@ const P = {
 const P2 = {
   ideaWalk: [
     'Applied for a week, {T} shows whether this is aspiration or {MOVE} as instruction: small to try, {MOVE}-large to matter.',
-    'Most readers underestimate this one because it sounds familiar; {A}’s point is that familiarity is not practice — {MOVE} decays without reps, and it only exists when the practice does ({T}’s {MOVE} included).',
+    'Most readers underestimate this one because it sounds familiar; {A}’s point is that familiarity is not practice — {MOVE} decays without reps, and it only exists when the practice does ({Y}’s standing truth).',
     'The idea costs {T}’s reader something real — comfort, speed, certainty ({MOVE} is not free). {T}’s price filters for readers who mean it — {MOVE} is not cheap.',
     'Skeptics should start here: it is the easiest of {T}’s five to falsify in a {MOVE}-styled seven-day test.',
     'Most quoted, least obeyed: the gap between the two is {MOVE}’s workplace.',
