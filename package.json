@@ -16,7 +16,10 @@
     "check:sitemap:prod": "node --import tsx scripts/check-sitemap-prod.ts",
     "monitor:indexing": "node --import tsx scripts/monitor-indexing.ts",
     "check:image-sitemap": "node --import tsx scripts/check-image-sitemap.ts",
-    "typecheck": "tsc --noEmit -p tsconfig.app.json && tsc --noEmit -p tsconfig.node.json"
+    "typecheck": "tsc --noEmit -p tsconfig.app.json && tsc --noEmit -p tsconfig.node.json",
+    "books:check": "node scripts/bookfactory/check.cjs",
+    "books:generate": "node scripts/bookfactory/generate.cjs",
+    "books:upload": "node scripts/bookfactory/upload.cjs"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.10.0",

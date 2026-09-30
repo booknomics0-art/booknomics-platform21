@@ -1,0 +1,107 @@
+{
+  "Self-Help": {
+    "opening": "Open on the reader's own problem, a recognisable moment of struggle, then name the book's answer.",
+    "summary_shape": "problem, the book's core framework (name every step or law), evidence and stories the author uses, how it works day to day, honest weaknesses, who benefits most",
+    "insights_style": "Each insight: a bold one-line claim, then how it works and one concrete way to use it.",
+    "action_style": "A 7-day habit or practice plan, one small task per day, each with a clear finish line.",
+    "audio_style": "Warm coach voice, one running example person, end with a single takeaway."
+  },
+  "Business": {
+    "opening": "Open on a real company story or decision the author uses, with a date and a number.",
+    "summary_shape": "the market problem, the author's framework (name every part), cases and numbers, what to do differently, where the advice breaks down, who should read it",
+    "insights_style": "Each insight: a claim, a company or case that shows it, and a question a founder or manager can ask on Monday.",
+    "action_style": "A 7-week experiment plan. Each week: one question, one task, one deliverable.",
+    "audio_style": "Sharp, conversational briefing for a busy operator. Use one small hypothetical company throughout."
+  },
+  "Psychology": {
+    "opening": "Open on a short, surprising experiment or puzzle the reader can try on themselves.",
+    "summary_shape": "the puzzle, the research programme, each major effect or concept, real studies with names and years, what has and has not replicated, practical limits",
+    "insights_style": "Each insight: the effect, the study behind it, and how to catch it in yourself.",
+    "action_style": "A 7-day self-observation plan: notice, record, test, reflect.",
+    "audio_style": "Curious and precise, walk the listener through an everyday street where each bias appears."
+  },
+  "Philosophy": {
+    "opening": "Open on an ancient question or a vivid scene from the author's life that makes the question urgent.",
+    "summary_shape": "who the author was and what they faced, the school of thought in plain words, the recurring themes, how to read the text, tensions and criticisms",
+    "insights_style": "Each insight: the idea in the author's spirit, a modern situation where it applies, one practice.",
+    "action_style": "A 7-day contemplative practice with a morning and an evening step, no more than ten minutes a day.",
+    "audio_style": "Calm and reflective, like a thoughtful teacher speaking to one person."
+  },
+  "Classic Literature": {
+    "opening": "Open on a scene or line from the book that captures its voice.",
+    "summary_shape": "the opening situation, plot in order (spoilers allowed), characters and what each stands for, craft and style, historical context and publication facts, why it lasts, limits",
+    "insights_style": "Each insight: a theme or character truth, anchored to a specific scene, plus what it says about real life.",
+    "action_style": "A 7-day reading-and-reflection practice, no rules or productivity tips, only attention exercises drawn from the book.",
+    "audio_style": "A storyteller retelling the plot with feeling, then stepping back to explain what it means."
+  },
+  "Dystopian Fiction": {
+    "opening": "Open on the first unsettling detail of the imagined world.",
+    "summary_shape": "how the world works, the plot, the control mechanisms one by one, the author's real-world target, why it still matters, what critics say",
+    "insights_style": "Each insight: a mechanism of power from the book, and how to recognise its modern cousin.",
+    "action_style": "A 7-day media and attention awareness routine, no paranoia, only habits of checking and noticing.",
+    "audio_style": "Measured and slightly chilling, then practical at the end."
+  },
+  "Literary Fiction": {
+    "opening": "Open on one strong image from the novel.",
+    "summary_shape": "the image and setting, the plot, the main characters, symbols and craft, themes, publication history and reception, limits",
+    "insights_style": "Each insight: a theme tied to a scene, and a question it asks of the reader.",
+    "action_style": "A 7-day reflection practice with journal prompts, not productivity advice.",
+    "audio_style": "Intimate, literary, closing with the book's last image."
+  },
+  "Memoir": {
+    "opening": "Open on the decisive moment of the author's story, told plainly and respectfully.",
+    "summary_shape": "the author's situation, the story in order, the central ideas they drew from it, context and publication facts, how to read it responsibly, limits of one person's testimony",
+    "insights_style": "Each insight: what the author learned, in their terms, and a gentle way to apply it.",
+    "action_style": "A 7-day reflective practice. Include a short note that it is not therapy and where to seek support.",
+    "audio_style": "Quiet, respectful, human. No hype."
+  },
+  "Finance": {
+    "opening": "Open on a specific money mistake or contrast of two people with numbers.",
+    "summary_shape": "the money story, each principle with a real example, the behaviour behind it, numbers and dates, what the book leaves out, who should read it",
+    "insights_style": "Each insight: a rule, the behaviour it corrects, a number to calculate.",
+    "action_style": "A 7-day money reset. State clearly that it is education, not personal financial advice.",
+    "audio_style": "Plain-spoken, like a friend who is good with money. Use one small two-person example."
+  },
+  "History": {
+    "opening": "Open on a concrete moment in the past that frames the book's thesis.",
+    "summary_shape": "the thesis, the turning points in order, cause and effect, key evidence, the author's background, what historians dispute, why it matters now",
+    "insights_style": "Each insight: a causal idea, a historical case, and a modern parallel.",
+    "action_style": "A 7-day exercise in long-view thinking: question, trace, compare, write.",
+    "audio_style": "Story-driven narration with dates and places, then a balanced critique."
+  },
+  "Science": {
+    "opening": "Open on a single astonishing fact or a question the book answers.",
+    "summary_shape": "the question, the main ideas step by step in plain language, the evidence, the author's role, what has been revised since, limits",
+    "insights_style": "Each insight: one scientific idea explained simply, with an everyday example.",
+    "action_style": "A 7-day curiosity practice with small observations or experiments at home.",
+    "audio_style": "Clear and wondering, avoiding jargon."
+  },
+  "Biography": {
+    "opening": "Open on the decisive moment of the subject's life.",
+    "summary_shape": "early life, turning points in order, character and methods, conflicts, legacy, how the biographer worked, what is disputed",
+    "insights_style": "Each insight: a lesson drawn from a specific episode, and how to use it.",
+    "action_style": "A 7-day plan applying one lesson per day from the subject's life.",
+    "audio_style": "A vivid narrator moving through the life in order."
+  },
+  "Economics": {
+    "opening": "Open on a puzzling real-world observation with a number.",
+    "summary_shape": "the puzzle, the method, the main findings with data, the author's argument, criticisms, what you can test yourself",
+    "insights_style": "Each insight: a finding, the incentive behind it, a question to ask of your own decisions.",
+    "action_style": "A 7-day plan to examine your own incentives and trade-offs.",
+    "audio_style": "Curious and plain, using one everyday market as the example."
+  },
+  "Politics": {
+    "opening": "Open on a concrete political moment or decision.",
+    "summary_shape": "the context, the argument, the main cases, the author's position, counterarguments, relevance today",
+    "insights_style": "Each insight: a claim, the evidence, and the strongest objection.",
+    "action_style": "A 7-day plan for reading across viewpoints and checking claims.",
+    "audio_style": "Even-handed and careful, presenting objections fairly."
+  },
+  "Spirituality": {
+    "opening": "Open on a question or a moment of stillness.",
+    "summary_shape": "the author's path, the core teachings in plain language, practices, context, how to read it without dogma, limits",
+    "insights_style": "Each insight: a teaching, a practice, and a caution.",
+    "action_style": "A 7-day quiet practice of at most ten minutes a day.",
+    "audio_style": "Gentle and unhurried."
+  }
+}

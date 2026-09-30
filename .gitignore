@@ -40,3 +40,7 @@ secrets/
 backups/
 reports/
 supabase/.temp/
+
+# bookfactory working files
+content-drafts/*/_rejected/
+content-drafts/*/_state.json
