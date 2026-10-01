@@ -131,13 +131,13 @@ const BookDetail = () => {
     }
     (async () => {
       // Try canonical slug first, then seo_slug (keyword URL), then any book that has this slug in old_slugs.
-      let { data } = await supabase.from("books").select("id,slug,title,author,category,cover_color,tagline,overview,reading_time,rating,year,created_at,cover_url,language,affiliate_link,is_draft,status,meta_title,meta_description,og_image,seo_slug,seo_keywords,old_slugs").eq("slug", slug).eq("is_draft", false).maybeSingle();
+      let { data } = await supabase.from("books").select("id,slug,title,author,category,cover_color,tagline,overview,deep_summary,key_ideas,deep_analysis,daily_application,reading_time,rating,year,created_at,cover_url,language,affiliate_link,is_draft,status,meta_title,meta_description,og_image,seo_slug,seo_keywords,old_slugs").eq("slug", slug).eq("is_draft", false).maybeSingle();
       if (!data) {
-        const bySeo = await supabase.from("books").select("id,slug,title,author,category,cover_color,tagline,overview,reading_time,rating,year,created_at,cover_url,language,affiliate_link,is_draft,status,meta_title,meta_description,og_image,seo_slug,seo_keywords,old_slugs").eq("seo_slug", slug).eq("is_draft", false).maybeSingle();
+        const bySeo = await supabase.from("books").select("id,slug,title,author,category,cover_color,tagline,overview,deep_summary,key_ideas,deep_analysis,daily_application,reading_time,rating,year,created_at,cover_url,language,affiliate_link,is_draft,status,meta_title,meta_description,og_image,seo_slug,seo_keywords,old_slugs").eq("seo_slug", slug).eq("is_draft", false).maybeSingle();
         data = bySeo.data;
       }
       if (!data) {
-        const byOld = await supabase.from("books").select("id,slug,title,author,category,cover_color,tagline,overview,reading_time,rating,year,created_at,cover_url,language,affiliate_link,is_draft,status,meta_title,meta_description,og_image,seo_slug,seo_keywords,old_slugs").contains("old_slugs", [slug]).eq("is_draft", false).limit(1).maybeSingle();
+        const byOld = await supabase.from("books").select("id,slug,title,author,category,cover_color,tagline,overview,deep_summary,key_ideas,deep_analysis,daily_application,reading_time,rating,year,created_at,cover_url,language,affiliate_link,is_draft,status,meta_title,meta_description,og_image,seo_slug,seo_keywords,old_slugs").contains("old_slugs", [slug]).eq("is_draft", false).limit(1).maybeSingle();
         if (byOld.data) {
           const target = (byOld.data as any).seo_slug || (byOld.data as any).slug;
           if (target && target !== slug) {
@@ -148,7 +148,7 @@ const BookDetail = () => {
         }
       }
       setBook(data as unknown as Book);
-      // Premium sections are fetched server-side and only returned to paying members.
+      // Public summary sections are fetched above for every visible book. Premium-only interactive/action fields may still be merged below.
       if (data) {
         const { data: prem } = await supabase.rpc("get_premium_summary", { p_book_id: (data as any).id });
         const row = Array.isArray(prem) ? prem[0] : prem;
