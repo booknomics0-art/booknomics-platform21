@@ -402,12 +402,6 @@ const BookDetail = () => {
 
   return (
     <Layout>
-      {(bookAny.status === "published_noindex") && (
-        <Helmet>
-          <meta name="robots" content="noindex,follow" />
-          <meta name="googlebot" content="noindex,follow" />
-        </Helmet>
-      )}
       <SEO
         title={seoTitle}
         description={seoDesc}
@@ -417,6 +411,7 @@ const BookDetail = () => {
         ogImage={ogImg}
         alternates={hreflangAlternates}
         jsonLd={[bookLd, breadcrumbLd, faqLd]}
+        noindex={bookAny.status === "published_noindex"}
       />
       {book.cover_url && (
         <Helmet>
@@ -781,14 +776,16 @@ const BookDetail = () => {
             <CommunitySidebar bookId={book.id} />
           </Suspense>
           {/* Sidebar ad on book detail */}
-          <AdBanner slot="auto" format="vertical" />
+          {bookAny.status !== "published_noindex" && <AdBanner slot="auto" format="vertical" />}
         </div>
       </div>
 
       {/* Ad between content and podcast */}
-      <div className="container py-4">
-        <AdBanner slot="auto" format="horizontal" className="w-full max-w-4xl mx-auto" />
-      </div>
+      {bookAny.status !== "published_noindex" && (
+        <div className="container py-4">
+          <AdBanner slot="auto" format="horizontal" className="w-full max-w-4xl mx-auto" />
+        </div>
+      )}
 
       {podcastOpen && assets?.audio_url && (
         <Suspense fallback={null}>
