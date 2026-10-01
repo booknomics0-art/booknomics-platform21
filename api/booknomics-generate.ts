@@ -104,7 +104,10 @@ export default async function handler(req: any, res: any) {
       return res.status(401).json({ error: "invalid_or_expired_proof" });
     }
 
-    const gatewayToken = process.env.AI_GATEWAY_API_KEY || process.env.VERCEL_OIDC_TOKEN;
+    const oidcHeader = Array.isArray(req.headers?.["x-vercel-oidc-token"])
+      ? req.headers["x-vercel-oidc-token"][0]
+      : req.headers?.["x-vercel-oidc-token"];
+    const gatewayToken = process.env.AI_GATEWAY_API_KEY || process.env.VERCEL_OIDC_TOKEN || oidcHeader;
     if (!gatewayToken) return res.status(500).json({ error: "ai_gateway_auth_missing" });
 
     const ai = await fetch("https://ai-gateway.vercel.sh/v1/chat/completions", {
