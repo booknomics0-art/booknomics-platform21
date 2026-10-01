@@ -527,7 +527,47 @@ const BookDetail = () => {
                 const labels = lang === "hi"
                   ? ["एक नज़र में", "विस्तृत सारांश", "मूल अवधारणाएँ", "गहरा विश्लेषण", "विचारों के साथ जीना"]
                   : ["The book at a glance", "Detailed summary", "The core concepts", "Deeper analysis", "Living with the ideas"];
-                const parts = [src.overview, src.deep_summary, src.key_ideas, src.deep_analysis, src.daily_application]
+                const rawAnalysis = (src.deep_analysis || "").trim();
+                const analysisSections = rawAnalysis
+                  ? rawAnalysis.split(/(?=^###\\s+)/m).map((s) => s.trim()).filter(Boolean)
+                  : [];
+                const splitAt = analysisSections.length > 1
+                  ? Math.max(1, Math.min(3, Math.ceil(analysisSections.length * 0.35)))
+                  : 0;
+                const derivedSummary = !src.deep_summary && rawAnalysis
+                  ? (analysisSections.length > 1
+                      ? analysisSections.slice(0, splitAt).join("\n\n")
+                      : rawAnalysis.split(/\n\n+/).slice(0, 4).join("\n\n"))
+                  : "";
+                const derivedAnalysis = !src.deep_summary && analysisSections.length > 1
+                  ? analysisSections.slice(splitAt).join("\n\n")
+                  : rawAnalysis;
+                const derivedIdeas = !src.key_ideas && analysisSections.length
+                  ? analysisSections.slice(0, 8).map((section) => {
+                      const heading = section.match(/^###\\s+(.+)$/m)?.[1]?.trim();
+                      const body = section.replace(/^###\\s+.+$/m, "").trim();
+                      const firstSentence = body.split(/(?<=[.!?।])\\s+/)[0]?.trim();
+                      return heading ? `- **${heading}**${firstSentence ? ` — ${firstSentence}` : ""}` : "";
+                    }).filter(Boolean).join("\n")
+                  : "";
+                const derivedApplication = !src.daily_application
+                  ? [
+                      `1. ${isHi ? "इस पुस्तक के एक मुख्य विचार को अपने शब्दों में लिखें।" : "Write one core idea from this book in your own words."}`,
+                      `2. ${isHi ? "ऊपर के किसी एक सेक्शन से एक ठोस उदाहरण चुनें।" : "Choose one concrete example from a section above."}`,
+                      `3. ${isHi ? "एक असहमति या सीमा नोट करें।" : "Note one disagreement, limitation, or boundary condition."}`,
+                      `4. ${isHi ? "आज के जीवन में एक छोटा प्रयोग तय करें।" : "Define one small real-world experiment for today."}`,
+                      `5. ${isHi ? "सप्ताह के अंत में देखें कि आपकी समझ बदली या नहीं।" : "Review at the end of the week whether your understanding changed."}`,
+                    ].join("\n")
+                  : "";
+
+                const chapterTexts = [
+                  src.overview,
+                  src.deep_summary || derivedSummary,
+                  src.key_ideas || derivedIdeas,
+                  src.deep_summary ? rawAnalysis : derivedAnalysis,
+                  src.daily_application || derivedApplication,
+                ];
+                const parts = chapterTexts
                   .map((t, i) => (t ? `## ${labels[i]}\n\n${t}` : ""))
                   .filter(Boolean);
                 const merged = linkifyMarkdown(parts.join("\n\n---\n\n"), linkTargets, 1);
