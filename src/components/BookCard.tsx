@@ -1,5 +1,4 @@
 import { Link } from "react-router-dom";
-import { Star } from "lucide-react";
 
 export interface BookCardData {
   id: string;
@@ -90,18 +89,10 @@ export const BookCard = ({ book, priority = false }: { book: BookCardData; prior
           <p className="hidden md:block text-xs text-muted-foreground mt-2 italic line-clamp-2">"{book.tagline}"</p>
         )}
         <div className="hidden md:flex items-center gap-3 mt-3 text-xs text-muted-foreground">
-          <span className="flex items-center gap-1">
-            <Star className="h-3 w-3 fill-primary text-primary" /> {book.rating ?? 4.5}
-          </span>
-          <span>·</span>
           <span>{book.reading_time ?? 12} min read</span>
         </div>
         <div className="flex md:hidden items-center gap-2 mt-1.5 text-[10px] text-muted-foreground">
           <span>{book.reading_time ?? 12} min</span>
-          <span>·</span>
-          <span className="flex items-center gap-0.5">
-            <Star className="h-2.5 w-2.5 fill-primary text-primary" /> {book.rating ?? 4.5}
-          </span>
         </div>
       </div>
     </div>
