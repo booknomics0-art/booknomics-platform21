@@ -316,8 +316,10 @@ const BookDetail = () => {
   const seoPath = `/books/${canonicalSlug}`;
   const canonical = `https://booknomics.com${seoPath}`;
   const ogImg = bookAny.og_image || book.cover_url || undefined;
-  const ratingAvg = reviewStats.count > 0 ? reviewStats.avg : (book.rating ?? null);
-  const ratingCount = reviewStats.count > 0 ? reviewStats.count : (book.rating ? 1 : 0);
+  // Only real reader reviews may produce AggregateRating structured data.
+  // Database display ratings are not treated as public review evidence.
+  const ratingAvg = reviewStats.count > 0 ? reviewStats.avg : null;
+  const ratingCount = reviewStats.count > 0 ? reviewStats.count : 0;
   const readMins = book.reading_time ?? 12;
   const absImage = book.cover_url
     ? (book.cover_url.startsWith("http") ? book.cover_url : `https://booknomics.com${book.cover_url.startsWith("/") ? "" : "/"}${book.cover_url}`)
@@ -400,6 +402,12 @@ const BookDetail = () => {
 
   return (
     <Layout>
+      {(bookAny.status === "published_noindex") && (
+        <Helmet>
+          <meta name="robots" content="noindex,follow" />
+          <meta name="googlebot" content="noindex,follow" />
+        </Helmet>
+      )}
       <SEO
         title={seoTitle}
         description={seoDesc}
@@ -452,7 +460,9 @@ const BookDetail = () => {
               {book.tagline && <p className="font-serif italic text-base md:text-2xl mt-4 md:mt-6 text-foreground/80">"{book.tagline}"</p>}
 
               <div className="flex flex-wrap items-center gap-5 mt-6 text-sm text-muted-foreground">
-                <span className="flex items-center gap-1.5"><Star className="h-4 w-4 fill-primary text-primary" />{book.rating}</span>
+                {reviewStats.count > 0 && (
+                  <span className="flex items-center gap-1.5"><Star className="h-4 w-4 fill-primary text-primary" />{reviewStats.avg} ({reviewStats.count})</span>
+                )}
                 <span className="flex items-center gap-1.5"><Clock className="h-4 w-4" />{book.reading_time} min read</span>
                 {book.year && <span className="flex items-center gap-1.5"><Calendar className="h-4 w-4" />{book.year}</span>}
               </div>
