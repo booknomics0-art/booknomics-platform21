@@ -27,8 +27,10 @@ async function fetchBooks() {
   const rows = [];
   for (let offset = 0; ; offset += 500) {
     const { data, error } = await db.from('books')
-      .select('id,slug,seo_slug,old_slugs,category,created_at,language,title,cover_url')
-      .eq('is_draft', false).order('id').range(offset, offset + 499);
+      .select('id,slug,seo_slug,old_slugs,category,created_at,language,title,cover_url,status')
+      .eq('is_draft', false)
+      .eq('status', 'published')
+      .order('id').range(offset, offset + 499);
     if (error) throw new Error(`Sitemap fetch failed: ${error.message}`);
     rows.push(...(data || []));
     if (!data || data.length < 500) return rows;
