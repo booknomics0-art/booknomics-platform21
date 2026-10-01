@@ -70,7 +70,7 @@ export const SEO = ({
       {hrefEn && <link rel="alternate" hrefLang="en" href={hrefEn} />}
       {hrefHi && <link rel="alternate" hrefLang="hi" href={hrefHi} />}
       <link rel="alternate" hrefLang="x-default" href={hrefDefault} />
-      {noindex && <meta name="robots" content="noindex, nofollow" />}
+      {noindex && <meta name="robots" content="noindex,follow" />}
       <meta property="og:type" content={ogType} />
       <meta property="og:title" content={title} />
       <meta property="og:description" content={description} />
