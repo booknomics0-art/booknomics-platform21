@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import { Search } from "lucide-react";
 import { Layout } from "@/components/Layout";
@@ -11,14 +11,16 @@ import { supabase } from "@/integrations/supabase/client";
 const Hindi = () => {
   const [params, setParams] = useSearchParams();
   const [books, setBooks] = useState<BookCardData[]>([]);
+  const [categories, setCategories] = useState<string[]>(["सभी"]);
+  const [totalCount, setTotalCount] = useState(0);
   const [loading, setLoading] = useState(true);
   const [loadError, setLoadError] = useState<string | null>(null);
   const [visibleCount, setVisibleCount] = useState(48);
   const [query, setQuery] = useState(params.get("q") ?? "");
+  const [debouncedQuery, setDebouncedQuery] = useState(query);
   const category = params.get("category") ?? "सभी";
 
   useEffect(() => {
-    // Inject Devanagari font
     if (!document.getElementById("noto-hindi-font")) {
       const link = document.createElement("link");
       link.id = "noto-hindi-font";
@@ -26,45 +28,79 @@ const Hindi = () => {
       link.href = "https://fonts.googleapis.com/css2?family=Noto+Sans+Devanagari:wght@400;500;600;700&family=Tiro+Devanagari+Hindi&display=swap";
       document.head.appendChild(link);
     }
-    setLoading(true);
-    setLoadError(null);
-    supabase.from("books")
-      .select("id,slug,title,author,category,cover_color,cover_url,tagline,rating,reading_time")
-      .eq("language", "hi")
-      .eq("is_draft", false)
-      .order("title")
-      .then(({ data, error }) => {
-        if (error) {
-          setBooks([]);
-          setLoadError(error.message);
-        } else {
-          setBooks(data ?? []);
-        }
-      })
-      .finally(() => setLoading(false));
+
+    let cancelled = false;
+    (async () => {
+      const values = new Set<string>();
+      const batchSize = 500;
+      for (let from = 0; ; from += batchSize) {
+        const { data, error } = await supabase
+          .from("books")
+          .select("category")
+          .eq("language", "hi")
+          .eq("is_draft", false)
+          .order("category")
+          .range(from, from + batchSize - 1);
+        if (error || cancelled) return;
+        const batch = data ?? [];
+        batch.forEach((row: any) => { if (row.category) values.add(row.category); });
+        if (batch.length < batchSize) break;
+      }
+      if (!cancelled) setCategories(["सभी", ...Array.from(values).sort()]);
+    })();
+
+    return () => { cancelled = true; };
   }, []);
 
-  const categories = useMemo(
-    () => ["सभी", ...Array.from(new Set(books.map(b => b.category))).sort()],
-    [books]
-  );
-
-  const filtered = books.filter(b => {
-    const matchCat = category === "सभी" || b.category === category;
-    const q = query.toLowerCase();
-    const matchQ = !q || b.title.toLowerCase().includes(q) || b.author.toLowerCase().includes(q);
-    return matchCat && matchQ;
-  });
+  useEffect(() => {
+    const timer = setTimeout(() => setDebouncedQuery(query), 250);
+    return () => clearTimeout(timer);
+  }, [query]);
 
   useEffect(() => {
     setVisibleCount(48);
-  }, [query, category]);
+  }, [debouncedQuery, category]);
 
-  const visibleBooks = filtered.slice(0, visibleCount);
+  useEffect(() => {
+    let cancelled = false;
+    setLoading(true);
+    setLoadError(null);
+
+    (async () => {
+      let request = supabase
+        .from("books")
+        .select("id,slug,title,author,category,cover_color,cover_url,tagline,rating,reading_time", { count: "exact" })
+        .eq("language", "hi")
+        .eq("is_draft", false);
+
+      if (category !== "सभी") request = request.eq("category", category);
+
+      const q = debouncedQuery.trim().replace(/[,%()]/g, " ").slice(0, 80);
+      if (q) request = request.or(`title.ilike.%${q}%,author.ilike.%${q}%`);
+
+      const { data, error, count } = await request
+        .order("title")
+        .range(0, visibleCount - 1);
+
+      if (cancelled) return;
+      if (error) {
+        setBooks([]);
+        setTotalCount(0);
+        setLoadError(error.message);
+      } else {
+        setBooks(data ?? []);
+        setTotalCount(count ?? 0);
+      }
+      setLoading(false);
+    })();
+
+    return () => { cancelled = true; };
+  }, [category, debouncedQuery, visibleCount]);
 
   const setCategory = (c: string) => {
     const next = new URLSearchParams(params);
     if (c === "सभी") next.delete("category"); else next.set("category", c);
+    next.delete("page");
     setParams(next);
   };
 
@@ -75,7 +111,7 @@ const Hindi = () => {
     url: "https://booknomics.com/hindi",
     mainEntity: {
       "@type": "ItemList",
-      itemListElement: filtered.slice(0, 30).map((b, i) => ({
+      itemListElement: books.slice(0, 30).map((b, i) => ({
         "@type": "ListItem",
         position: i + 1,
         url: `https://booknomics.com/books/${b.slug}`,
@@ -103,7 +139,7 @@ const Hindi = () => {
               ज्ञान की हिंदी यात्रा
             </h1>
             <p className="text-muted-foreground max-w-xl mb-8 text-lg leading-relaxed">
-              बीस चुनी हुई कालजयी पुस्तकों के गहन सारांश — साहित्य, अध्यात्म, व्यवसाय, विज्ञान और दर्शन से।
+              हिंदी में उपयोगी विचार, गहन सारांश और एक्शन प्लान — साहित्य, अध्यात्म, व्यवसाय, विज्ञान और दर्शन से।
             </p>
             <div className="relative max-w-xl">
               <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
@@ -133,7 +169,7 @@ const Hindi = () => {
           </div>
 
           <div className="text-sm text-muted-foreground mb-6">
-            {filtered.length} {filtered.length === 1 ? "पुस्तक" : "पुस्तकें"}
+            {totalCount} {totalCount === 1 ? "पुस्तक" : "पुस्तकें"}
           </div>
 
           {loading ? (
@@ -147,14 +183,14 @@ const Hindi = () => {
           ) : (
             <>
               <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-                {visibleBooks.map((b, i) => <BookCard key={b.id} book={b} priority={i < 4} />)}
+                {books.map((b, i) => <BookCard key={b.id} book={b} priority={i < 4} />)}
               </div>
 
-              {filtered.length === 0 && (
+              {totalCount === 0 && (
                 <div className="text-center py-20 text-muted-foreground">कोई पुस्तक नहीं मिली।</div>
               )}
 
-              {visibleCount < filtered.length && (
+              {books.length < totalCount && (
                 <div className="text-center mt-8">
                   <Button variant="outline" className="rounded-full" onClick={() => setVisibleCount((n) => n + 48)}>
                     और पुस्तकें दिखाएँ
