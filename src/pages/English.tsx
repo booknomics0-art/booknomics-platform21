@@ -52,7 +52,7 @@ const English = () => {
   const [books, setBooks] = useState<BookCardData[]>([]);
 
   useEffect(() => {
-    const fields = "id,slug,title,author,category,cover_color,cover_url,tagline,rating,reading_time";
+    const fields = "id,slug,title,author,category,cover_color,cover_url,tagline,rating,reading_time" as const;
     Promise.all([
       supabase
         .from("books")
