@@ -541,9 +541,21 @@ const BookDetail = () => {
             </div>
             <div>
               <div className="text-[10px] md:text-xs tracking-[0.2em] uppercase text-primary font-semibold mb-2 md:mb-3">{book.category}</div>
-              <h1 className="font-serif text-2xl md:text-6xl font-bold tracking-tight leading-[1.1]">{book.title}</h1>
+              <h1
+                className={`font-serif text-2xl md:text-6xl font-bold leading-[1.1] ${isHi ? "tracking-normal" : "tracking-tight"}`}
+                style={isHi ? { fontFamily: "'Noto Sans Devanagari', system-ui, sans-serif" } : undefined}
+              >
+                {book.title}
+              </h1>
               <p className="text-base md:text-xl text-muted-foreground mt-2 md:mt-3">{isHi ? "लेखक: " : "by "}{book.author}</p>
-              {book.tagline && <p className="font-serif italic text-base md:text-2xl mt-4 md:mt-6 text-foreground/80">"{book.tagline}"</p>}
+              {book.tagline && (
+                <p
+                  className={`font-serif text-base md:text-2xl mt-4 md:mt-6 text-foreground/80 ${isHi ? "not-italic" : "italic"}`}
+                  style={isHi ? { fontFamily: "'Noto Serif Devanagari', serif" } : undefined}
+                >
+                  "{book.tagline}"
+                </p>
+              )}
 
               <div className="flex flex-wrap items-center gap-5 mt-6 text-sm text-muted-foreground">
                 {reviewStats.count > 0 && (
