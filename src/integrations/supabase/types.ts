@@ -453,6 +453,7 @@ export type Database = {
       books: {
         Row: {
           action_system: string | null
+          alternate_book_id: string | null
           affiliate_link: string | null
           author: string
           category: string
@@ -486,6 +487,7 @@ export type Database = {
         }
         Insert: {
           action_system?: string | null
+          alternate_book_id?: string | null
           affiliate_link?: string | null
           author: string
           category: string
@@ -519,6 +521,7 @@ export type Database = {
         }
         Update: {
           action_system?: string | null
+          alternate_book_id?: string | null
           affiliate_link?: string | null
           author?: string
           category?: string
@@ -550,7 +553,15 @@ export type Database = {
           title?: string
           year?: number | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "books_alternate_book_id_fkey"
+            columns: ["alternate_book_id"]
+            isOneToOne: false
+            referencedRelation: "books"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       comments: {
         Row: {
@@ -1066,6 +1077,45 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      gsc_page_metrics: {
+        Row: {
+          captured_at: string
+          clicks: number
+          ctr: number
+          end_date: string
+          id: string
+          impressions: number
+          position: number
+          site_url: string
+          start_date: string
+          url: string
+        }
+        Insert: {
+          captured_at?: string
+          clicks?: number
+          ctr?: number
+          end_date: string
+          id?: string
+          impressions?: number
+          position?: number
+          site_url: string
+          start_date: string
+          url: string
+        }
+        Update: {
+          captured_at?: string
+          clicks?: number
+          ctr?: number
+          end_date?: string
+          id?: string
+          impressions?: number
+          position?: number
+          site_url?: string
+          start_date?: string
+          url?: string
+        }
+        Relationships: []
       }
       seo_audits: {
         Row: {
