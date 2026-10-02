@@ -66,6 +66,37 @@ const normalizeLang = (l: string) => {
   return "en";
 };
 
+const hasLowSignalHindiTemplate = (sections: Record<string, string>) => {
+  const text = [
+    sections.SUMMARY,
+    sections.KEY_INSIGHTS,
+    sections.APPLY_TODAY,
+    sections.AUDIO_SCRIPT,
+  ].filter(Boolean).join("\n").toLowerCase();
+
+  const knownMarkers = [
+    "particular way of seeing",
+    "की जाँच करते समय claim, example और tone",
+    "दूसरा प्रश्न audience का है",
+    "तीसरा स्तर modern application का है",
+    "hidden assumption",
+  ];
+  const markerHits = knownMarkers.filter((marker) => text.includes(marker)).length;
+
+  const genericApplyMarkers = [
+    "आत्म-चिंतन का महत्व",
+    "रिश्तों की कीमत",
+    "सामाजिक जिम्मेदारी",
+    "नैतिक मूल्यों का पालन",
+    "परिवर्तन को स्वीकार करना",
+  ];
+  const genericApplyHits = genericApplyMarkers.filter((marker) => text.includes(marker)).length;
+
+  const repeatedSeeing = (text.match(/यह दिखाता है कि/g) || []).length;
+
+  return markerHits >= 2 || genericApplyHits >= 4 || repeatedSeeing >= 6;
+};
+
 const SECTION_TAGS = [
   "HOOK", "SUMMARY", "KEY_INSIGHTS", "APPLY_TODAY", "REFLECTION",
   "ACTION_SYSTEM", "AUDIO_SCRIPT",
@@ -130,6 +161,14 @@ export function parseBulkBooks(raw: string): { books: ParsedBook[]; errors: stri
       continue;
     }
 
+    const language = normalizeLang(header.language || "English");
+    if (language === "hi" && hasLowSignalHindiTemplate(sections)) {
+      errors.push(
+        `Book #${idx} (${header.title}): Hindi content looks like repeated/generic template text. Rewrite the affected sections with book-specific analysis before importing.`,
+      );
+      continue;
+    }
+
     const audio_url = sections.AUDIO_URL?.trim() || null;
     const mindmap_url = sections.MINDMAP_URL?.trim() || null;
     const quiz_data = safeJson<any[]>(sections.QUIZ_JSON);
@@ -151,7 +190,7 @@ export function parseBulkBooks(raw: string): { books: ParsedBook[]; errors: stri
     books.push({
       title: header.title,
       author: header.author,
-      language: normalizeLang(header.language || "English"),
+      language,
       category: header.category || "General",
       slug: slugify(header.title) + "-" + Math.random().toString(36).slice(2, 6),
       tagline: sections.HOOK || null,
