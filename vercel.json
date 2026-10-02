@@ -29,7 +29,7 @@
       ]
     },
     {
-      "source": "/((?!assets/).*)",
+      "source": "/index.html",
       "headers": [
         {
           "key": "Cache-Control",
@@ -60,7 +60,7 @@
     },
     {
       "source": "/books/aplak-jaishankar-prasad-saransh",
-      "destination": "/books/अपलक-जयशंकर-प्रसाद-saransh",
+      "destination": "/books/%E0%A4%85%E0%A4%AA%E0%A4%B2%E0%A4%95-%E0%A4%9C%E0%A4%AF%E0%A4%B6%E0%A4%82%E0%A4%95%E0%A4%B0-%E0%A4%AA%E0%A5%8D%E0%A4%B0%E0%A4%B8%E0%A4%BE%E0%A4%A6-saransh",
       "permanent": true
     },
     {
@@ -155,12 +155,12 @@
     },
     {
       "source": "/books/raktakarabi-rabindranath-thakur-saransh",
-      "destination": "/books/रक्तकरबी",
+      "destination": "/books/%E0%A4%B0%E0%A4%95%E0%A5%8D%E0%A4%A4%E0%A4%95%E0%A4%B0%E0%A4%AC%E0%A5%80",
       "permanent": true
     },
     {
       "source": "/books/rashmirathi-dinkar-saransh",
-      "destination": "/books/रश्मिरथी-रामधारी-सिंह-दिनकर-saransh",
+      "destination": "/books/%E0%A4%B0%E0%A4%B6%E0%A5%8D%E0%A4%AE%E0%A4%BF%E0%A4%B0%E0%A4%A5%E0%A5%80-%E0%A4%B0%E0%A4%BE%E0%A4%AE%E0%A4%A7%E0%A4%BE%E0%A4%B0%E0%A5%80-%E0%A4%B8%E0%A4%BF%E0%A4%82%E0%A4%B9-%E0%A4%A6%E0%A4%BF%E0%A4%A8%E0%A4%95%E0%A4%B0-saransh",
       "permanent": true
     },
     {
@@ -170,12 +170,12 @@
     },
     {
       "source": "/books/somdev-chatursen-saransh",
-      "destination": "/books/सोमदेव-आचार्य-चतुरसेन-शास्त्री-saransh",
+      "destination": "/books/%E0%A4%B8%E0%A5%8B%E0%A4%AE%E0%A4%A6%E0%A5%87%E0%A4%B5-%E0%A4%86%E0%A4%9A%E0%A4%BE%E0%A4%B0%E0%A5%8D%E0%A4%AF-%E0%A4%9A%E0%A4%A4%E0%A5%81%E0%A4%B0%E0%A4%B8%E0%A5%87%E0%A4%A8-%E0%A4%B6%E0%A4%BE%E0%A4%B8%E0%A5%8D%E0%A4%A4%E0%A5%8D%E0%A4%B0%E0%A5%80-saransh",
       "permanent": true
     },
     {
       "source": "/books/teeshri-kasam-renu-saransh",
-      "destination": "/books/तीसरी-कसम-फणीश्वर-नाथ-रेणु-saransh",
+      "destination": "/books/%E0%A4%A4%E0%A5%80%E0%A4%B8%E0%A4%B0%E0%A5%80-%E0%A4%95%E0%A4%B8%E0%A4%AE-%E0%A4%AB%E0%A4%A3%E0%A5%80%E0%A4%B6%E0%A5%8D%E0%A4%B5%E0%A4%B0-%E0%A4%A8%E0%A4%BE%E0%A4%A5-%E0%A4%B0%E0%A5%87%E0%A4%A3%E0%A5%81-saransh",
       "permanent": true
     },
     {
@@ -200,12 +200,12 @@
     },
     {
       "source": "/books/urvashi-dinkar-saransh",
-      "destination": "/books/उर्वशी-रामधारी-सिंह-दिनकर-saransh",
+      "destination": "/books/%E0%A4%89%E0%A4%B0%E0%A5%8D%E0%A4%B5%E0%A4%B6%E0%A5%80-%E0%A4%B0%E0%A4%BE%E0%A4%AE%E0%A4%A7%E0%A4%BE%E0%A4%B0%E0%A5%80-%E0%A4%B8%E0%A4%BF%E0%A4%82%E0%A4%B9-%E0%A4%A6%E0%A4%BF%E0%A4%A8%E0%A4%95%E0%A4%B0-saransh",
       "permanent": true
     },
     {
       "source": "/books/vayam-raksham-rahul-sankrityayan-saransh",
-      "destination": "/books/वयं-रक्षामः-राहुल-सांकृत्यायन-saransh",
+      "destination": "/books/%E0%A4%B5%E0%A4%AF%E0%A4%82-%E0%A4%B0%E0%A4%95%E0%A5%8D%E0%A4%B7%E0%A4%BE%E0%A4%AE%E0%A4%83-%E0%A4%B0%E0%A4%BE%E0%A4%B9%E0%A5%81%E0%A4%B2-%E0%A4%B8%E0%A4%BE%E0%A4%82%E0%A4%95%E0%A5%83%E0%A4%A4%E0%A5%8D%E0%A4%AF%E0%A4%BE%E0%A4%AF%E0%A4%A8-saransh",
       "permanent": true
     },
     {
@@ -214,127 +214,127 @@
       "permanent": true
     },
     {
-      "source": "/books/आधे-अधूरे-मोहन-राकेश-saransh",
+      "source": "/books/%E0%A4%86%E0%A4%A7%E0%A5%87-%E0%A4%85%E0%A4%A7%E0%A5%82%E0%A4%B0%E0%A5%87-%E0%A4%AE%E0%A5%8B%E0%A4%B9%E0%A4%A8-%E0%A4%B0%E0%A4%BE%E0%A4%95%E0%A5%87%E0%A4%B6-saransh",
       "destination": "/books/adhe-adhure-mohan-rakesh-saransh",
       "permanent": true
     },
     {
-      "source": "/books/कर्मभूमि-मुंशी-प्रेमचंद-saransh",
+      "source": "/books/%E0%A4%95%E0%A4%B0%E0%A5%8D%E0%A4%AE%E0%A4%AD%E0%A5%82%E0%A4%AE%E0%A4%BF-%E0%A4%AE%E0%A5%81%E0%A4%82%E0%A4%B6%E0%A5%80-%E0%A4%AA%E0%A5%8D%E0%A4%B0%E0%A5%87%E0%A4%AE%E0%A4%9A%E0%A4%82%E0%A4%A6-saransh",
       "destination": "/books/karmabhoomi-premchand-saransh",
       "permanent": true
     },
     {
-      "source": "/books/कामायनी-जयशंकर-प्रसाद-saransh",
+      "source": "/books/%E0%A4%95%E0%A4%BE%E0%A4%AE%E0%A4%BE%E0%A4%AF%E0%A4%A8%E0%A5%80-%E0%A4%9C%E0%A4%AF%E0%A4%B6%E0%A4%82%E0%A4%95%E0%A4%B0-%E0%A4%AA%E0%A5%8D%E0%A4%B0%E0%A4%B8%E0%A4%BE%E0%A4%A6-saransh",
       "destination": "/books/kamayani-jaishankar-prasad-saransh",
       "permanent": true
     },
     {
-      "source": "/books/कायाकल्प-मुंशी-प्रेमचंद-saransh",
+      "source": "/books/%E0%A4%95%E0%A4%BE%E0%A4%AF%E0%A4%BE%E0%A4%95%E0%A4%B2%E0%A5%8D%E0%A4%AA-%E0%A4%AE%E0%A5%81%E0%A4%82%E0%A4%B6%E0%A5%80-%E0%A4%AA%E0%A5%8D%E0%A4%B0%E0%A5%87%E0%A4%AE%E0%A4%9A%E0%A4%82%E0%A4%A6-saransh",
       "destination": "/books/kayakalp-premchand-saransh",
       "permanent": true
     },
     {
-      "source": "/books/कितने-चौराहे-कमलेश्वर-saransh",
+      "source": "/books/%E0%A4%95%E0%A4%BF%E0%A4%A4%E0%A4%A8%E0%A5%87-%E0%A4%9A%E0%A5%8C%E0%A4%B0%E0%A4%BE%E0%A4%B9%E0%A5%87-%E0%A4%95%E0%A4%AE%E0%A4%B2%E0%A5%87%E0%A4%B6%E0%A5%8D%E0%A4%B5%E0%A4%B0-saransh",
       "destination": "/books/kitne-chaurahe-phanishwarnath-renu-saransh",
       "permanent": true
     },
     {
-      "source": "/books/गबन-मुंशी-प्रेमचंद-saransh",
+      "source": "/books/%E0%A4%97%E0%A4%AC%E0%A4%A8-%E0%A4%AE%E0%A5%81%E0%A4%82%E0%A4%B6%E0%A5%80-%E0%A4%AA%E0%A5%8D%E0%A4%B0%E0%A5%87%E0%A4%AE%E0%A4%9A%E0%A4%82%E0%A4%A6-saransh",
       "destination": "/books/gaban-munshi-premchand-saransh",
       "permanent": true
     },
     {
-      "source": "/books/गुनाहों-का-देवता-धर्मवीर-भारती-saransh",
+      "source": "/books/%E0%A4%97%E0%A5%81%E0%A4%A8%E0%A4%BE%E0%A4%B9%E0%A5%8B%E0%A4%82-%E0%A4%95%E0%A4%BE-%E0%A4%A6%E0%A5%87%E0%A4%B5%E0%A4%A4%E0%A4%BE-%E0%A4%A7%E0%A4%B0%E0%A5%8D%E0%A4%AE%E0%A4%B5%E0%A5%80%E0%A4%B0-%E0%A4%AD%E0%A4%BE%E0%A4%B0%E0%A4%A4%E0%A5%80-saransh",
       "destination": "/books/gunahon-ka-devta-dharamvir-bharti-saransh",
       "permanent": true
     },
     {
-      "source": "/books/गोदान-मुंशी-प्रेमचंद-saransh",
+      "source": "/books/%E0%A4%97%E0%A5%8B%E0%A4%A6%E0%A4%BE%E0%A4%A8-%E0%A4%AE%E0%A5%81%E0%A4%82%E0%A4%B6%E0%A5%80-%E0%A4%AA%E0%A5%8D%E0%A4%B0%E0%A5%87%E0%A4%AE%E0%A4%9A%E0%A4%82%E0%A4%A6-saransh",
       "destination": "/books/godan-munshi-premchand-saransh",
       "permanent": true
     },
     {
-      "source": "/books/चरित्रहीन-शरतचंद्र-चट्टोपाध्याय-saransh",
+      "source": "/books/%E0%A4%9A%E0%A4%B0%E0%A4%BF%E0%A4%A4%E0%A5%8D%E0%A4%B0%E0%A4%B9%E0%A5%80%E0%A4%A8-%E0%A4%B6%E0%A4%B0%E0%A4%A4%E0%A4%9A%E0%A4%82%E0%A4%A6%E0%A5%8D%E0%A4%B0-%E0%A4%9A%E0%A4%9F%E0%A5%8D%E0%A4%9F%E0%A5%8B%E0%A4%AA%E0%A4%BE%E0%A4%A7%E0%A5%8D%E0%A4%AF%E0%A4%BE%E0%A4%AF-saransh",
       "destination": "/books/charitraheen-sharatchandra-saransh",
       "permanent": true
     },
     {
-      "source": "/books/चित्रलेखा-भगवती-चरण-वर्मा-saransh",
+      "source": "/books/%E0%A4%9A%E0%A4%BF%E0%A4%A4%E0%A5%8D%E0%A4%B0%E0%A4%B2%E0%A5%87%E0%A4%96%E0%A4%BE-%E0%A4%AD%E0%A4%97%E0%A4%B5%E0%A4%A4%E0%A5%80-%E0%A4%9A%E0%A4%B0%E0%A4%A3-%E0%A4%B5%E0%A4%B0%E0%A5%8D%E0%A4%AE%E0%A4%BE-saransh",
       "destination": "/books/chitralekha-bhagvati-charan-verma-saransh",
       "permanent": true
     },
     {
-      "source": "/books/तमस-भीष्म-साहनी-saransh",
+      "source": "/books/%E0%A4%A4%E0%A4%AE%E0%A4%B8-%E0%A4%AD%E0%A5%80%E0%A4%B7%E0%A5%8D%E0%A4%AE-%E0%A4%B8%E0%A4%BE%E0%A4%B9%E0%A4%A8%E0%A5%80-saransh",
       "destination": "/books/tamas-bhisham-sahni-saransh",
       "permanent": true
     },
     {
-      "source": "/books/देवदास-शरतचंद्र-चट्टोपाध्याय-saransh",
+      "source": "/books/%E0%A4%A6%E0%A5%87%E0%A4%B5%E0%A4%A6%E0%A4%BE%E0%A4%B8-%E0%A4%B6%E0%A4%B0%E0%A4%A4%E0%A4%9A%E0%A4%82%E0%A4%A6%E0%A5%8D%E0%A4%B0-%E0%A4%9A%E0%A4%9F%E0%A5%8D%E0%A4%9F%E0%A5%8B%E0%A4%AA%E0%A4%BE%E0%A4%A7%E0%A5%8D%E0%A4%AF%E0%A4%BE%E0%A4%AF-saransh",
       "destination": "/books/devdas-sharatchandra-saransh",
       "permanent": true
     },
     {
-      "source": "/books/नदी-के-द्वीप-अज्ञेय-saransh",
+      "source": "/books/%E0%A4%A8%E0%A4%A6%E0%A5%80-%E0%A4%95%E0%A5%87-%E0%A4%A6%E0%A5%8D%E0%A4%B5%E0%A5%80%E0%A4%AA-%E0%A4%85%E0%A4%9C%E0%A5%8D%E0%A4%9E%E0%A5%87%E0%A4%AF-saransh",
       "destination": "/books/nadi-ke-dweep-agyeya-saransh",
       "permanent": true
     },
     {
-      "source": "/books/निर्मला-मुंशी-प्रेमचंद-saransh",
+      "source": "/books/%E0%A4%A8%E0%A4%BF%E0%A4%B0%E0%A5%8D%E0%A4%AE%E0%A4%B2%E0%A4%BE-%E0%A4%AE%E0%A5%81%E0%A4%82%E0%A4%B6%E0%A5%80-%E0%A4%AA%E0%A5%8D%E0%A4%B0%E0%A5%87%E0%A4%AE%E0%A4%9A%E0%A4%82%E0%A4%A6-saransh",
       "destination": "/books/nirmala-munshi-premchand-saransh",
       "permanent": true
     },
     {
-      "source": "/books/परिणीता-शरतचंद्र-चट्टोपाध्याय-saransh",
+      "source": "/books/%E0%A4%AA%E0%A4%B0%E0%A4%BF%E0%A4%A3%E0%A5%80%E0%A4%A4%E0%A4%BE-%E0%A4%B6%E0%A4%B0%E0%A4%A4%E0%A4%9A%E0%A4%82%E0%A4%A6%E0%A5%8D%E0%A4%B0-%E0%A4%9A%E0%A4%9F%E0%A5%8D%E0%A4%9F%E0%A5%8B%E0%A4%AA%E0%A4%BE%E0%A4%A7%E0%A5%8D%E0%A4%AF%E0%A4%BE%E0%A4%AF-saransh",
       "destination": "/books/parineeta-sharatchandra-saransh",
       "permanent": true
     },
     {
-      "source": "/books/मधुशाला-हरिवंश-राय-बच्चन-saransh",
+      "source": "/books/%E0%A4%AE%E0%A4%A7%E0%A5%81%E0%A4%B6%E0%A4%BE%E0%A4%B2%E0%A4%BE-%E0%A4%B9%E0%A4%B0%E0%A4%BF%E0%A4%B5%E0%A4%82%E0%A4%B6-%E0%A4%B0%E0%A4%BE%E0%A4%AF-%E0%A4%AC%E0%A4%9A%E0%A5%8D%E0%A4%9A%E0%A4%A8-saransh",
       "destination": "/books/madhushala-harivansh-rai-bachchan-saransh",
       "permanent": true
     },
     {
-      "source": "/books/मैला-आँचल-फणीश्वर-नाथ-रेणु-saransh",
+      "source": "/books/%E0%A4%AE%E0%A5%88%E0%A4%B2%E0%A4%BE-%E0%A4%86%E0%A4%81%E0%A4%9A%E0%A4%B2-%E0%A4%AB%E0%A4%A3%E0%A5%80%E0%A4%B6%E0%A5%8D%E0%A4%B5%E0%A4%B0-%E0%A4%A8%E0%A4%BE%E0%A4%A5-%E0%A4%B0%E0%A5%87%E0%A4%A3%E0%A5%81-saransh",
       "destination": "/books/maila-aanchal-phanishwar-nath-renu-saransh",
       "permanent": true
     },
     {
-      "source": "/books/यामा-महादेवी-वर्मा-saransh",
+      "source": "/books/%E0%A4%AF%E0%A4%BE%E0%A4%AE%E0%A4%BE-%E0%A4%AE%E0%A4%B9%E0%A4%BE%E0%A4%A6%E0%A5%87%E0%A4%B5%E0%A5%80-%E0%A4%B5%E0%A4%B0%E0%A5%8D%E0%A4%AE%E0%A4%BE-saransh",
       "destination": "/books/yama-mahadevi-varma-saransh",
       "permanent": true
     },
     {
-      "source": "/books/रक्त-करबी-रवींद्रनाथ-ठाकुर-saransh",
-      "destination": "/books/रक्तकरबी",
+      "source": "/books/%E0%A4%B0%E0%A4%95%E0%A5%8D%E0%A4%A4-%E0%A4%95%E0%A4%B0%E0%A4%AC%E0%A5%80-%E0%A4%B0%E0%A4%B5%E0%A5%80%E0%A4%82%E0%A4%A6%E0%A5%8D%E0%A4%B0%E0%A4%A8%E0%A4%BE%E0%A4%A5-%E0%A4%A0%E0%A4%BE%E0%A4%95%E0%A5%81%E0%A4%B0-saransh",
+      "destination": "/books/%E0%A4%B0%E0%A4%95%E0%A5%8D%E0%A4%A4%E0%A4%95%E0%A4%B0%E0%A4%AC%E0%A5%80",
       "permanent": true
     },
     {
-      "source": "/books/रंगभूमि-मुंशी-प्रेमचंद-saransh",
+      "source": "/books/%E0%A4%B0%E0%A4%82%E0%A4%97%E0%A4%AD%E0%A5%82%E0%A4%AE%E0%A4%BF-%E0%A4%AE%E0%A5%81%E0%A4%82%E0%A4%B6%E0%A5%80-%E0%A4%AA%E0%A5%8D%E0%A4%B0%E0%A5%87%E0%A4%AE%E0%A4%9A%E0%A4%82%E0%A4%A6-saransh",
       "destination": "/books/rangbhoomi-premchand-saransh",
       "permanent": true
     },
     {
-      "source": "/books/राग-दरबारी-श्रीलाल-शुक्ल-saransh",
+      "source": "/books/%E0%A4%B0%E0%A4%BE%E0%A4%97-%E0%A4%A6%E0%A4%B0%E0%A4%AC%E0%A4%BE%E0%A4%B0%E0%A5%80-%E0%A4%B6%E0%A5%8D%E0%A4%B0%E0%A5%80%E0%A4%B2%E0%A4%BE%E0%A4%B2-%E0%A4%B6%E0%A5%81%E0%A4%95%E0%A5%8D%E0%A4%B2-saransh",
       "destination": "/books/rag-darbari-shrilal-shukla-saransh",
       "permanent": true
     },
     {
-      "source": "/books/लहरों-के-राजहंस-मोहन-राकेश-saransh",
+      "source": "/books/%E0%A4%B2%E0%A4%B9%E0%A4%B0%E0%A5%8B%E0%A4%82-%E0%A4%95%E0%A5%87-%E0%A4%B0%E0%A4%BE%E0%A4%9C%E0%A4%B9%E0%A4%82%E0%A4%B8-%E0%A4%AE%E0%A5%8B%E0%A4%B9%E0%A4%A8-%E0%A4%B0%E0%A4%BE%E0%A4%95%E0%A5%87%E0%A4%B6-saransh",
       "destination": "/books/lehron-ke-rajhans-mohan-rakesh-saransh",
       "permanent": true
     },
     {
-      "source": "/books/वैशाली-की-नगरवधू-आचार्य-चतुरसेन-शास्त्री-saransh",
+      "source": "/books/%E0%A4%B5%E0%A5%88%E0%A4%B6%E0%A4%BE%E0%A4%B2%E0%A5%80-%E0%A4%95%E0%A5%80-%E0%A4%A8%E0%A4%97%E0%A4%B0%E0%A4%B5%E0%A4%A7%E0%A5%82-%E0%A4%86%E0%A4%9A%E0%A4%BE%E0%A4%B0%E0%A5%8D%E0%A4%AF-%E0%A4%9A%E0%A4%A4%E0%A5%81%E0%A4%B0%E0%A4%B8%E0%A5%87%E0%A4%A8-%E0%A4%B6%E0%A4%BE%E0%A4%B8%E0%A5%8D%E0%A4%A4%E0%A5%8D%E0%A4%B0%E0%A5%80-saransh",
       "destination": "/books/vaishali-ki-nagarvadhu-chatursen-saransh",
       "permanent": true
     },
     {
-      "source": "/books/शेखर:-एक-जीवनी-अज्ञेय-saransh",
+      "source": "/books/%E0%A4%B6%E0%A5%87%E0%A4%96%E0%A4%B0%3A-%E0%A4%8F%E0%A4%95-%E0%A4%9C%E0%A5%80%E0%A4%B5%E0%A4%A8%E0%A5%80-%E0%A4%85%E0%A4%9C%E0%A5%8D%E0%A4%9E%E0%A5%87%E0%A4%AF-saransh",
       "destination": "/books/shekhar-ek-jivani-agyeya-saransh",
       "permanent": true
     },
     {
-      "source": "/books/सेवासदन-मुंशी-प्रेमचंद-saransh",
+      "source": "/books/%E0%A4%B8%E0%A5%87%E0%A4%B5%E0%A4%BE%E0%A4%B8%E0%A4%A6%E0%A4%A8-%E0%A4%AE%E0%A5%81%E0%A4%82%E0%A4%B6%E0%A5%80-%E0%A4%AA%E0%A5%8D%E0%A4%B0%E0%A5%87%E0%A4%AE%E0%A4%9A%E0%A4%82%E0%A4%A6-saransh",
       "destination": "/books/sevasadan-premchand-saransh",
       "permanent": true
     }
