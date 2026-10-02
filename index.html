@@ -3,7 +3,7 @@
   <head>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link rel="preconnect" href="https://aszjrlarrutzyripxacw.supabase.co" crossorigin />
+    <link rel="preconnect" href="%VITE_SUPABASE_URL%" crossorigin />
     <link rel="dns-prefetch" href="https://www.clarity.ms" />
     <link rel="dns-prefetch" href="https://www.googletagmanager.com" />
     <link rel="dns-prefetch" href="https://pagead2.googlesyndication.com" />
@@ -53,14 +53,6 @@
         s.src = 'https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3415243304589225';
         document.head.appendChild(s);
       }
-      function loadAdsterra(){
-        if (window.__IS_BOT__ || window.__adsterraLoaded) return; window.__adsterraLoaded = true;
-        // Social Bar — goes at the end of <body>. (Popunder removed to stay safe with AdSense policy.)
-        var sb = document.createElement('script');
-        sb.async = true;
-        sb.src = 'https://pl30862552.effectivecpmnetwork.com/99/75/7e/99757e95ae0ce1628a1772d662601e7a.js';
-        document.body.appendChild(sb);
-      }
       var _tpFired = false;
       function _tpTrigger(){ if(_tpFired) return; _tpFired = true; loadGA(); loadClarity(); loadAds(); }
       // Consent gate: non-essential scripts (GA4, Clarity, AdSense) only run once the visitor accepts.
@@ -85,7 +77,8 @@
 
     
 
-    <meta name="google-site-verification" content="M6qwobaePtnNuoJth9UeTI1oHuxTbm4k0grRhVsbORg" />\n    <meta name="google-site-verification" content="zbvpT5s8SosdZJkCtS-0aVLONPI0jZerMScqWvMtVrU" />
+    <meta name="google-site-verification" content="M6qwobaePtnNuoJth9UeTI1oHuxTbm4k0grRhVsbORg" />
+    <meta name="google-site-verification" content="zbvpT5s8SosdZJkCtS-0aVLONPI0jZerMScqWvMtVrU" />
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Booknomics — Book Summaries in English & Hindi | Read Smarter, Apply Faster</title>
