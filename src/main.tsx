@@ -3,6 +3,17 @@ import { HelmetProvider } from "react-helmet-async";
 import App from "./App.tsx";
 import "./index.css";
 
+const PRELOAD_RELOAD_KEY = "booknomics-vite-preload-reload";
+window.addEventListener("vite:preloadError", (event) => {
+  event.preventDefault();
+  const now = Date.now();
+  const lastReload = Number(sessionStorage.getItem(PRELOAD_RELOAD_KEY) || "0");
+  if (now - lastReload > 10_000) {
+    sessionStorage.setItem(PRELOAD_RELOAD_KEY, String(now));
+    window.location.reload();
+  }
+});
+
 const root = document.getElementById("root");
 if (root) {
   createRoot(root).render(
