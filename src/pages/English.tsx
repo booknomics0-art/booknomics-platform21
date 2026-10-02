@@ -93,15 +93,7 @@ const English = () => {
     },
   };
 
-  const faqLd = {
-    "@context": "https://schema.org",
-    "@type": "FAQPage",
-    mainEntity: FAQS.map((f) => ({
-      "@type": "Question",
-      name: f.q,
-      acceptedAnswer: { "@type": "Answer", text: f.a },
-    })),
-  };
+
 
   return (
     <Layout>
@@ -110,7 +102,7 @@ const English = () => {
         description="Read the best English book summaries on Booknomics — practical insights, 7-day action trackers and reflection prompts across self-help, business, psychology, and philosophy."
         canonical={PAGE_URL}
         lang="en"
-        jsonLd={[collectionLd, breadcrumbLd, faqLd]}
+        jsonLd={[collectionLd, breadcrumbLd]}
       />
 
       {/* Breadcrumbs */}
