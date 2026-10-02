@@ -370,6 +370,7 @@ export default function Admin() {
   const noindexCount = allBooks.filter((b) => !b.is_draft && b.status === "published_noindex").length;
   const liveCount = allBooks.filter((b) => !b.is_draft).length;
   const hindiLiveCount = allBooks.filter((b) => !b.is_draft && b.language === "hi").length;
+  const englishLiveCount = allBooks.filter((b) => !b.is_draft && b.language === "en").length;
   const missingSeoCount = allBooks.filter((b) => !b.is_draft && (!b.meta_title?.trim() || !b.meta_description?.trim())).length;
   const missingCoverCount = allBooks.filter((b) => !b.is_draft && !b.cover_url).length;
   const assetFor = (b: AdminBook) => Array.isArray(b.book_assets) ? b.book_assets[0] : b.book_assets;
@@ -386,11 +387,40 @@ export default function Admin() {
       <div className="container mx-auto p-4 md:p-8 max-w-5xl">
         <h1 className="text-2xl md:text-3xl font-bold mb-1">Admin Portal</h1>
         <p className="text-sm text-muted-foreground mb-4">
-          Bulk upload · AI generate · HD covers · Edit / Republish / Delete
+          Bulk upload · AI generate · HD covers · MP3 audio · SEO · Indexing · Publish
         </p>
 
-
-
+        <Card className="p-4 mb-5">
+          <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-2 mb-4">
+            <div>
+              <h2 className="font-semibold">Catalog health</h2>
+              <p className="text-xs text-muted-foreground">
+                Indexable = eligible for Google. Noindex = live for visitors but intentionally excluded from search.
+              </p>
+            </div>
+            <div className="text-xs text-muted-foreground">
+              MP3: Edit a book → Assets → Audio → Upload MP3
+            </div>
+          </div>
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2">
+            {[
+              ["Live", liveCount],
+              ["Indexable", pubCount],
+              ["Noindex", noindexCount],
+              ["Drafts", draftCount],
+              ["Hindi", hindiLiveCount],
+              ["English", englishLiveCount],
+              ["Missing SEO", missingSeoCount],
+              ["Missing covers", missingCoverCount],
+              ["Audio ready", audioReadyCount],
+            ].map(([label, value]) => (
+              <div key={String(label)} className="rounded-xl border border-border bg-muted/20 p-3">
+                <div className="text-[10px] uppercase tracking-wide text-muted-foreground">{label}</div>
+                <div className="text-xl font-bold tabular-nums">{value}</div>
+              </div>
+            ))}
+          </div>
+        </Card>
 
         <Tabs defaultValue="books">
           <TabsList className="flex-wrap h-auto">
