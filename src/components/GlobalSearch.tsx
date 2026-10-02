@@ -1,26 +1,11 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Search, X } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { supabase } from "@/integrations/supabase/client";
+import { trackSearch } from "@/lib/analytics";
 
 type Row = { id: string; slug: string; title: string; author: string; category: string; language: string };
-
-let cache: Row[] | null = null;
-let inflight: Promise<Row[]> | null = null;
-const loadBooks = (): Promise<Row[]> => {
-  if (cache) return Promise.resolve(cache);
-  if (inflight) return inflight;
-  inflight = (async () => {
-    const { data } = await supabase
-      .from("books")
-      .select("id,slug,title,author,category,language")
-      .eq("is_draft", false);
-    cache = (data ?? []) as Row[];
-    return cache;
-  })();
-  return inflight;
-};
 
 export const GlobalSearch = ({
   placeholder = "Search books, authors, or topics…",
@@ -33,11 +18,41 @@ export const GlobalSearch = ({
 }) => {
   const [q, setQ] = useState("");
   const [open, setOpen] = useState(false);
-  const [books, setBooks] = useState<Row[]>([]);
+  const [results, setResults] = useState<Row[]>([]);
+  const [searching, setSearching] = useState(false);
   const navigate = useNavigate();
   const wrapRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => { loadBooks().then(setBooks); }, []);
+  useEffect(() => {
+    const term = q.trim();
+    if (!open || term.length < 2) {
+      setResults([]);
+      setSearching(false);
+      return;
+    }
+
+    let cancelled = false;
+    const timer = window.setTimeout(async () => {
+      setSearching(true);
+      const safe = term.replace(/[,%()]/g, " ").slice(0, 80);
+      const { data, error } = await supabase
+        .from("books")
+        .select("id,slug,title,author,category,language")
+        .eq("is_draft", false)
+        .or(`title.ilike.%${safe}%,author.ilike.%${safe}%,category.ilike.%${safe}%`)
+        .order("title")
+        .limit(8);
+
+      if (cancelled) return;
+      setResults(error ? [] : ((data ?? []) as Row[]));
+      setSearching(false);
+    }, 220);
+
+    return () => {
+      cancelled = true;
+      window.clearTimeout(timer);
+    };
+  }, [q, open]);
 
   useEffect(() => {
     const onDoc = (e: MouseEvent) => {
@@ -47,26 +62,17 @@ export const GlobalSearch = ({
     return () => document.removeEventListener("mousedown", onDoc);
   }, []);
 
-  const results = useMemo(() => {
-    const term = q.trim().toLowerCase();
-    if (!term) return [];
-    return books
-      .filter(b =>
-        b.title.toLowerCase().includes(term) ||
-        b.author.toLowerCase().includes(term) ||
-        (b.category ?? "").toLowerCase().includes(term)
-      )
-      .slice(0, 8);
-  }, [q, books]);
-
   const onSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    const term = q.trim();
+    if (!term) return;
+    trackSearch(term, results.length, "global_search");
     if (results[0]) {
       navigate(`/books/${results[0].slug}`);
       setOpen(false);
       setQ("");
-    } else if (q.trim()) {
-      navigate(`/browse?q=${encodeURIComponent(q.trim())}`);
+    } else {
+      navigate(`/browse?q=${encodeURIComponent(term)}`);
       setOpen(false);
     }
   };
@@ -100,7 +106,9 @@ export const GlobalSearch = ({
 
       {open && q.trim() && (
         <div className="absolute z-50 left-0 right-0 mt-2 rounded-2xl border border-border bg-popover shadow-cover overflow-hidden">
-          {results.length === 0 ? (
+          {searching ? (
+            <div className="p-4 text-sm text-muted-foreground">Searching…</div>
+          ) : results.length === 0 ? (
             <div className="p-4 text-sm text-muted-foreground">No matches. Press Enter to browse.</div>
           ) : (
             <ul className="max-h-[60vh] overflow-y-auto py-1">
