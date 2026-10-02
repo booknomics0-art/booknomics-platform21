@@ -2,12 +2,13 @@ import { ReactNode } from "react";
 import { NavLink } from "react-router-dom";
 import { Layout } from "@/components/Layout";
 import {
-  LayoutDashboard, Search, Globe, Link2, Share2, Sparkles, BookOpen, ListChecks, Wand2,
+  LayoutDashboard, Search, Globe, Link2, Share2, Sparkles, BookOpen, ListChecks, Wand2, BarChart3,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const NAV = [
   { to: "/admin", label: "Books / Content", icon: BookOpen, end: true },
+  { to: "/admin/demand", label: "Reader Demand", icon: BarChart3 },
   { to: "/admin/seo", label: "SEO Dashboard", icon: LayoutDashboard },
   { to: "/admin/seo-manager", label: "SEO Manager (Keywords)", icon: Wand2 },
   { to: "/admin/gsc", label: "Google Search Console", icon: Globe },
