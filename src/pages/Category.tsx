@@ -36,13 +36,19 @@ const Category = () => {
 
   useEffect(() => {
     if (!category) return;
-    supabase.from("books").select("category").eq("is_draft", false).then(({ data }) => {
-      const all = (data ?? []).map((r: any) => r.category).filter(Boolean);
-      const cats = Array.from(new Set(all));
-      const match = cats.find((c) => slugifyCategory(String(c)) === category.toLowerCase());
-      setResolved(match ?? null);
-      if (match) setCount(all.filter((c) => c === match).length);
-    });
+    supabase.from("books").select("category,status")
+      .eq("is_draft", false)
+      .in("status", ["published", "published_noindex"])
+      .then(({ data }) => {
+        const rows = data ?? [];
+        const all = rows.map((r: any) => r.category).filter(Boolean);
+        const cats = Array.from(new Set(all));
+        const match = cats.find((c) => slugifyCategory(String(c)) === category.toLowerCase());
+        setResolved(match ?? null);
+        if (match) {
+          setCount(rows.filter((r: any) => r.category === match && r.status === "published").length);
+        }
+      });
   }, [category]);
 
   if (!category) return <Navigate to="/browse" replace />;
@@ -208,6 +214,7 @@ const Category = () => {
         description={description}
         canonical={canonical}
         lang={isHindi ? "hi" : "en"}
+        noindex={!content && count < 3}
         jsonLd={[collectionLd, breadcrumbLd, faqLd]}
       />
       <Browse
