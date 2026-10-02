@@ -23,6 +23,14 @@ const Index = () => {
     { label: "Spirituality", path: "/category/spirituality" },
     { label: "History", path: "/category/history" },
   ];
+  const outcomes = [
+    { label: "Build better habits", desc: "Turn good intentions into a repeatable system.", path: "/category/self-help" },
+    { label: "Think more clearly", desc: "Understand behaviour, decisions and your own mind.", path: "/category/psychology" },
+    { label: "Grow work & business", desc: "Learn strategy, leadership and execution.", path: "/category/business" },
+    { label: "Find meaning", desc: "Explore philosophy without needing hours to spare.", path: "/category/philosophy" },
+    { label: "Create inner calm", desc: "Use timeless ideas for reflection and perspective.", path: "/category/spirituality" },
+    { label: "Learn from history", desc: "See patterns, people and ideas that shaped the world.", path: "/category/history" },
+  ];
   // Trending books link straight to their canonical book pages.
   const trending = [
     { label: "Atomic Habits", path: "/books/atomic-habits" },
@@ -37,11 +45,13 @@ const Index = () => {
         .from("books")
         .select("id,slug,title,author,category,cover_color,cover_url,tagline,rating,reading_time")
         .eq("is_draft", false)
+        .eq("status", "published")
         .limit(6);
       const { data: pop } = await supabase
         .from("books")
         .select("id,slug,title,author,category,cover_color,cover_url,tagline,rating,reading_time")
         .eq("is_draft", false)
+        .eq("status", "published")
         .range(6, 11);
       setFeatured(feat ?? []);
       setPopular(pop ?? []);
@@ -88,11 +98,11 @@ const Index = () => {
               <span className="italic text-gold">→</span> Transform.
             </h1>
             <p className="mt-4 md:mt-6 text-sm sm:text-base md:text-lg text-muted-foreground max-w-lg leading-relaxed">
-              Books that actually change your life. Deep summaries, action systems, 7-day trackers and reflection
-              prompts — for English & Hindi readers.
+              Don't read more just to collect ideas. Pick what you want to improve, learn the useful parts in minutes,
+              then apply one idea with a 7-day action plan — in English or Hindi.
             </p>
             <div className="mt-6 md:mt-8 max-w-xl">
-              <GlobalSearch placeholder="Search 80+ summaries — title, author, topic…" size="lg" />
+              <GlobalSearch placeholder="Search books, authors or topics…" size="lg" />
               <div className="mt-3 flex flex-wrap gap-1.5 text-[11px] text-muted-foreground">
                 <span className="opacity-70">Trending:</span>
                 {trending.map((t, i) => (
@@ -118,9 +128,9 @@ const Index = () => {
               </Button>
             </div>
             <div className="mt-6 md:mt-8 flex flex-wrap items-center gap-4 md:gap-6 text-xs md:text-sm text-muted-foreground">
-              <span>⭐ 10,000+ readers</span>
-              <span>🔥 50+ books curated</span>
-              <span>🇮🇳 Bilingual</span>
+              <span>🎧 Read or listen</span>
+              <span>✅ Action plans, not just summaries</span>
+              <span>🇮🇳 English + Hindi</span>
             </div>
           </div>
           <div className="relative">
@@ -140,6 +150,28 @@ const Index = () => {
               <p className="text-sm font-serif italic">"Small habits, repeated daily, become identity."</p>
             </div>
           </div>
+        </div>
+      </section>
+
+      {/* Outcome-first discovery */}
+      <section className="container py-10 md:py-16" aria-labelledby="outcome-heading">
+        <div className="max-w-2xl mb-6 md:mb-8">
+          <div className="text-[10px] md:text-xs tracking-[0.2em] uppercase text-primary font-semibold mb-2">Start with your goal</div>
+          <h2 id="outcome-heading" className="font-serif text-3xl md:text-5xl font-bold tracking-tight">
+            What do you want to improve?
+          </h2>
+          <p className="text-sm md:text-base text-muted-foreground mt-3">
+            Choose an outcome first. Booknomics will take you to ideas you can use, instead of asking you to browse thousands of titles.
+          </p>
+        </div>
+        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-4">
+          {outcomes.map((item) => (
+            <Link key={item.path} to={item.path} className="rounded-2xl border border-border bg-card p-5 hover:border-primary hover:shadow-paper transition-all">
+              <h3 className="font-serif text-lg font-semibold mb-1">{item.label}</h3>
+              <p className="text-sm text-muted-foreground leading-relaxed">{item.desc}</p>
+              <span className="mt-3 inline-flex items-center gap-1 text-xs font-semibold text-primary">Explore <ArrowRight className="h-3 w-3" /></span>
+            </Link>
+          ))}
         </div>
       </section>
 
