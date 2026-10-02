@@ -29,6 +29,11 @@ const CATEGORY_INTROS: Record<string, string> = {
 
 const SITE = "https://booknomics.com";
 
+const CATEGORY_ALIASES: Record<string, string> = {
+  "self-help": "Personal Development",
+  "hindi-literature": "साहित्य",
+};
+
 const Category = () => {
   const { category } = useParams();
   const [resolved, setResolved] = useState<string | null | undefined>(undefined);
@@ -43,7 +48,11 @@ const Category = () => {
         const rows = data ?? [];
         const all = rows.map((r: any) => r.category).filter(Boolean);
         const cats = Array.from(new Set(all));
-        const match = cats.find((c) => slugifyCategory(String(c)) === category.toLowerCase());
+        const requestedSlug = category.toLowerCase();
+        const alias = CATEGORY_ALIASES[requestedSlug];
+        const match = alias && cats.includes(alias)
+          ? alias
+          : cats.find((c) => slugifyCategory(String(c)) === requestedSlug);
         setResolved(match ?? null);
         if (match) {
           setCount(rows.filter((r: any) => r.category === match && r.status === "published").length);
@@ -105,16 +114,6 @@ const Category = () => {
       a: "Each summary is designed to be read in 10–15 minutes, with key insights distilled from the original book.",
     },
   ];
-
-  const faqLd = {
-    "@context": "https://schema.org",
-    "@type": "FAQPage",
-    mainEntity: faqs.map((f) => ({
-      "@type": "Question",
-      name: f.q,
-      acceptedAnswer: { "@type": "Answer", text: f.a },
-    })),
-  };
 
   const breadcrumb = (
     <nav aria-label="Breadcrumb" className="container pt-6 text-xs md:text-sm text-muted-foreground">
@@ -215,7 +214,7 @@ const Category = () => {
         canonical={canonical}
         lang={isHindi ? "hi" : "en"}
         noindex={!content && count < 3}
-        jsonLd={[collectionLd, breadcrumbLd, faqLd]}
+        jsonLd={[collectionLd, breadcrumbLd]}
       />
       <Browse
         categoryFilter={resolved}
