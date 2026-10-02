@@ -841,18 +841,33 @@ function IndexingPanel({ books }: { books: AdminBook[] }) {
 
   const checkThinContent = async () => {
     setLoadingThin(true);
-    const { data } = await supabase
-      .from("books_admin")
-      .select("id,overview,key_ideas")
-      .eq("is_draft", false);
     const map: Record<string, number> = {};
-    (data ?? []).forEach((b: any) => {
-      const len = (b.overview ?? "").length + (b.key_ideas ?? "").length;
-      map[b.id] = len;
-    });
+    const pageSize = 500;
+
+    for (let from = 0; ; from += pageSize) {
+      const { data, error } = await supabase
+        .from("books_admin")
+        .select("id,overview,key_ideas")
+        .eq("is_draft", false)
+        .eq("status", "published")
+        .range(from, from + pageSize - 1);
+
+      if (error) {
+        setLoadingThin(false);
+        return toast.error(error.message);
+      }
+
+      const batch = data ?? [];
+      batch.forEach((b: any) => {
+        const len = (b.overview ?? "").length + (b.key_ideas ?? "").length;
+        map[b.id] = len;
+      });
+      if (batch.length < pageSize) break;
+    }
+
     setThin(map);
     setLoadingThin(false);
-    toast.success("Content audit complete");
+    toast.success(`Content audit complete · ${Object.keys(map).length} indexable books checked`);
   };
 
   return (
