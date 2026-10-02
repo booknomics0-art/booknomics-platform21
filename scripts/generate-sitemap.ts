@@ -1,6 +1,6 @@
 // Runs before `vite dev` and `vite build` (predev/prebuild hooks).
 // Writes public/sitemap.xml, public/books-sitemap.xml, and public/_redirects.
-import { writeFileSync } from "fs";
+import { writeFileSync, readFileSync } from "fs";
 import { loadEnv } from "vite";
 Object.assign(process.env, { ...loadEnv(process.env.NODE_ENV || "production", process.cwd(), ""), ...process.env });
 import { resolve } from "path";
@@ -270,6 +270,27 @@ function renderImageSitemap(items: Array<{ slug: string; title: string; cover: s
     writeFileSync(resolve("public/_redirects"), renderRedirects(canonicalSlugs, bookRedirects));
     // Vercel routing config is source-controlled. Do not mutate vercel.json here:
     // project routing is evaluated before this prebuild script runs.
+    // Instead, fail the build if a current canonical redirect is missing so a
+    // slug change can never silently ship without its hosting-level redirect.
+    const config = JSON.parse(readFileSync(resolve("vercel.json"), "utf8"));
+    const configuredRedirects = new Map<string, string>(
+      (config.redirects ?? []).map((r: any) => [r.source, r.destination]),
+    );
+    const expectedRedirects = new Map<string, string>();
+    for (const [from, to] of [...Object.entries(SLUG_REDIRECTS), ...bookRedirects.map((r) => [r.from, r.to] as [string, string])]) {
+      if (from !== to && canonicalSlugs.has(to) && !canonicalSlugs.has(from)) {
+        expectedRedirects.set(`/books/${from}`, `/books/${to}`);
+      }
+    }
+    const missingRedirects = Array.from(expectedRedirects).filter(
+      ([source, destination]) => configuredRedirects.get(source) !== destination,
+    );
+    if (missingRedirects.length) {
+      throw new Error(
+        `[redirects] vercel.json is missing ${missingRedirects.length} canonical redirects. ` +
+        `Update the source-controlled redirects before deploying. First missing: ${missingRedirects[0][0]} → ${missingRedirects[0][1]}`,
+      );
+    }
     console.log(
       `[sitemap] ✅ wrote sitemap.xml (${entries.length} URLs = ${staticCount} static + ${bookCount} books + categories) · books-sitemap.xml (${bookEntries.length}) · image-sitemap.xml (${imageItems.length}) · _redirects (${Object.keys(SLUG_REDIRECTS).length} static aliases + ${bookRedirects.length} book redirects)`,
     );
