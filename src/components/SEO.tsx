@@ -57,10 +57,13 @@ export const SEO = ({
       })),
     });
   }
-  // hreflang: explicit pairs when provided, otherwise self-referencing for the page language.
-  const hrefEn = alternates ? (alternates.en ? abs(alternates.en) : undefined) : (lang === "en" ? url : undefined);
-  const hrefHi = alternates ? (alternates.hi ? abs(alternates.hi) : undefined) : (lang === "hi" ? url : undefined);
-  const hrefDefault = alternates?.xDefault ? abs(alternates.xDefault) : (hrefEn ?? url);
+  // hreflang is emitted only for explicit, verified language counterparts.
+  // A canonical page without a real translation relationship should not invent one.
+  const hrefEn = alternates?.en ? abs(alternates.en) : undefined;
+  const hrefHi = alternates?.hi ? abs(alternates.hi) : undefined;
+  const hrefDefault = alternates
+    ? (alternates.xDefault ? abs(alternates.xDefault) : (hrefEn ?? hrefHi))
+    : undefined;
   return (
     <Helmet>
       <html lang={lang} />
@@ -69,7 +72,7 @@ export const SEO = ({
       <link rel="canonical" href={url} />
       {hrefEn && <link rel="alternate" hrefLang="en" href={hrefEn} />}
       {hrefHi && <link rel="alternate" hrefLang="hi" href={hrefHi} />}
-      <link rel="alternate" hrefLang="x-default" href={hrefDefault} />
+      {hrefDefault && <link rel="alternate" hrefLang="x-default" href={hrefDefault} />}
       {noindex && <meta name="robots" content="noindex,follow" />}
       <meta property="og:type" content={ogType} />
       <meta property="og:title" content={title} />
