@@ -7,6 +7,7 @@ import { resolve } from "path";
 import { createClient } from "@supabase/supabase-js";
 import { SLUG_REDIRECTS } from "../src/lib/slugRedirects";
 import { auditSeoSlug } from "../src/lib/seoSlugTools";
+import { CATEGORY_CONTENT } from "../src/content/categoryContent";
 
 const BASE_URL = "https://booknomics.com";
 
@@ -127,10 +128,23 @@ async function build(): Promise<{ entries: Entry[]; bookCount: number; staticCou
     });
   }
   if (skippedBroken) console.log(`[sitemap] skipped ${skippedBroken} broken/garbage slugs`);
-  const cats = Array.from(new Set(books!.map((b: any) => b.category).filter(Boolean)));
-  for (const c of cats) {
-    const slug = slugify(String(c));
+  // Keep thin taxonomy pages usable for navigation, but only submit
+  // category hubs that have enough indexable inventory or curated editorial copy.
+  const categoryCounts = new Map<string, number>();
+  for (const b of books!) {
+    if (!b.category) continue;
+    const category = String(b.category);
+    categoryCounts.set(category, (categoryCounts.get(category) ?? 0) + 1);
+  }
+
+  const categorySlugs = new Set<string>(Object.keys(CATEGORY_CONTENT));
+  for (const [category, count] of categoryCounts) {
+    const slug = slugify(category);
     if (!slug) continue;
+    if (count >= 3) categorySlugs.add(slug);
+  }
+
+  for (const slug of Array.from(categorySlugs).sort()) {
     entries.push({
       path: `/category/${slug}`,
       changefreq: "weekly",
@@ -254,15 +268,32 @@ function renderImageSitemap(items: Array<{ slug: string; title: string; cover: s
     writeFileSync(resolve("public/books-sitemap.xml"), renderUrlset(bookEntries));
     writeFileSync(resolve("public/image-sitemap.xml"), renderImageSitemap(imageItems));
     writeFileSync(resolve("public/_redirects"), renderRedirects(canonicalSlugs, bookRedirects));
-    // Vercel does not interpret Netlify/Lovable's _redirects file.
-    const config = JSON.parse(readFileSync(resolve('vercel.json'), 'utf8'));
-    const redirects = new Map<string, string>();
-    for (const [from, to] of [...Object.entries(SLUG_REDIRECTS), ...bookRedirects.map(r => [r.from, r.to])]) {
-      if (from !== to && canonicalSlugs.has(to) && !canonicalSlugs.has(from))
-        redirects.set(`/books/${from}`, `/books/${to}`);
+    // Vercel routing config is source-controlled. Do not mutate vercel.json here:
+    // project routing is evaluated before this prebuild script runs.
+    // Instead, fail the build if a current canonical redirect is missing so a
+    // slug change can never silently ship without its hosting-level redirect.
+    const config = JSON.parse(readFileSync(resolve("vercel.json"), "utf8"));
+    const configuredRedirects = new Map<string, string>(
+      (config.redirects ?? []).map((r: any) => [r.source, r.destination]),
+    );
+    const expectedRedirects = new Map<string, string>();
+    for (const [from, to] of [...Object.entries(SLUG_REDIRECTS), ...bookRedirects.map((r) => [r.from, r.to] as [string, string])]) {
+      if (from !== to && canonicalSlugs.has(to) && !canonicalSlugs.has(from)) {
+        expectedRedirects.set(
+          `/books/${encodeURIComponent(from)}`,
+          `/books/${encodeURIComponent(to)}`,
+        );
+      }
     }
-    config.redirects = [...redirects].map(([source, destination]) => ({ source, destination, permanent: true }));
-    writeFileSync(resolve('vercel.json'), JSON.stringify(config, null, 2) + '\n');
+    const missingRedirects = Array.from(expectedRedirects).filter(
+      ([source, destination]) => configuredRedirects.get(source) !== destination,
+    );
+    if (missingRedirects.length) {
+      throw new Error(
+        `[redirects] vercel.json is missing ${missingRedirects.length} canonical redirects. ` +
+        `Update the source-controlled redirects before deploying. First missing: ${missingRedirects[0][0]} → ${missingRedirects[0][1]}`,
+      );
+    }
     console.log(
       `[sitemap] ✅ wrote sitemap.xml (${entries.length} URLs = ${staticCount} static + ${bookCount} books + categories) · books-sitemap.xml (${bookEntries.length}) · image-sitemap.xml (${imageItems.length}) · _redirects (${Object.keys(SLUG_REDIRECTS).length} static aliases + ${bookRedirects.length} book redirects)`,
     );

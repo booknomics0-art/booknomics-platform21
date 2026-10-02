@@ -1,6 +1,6 @@
 // Lightweight indexing/discoverability monitor for booknomics.com.
 // Usage: bun run monitor:indexing            (checks first 40 URLs by default)
-//        SAMPLE=all bun run monitor:indexing (checks every URL — slower)
+//        SAMPLE=40 bun run monitor:indexing  (optional smaller diagnostic sample)
 //
 // Fetches the production sitemap, then for each URL checks:
 //   • HTTP status
@@ -17,7 +17,7 @@ import { resolve } from "path";
 const SITE = "https://booknomics.com";
 const SITEMAP = `${SITE}/sitemap.xml`;
 const ROBOTS = `${SITE}/robots.txt`;
-const SAMPLE = process.env.SAMPLE ?? "40";
+const SAMPLE = process.env.SAMPLE ?? "all";
 
 type Row = {
   url: string;

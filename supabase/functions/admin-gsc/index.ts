@@ -14,11 +14,13 @@ Deno.serve(async (req) => {
   try {
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
     const GSC_KEY = Deno.env.get("GOOGLE_SEARCH_CONSOLE_API_KEY");
+    const SUPABASE_URL = Deno.env.get("SUPABASE_URL");
+    const SERVICE_ROLE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
     if (!LOVABLE_API_KEY || !GSC_KEY) return json({ error: "GSC connector not linked" }, 500);
 
     const auth = req.headers.get("Authorization");
     if (!auth) return json({ error: "Auth required" }, 401);
-    const user = createClient(Deno.env.get("SUPABASE_URL")!, Deno.env.get("SUPABASE_ANON_KEY")!, {
+    const user = createClient(SUPABASE_URL!, Deno.env.get("SUPABASE_ANON_KEY")!, {
       global: { headers: { Authorization: auth } },
     });
     const { data: u } = await user.auth.getUser();
@@ -65,17 +67,43 @@ Deno.serve(async (req) => {
         }),
         gw(`/webmasters/v3/sites/${enc}/searchAnalytics/query`, {
           method: "POST",
-          body: JSON.stringify({ startDate, endDate, dimensions: ["page"], rowLimit: 100 }),
+          body: JSON.stringify({ startDate, endDate, dimensions: ["page"], rowLimit: 25000 }),
         }),
         gw(`/webmasters/v3/sites/${enc}/searchAnalytics/query`, {
           method: "POST",
-          body: JSON.stringify({ startDate, endDate, dimensions: ["query"], rowLimit: 50 }),
+          body: JSON.stringify({ startDate, endDate, dimensions: ["query"], rowLimit: 1000 }),
         }),
       ]);
+      const pageRows = pages.rows || [];
+      let persisted = false;
+      if (SUPABASE_URL && SERVICE_ROLE_KEY && pageRows.length) {
+        const admin = createClient(SUPABASE_URL, SERVICE_ROLE_KEY);
+        const capturedAt = new Date().toISOString();
+        const metrics = pageRows
+          .filter((row: any) => row?.keys?.[0])
+          .map((row: any) => ({
+            site_url: siteUrl,
+            start_date: startDate,
+            end_date: endDate,
+            url: row.keys[0],
+            clicks: Number(row.clicks || 0),
+            impressions: Number(row.impressions || 0),
+            ctr: Number(row.ctr || 0),
+            position: Number(row.position || 0),
+            captured_at: capturedAt,
+          }));
+        const { error: persistError } = await admin
+          .from("gsc_page_metrics")
+          .upsert(metrics, { onConflict: "site_url,start_date,end_date,url" });
+        if (persistError) console.error("GSC persistence error:", persistError.message);
+        else persisted = true;
+      }
+
       return json({
         totals: totals.rows?.[0] || { clicks: 0, impressions: 0, ctr: 0, position: 0 },
-        pages: pages.rows || [],
+        pages: pageRows,
         queries: queries.rows || [],
+        persisted,
       });
     }
 

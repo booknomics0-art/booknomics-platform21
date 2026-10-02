@@ -39,6 +39,7 @@ const Hindi = () => {
           .select("category")
           .eq("language", "hi")
           .eq("is_draft", false)
+          .in("status", ["published", "published_noindex"])
           .order("category")
           .range(from, from + batchSize - 1);
         if (error || cancelled) return;
@@ -71,7 +72,8 @@ const Hindi = () => {
         .from("books")
         .select("id,slug,title,author,category,cover_color,cover_url,tagline,rating,reading_time", { count: "exact" })
         .eq("language", "hi")
-        .eq("is_draft", false);
+        .eq("is_draft", false)
+        .in("status", ["published", "published_noindex"]);
 
       if (category !== "सभी") request = request.eq("category", category);
 
@@ -127,7 +129,6 @@ const Hindi = () => {
         description="ओशो, चाणक्य, प्रेमचंद, महादेवी वर्मा और अन्य लेखकों की किताबों के विस्तृत सारांश और मुख्य विचार।"
         canonical="https://booknomics.com/hindi"
         lang="hi"
-        alternates={{ en: "/browse", hi: "/hindi", xDefault: "/browse" }}
         jsonLd={collectionLd}
         breadcrumbs={[{ name: "Home", path: "/" }, { name: "Hindi", path: "/hindi" }]}
       />

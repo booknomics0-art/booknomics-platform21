@@ -60,6 +60,7 @@ const Browse = ({ categoryFilter, titleOverride, introText, skipSeo, aboveConten
           .from("books")
           .select("category")
           .eq("is_draft", false)
+          .in("status", ["published", "published_noindex"])
           .order("category")
           .range(from, from + batchSize - 1);
         if (error || cancelled) return;
@@ -83,7 +84,8 @@ const Browse = ({ categoryFilter, titleOverride, introText, skipSeo, aboveConten
       let request = supabase
         .from("books")
         .select("id,slug,title,author,category,cover_color,cover_url,tagline,rating,reading_time,language,created_at", { count: "exact" })
-        .eq("is_draft", false);
+        .eq("is_draft", false)
+        .in("status", ["published", "published_noindex"]);
 
       if (category !== "All") request = request.eq("category", category);
       if (language !== "all") request = request.eq("language", language);
@@ -183,7 +185,7 @@ const Browse = ({ categoryFilter, titleOverride, introText, skipSeo, aboveConten
 
   return (
     <Layout>
-      {!skipSeo && <SEO title={seoTitle} description={seoDesc} path={seoPath} alternates={seoPath === "/browse" ? { en: "/browse", hi: "/hindi", xDefault: "/browse" } : undefined} jsonLd={collectionLd} breadcrumbs={[{ name: "Home", path: "/" }, { name: "Browse", path: "/browse" }]} />}
+      {!skipSeo && <SEO title={seoTitle} description={seoDesc} path={seoPath} jsonLd={collectionLd} breadcrumbs={[{ name: "Home", path: "/" }, { name: "Browse", path: "/browse" }]} />}
 
       {breadcrumb}
 

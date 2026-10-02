@@ -29,6 +29,15 @@
       ]
     },
     {
+      "source": "/index.html",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=0, must-revalidate"
+        }
+      ]
+    },
+    {
       "source": "/assets/(.*)",
       "headers": [
         {
@@ -38,5 +47,296 @@
       ]
     }
   ],
-  "redirects": []
+  "redirects": [
+    {
+      "source": "/books/7-habits",
+      "destination": "/books/the-7-habits",
+      "permanent": true
+    },
+    {
+      "source": "/books/7-habits-of-highly-effective-people",
+      "destination": "/books/the-7-habits",
+      "permanent": true
+    },
+    {
+      "source": "/books/aplak-jaishankar-prasad-saransh",
+      "destination": "/books/%E0%A4%85%E0%A4%AA%E0%A4%B2%E0%A4%95-%E0%A4%9C%E0%A4%AF%E0%A4%B6%E0%A4%82%E0%A4%95%E0%A4%B0-%E0%A4%AA%E0%A5%8D%E0%A4%B0%E0%A4%B8%E0%A4%BE%E0%A4%A6-saransh",
+      "permanent": true
+    },
+    {
+      "source": "/books/atomic-habit",
+      "destination": "/books/atomic-habits",
+      "permanent": true
+    },
+    {
+      "source": "/books/atomichabits",
+      "destination": "/books/atomic-habits",
+      "permanent": true
+    },
+    {
+      "source": "/books/bhagavad-gita-hindi",
+      "destination": "/books/bhagavad-gita-hi",
+      "permanent": true
+    },
+    {
+      "source": "/books/bhagwad-gita",
+      "destination": "/books/bhagavad-gita",
+      "permanent": true
+    },
+    {
+      "source": "/books/bhagwat-gita",
+      "destination": "/books/bhagavad-gita",
+      "permanent": true
+    },
+    {
+      "source": "/books/can_t_hurt_me",
+      "destination": "/books/can-t-hurt-me",
+      "permanent": true
+    },
+    {
+      "source": "/books/cant-hurt-me",
+      "destination": "/books/can-t-hurt-me",
+      "permanent": true
+    },
+    {
+      "source": "/books/chanakya-neeti",
+      "destination": "/books/chanakya-niti",
+      "permanent": true
+    },
+    {
+      "source": "/books/gandhi-autobiography",
+      "destination": "/books/gandhi-autobiography-hi",
+      "permanent": true
+    },
+    {
+      "source": "/books/intelligent-investor",
+      "destination": "/books/the-intelligent-investor-cmkh",
+      "permanent": true
+    },
+    {
+      "source": "/books/kitne-chaurahe-kamleshwar-saransh",
+      "destination": "/books/kitne-chaurahe-phanishwarnath-renu-saransh",
+      "permanent": true
+    },
+    {
+      "source": "/books/man-s-search-for-meaning",
+      "destination": "/books/man-search-meaning",
+      "permanent": true
+    },
+    {
+      "source": "/books/mans-search-for-meaning",
+      "destination": "/books/man-search-meaning",
+      "permanent": true
+    },
+    {
+      "source": "/books/mans-search-meaning",
+      "destination": "/books/man-search-meaning",
+      "permanent": true
+    },
+    {
+      "source": "/books/mountain-is-you",
+      "destination": "/books/the-mountain-is-you-a2fg",
+      "permanent": true
+    },
+    {
+      "source": "/books/my-experiments-with-truth",
+      "destination": "/books/gandhi-autobiography-hi",
+      "permanent": true
+    },
+    {
+      "source": "/books/power-of-subconscious-mind",
+      "destination": "/books/the-power-of-your-subconscious-mind-6znj",
+      "permanent": true
+    },
+    {
+      "source": "/books/power-of-your-subconscious-mind",
+      "destination": "/books/the-power-of-your-subconscious-mind-6znj",
+      "permanent": true
+    },
+    {
+      "source": "/books/raktakarabi-rabindranath-thakur-saransh",
+      "destination": "/books/%E0%A4%B0%E0%A4%95%E0%A5%8D%E0%A4%A4%E0%A4%95%E0%A4%B0%E0%A4%AC%E0%A5%80",
+      "permanent": true
+    },
+    {
+      "source": "/books/rashmirathi-dinkar-saransh",
+      "destination": "/books/%E0%A4%B0%E0%A4%B6%E0%A5%8D%E0%A4%AE%E0%A4%BF%E0%A4%B0%E0%A4%A5%E0%A5%80-%E0%A4%B0%E0%A4%BE%E0%A4%AE%E0%A4%A7%E0%A4%BE%E0%A4%B0%E0%A5%80-%E0%A4%B8%E0%A4%BF%E0%A4%82%E0%A4%B9-%E0%A4%A6%E0%A4%BF%E0%A4%A8%E0%A4%95%E0%A4%B0-saransh",
+      "permanent": true
+    },
+    {
+      "source": "/books/seven-habits",
+      "destination": "/books/the-7-habits",
+      "permanent": true
+    },
+    {
+      "source": "/books/somdev-chatursen-saransh",
+      "destination": "/books/%E0%A4%B8%E0%A5%8B%E0%A4%AE%E0%A4%A6%E0%A5%87%E0%A4%B5-%E0%A4%86%E0%A4%9A%E0%A4%BE%E0%A4%B0%E0%A5%8D%E0%A4%AF-%E0%A4%9A%E0%A4%A4%E0%A5%81%E0%A4%B0%E0%A4%B8%E0%A5%87%E0%A4%A8-%E0%A4%B6%E0%A4%BE%E0%A4%B8%E0%A5%8D%E0%A4%A4%E0%A5%8D%E0%A4%B0%E0%A5%80-saransh",
+      "permanent": true
+    },
+    {
+      "source": "/books/teeshri-kasam-renu-saransh",
+      "destination": "/books/%E0%A4%A4%E0%A5%80%E0%A4%B8%E0%A4%B0%E0%A5%80-%E0%A4%95%E0%A4%B8%E0%A4%AE-%E0%A4%AB%E0%A4%A3%E0%A5%80%E0%A4%B6%E0%A5%8D%E0%A4%B5%E0%A4%B0-%E0%A4%A8%E0%A4%BE%E0%A4%A5-%E0%A4%B0%E0%A5%87%E0%A4%A3%E0%A5%81-saransh",
+      "permanent": true
+    },
+    {
+      "source": "/books/the-bhagavad-gita",
+      "destination": "/books/bhagavad-gita",
+      "permanent": true
+    },
+    {
+      "source": "/books/the-intelligent-investor",
+      "destination": "/books/the-intelligent-investor-cmkh",
+      "permanent": true
+    },
+    {
+      "source": "/books/the-mountain-is-you",
+      "destination": "/books/the-mountain-is-you-a2fg",
+      "permanent": true
+    },
+    {
+      "source": "/books/the-power-of-your-subconscious-mind",
+      "destination": "/books/the-power-of-your-subconscious-mind-6znj",
+      "permanent": true
+    },
+    {
+      "source": "/books/urvashi-dinkar-saransh",
+      "destination": "/books/%E0%A4%89%E0%A4%B0%E0%A5%8D%E0%A4%B5%E0%A4%B6%E0%A5%80-%E0%A4%B0%E0%A4%BE%E0%A4%AE%E0%A4%A7%E0%A4%BE%E0%A4%B0%E0%A5%80-%E0%A4%B8%E0%A4%BF%E0%A4%82%E0%A4%B9-%E0%A4%A6%E0%A4%BF%E0%A4%A8%E0%A4%95%E0%A4%B0-saransh",
+      "permanent": true
+    },
+    {
+      "source": "/books/vayam-raksham-rahul-sankrityayan-saransh",
+      "destination": "/books/%E0%A4%B5%E0%A4%AF%E0%A4%82-%E0%A4%B0%E0%A4%95%E0%A5%8D%E0%A4%B7%E0%A4%BE%E0%A4%AE%E0%A4%83-%E0%A4%B0%E0%A4%BE%E0%A4%B9%E0%A5%81%E0%A4%B2-%E0%A4%B8%E0%A4%BE%E0%A4%82%E0%A4%95%E0%A5%83%E0%A4%A4%E0%A5%8D%E0%A4%AF%E0%A4%BE%E0%A4%AF%E0%A4%A8-saransh",
+      "permanent": true
+    },
+    {
+      "source": "/books/wings-of-fire-apj",
+      "destination": "/books/wings-of-fire",
+      "permanent": true
+    },
+    {
+      "source": "/books/%E0%A4%86%E0%A4%A7%E0%A5%87-%E0%A4%85%E0%A4%A7%E0%A5%82%E0%A4%B0%E0%A5%87-%E0%A4%AE%E0%A5%8B%E0%A4%B9%E0%A4%A8-%E0%A4%B0%E0%A4%BE%E0%A4%95%E0%A5%87%E0%A4%B6-saransh",
+      "destination": "/books/adhe-adhure-mohan-rakesh-saransh",
+      "permanent": true
+    },
+    {
+      "source": "/books/%E0%A4%95%E0%A4%B0%E0%A5%8D%E0%A4%AE%E0%A4%AD%E0%A5%82%E0%A4%AE%E0%A4%BF-%E0%A4%AE%E0%A5%81%E0%A4%82%E0%A4%B6%E0%A5%80-%E0%A4%AA%E0%A5%8D%E0%A4%B0%E0%A5%87%E0%A4%AE%E0%A4%9A%E0%A4%82%E0%A4%A6-saransh",
+      "destination": "/books/karmabhoomi-premchand-saransh",
+      "permanent": true
+    },
+    {
+      "source": "/books/%E0%A4%95%E0%A4%BE%E0%A4%AE%E0%A4%BE%E0%A4%AF%E0%A4%A8%E0%A5%80-%E0%A4%9C%E0%A4%AF%E0%A4%B6%E0%A4%82%E0%A4%95%E0%A4%B0-%E0%A4%AA%E0%A5%8D%E0%A4%B0%E0%A4%B8%E0%A4%BE%E0%A4%A6-saransh",
+      "destination": "/books/kamayani-jaishankar-prasad-saransh",
+      "permanent": true
+    },
+    {
+      "source": "/books/%E0%A4%95%E0%A4%BE%E0%A4%AF%E0%A4%BE%E0%A4%95%E0%A4%B2%E0%A5%8D%E0%A4%AA-%E0%A4%AE%E0%A5%81%E0%A4%82%E0%A4%B6%E0%A5%80-%E0%A4%AA%E0%A5%8D%E0%A4%B0%E0%A5%87%E0%A4%AE%E0%A4%9A%E0%A4%82%E0%A4%A6-saransh",
+      "destination": "/books/kayakalp-premchand-saransh",
+      "permanent": true
+    },
+    {
+      "source": "/books/%E0%A4%95%E0%A4%BF%E0%A4%A4%E0%A4%A8%E0%A5%87-%E0%A4%9A%E0%A5%8C%E0%A4%B0%E0%A4%BE%E0%A4%B9%E0%A5%87-%E0%A4%95%E0%A4%AE%E0%A4%B2%E0%A5%87%E0%A4%B6%E0%A5%8D%E0%A4%B5%E0%A4%B0-saransh",
+      "destination": "/books/kitne-chaurahe-phanishwarnath-renu-saransh",
+      "permanent": true
+    },
+    {
+      "source": "/books/%E0%A4%97%E0%A4%AC%E0%A4%A8-%E0%A4%AE%E0%A5%81%E0%A4%82%E0%A4%B6%E0%A5%80-%E0%A4%AA%E0%A5%8D%E0%A4%B0%E0%A5%87%E0%A4%AE%E0%A4%9A%E0%A4%82%E0%A4%A6-saransh",
+      "destination": "/books/gaban-munshi-premchand-saransh",
+      "permanent": true
+    },
+    {
+      "source": "/books/%E0%A4%97%E0%A5%81%E0%A4%A8%E0%A4%BE%E0%A4%B9%E0%A5%8B%E0%A4%82-%E0%A4%95%E0%A4%BE-%E0%A4%A6%E0%A5%87%E0%A4%B5%E0%A4%A4%E0%A4%BE-%E0%A4%A7%E0%A4%B0%E0%A5%8D%E0%A4%AE%E0%A4%B5%E0%A5%80%E0%A4%B0-%E0%A4%AD%E0%A4%BE%E0%A4%B0%E0%A4%A4%E0%A5%80-saransh",
+      "destination": "/books/gunahon-ka-devta-dharamvir-bharti-saransh",
+      "permanent": true
+    },
+    {
+      "source": "/books/%E0%A4%97%E0%A5%8B%E0%A4%A6%E0%A4%BE%E0%A4%A8-%E0%A4%AE%E0%A5%81%E0%A4%82%E0%A4%B6%E0%A5%80-%E0%A4%AA%E0%A5%8D%E0%A4%B0%E0%A5%87%E0%A4%AE%E0%A4%9A%E0%A4%82%E0%A4%A6-saransh",
+      "destination": "/books/godan-munshi-premchand-saransh",
+      "permanent": true
+    },
+    {
+      "source": "/books/%E0%A4%9A%E0%A4%B0%E0%A4%BF%E0%A4%A4%E0%A5%8D%E0%A4%B0%E0%A4%B9%E0%A5%80%E0%A4%A8-%E0%A4%B6%E0%A4%B0%E0%A4%A4%E0%A4%9A%E0%A4%82%E0%A4%A6%E0%A5%8D%E0%A4%B0-%E0%A4%9A%E0%A4%9F%E0%A5%8D%E0%A4%9F%E0%A5%8B%E0%A4%AA%E0%A4%BE%E0%A4%A7%E0%A5%8D%E0%A4%AF%E0%A4%BE%E0%A4%AF-saransh",
+      "destination": "/books/charitraheen-sharatchandra-saransh",
+      "permanent": true
+    },
+    {
+      "source": "/books/%E0%A4%9A%E0%A4%BF%E0%A4%A4%E0%A5%8D%E0%A4%B0%E0%A4%B2%E0%A5%87%E0%A4%96%E0%A4%BE-%E0%A4%AD%E0%A4%97%E0%A4%B5%E0%A4%A4%E0%A5%80-%E0%A4%9A%E0%A4%B0%E0%A4%A3-%E0%A4%B5%E0%A4%B0%E0%A5%8D%E0%A4%AE%E0%A4%BE-saransh",
+      "destination": "/books/chitralekha-bhagvati-charan-verma-saransh",
+      "permanent": true
+    },
+    {
+      "source": "/books/%E0%A4%A4%E0%A4%AE%E0%A4%B8-%E0%A4%AD%E0%A5%80%E0%A4%B7%E0%A5%8D%E0%A4%AE-%E0%A4%B8%E0%A4%BE%E0%A4%B9%E0%A4%A8%E0%A5%80-saransh",
+      "destination": "/books/tamas-bhisham-sahni-saransh",
+      "permanent": true
+    },
+    {
+      "source": "/books/%E0%A4%A6%E0%A5%87%E0%A4%B5%E0%A4%A6%E0%A4%BE%E0%A4%B8-%E0%A4%B6%E0%A4%B0%E0%A4%A4%E0%A4%9A%E0%A4%82%E0%A4%A6%E0%A5%8D%E0%A4%B0-%E0%A4%9A%E0%A4%9F%E0%A5%8D%E0%A4%9F%E0%A5%8B%E0%A4%AA%E0%A4%BE%E0%A4%A7%E0%A5%8D%E0%A4%AF%E0%A4%BE%E0%A4%AF-saransh",
+      "destination": "/books/devdas-sharatchandra-saransh",
+      "permanent": true
+    },
+    {
+      "source": "/books/%E0%A4%A8%E0%A4%A6%E0%A5%80-%E0%A4%95%E0%A5%87-%E0%A4%A6%E0%A5%8D%E0%A4%B5%E0%A5%80%E0%A4%AA-%E0%A4%85%E0%A4%9C%E0%A5%8D%E0%A4%9E%E0%A5%87%E0%A4%AF-saransh",
+      "destination": "/books/nadi-ke-dweep-agyeya-saransh",
+      "permanent": true
+    },
+    {
+      "source": "/books/%E0%A4%A8%E0%A4%BF%E0%A4%B0%E0%A5%8D%E0%A4%AE%E0%A4%B2%E0%A4%BE-%E0%A4%AE%E0%A5%81%E0%A4%82%E0%A4%B6%E0%A5%80-%E0%A4%AA%E0%A5%8D%E0%A4%B0%E0%A5%87%E0%A4%AE%E0%A4%9A%E0%A4%82%E0%A4%A6-saransh",
+      "destination": "/books/nirmala-munshi-premchand-saransh",
+      "permanent": true
+    },
+    {
+      "source": "/books/%E0%A4%AA%E0%A4%B0%E0%A4%BF%E0%A4%A3%E0%A5%80%E0%A4%A4%E0%A4%BE-%E0%A4%B6%E0%A4%B0%E0%A4%A4%E0%A4%9A%E0%A4%82%E0%A4%A6%E0%A5%8D%E0%A4%B0-%E0%A4%9A%E0%A4%9F%E0%A5%8D%E0%A4%9F%E0%A5%8B%E0%A4%AA%E0%A4%BE%E0%A4%A7%E0%A5%8D%E0%A4%AF%E0%A4%BE%E0%A4%AF-saransh",
+      "destination": "/books/parineeta-sharatchandra-saransh",
+      "permanent": true
+    },
+    {
+      "source": "/books/%E0%A4%AE%E0%A4%A7%E0%A5%81%E0%A4%B6%E0%A4%BE%E0%A4%B2%E0%A4%BE-%E0%A4%B9%E0%A4%B0%E0%A4%BF%E0%A4%B5%E0%A4%82%E0%A4%B6-%E0%A4%B0%E0%A4%BE%E0%A4%AF-%E0%A4%AC%E0%A4%9A%E0%A5%8D%E0%A4%9A%E0%A4%A8-saransh",
+      "destination": "/books/madhushala-harivansh-rai-bachchan-saransh",
+      "permanent": true
+    },
+    {
+      "source": "/books/%E0%A4%AE%E0%A5%88%E0%A4%B2%E0%A4%BE-%E0%A4%86%E0%A4%81%E0%A4%9A%E0%A4%B2-%E0%A4%AB%E0%A4%A3%E0%A5%80%E0%A4%B6%E0%A5%8D%E0%A4%B5%E0%A4%B0-%E0%A4%A8%E0%A4%BE%E0%A4%A5-%E0%A4%B0%E0%A5%87%E0%A4%A3%E0%A5%81-saransh",
+      "destination": "/books/maila-aanchal-phanishwar-nath-renu-saransh",
+      "permanent": true
+    },
+    {
+      "source": "/books/%E0%A4%AF%E0%A4%BE%E0%A4%AE%E0%A4%BE-%E0%A4%AE%E0%A4%B9%E0%A4%BE%E0%A4%A6%E0%A5%87%E0%A4%B5%E0%A5%80-%E0%A4%B5%E0%A4%B0%E0%A5%8D%E0%A4%AE%E0%A4%BE-saransh",
+      "destination": "/books/yama-mahadevi-varma-saransh",
+      "permanent": true
+    },
+    {
+      "source": "/books/%E0%A4%B0%E0%A4%95%E0%A5%8D%E0%A4%A4-%E0%A4%95%E0%A4%B0%E0%A4%AC%E0%A5%80-%E0%A4%B0%E0%A4%B5%E0%A5%80%E0%A4%82%E0%A4%A6%E0%A5%8D%E0%A4%B0%E0%A4%A8%E0%A4%BE%E0%A4%A5-%E0%A4%A0%E0%A4%BE%E0%A4%95%E0%A5%81%E0%A4%B0-saransh",
+      "destination": "/books/%E0%A4%B0%E0%A4%95%E0%A5%8D%E0%A4%A4%E0%A4%95%E0%A4%B0%E0%A4%AC%E0%A5%80",
+      "permanent": true
+    },
+    {
+      "source": "/books/%E0%A4%B0%E0%A4%82%E0%A4%97%E0%A4%AD%E0%A5%82%E0%A4%AE%E0%A4%BF-%E0%A4%AE%E0%A5%81%E0%A4%82%E0%A4%B6%E0%A5%80-%E0%A4%AA%E0%A5%8D%E0%A4%B0%E0%A5%87%E0%A4%AE%E0%A4%9A%E0%A4%82%E0%A4%A6-saransh",
+      "destination": "/books/rangbhoomi-premchand-saransh",
+      "permanent": true
+    },
+    {
+      "source": "/books/%E0%A4%B0%E0%A4%BE%E0%A4%97-%E0%A4%A6%E0%A4%B0%E0%A4%AC%E0%A4%BE%E0%A4%B0%E0%A5%80-%E0%A4%B6%E0%A5%8D%E0%A4%B0%E0%A5%80%E0%A4%B2%E0%A4%BE%E0%A4%B2-%E0%A4%B6%E0%A5%81%E0%A4%95%E0%A5%8D%E0%A4%B2-saransh",
+      "destination": "/books/rag-darbari-shrilal-shukla-saransh",
+      "permanent": true
+    },
+    {
+      "source": "/books/%E0%A4%B2%E0%A4%B9%E0%A4%B0%E0%A5%8B%E0%A4%82-%E0%A4%95%E0%A5%87-%E0%A4%B0%E0%A4%BE%E0%A4%9C%E0%A4%B9%E0%A4%82%E0%A4%B8-%E0%A4%AE%E0%A5%8B%E0%A4%B9%E0%A4%A8-%E0%A4%B0%E0%A4%BE%E0%A4%95%E0%A5%87%E0%A4%B6-saransh",
+      "destination": "/books/lehron-ke-rajhans-mohan-rakesh-saransh",
+      "permanent": true
+    },
+    {
+      "source": "/books/%E0%A4%B5%E0%A5%88%E0%A4%B6%E0%A4%BE%E0%A4%B2%E0%A5%80-%E0%A4%95%E0%A5%80-%E0%A4%A8%E0%A4%97%E0%A4%B0%E0%A4%B5%E0%A4%A7%E0%A5%82-%E0%A4%86%E0%A4%9A%E0%A4%BE%E0%A4%B0%E0%A5%8D%E0%A4%AF-%E0%A4%9A%E0%A4%A4%E0%A5%81%E0%A4%B0%E0%A4%B8%E0%A5%87%E0%A4%A8-%E0%A4%B6%E0%A4%BE%E0%A4%B8%E0%A5%8D%E0%A4%A4%E0%A5%8D%E0%A4%B0%E0%A5%80-saransh",
+      "destination": "/books/vaishali-ki-nagarvadhu-chatursen-saransh",
+      "permanent": true
+    },
+    {
+      "source": "/books/%E0%A4%B6%E0%A5%87%E0%A4%96%E0%A4%B0%3A-%E0%A4%8F%E0%A4%95-%E0%A4%9C%E0%A5%80%E0%A4%B5%E0%A4%A8%E0%A5%80-%E0%A4%85%E0%A4%9C%E0%A5%8D%E0%A4%9E%E0%A5%87%E0%A4%AF-saransh",
+      "destination": "/books/shekhar-ek-jivani-agyeya-saransh",
+      "permanent": true
+    },
+    {
+      "source": "/books/%E0%A4%B8%E0%A5%87%E0%A4%B5%E0%A4%BE%E0%A4%B8%E0%A4%A6%E0%A4%A8-%E0%A4%AE%E0%A5%81%E0%A4%82%E0%A4%B6%E0%A5%80-%E0%A4%AA%E0%A5%8D%E0%A4%B0%E0%A5%87%E0%A4%AE%E0%A4%9A%E0%A4%82%E0%A4%A6-saransh",
+      "destination": "/books/sevasadan-premchand-saransh",
+      "permanent": true
+    }
+  ]
 }

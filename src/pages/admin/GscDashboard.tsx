@@ -30,6 +30,8 @@ function Inner() {
   const [inspectUrl, setInspectUrl] = useState("");
   const [inspectResult, setInspectResult] = useState<any>(null);
 
+  const ctrOpportunities = buildCtrOpportunities(siteData?.pages || []);
+
   useEffect(() => { localStorage.setItem("gsc_site", site); }, [site]);
 
   const call = async (body: any) => {
@@ -100,6 +102,33 @@ function Inner() {
             <Mini label="CTR" value={`${((siteData.totals?.ctr ?? 0) * 100).toFixed(2)}%`} />
             <Mini label="Avg position" value={(siteData.totals?.position ?? 0).toFixed(1)} />
           </div>
+          {ctrOpportunities.length > 0 && (
+            <div className="mb-6">
+              <h3 className="font-semibold mb-2">High-impression CTR opportunities</h3>
+              <p className="text-xs text-muted-foreground mb-2">
+                Pages are compared only with Booknomics pages in the same average-position band, then filtered to high-impression pages below that band's median CTR.
+              </p>
+              <div className="overflow-x-auto">
+                <table className="w-full text-sm">
+                  <thead className="text-xs uppercase text-muted-foreground">
+                    <tr><th className="text-left p-2">URL</th><th>Impr.</th><th>CTR</th><th>Band median</th><th>Pos.</th></tr>
+                  </thead>
+                  <tbody>
+                    {ctrOpportunities.slice(0, 25).map((p: any, i: number) => (
+                      <tr key={i} className="border-t">
+                        <td className="p-2 truncate max-w-[420px]"><a className="text-primary hover:underline" href={p.url} target="_blank" rel="noreferrer">{p.url}</a></td>
+                        <td className="text-center tabular-nums">{p.impressions}</td>
+                        <td className="text-center tabular-nums">{(p.ctr * 100).toFixed(1)}%</td>
+                        <td className="text-center tabular-nums">{(p.bandMedian * 100).toFixed(1)}%</td>
+                        <td className="text-center tabular-nums">{p.position.toFixed(1)}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          )}
+
           <h3 className="font-semibold mb-2">Top pages</h3>
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
@@ -143,4 +172,42 @@ function Mini({ label, value }: { label: string; value: any }) {
       <div className="text-xl font-bold tabular-nums">{value}</div>
     </div>
   );
+}
+
+
+function buildCtrOpportunities(rows: any[]) {
+  const normalized = rows
+    .filter((r) => r?.keys?.[0] && Number(r.impressions || 0) > 0)
+    .map((r) => ({
+      url: r.keys[0],
+      clicks: Number(r.clicks || 0),
+      impressions: Number(r.impressions || 0),
+      ctr: Number(r.ctr || 0),
+      position: Number(r.position || 0),
+    }));
+
+  const bandFor = (position: number) =>
+    position <= 3 ? "1-3" : position <= 7 ? "4-7" : position <= 15 ? "8-15" : "16+";
+
+  const median = (values: number[]) => {
+    if (!values.length) return 0;
+    const sorted = [...values].sort((a, b) => a - b);
+    const mid = Math.floor(sorted.length / 2);
+    return sorted.length % 2 ? sorted[mid] : (sorted[mid - 1] + sorted[mid]) / 2;
+  };
+
+  const impressionValues = normalized.map((r) => r.impressions).sort((a, b) => a - b);
+  const q3Index = Math.max(0, Math.floor((impressionValues.length - 1) * 0.75));
+  const highImpressionCutoff = impressionValues[q3Index] || 0;
+
+  const medians = new Map<string, number>();
+  for (const band of ["1-3", "4-7", "8-15"]) {
+    medians.set(band, median(normalized.filter((r) => bandFor(r.position) === band).map((r) => r.ctr)));
+  }
+
+  return normalized
+    .filter((r) => r.position > 0 && r.position <= 15 && r.impressions >= highImpressionCutoff)
+    .map((r) => ({ ...r, bandMedian: medians.get(bandFor(r.position)) || 0 }))
+    .filter((r) => r.ctr < r.bandMedian)
+    .sort((a, b) => b.impressions - a.impressions);
 }

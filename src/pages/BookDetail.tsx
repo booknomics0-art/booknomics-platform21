@@ -24,6 +24,7 @@ import { trackAddToLibrary } from "@/lib/analytics";
 import { SEO } from "@/components/SEO";
 import { Helmet } from "react-helmet-async";
 import { stripMarkdown } from "@/lib/stripMarkdown";
+import { slugifyCategory } from "@/lib/categorySlug";
 import { Link } from "react-router-dom";
 
 import { resolveCanonicalSlug } from "@/lib/slugRedirects";
@@ -55,6 +56,7 @@ interface Book {
   real_life_example: string | null;
   rating: number | null; reading_time: number | null; year: number | null; language: string;
   affiliate_link: string | null;
+  alternate_book_id: string | null;
 }
 
 const Section = ({ title, eyebrow, children, level = 2 }: { title: string; eyebrow: string; children: React.ReactNode; level?: 2 | 3 }) => {
@@ -136,20 +138,20 @@ const BookDetail = () => {
     setBookError(null);
     (async () => {
       try {
-        const fields = "id,slug,title,author,category,cover_color,tagline,overview,deep_summary,key_ideas,deep_analysis,daily_application,reading_time,rating,year,created_at,cover_url,language,affiliate_link,is_draft,status,meta_title,meta_description,og_image,seo_slug,seo_keywords,old_slugs";
+        const fields = "id,slug,title,author,category,cover_color,tagline,overview,deep_summary,key_ideas,deep_analysis,daily_application,reading_time,rating,year,created_at,cover_url,language,affiliate_link,is_draft,status,meta_title,meta_description,og_image,seo_slug,seo_keywords,old_slugs,alternate_book_id";
         // Try canonical slug first, then seo_slug (keyword URL), then any book
         // that has this slug in old_slugs.
-        const primary = await supabase.from("books").select(fields).eq("slug", slug).eq("is_draft", false).maybeSingle();
+        const primary = await supabase.from("books").select(fields).eq("slug", slug).eq("is_draft", false).in("status", ["published", "published_noindex"]).maybeSingle();
         if (primary.error) throw primary.error;
         let data = primary.data;
 
         if (!data) {
-          const bySeo = await supabase.from("books").select(fields).eq("seo_slug", slug).eq("is_draft", false).maybeSingle();
+          const bySeo = await supabase.from("books").select(fields).eq("seo_slug", slug).eq("is_draft", false).in("status", ["published", "published_noindex"]).maybeSingle();
           if (bySeo.error) throw bySeo.error;
           data = bySeo.data;
         }
         if (!data) {
-          const byOld = await supabase.from("books").select(fields).contains("old_slugs", [slug]).eq("is_draft", false).limit(1).maybeSingle();
+          const byOld = await supabase.from("books").select(fields).contains("old_slugs", [slug]).eq("is_draft", false).in("status", ["published", "published_noindex"]).limit(1).maybeSingle();
           if (byOld.error) throw byOld.error;
           if (byOld.data) {
             const target = (byOld.data as any).seo_slug || (byOld.data as any).slug;
@@ -232,22 +234,24 @@ const BookDetail = () => {
       .then(({ data }) => setLinkTargets((data ?? []) as LinkTarget[]));
   }, [book]);
 
-  // Find the same book in the other language (slug convention: foo ⇄ foo-hi / foo-hindi)
+  // Only explicit database relationships may create language alternates.
+  // Slug guessing can pair unrelated Hindi/English books and produce invalid hreflang.
   useEffect(() => {
     setCounterpart(null);
-    if (!book) return;
-    const isHiBook = book.language === "hi";
-    const candidates = isHiBook
-      ? [book.slug.replace(/-(hi|hindi)$/, "")].filter(s => s !== book.slug)
-      : [`${book.slug}-hi`, `${book.slug}-hindi`];
-    if (!candidates.length) return;
+    if (!book?.alternate_book_id) return;
     supabase.from("books")
-      .select("slug,language")
+      .select("slug,seo_slug,language")
+      .eq("id", book.alternate_book_id)
       .eq("is_draft", false)
-      .eq("language", isHiBook ? "en" : "hi")
-      .in("slug", candidates)
-      .limit(1)
-      .then(({ data }) => setCounterpart(data?.[0] ?? null));
+      .eq("status", "published")
+      .maybeSingle()
+      .then(({ data }) => {
+        if (!data) return;
+        setCounterpart({
+          slug: (data as any).seo_slug || data.slug,
+          language: data.language,
+        });
+      });
   }, [book]);
 
 
@@ -359,20 +363,16 @@ const BookDetail = () => {
   const bookAny = book as any;
   const rawDesc = stripMarkdown(book.tagline || book.overview || "");
   const fallbackDesc = isHi
-    ? `${book.title} पुस्तक का मुफ्त सारांश हिंदी में पढ़ें। मुख्य अंश, 7-दिन एक्शन प्लान और reflection questions के साथ। Book summary in Hindi by Booknomics.`
+    ? `${book.title} का सारांश हिंदी में पढ़ें — प्रमुख विचार, गहरा विश्लेषण और 7-दिन की व्यावहारिक कार्ययोजना के साथ।`
     : `${book.title} by ${book.author}: key insights, practical lessons, reflection questions, and an actionable plan you can use today.`;
   const seoTitle = bookAny.meta_title || (isHi
     ? `${book.title} का सारांश हिंदी में — ${book.author} | Booknomics`
-    : `${book.title} Summary in Hindi & English | Actionable Insights - Booknomics`);
+    : `${book.title} Summary: Key Lessons & Analysis | Booknomics`);
   const seoDesc = bookAny.meta_description || (isHi ? fallbackDesc.slice(0, 158) : (rawDesc ? rawDesc.slice(0, 155) : fallbackDesc));
   const canonicalSlug = (bookAny.seo_slug as string | null) || book.slug;
   const seoPath = `/books/${canonicalSlug}`;
   const canonical = `https://booknomics.com${seoPath}`;
   const ogImg = bookAny.og_image || book.cover_url || undefined;
-  // Only real reader reviews may produce AggregateRating structured data.
-  // Database display ratings are not treated as public review evidence.
-  const ratingAvg = reviewStats.count > 0 ? reviewStats.avg : null;
-  const ratingCount = reviewStats.count > 0 ? reviewStats.count : 0;
   const readMins = book.reading_time ?? 12;
   const absImage = book.cover_url
     ? (book.cover_url.startsWith("http") ? book.cover_url : `https://booknomics.com${book.cover_url.startsWith("/") ? "" : "/"}${book.cover_url}`)
@@ -384,35 +384,27 @@ const BookDetail = () => {
     author: { "@type": "Person", name: book.author },
     inLanguage: isHi ? "hi" : "en",
     genre: book.category,
-    url: canonical,
-    mainEntityOfPage: canonical,
-    bookFormat: "https://schema.org/EBook",
-    description: stripMarkdown(book.overview || "").slice(0, 300) || fallbackDesc,
-    timeRequired: `PT${readMins}M`,
     ...(book.year ? { datePublished: String(book.year) } : {}),
     ...(absImage ? { image: absImage } : {}),
-    ...(book.affiliate_link ? { sameAs: [book.affiliate_link] } : {}),
   };
-
-  if (ratingAvg && ratingCount > 0) {
-    bookLd.aggregateRating = {
-      "@type": "AggregateRating",
-      ratingValue: ratingAvg,
-      reviewCount: ratingCount,
-      bestRating: 5,
-      worstRating: 1,
-    };
-  }
-  if (reviewStats.top) {
-    bookLd.review = [{
-      "@type": "Review",
-      reviewRating: { "@type": "Rating", ratingValue: reviewStats.top.rating, bestRating: 5, worstRating: 1 },
-      author: { "@type": "Person", name: "Booknomics Reader" },
-      datePublished: reviewStats.top.created_at.slice(0, 10),
-      reviewBody: reviewStats.top.content.slice(0, 500),
-    }];
-  }
-  const categoryCrumb = `https://booknomics.com/category/${encodeURIComponent(book.category.toLowerCase())}`;
+  const articleLd: Record<string, any> = {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    headline: seoTitle,
+    description: seoDesc,
+    inLanguage: isHi ? "hi" : "en",
+    mainEntityOfPage: { "@type": "WebPage", "@id": canonical },
+    author: { "@type": "Organization", name: "Booknomics", url: "https://booknomics.com" },
+    publisher: { "@type": "Organization", name: "Booknomics", url: "https://booknomics.com" },
+    about: {
+      "@type": "Book",
+      name: book.title,
+      author: { "@type": "Person", name: book.author },
+    },
+    timeRequired: `PT${readMins}M`,
+    ...(absImage ? { image: [absImage] } : {}),
+  };
+  const categoryCrumb = `https://booknomics.com/category/${slugifyCategory(book.category)}`;
   const breadcrumbLd = {
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
@@ -434,7 +426,7 @@ const BookDetail = () => {
       }
     : undefined;
 
-  // FAQ items (visible) + FAQPage JSON-LD for rich results.
+  // FAQs remain visible for readers; search engines no longer depend on FAQ rich-result markup.
   const faqs = buildBookFaqs({
     title: book.title,
     author: book.author,
@@ -443,15 +435,7 @@ const BookDetail = () => {
     isHindi: isHi,
     tagline: book.tagline,
   });
-  const faqLd = {
-    "@context": "https://schema.org",
-    "@type": "FAQPage",
-    mainEntity: faqs.map((f) => ({
-      "@type": "Question",
-      name: f.q,
-      acceptedAnswer: { "@type": "Answer", text: f.a },
-    })),
-  };
+
 
   return (
     <Layout>
@@ -459,11 +443,11 @@ const BookDetail = () => {
         title={seoTitle}
         description={seoDesc}
         canonical={canonical}
-        ogType="book"
+        ogType="article"
         lang={isHi ? "hi" : "en"}
         ogImage={ogImg}
         alternates={hreflangAlternates}
-        jsonLd={[bookLd, breadcrumbLd, faqLd]}
+        jsonLd={[articleLd, bookLd, breadcrumbLd]}
         noindex={bookAny.status === "published_noindex"}
       />
       {book.cover_url && (
