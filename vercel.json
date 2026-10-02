@@ -59,6 +59,11 @@
       "permanent": true
     },
     {
+      "source": "/books/aplak-jaishankar-prasad-saransh",
+      "destination": "/books/अपलक-जयशंकर-प्रसाद-saransh",
+      "permanent": true
+    },
+    {
       "source": "/books/atomic-habit",
       "destination": "/books/atomic-habits",
       "permanent": true
@@ -109,6 +114,11 @@
       "permanent": true
     },
     {
+      "source": "/books/kitne-chaurahe-kamleshwar-saransh",
+      "destination": "/books/kitne-chaurahe-phanishwarnath-renu-saransh",
+      "permanent": true
+    },
+    {
       "source": "/books/man-s-search-for-meaning",
       "destination": "/books/man-search-meaning",
       "permanent": true
@@ -144,8 +154,28 @@
       "permanent": true
     },
     {
+      "source": "/books/raktakarabi-rabindranath-thakur-saransh",
+      "destination": "/books/रक्तकरबी",
+      "permanent": true
+    },
+    {
+      "source": "/books/rashmirathi-dinkar-saransh",
+      "destination": "/books/रश्मिरथी-रामधारी-सिंह-दिनकर-saransh",
+      "permanent": true
+    },
+    {
       "source": "/books/seven-habits",
       "destination": "/books/the-7-habits",
+      "permanent": true
+    },
+    {
+      "source": "/books/somdev-chatursen-saransh",
+      "destination": "/books/सोमदेव-आचार्य-चतुरसेन-शास्त्री-saransh",
+      "permanent": true
+    },
+    {
+      "source": "/books/teeshri-kasam-renu-saransh",
+      "destination": "/books/तीसरी-कसम-फणीश्वर-नाथ-रेणु-saransh",
       "permanent": true
     },
     {
@@ -169,8 +199,143 @@
       "permanent": true
     },
     {
+      "source": "/books/urvashi-dinkar-saransh",
+      "destination": "/books/उर्वशी-रामधारी-सिंह-दिनकर-saransh",
+      "permanent": true
+    },
+    {
+      "source": "/books/vayam-raksham-rahul-sankrityayan-saransh",
+      "destination": "/books/वयं-रक्षामः-राहुल-सांकृत्यायन-saransh",
+      "permanent": true
+    },
+    {
       "source": "/books/wings-of-fire-apj",
       "destination": "/books/wings-of-fire",
+      "permanent": true
+    },
+    {
+      "source": "/books/आधे-अधूरे-मोहन-राकेश-saransh",
+      "destination": "/books/adhe-adhure-mohan-rakesh-saransh",
+      "permanent": true
+    },
+    {
+      "source": "/books/कर्मभूमि-मुंशी-प्रेमचंद-saransh",
+      "destination": "/books/karmabhoomi-premchand-saransh",
+      "permanent": true
+    },
+    {
+      "source": "/books/कामायनी-जयशंकर-प्रसाद-saransh",
+      "destination": "/books/kamayani-jaishankar-prasad-saransh",
+      "permanent": true
+    },
+    {
+      "source": "/books/कायाकल्प-मुंशी-प्रेमचंद-saransh",
+      "destination": "/books/kayakalp-premchand-saransh",
+      "permanent": true
+    },
+    {
+      "source": "/books/कितने-चौराहे-कमलेश्वर-saransh",
+      "destination": "/books/kitne-chaurahe-phanishwarnath-renu-saransh",
+      "permanent": true
+    },
+    {
+      "source": "/books/गबन-मुंशी-प्रेमचंद-saransh",
+      "destination": "/books/gaban-munshi-premchand-saransh",
+      "permanent": true
+    },
+    {
+      "source": "/books/गुनाहों-का-देवता-धर्मवीर-भारती-saransh",
+      "destination": "/books/gunahon-ka-devta-dharamvir-bharti-saransh",
+      "permanent": true
+    },
+    {
+      "source": "/books/गोदान-मुंशी-प्रेमचंद-saransh",
+      "destination": "/books/godan-munshi-premchand-saransh",
+      "permanent": true
+    },
+    {
+      "source": "/books/चरित्रहीन-शरतचंद्र-चट्टोपाध्याय-saransh",
+      "destination": "/books/charitraheen-sharatchandra-saransh",
+      "permanent": true
+    },
+    {
+      "source": "/books/चित्रलेखा-भगवती-चरण-वर्मा-saransh",
+      "destination": "/books/chitralekha-bhagvati-charan-verma-saransh",
+      "permanent": true
+    },
+    {
+      "source": "/books/तमस-भीष्म-साहनी-saransh",
+      "destination": "/books/tamas-bhisham-sahni-saransh",
+      "permanent": true
+    },
+    {
+      "source": "/books/देवदास-शरतचंद्र-चट्टोपाध्याय-saransh",
+      "destination": "/books/devdas-sharatchandra-saransh",
+      "permanent": true
+    },
+    {
+      "source": "/books/नदी-के-द्वीप-अज्ञेय-saransh",
+      "destination": "/books/nadi-ke-dweep-agyeya-saransh",
+      "permanent": true
+    },
+    {
+      "source": "/books/निर्मला-मुंशी-प्रेमचंद-saransh",
+      "destination": "/books/nirmala-munshi-premchand-saransh",
+      "permanent": true
+    },
+    {
+      "source": "/books/परिणीता-शरतचंद्र-चट्टोपाध्याय-saransh",
+      "destination": "/books/parineeta-sharatchandra-saransh",
+      "permanent": true
+    },
+    {
+      "source": "/books/मधुशाला-हरिवंश-राय-बच्चन-saransh",
+      "destination": "/books/madhushala-harivansh-rai-bachchan-saransh",
+      "permanent": true
+    },
+    {
+      "source": "/books/मैला-आँचल-फणीश्वर-नाथ-रेणु-saransh",
+      "destination": "/books/maila-aanchal-phanishwar-nath-renu-saransh",
+      "permanent": true
+    },
+    {
+      "source": "/books/यामा-महादेवी-वर्मा-saransh",
+      "destination": "/books/yama-mahadevi-varma-saransh",
+      "permanent": true
+    },
+    {
+      "source": "/books/रक्त-करबी-रवींद्रनाथ-ठाकुर-saransh",
+      "destination": "/books/रक्तकरबी",
+      "permanent": true
+    },
+    {
+      "source": "/books/रंगभूमि-मुंशी-प्रेमचंद-saransh",
+      "destination": "/books/rangbhoomi-premchand-saransh",
+      "permanent": true
+    },
+    {
+      "source": "/books/राग-दरबारी-श्रीलाल-शुक्ल-saransh",
+      "destination": "/books/rag-darbari-shrilal-shukla-saransh",
+      "permanent": true
+    },
+    {
+      "source": "/books/लहरों-के-राजहंस-मोहन-राकेश-saransh",
+      "destination": "/books/lehron-ke-rajhans-mohan-rakesh-saransh",
+      "permanent": true
+    },
+    {
+      "source": "/books/वैशाली-की-नगरवधू-आचार्य-चतुरसेन-शास्त्री-saransh",
+      "destination": "/books/vaishali-ki-nagarvadhu-chatursen-saransh",
+      "permanent": true
+    },
+    {
+      "source": "/books/शेखर:-एक-जीवनी-अज्ञेय-saransh",
+      "destination": "/books/shekhar-ek-jivani-agyeya-saransh",
+      "permanent": true
+    },
+    {
+      "source": "/books/सेवासदन-मुंशी-प्रेमचंद-saransh",
+      "destination": "/books/sevasadan-premchand-saransh",
       "permanent": true
     }
   ]
