@@ -40,6 +40,8 @@ const SlugOptimizer = lazy(() => import("./pages/admin/SlugOptimizer.tsx"));
 const SocialPublisher = lazy(() => import("./pages/admin/SocialPublisher.tsx"));
 const ContentPolish = lazy(() => import("./pages/admin/ContentPolish.tsx"));
 const GscDashboard = lazy(() => import("./pages/admin/GscDashboard.tsx"));
+const AdminDemand = lazy(() => import("./pages/admin/AdminDemand.tsx"));
+const RequestBook = lazy(() => import("./pages/RequestBook.tsx"));
 const IndexingQueue = lazy(() => import("./pages/admin/IndexingQueue.tsx"));
 const Resources = lazy(() => import("./pages/Resources.tsx"));
 const ReadingTracker = lazy(() => import("./pages/resources/ReadingTracker.tsx"));
@@ -121,6 +123,8 @@ const App = () => (
                 <Route path="/admin/social" element={<SocialPublisher />} />
                 <Route path="/admin/polish" element={<ContentPolish />} />
                 <Route path="/admin/gsc" element={<GscDashboard />} />
+                <Route path="/admin/demand" element={<AdminDemand />} />
+                <Route path="/request-book" element={<RequestBook />} />
                 <Route path="/admin/indexing-queue" element={<IndexingQueue />} />
                 <Route path="/privacy" element={<Privacy />} />
                 <Route path="/privacy-policy" element={<Privacy />} />
