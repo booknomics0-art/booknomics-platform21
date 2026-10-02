@@ -143,13 +143,6 @@ export type Database = {
             referencedRelation: "books"
             referencedColumns: ["id"]
           },
-          {
-            foreignKeyName: "backlink_records_book_id_fkey"
-            columns: ["book_id"]
-            isOneToOne: false
-            referencedRelation: "books_admin"
-            referencedColumns: ["id"]
-          },
         ]
       }
       book_assets: {
@@ -191,11 +184,75 @@ export type Database = {
             referencedRelation: "books"
             referencedColumns: ["id"]
           },
+        ]
+      }
+      book_catalog: {
+        Row: {
+          author: string
+          batch_no: number | null
+          booknomics_no: number
+          category: string
+          created_at: string
+          legal_status: string | null
+          linked_book_id: string | null
+          production_status: string
+          quality_notes: string | null
+          quality_score: number | null
+          quality_status: string
+          selected: boolean
+          source_gutenberg: string | null
+          source_wikisource: string | null
+          summary_language: string
+          target_summary_words: number
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          author: string
+          batch_no?: number | null
+          booknomics_no: number
+          category: string
+          created_at?: string
+          legal_status?: string | null
+          linked_book_id?: string | null
+          production_status?: string
+          quality_notes?: string | null
+          quality_score?: number | null
+          quality_status?: string
+          selected?: boolean
+          source_gutenberg?: string | null
+          source_wikisource?: string | null
+          summary_language: string
+          target_summary_words: number
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          author?: string
+          batch_no?: number | null
+          booknomics_no?: number
+          category?: string
+          created_at?: string
+          legal_status?: string | null
+          linked_book_id?: string | null
+          production_status?: string
+          quality_notes?: string | null
+          quality_score?: number | null
+          quality_status?: string
+          selected?: boolean
+          source_gutenberg?: string | null
+          source_wikisource?: string | null
+          summary_language?: string
+          target_summary_words?: number
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
           {
-            foreignKeyName: "book_assets_book_id_fkey"
-            columns: ["book_id"]
-            isOneToOne: true
-            referencedRelation: "books_admin"
+            foreignKeyName: "book_catalog_linked_book_id_fkey"
+            columns: ["linked_book_id"]
+            isOneToOne: false
+            referencedRelation: "books"
             referencedColumns: ["id"]
           },
         ]
@@ -245,13 +302,6 @@ export type Database = {
             referencedRelation: "books"
             referencedColumns: ["id"]
           },
-          {
-            foreignKeyName: "book_modules_book_id_fkey"
-            columns: ["book_id"]
-            isOneToOne: false
-            referencedRelation: "books_admin"
-            referencedColumns: ["id"]
-          },
         ]
       }
       book_notes: {
@@ -276,6 +326,42 @@ export type Database = {
           content?: string
           created_at?: string
           id?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      book_requests: {
+        Row: {
+          author: string | null
+          created_at: string
+          id: string
+          language: string
+          reason: string | null
+          status: string
+          title: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          author?: string | null
+          created_at?: string
+          id?: string
+          language?: string
+          reason?: string | null
+          status?: string
+          title: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          author?: string | null
+          created_at?: string
+          id?: string
+          language?: string
+          reason?: string | null
+          status?: string
+          title?: string
           updated_at?: string
           user_id?: string
         }
@@ -313,6 +399,56 @@ export type Database = {
           user_id?: string
         }
         Relationships: []
+      }
+      book_sources: {
+        Row: {
+          access_mode: string
+          booknomics_no: number
+          created_at: string
+          id: string
+          notes: string | null
+          source_name: string
+          source_rank: number
+          source_role: string
+          source_url: string
+          verified: boolean
+          verified_at: string | null
+        }
+        Insert: {
+          access_mode?: string
+          booknomics_no: number
+          created_at?: string
+          id?: string
+          notes?: string | null
+          source_name: string
+          source_rank: number
+          source_role: string
+          source_url: string
+          verified?: boolean
+          verified_at?: string | null
+        }
+        Update: {
+          access_mode?: string
+          booknomics_no?: number
+          created_at?: string
+          id?: string
+          notes?: string | null
+          source_name?: string
+          source_rank?: number
+          source_role?: string
+          source_url?: string
+          verified?: boolean
+          verified_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "book_sources_booknomics_no_fkey"
+            columns: ["booknomics_no"]
+            isOneToOne: false
+            referencedRelation: "book_catalog"
+            referencedColumns: ["booknomics_no"]
+          },
+        ]
       }
       books: {
         Row: {
@@ -651,13 +787,6 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "learning_path_books_book_id_fkey"
-            columns: ["book_id"]
-            isOneToOne: false
-            referencedRelation: "books_admin"
-            referencedColumns: ["id"]
-          },
-          {
             foreignKeyName: "learning_path_books_path_id_fkey"
             columns: ["path_id"]
             isOneToOne: false
@@ -724,13 +853,6 @@ export type Database = {
             columns: ["book_id"]
             isOneToOne: false
             referencedRelation: "books"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "library_book_id_fkey"
-            columns: ["book_id"]
-            isOneToOne: false
-            referencedRelation: "books_admin"
             referencedColumns: ["id"]
           },
         ]
@@ -840,13 +962,6 @@ export type Database = {
             columns: ["book_id"]
             isOneToOne: false
             referencedRelation: "books"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "promotion_logs_book_id_fkey"
-            columns: ["book_id"]
-            isOneToOne: false
-            referencedRelation: "books_admin"
             referencedColumns: ["id"]
           },
         ]
@@ -1021,13 +1136,6 @@ export type Database = {
             referencedRelation: "books"
             referencedColumns: ["id"]
           },
-          {
-            foreignKeyName: "seo_audits_book_id_fkey"
-            columns: ["book_id"]
-            isOneToOne: false
-            referencedRelation: "books_admin"
-            referencedColumns: ["id"]
-          },
         ]
       }
       seo_indexing_jobs: {
@@ -1073,13 +1181,6 @@ export type Database = {
             columns: ["book_id"]
             isOneToOne: false
             referencedRelation: "books"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "seo_indexing_jobs_book_id_fkey"
-            columns: ["book_id"]
-            isOneToOne: false
-            referencedRelation: "books_admin"
             referencedColumns: ["id"]
           },
         ]
@@ -1181,13 +1282,6 @@ export type Database = {
             columns: ["book_id"]
             isOneToOne: false
             referencedRelation: "books"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "social_posts_book_id_fkey"
-            columns: ["book_id"]
-            isOneToOne: false
-            referencedRelation: "books_admin"
             referencedColumns: ["id"]
           },
         ]
@@ -1309,13 +1403,6 @@ export type Database = {
             referencedRelation: "books"
             referencedColumns: ["id"]
           },
-          {
-            foreignKeyName: "user_book_mastery_book_id_fkey"
-            columns: ["book_id"]
-            isOneToOne: false
-            referencedRelation: "books_admin"
-            referencedColumns: ["id"]
-          },
         ]
       }
       user_roles: {
@@ -1374,72 +1461,6 @@ export type Database = {
           tagline: string | null
           title: string | null
           year: number | null
-        }
-        Insert: {
-          action_system?: string | null
-          affiliate_link?: string | null
-          author?: string | null
-          category?: string | null
-          cover_color?: string | null
-          cover_url?: string | null
-          created_at?: string | null
-          daily_application?: string | null
-          deep_analysis?: string | null
-          deep_summary?: string | null
-          id?: string | null
-          is_draft?: boolean | null
-          key_ideas?: string | null
-          language?: string | null
-          meta_description?: string | null
-          meta_title?: string | null
-          og_image?: string | null
-          old_slugs?: string[] | null
-          overview?: string | null
-          practice_tracker?: string | null
-          rating?: number | null
-          reading_time?: number | null
-          real_life_example?: string | null
-          reflection_questions?: string | null
-          seo_keywords?: string[] | null
-          seo_slug?: string | null
-          slug?: string | null
-          status?: string | null
-          tagline?: string | null
-          title?: string | null
-          year?: number | null
-        }
-        Update: {
-          action_system?: string | null
-          affiliate_link?: string | null
-          author?: string | null
-          category?: string | null
-          cover_color?: string | null
-          cover_url?: string | null
-          created_at?: string | null
-          daily_application?: string | null
-          deep_analysis?: string | null
-          deep_summary?: string | null
-          id?: string | null
-          is_draft?: boolean | null
-          key_ideas?: string | null
-          language?: string | null
-          meta_description?: string | null
-          meta_title?: string | null
-          og_image?: string | null
-          old_slugs?: string[] | null
-          overview?: string | null
-          practice_tracker?: string | null
-          rating?: number | null
-          reading_time?: number | null
-          real_life_example?: string | null
-          reflection_questions?: string | null
-          seo_keywords?: string[] | null
-          seo_slug?: string | null
-          slug?: string | null
-          status?: string | null
-          tagline?: string | null
-          title?: string | null
-          year?: number | null
         }
         Relationships: []
       }
