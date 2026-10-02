@@ -67,7 +67,8 @@ const HINDI_COPY_REPLACEMENTS: Array<[RegExp, string]> = [
 ];
 
 const normalizeHindiMarkdown = (input: string) => {
-  let text = HINDI_COPY_REPLACEMENTS.reduce((acc, [pattern, replacement]) => acc.replace(pattern, replacement), input);
+  const withRealLineBreaks = input.replace(/\\n/g, "\n");
+  let text = HINDI_COPY_REPLACEMENTS.reduce((acc, [pattern, replacement]) => acc.replace(pattern, replacement), withRealLineBreaks);
 
   text = text
     .split("\n")
