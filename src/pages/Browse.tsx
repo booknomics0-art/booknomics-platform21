@@ -16,6 +16,17 @@ import { AdBanner } from "@/components/AdBanner";
 type SortKey = "latest" | "az" | "za" | "category";
 const PER_PAGE = 24;
 
+const FEATURED_CRAWL_BOOKS = [
+  { title: "Atomic Habits", slug: "atomic-habits-james-clear-summary" },
+  { title: "Deep Work", slug: "deep-work-cal-newport-summary" },
+  { title: "A Brief History of Time", slug: "a-brief-history-of-time-stephen-hawking-summary" },
+  { title: "Blue Ocean Strategy", slug: "blue-ocean-strategy-w-chan-kim-and-renee-mauborgne-summary" },
+  { title: "Emotional Intelligence", slug: "emotional-intelligence-daniel-goleman-summary" },
+  { title: "Essentialism", slug: "essentialism-greg-mckeown-summary" },
+  { title: "Factfulness", slug: "factfulness-hans-rosling-ola-rosling-and-anna-rosling-ronnlund-summary" },
+  { title: "Digital Minimalism", slug: "digital-minimalism-cal-newport-summary" },
+] as const;
+
 type BrowseProps = {
   categoryFilter?: string;
   titleOverride?: string;
@@ -160,6 +171,9 @@ const Browse = ({ categoryFilter, titleOverride, introText, skipSeo, aboveConten
     : paramCategory
       ? `/category/${slugifyCategory(paramCategory)}`
       : "/browse";
+  // Give crawlers a useful ItemList immediately, even before the async catalog
+  // request finishes. Once Supabase data arrives, the live page data replaces it.
+  const collectionItems = pageBooks.length > 0 ? pageBooks : FEATURED_CRAWL_BOOKS;
   const collectionLd = {
     "@context": "https://schema.org",
     "@type": "CollectionPage",
@@ -167,7 +181,7 @@ const Browse = ({ categoryFilter, titleOverride, introText, skipSeo, aboveConten
     url: `https://booknomics.com${seoPath}`,
     mainEntity: {
       "@type": "ItemList",
-      itemListElement: pageBooks.slice(0, 30).map((b, i) => ({
+      itemListElement: collectionItems.slice(0, 30).map((b, i) => ({
         "@type": "ListItem",
         position: (page - 1) * PER_PAGE + i + 1,
         url: `https://booknomics.com/books/${b.slug}`,
@@ -275,8 +289,12 @@ const Browse = ({ categoryFilter, titleOverride, introText, skipSeo, aboveConten
             </Button>
           )}
 
-          <span className="text-xs md:text-sm text-muted-foreground ml-auto">
-            {totalCount} {totalCount === 1 ? "book" : "books"}
+          <span className="text-xs md:text-sm text-muted-foreground ml-auto" aria-live="polite">
+            {loading
+              ? "Loading books…"
+              : loadError
+                ? "Library temporarily unavailable"
+                : `${totalCount} ${totalCount === 1 ? "book" : "books"}`}
           </span>
         </div>
 
@@ -320,6 +338,27 @@ const Browse = ({ categoryFilter, titleOverride, introText, skipSeo, aboveConten
       </section>
 
       {aboveContent}
+
+      {!categoryFilter && page === 1 && !query.trim() && language !== "hi" && (
+        <section className="container pb-5" aria-labelledby="popular-summaries-heading">
+          <div className="rounded-xl border border-border bg-card/60 p-4 md:p-5">
+            <h2 id="popular-summaries-heading" className="font-serif text-lg md:text-xl font-semibold mb-3">
+              Popular book summaries
+            </h2>
+            <div className="flex flex-wrap gap-2">
+              {FEATURED_CRAWL_BOOKS.map((book) => (
+                <Link
+                  key={book.slug}
+                  to={`/books/${book.slug}`}
+                  className="rounded-full border border-border bg-background px-3 py-1.5 text-xs md:text-sm hover:border-primary/50 hover:text-primary transition-colors"
+                >
+                  {book.title}
+                </Link>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
 
       <section className="container pb-12">
         {loading ? (
