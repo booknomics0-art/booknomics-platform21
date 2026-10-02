@@ -22,7 +22,7 @@ export const Footer = () => {
             <div className="bg-gold h-8 w-8 rounded-md grid place-items-center">
               <BookOpen className="h-4 w-4 text-primary-foreground" />
             </div>
-            <span className="font-serif text-lg font-bold">BookInsight</span>
+            <span className="font-serif text-lg font-bold">Booknomics</span>
           </div>
           <p className="text-sm text-muted-foreground max-w-xs">
             A life-improvement system disguised as a library. Read → Apply → Transform.
@@ -34,6 +34,7 @@ export const Footer = () => {
             <li><Link to="/browse" className="hover:text-foreground">Browse</Link></li>
             <li><Link to="/hindi" className="hover:text-foreground">हिंदी</Link></li>
             <li><Link to="/library" className="hover:text-foreground">Library</Link></li>
+            <li><Link to="/request-book" className="hover:text-foreground">Request a book</Link></li>
           </ul>
         </div>
         <div>
@@ -95,14 +96,14 @@ export const Footer = () => {
           <div className="bg-gold h-6 w-6 rounded-md grid place-items-center">
             <BookOpen className="h-3 w-3 text-primary-foreground" />
           </div>
-          <span className="font-serif text-sm font-bold">BookInsight</span>
+          <span className="font-serif text-sm font-bold">Booknomics</span>
         </div>
         <span className="text-[10px] text-muted-foreground">© {new Date().getFullYear()}</span>
       </div>
     </div>
     {/* Desktop copyright */}
     <div className="hidden md:block border-t border-border py-6 text-center text-xs text-muted-foreground">
-      © {new Date().getFullYear()} BookInsight AI. Summaries are original analyses for educational purposes.
+      © {new Date().getFullYear()} Booknomics. Summaries are original analyses for educational purposes.
     </div>
   </footer>
   );
