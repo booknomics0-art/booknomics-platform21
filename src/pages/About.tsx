@@ -2,7 +2,7 @@ import { DocPage } from "@/components/DocPage";
 import { Sparkles, BookOpen, Compass, Heart, Target, AlertTriangle, Layers, Globe } from "lucide-react";
 
 const values = [
-  { icon: BookOpen, title: "Quality over quantity", body: "Fifty books, chosen with care. Each one earns its place in the library." },
+  { icon: BookOpen, title: "Quality over quantity", body: "A focused library, chosen with care. Every public title should earn its place through usefulness and quality." },
   { icon: Globe, title: "Bilingual accessibility", body: "Every summary in English & Hindi — ideas should travel across languages." },
   { icon: Target, title: "Practical growth", body: "Every book ships with an action plan, habit tracker, and reflection prompts." },
   { icon: Heart, title: "Read with reverence", body: "A great book deserves a quiet room. We try to provide one." },
@@ -94,7 +94,7 @@ const About = () => (
         body: (
           <>
             <p>
-              No ads. No infinite scroll. No noise. Every summary is original, edited by humans, and built to be applied — not just read.
+              No intrusive pop-ups or social bars. No infinite scroll. No noise. Every summary is built to be applied — not just read.
             </p>
             <p>
               If you finish a book on Booknomics and your week looks the same, we've failed at our job.
