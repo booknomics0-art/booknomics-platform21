@@ -52,20 +52,31 @@ const English = () => {
   const [books, setBooks] = useState<BookCardData[]>([]);
 
   useEffect(() => {
-    supabase
-      .from("books")
-      .select("id,slug,title,author,category,cover_color,cover_url,tagline,rating,reading_time")
-      .eq("language", "en")
-      .eq("is_draft", false)
-      .in("status", ["published", "published_noindex"])
-      .then(({ data }) => {
-        const all = (data ?? []) as BookCardData[];
-        const featured = FEATURED_SLUGS
-          .map((s) => all.find((b) => b.slug === s))
-          .filter(Boolean) as BookCardData[];
-        const rest = all.filter((b) => !FEATURED_SLUGS.includes(b.slug));
-        setBooks([...featured, ...rest]);
-      });
+    const fields = "id,slug,title,author,category,cover_color,cover_url,tagline,rating,reading_time";
+    Promise.all([
+      supabase
+        .from("books")
+        .select(fields)
+        .eq("language", "en")
+        .eq("is_draft", false)
+        .in("status", ["published", "published_noindex"])
+        .in("slug", FEATURED_SLUGS),
+      supabase
+        .from("books")
+        .select(fields)
+        .eq("language", "en")
+        .eq("is_draft", false)
+        .in("status", ["published", "published_noindex"])
+        .order("title")
+        .limit(24),
+    ]).then(([featuredResult, fallbackResult]) => {
+      const all = [...(featuredResult.data ?? []), ...(fallbackResult.data ?? [])] as BookCardData[];
+      const bySlug = new Map(all.map((b) => [b.slug, b]));
+      const featured = FEATURED_SLUGS.map((slug) => bySlug.get(slug)).filter(Boolean) as BookCardData[];
+      const rest = all.filter((b) => !FEATURED_SLUGS.includes(b.slug));
+      const deduped = [...featured, ...rest].filter((b, i, arr) => arr.findIndex((x) => x.id === b.id) === i);
+      setBooks(deduped.slice(0, 12));
+    });
   }, []);
 
   const breadcrumbLd = {
