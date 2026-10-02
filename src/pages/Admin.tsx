@@ -91,18 +91,29 @@ type AdminBook = {
   status: string;
   slug: string;
   affiliate_link: string | null;
-  overview?: string | null;
-  key_ideas?: string | null;
-  deep_analysis?: string | null;
-  meta_title?: string | null;
-  meta_description?: string | null;
-  seo_slug?: string | null;
-  book_assets?: { audio_url: string | null; status: string | null } | Array<{ audio_url: string | null; status: string | null }> | null;
+  meta_title: string | null;
+  meta_description: string | null;
+  seo_slug: string | null;
+  has_overview: boolean;
+  has_key_ideas: boolean;
+  has_deep_analysis: boolean;
+  has_meta_title: boolean;
+  has_meta_description: boolean;
+  audio_ready: boolean;
+};
+
+type BookReadinessSource = {
+  overview: string | null;
+  key_ideas: string | null;
+  deep_analysis: string | null;
+  meta_title: string | null;
+  meta_description: string | null;
+  cover_url: string | null;
 };
 
 type EditState = Pick<AdminBook, "id" | "title" | "author" | "category" | "language" | "slug" | "affiliate_link"> & { overview?: string | null };
 
-function indexReadiness(b: AdminBook) {
+function indexReadiness(b: BookReadinessSource) {
   const missing: string[] = [];
   if (!b.overview?.trim()) missing.push("overview");
   if (!b.deep_analysis?.trim()) missing.push("deep analysis");
@@ -113,14 +124,28 @@ function indexReadiness(b: AdminBook) {
   return { ready: missing.length === 0, missing };
 }
 
+function catalogReadiness(b: AdminBook) {
+  const missing: string[] = [];
+  if (!b.has_overview) missing.push("overview");
+  if (!b.has_deep_analysis) missing.push("deep analysis");
+  if (!b.has_key_ideas) missing.push("key ideas");
+  if (!b.has_meta_title) missing.push("meta title");
+  if (!b.has_meta_description) missing.push("meta description");
+  if (!b.cover_url) missing.push("cover");
+  return { ready: missing.length === 0, missing };
+}
+
 export default function Admin() {
   const { user, loading, isAdmin } = useAdmin();
   const [raw, setRaw] = useState("");
   const [parsed, setParsed] = useState<ParsedBook[]>([]);
   const [errors, setErrors] = useState<string[]>([]);
   const [allBooks, setAllBooks] = useState<AdminBook[]>([]);
+  const [catalogLoading, setCatalogLoading] = useState(true);
+  const [catalogError, setCatalogError] = useState<string | null>(null);
   const [filter, setFilter] = useState<"all" | "draft" | "published" | "noindex">("all");
   const [search, setSearch] = useState("");
+  const [visibleLimit, setVisibleLimit] = useState(60);
   const [busy, setBusy] = useState(false);
   const [coverBusyId, setCoverBusyId] = useState<string | null>(null);
   const [uploadBusyId, setUploadBusyId] = useState<string | null>(null);
@@ -143,31 +168,62 @@ export default function Admin() {
   }, [user, loading, isAdmin]);
 
   const loadBooks = async () => {
-    // Supabase caps a single select at 1,000 rows by default. The catalog is
-    // already larger than that, so page through it instead of silently hiding
-    // books from the admin portal.
+    // Keep the admin portal fast: the lightweight view exposes only catalog
+    // metadata + readiness booleans instead of downloading long book content
+    // (overview/deep analysis/key ideas) for all 3,000+ books.
+    setCatalogLoading(true);
+    setCatalogError(null);
     const pageSize = 500;
     const rows: AdminBook[] = [];
+
     for (let from = 0; ; from += pageSize) {
       const { data, error } = await supabase
-        .from("books")
-        .select("id,title,author,category,language,is_draft,cover_url,status,slug,affiliate_link,overview,key_ideas,deep_analysis,meta_title,meta_description,seo_slug,book_assets(audio_url,status)")
+        .from("admin_book_catalog")
+        .select("id,title,author,category,language,is_draft,cover_url,status,slug,affiliate_link,meta_title,meta_description,seo_slug,has_overview,has_key_ideas,has_deep_analysis,has_meta_title,has_meta_description,audio_ready,created_at")
         .order("created_at", { ascending: false })
         .range(from, from + pageSize - 1);
+
       if (error) {
-        toast.error(error.message);
+        setCatalogError(error.message);
+        setAllBooks([...rows]);
+        setCatalogLoading(false);
+        toast.error("Catalog load failed: " + error.message);
         return;
       }
+
       const batch = (data ?? []) as unknown as AdminBook[];
       rows.push(...batch);
+      // Progressive state update: the portal becomes useful after the first
+      // successful batch instead of showing zero until every page finishes.
+      setAllBooks([...rows]);
+
       if (batch.length < pageSize) break;
     }
-    setAllBooks(rows);
+
+    setCatalogLoading(false);
+  };
+
+  const fetchBookReadiness = async (id: string): Promise<BookReadinessSource | null> => {
+    const { data, error } = await supabase
+      .from("books")
+      .select("overview,key_ideas,deep_analysis,meta_title,meta_description,cover_url")
+      .eq("id", id)
+      .maybeSingle();
+
+    if (error) {
+      toast.error("Could not verify publishing readiness: " + error.message);
+      return null;
+    }
+    return data as BookReadinessSource | null;
   };
 
   useEffect(() => {
     if (isAdmin) loadBooks();
   }, [isAdmin]);
+
+  useEffect(() => {
+    setVisibleLimit(60);
+  }, [filter, search]);
 
   if (loading || isAdmin === null) {
     return <Layout><div className="p-8">Loading…</div></Layout>;
@@ -228,7 +284,16 @@ export default function Admin() {
 
   const handleTogglePublish = async (b: AdminBook) => {
     const wasPublishing = b.is_draft;
-    const readiness = indexReadiness(b);
+    let readiness = catalogReadiness(b);
+
+    // Publishing decisions always re-check the full row at action time. The
+    // catalog view is intentionally lightweight and only powers list rendering.
+    if (wasPublishing) {
+      const source = await fetchBookReadiness(b.id);
+      if (!source) return;
+      readiness = indexReadiness(source);
+    }
+
     const nextStatus = wasPublishing
       ? (readiness.ready ? "published" : "published_noindex")
       : "draft";
@@ -262,7 +327,9 @@ export default function Admin() {
   };
 
   const handlePromoteIndexable = async (b: AdminBook) => {
-    const readiness = indexReadiness(b);
+    const source = await fetchBookReadiness(b.id);
+    if (!source) return;
+    const readiness = indexReadiness(source);
     if (!readiness.ready) {
       return toast.error(`Complete before indexing: ${readiness.missing.join(", ")}`);
     }
@@ -402,12 +469,12 @@ export default function Admin() {
   const liveCount = allBooks.filter((b) => !b.is_draft).length;
   const hindiLiveCount = allBooks.filter((b) => !b.is_draft && b.language === "hi").length;
   const englishLiveCount = allBooks.filter((b) => !b.is_draft && b.language === "en").length;
-  const missingSeoCount = allBooks.filter((b) => !b.is_draft && (!b.meta_title?.trim() || !b.meta_description?.trim())).length;
+  const missingSeoCount = allBooks.filter((b) => !b.is_draft && (!b.has_meta_title || !b.has_meta_description)).length;
   const missingCoverCount = allBooks.filter((b) => !b.is_draft && !b.cover_url).length;
-  const assetFor = (b: AdminBook) => Array.isArray(b.book_assets) ? b.book_assets[0] : b.book_assets;
-  const audioReadyCount = allBooks.filter((b) => !!assetFor(b)?.audio_url).length;
-  const contentReady = (b: AdminBook) => !!b.overview?.trim() && !!b.deep_analysis?.trim() && !!b.key_ideas?.trim();
-  const seoReady = (b: AdminBook) => !!b.meta_title?.trim() && !!b.meta_description?.trim();
+  const audioReadyCount = allBooks.filter((b) => b.audio_ready).length;
+  const contentReady = (b: AdminBook) => b.has_overview && b.has_deep_analysis && b.has_key_ideas;
+  const seoReady = (b: AdminBook) => b.has_meta_title && b.has_meta_description;
+  const visibleBooks = filtered.slice(0, visibleLimit);
 
   return (
     <Layout>
@@ -447,7 +514,7 @@ export default function Admin() {
             ].map(([label, value]) => (
               <div key={String(label)} className="rounded-xl border border-border bg-muted/20 p-3">
                 <div className="text-[10px] uppercase tracking-wide text-muted-foreground">{label}</div>
-                <div className="text-xl font-bold tabular-nums">{value}</div>
+                <div className="text-xl font-bold tabular-nums">{catalogLoading && allBooks.length === 0 ? "…" : value}</div>
               </div>
             ))}
           </div>
@@ -456,7 +523,7 @@ export default function Admin() {
         <Tabs defaultValue="books">
           <TabsList className="flex-wrap h-auto">
             <TabsTrigger value="books">
-              <LibraryIcon className="w-4 h-4 mr-1" />Books ({allBooks.length})
+              <LibraryIcon className="w-4 h-4 mr-1" />Books ({catalogLoading && allBooks.length === 0 ? "…" : allBooks.length})
             </TabsTrigger>
             <TabsTrigger value="upload">
               <Upload className="w-4 h-4 mr-1" />Upload
@@ -519,11 +586,29 @@ export default function Admin() {
               </div>
             </Card>
 
-            {filtered.length === 0 && (
+            {catalogError && (
+              <Card className="p-4 border-destructive/40">
+                <div className="flex flex-col sm:flex-row sm:items-center gap-3 justify-between">
+                  <div>
+                    <div className="font-medium text-destructive">Catalog load incomplete</div>
+                    <div className="text-xs text-muted-foreground">{catalogError}</div>
+                  </div>
+                  <Button size="sm" variant="outline" onClick={loadBooks}>Retry</Button>
+                </div>
+              </Card>
+            )}
+
+            {catalogLoading && (
+              <Card className="p-4 text-sm text-muted-foreground">
+                Loading catalog… {allBooks.length ? `${allBooks.length} books loaded` : "fetching first batch"}
+              </Card>
+            )}
+
+            {!catalogLoading && !catalogError && filtered.length === 0 && (
               <Card className="p-6 text-center text-muted-foreground">No books</Card>
             )}
 
-            {filtered.map((d) => (
+            {visibleBooks.map((d) => (
               <Card key={d.id} className="p-3 flex flex-col gap-3">
                 <div className="flex items-start gap-3">
                   {d.cover_url ? (
@@ -564,8 +649,8 @@ export default function Admin() {
                       <Badge variant={d.cover_url ? "secondary" : "outline"} className="text-[9px]">
                         Cover {d.cover_url ? "✓" : "—"}
                       </Badge>
-                      <Badge variant={assetFor(d)?.audio_url ? "secondary" : "outline"} className="text-[9px]">
-                        Audio {assetFor(d)?.audio_url ? "✓" : "—"}
+                      <Badge variant={d.audio_ready ? "secondary" : "outline"} className="text-[9px]">
+                        Audio {d.audio_ready ? "✓" : "—"}
                       </Badge>
                     </div>
                   </div>
@@ -653,8 +738,8 @@ export default function Admin() {
                       size="sm"
                       variant="default"
                       onClick={() => handlePromoteIndexable(d)}
-                      disabled={!indexReadiness(d).ready}
-                      title={indexReadiness(d).ready ? "Make this page eligible for search indexing" : `Missing: ${indexReadiness(d).missing.join(", ")}`}
+                      disabled={!catalogReadiness(d).ready}
+                      title={catalogReadiness(d).ready ? "Make this page eligible for search indexing" : `Missing: ${catalogReadiness(d).missing.join(", ")}`}
                     >
                       <CheckCircle2 className="w-4 h-4 mr-1" />Make indexable
                     </Button>
@@ -664,7 +749,7 @@ export default function Admin() {
                     onClick={() => handleTogglePublish(d)}
                     variant={d.is_draft ? "default" : "outline"}
                     disabled={false}
-                    title={d.is_draft ? (indexReadiness(d).ready ? "Publish as indexable" : `Will publish as noindex. Missing: ${indexReadiness(d).missing.join(", ")}`) : "Move back to draft"}
+                    title={d.is_draft ? (catalogReadiness(d).ready ? "Publish as indexable" : `Will publish as noindex. Missing: ${catalogReadiness(d).missing.join(", ")}`) : "Move back to draft"}
                   >
                     {d.is_draft ? (
                       <><CheckCircle2 className="w-4 h-4 mr-1" />Publish</>
@@ -685,6 +770,21 @@ export default function Admin() {
                 </div>
               </Card>
             ))}
+
+            {visibleBooks.length < filtered.length && (
+              <Card className="p-3 flex items-center justify-between gap-3">
+                <div className="text-xs text-muted-foreground">
+                  Showing {visibleBooks.length} of {filtered.length} matching books
+                </div>
+                <Button
+                  size="sm"
+                  variant="outline"
+                  onClick={() => setVisibleLimit((n) => n + 60)}
+                >
+                  Load 60 more
+                </Button>
+              </Card>
+            )}
           </TabsContent>
 
           {/* ============ UPLOAD TAB ============ */}
