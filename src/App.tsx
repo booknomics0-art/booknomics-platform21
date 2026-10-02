@@ -1,6 +1,6 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Route, Routes, useLocation, Navigate, useParams } from "react-router-dom";
-import { useEffect, lazy, Suspense } from "react";
+import { useEffect, lazy as reactLazy, Suspense, type ComponentType } from "react";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -8,6 +8,26 @@ import { ErrorBoundary } from "@/components/ErrorBoundary";
 import { PageLoader } from "@/components/LoadingSpinner";
 import Index from "./pages/Index.tsx";
 import { PricingModalProvider } from "@/components/PricingModal";
+
+const LAZY_RETRY_KEY = "booknomics-lazy-route-retry";
+
+const lazy = <T extends ComponentType<any>>(importer: () => Promise<{ default: T }>) =>
+  reactLazy(async () => {
+    try {
+      const mod = await importer();
+      if (typeof window !== "undefined") sessionStorage.removeItem(LAZY_RETRY_KEY);
+      return mod;
+    } catch (error) {
+      const message = error instanceof Error ? error.message : String(error);
+      const staleChunk = /dynamically imported module|module script|chunkloaderror|loading chunk|failed to fetch/i.test(message);
+      if (typeof window !== "undefined" && staleChunk && !sessionStorage.getItem(LAZY_RETRY_KEY)) {
+        sessionStorage.setItem(LAZY_RETRY_KEY, "1");
+        window.location.reload();
+        return new Promise<{ default: T }>(() => {});
+      }
+      throw error;
+    }
+  });
 
 const Browse = lazy(() => import("./pages/Browse.tsx"));
 const BookDetail = lazy(() => import("./pages/BookDetail.tsx"));
