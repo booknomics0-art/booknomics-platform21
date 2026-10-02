@@ -91,6 +91,13 @@ type AdminBook = {
   status: string;
   slug: string;
   affiliate_link: string | null;
+  overview?: string | null;
+  key_ideas?: string | null;
+  deep_analysis?: string | null;
+  meta_title?: string | null;
+  meta_description?: string | null;
+  seo_slug?: string | null;
+  book_assets?: { audio_url: string | null; status: string | null } | Array<{ audio_url: string | null; status: string | null }> | null;
 };
 
 type EditState = Pick<AdminBook, "id" | "title" | "author" | "category" | "language" | "slug" | "affiliate_link"> & { overview?: string | null };
@@ -101,7 +108,7 @@ export default function Admin() {
   const [parsed, setParsed] = useState<ParsedBook[]>([]);
   const [errors, setErrors] = useState<string[]>([]);
   const [allBooks, setAllBooks] = useState<AdminBook[]>([]);
-  const [filter, setFilter] = useState<"all" | "draft" | "published">("all");
+  const [filter, setFilter] = useState<"all" | "draft" | "published" | "noindex">("all");
   const [search, setSearch] = useState("");
   const [busy, setBusy] = useState(false);
   const [coverBusyId, setCoverBusyId] = useState<string | null>(null);
@@ -125,12 +132,26 @@ export default function Admin() {
   }, [user, loading, isAdmin]);
 
   const loadBooks = async () => {
-    const { data, error } = await supabase
-      .from("books")
-      .select("id,title,author,category,language,is_draft,cover_url,status,slug,affiliate_link")
-      .order("created_at", { ascending: false });
-    if (error) toast.error(error.message);
-    else setAllBooks((data as AdminBook[]) || []);
+    // Supabase caps a single select at 1,000 rows by default. The catalog is
+    // already larger than that, so page through it instead of silently hiding
+    // books from the admin portal.
+    const pageSize = 500;
+    const rows: AdminBook[] = [];
+    for (let from = 0; ; from += pageSize) {
+      const { data, error } = await supabase
+        .from("books")
+        .select("id,title,author,category,language,is_draft,cover_url,status,slug,affiliate_link,overview,key_ideas,deep_analysis,meta_title,meta_description,seo_slug,book_assets(audio_url,status)")
+        .order("created_at", { ascending: false })
+        .range(from, from + pageSize - 1);
+      if (error) {
+        toast.error(error.message);
+        return;
+      }
+      const batch = (data ?? []) as unknown as AdminBook[];
+      rows.push(...batch);
+      if (batch.length < pageSize) break;
+    }
+    setAllBooks(rows);
   };
 
   useEffect(() => {
@@ -198,8 +219,10 @@ export default function Admin() {
     const wasPublishing = b.is_draft;
     // Daily publish cap removed — unlimited publishing.
 
-    const patch: Partial<AdminBook> = { is_draft: !b.is_draft };
-    if (b.is_draft && b.status !== "done") (patch as any).status = "done";
+    const patch: Partial<AdminBook> = {
+      is_draft: !b.is_draft,
+      status: b.is_draft ? "published" : "draft",
+    };
     const { error } = await supabase
       .from("books")
       .update(patch)
@@ -210,7 +233,8 @@ export default function Admin() {
         { title: b.title, slug: b.slug, category: b.category },
         "manual_upload"
       );
-      // Auto-submit to IndexNow (Bing, Yandex, Seznam, Naver) + Google sitemap ping.
+      // Auto-submit to IndexNow-supported search engines. Google discovery is
+      // handled through the sitemap + Search Console, not the restricted Indexing API.
       pingIndexNow([`https://booknomics.com/books/${b.slug}`]);
       
     }
@@ -330,7 +354,10 @@ export default function Admin() {
 
   const filtered = allBooks
     .filter((b) =>
-      filter === "all" ? true : filter === "draft" ? b.is_draft : !b.is_draft
+      filter === "all" ? true
+        : filter === "draft" ? b.is_draft
+        : filter === "published" ? (!b.is_draft && b.status === "published")
+        : (!b.is_draft && b.status === "published_noindex")
     )
     .filter((b) => {
       if (!search.trim()) return true;
@@ -339,7 +366,16 @@ export default function Admin() {
     });
 
   const draftCount = allBooks.filter((b) => b.is_draft).length;
-  const pubCount = allBooks.length - draftCount;
+  const pubCount = allBooks.filter((b) => !b.is_draft && b.status === "published").length;
+  const noindexCount = allBooks.filter((b) => !b.is_draft && b.status === "published_noindex").length;
+  const liveCount = allBooks.filter((b) => !b.is_draft).length;
+  const hindiLiveCount = allBooks.filter((b) => !b.is_draft && b.language === "hi").length;
+  const missingSeoCount = allBooks.filter((b) => !b.is_draft && (!b.meta_title?.trim() || !b.meta_description?.trim())).length;
+  const missingCoverCount = allBooks.filter((b) => !b.is_draft && !b.cover_url).length;
+  const assetFor = (b: AdminBook) => Array.isArray(b.book_assets) ? b.book_assets[0] : b.book_assets;
+  const audioReadyCount = allBooks.filter((b) => !!assetFor(b)?.audio_url).length;
+  const contentReady = (b: AdminBook) => !!b.overview?.trim() && !!b.deep_analysis?.trim() && !!b.key_ideas?.trim();
+  const seoReady = (b: AdminBook) => !!b.meta_title?.trim() && !!b.meta_description?.trim();
 
   return (
     <Layout>
@@ -399,7 +435,12 @@ export default function Admin() {
                   size="sm"
                   variant={filter === "published" ? "default" : "outline"}
                   onClick={() => setFilter("published")}
-                >Published ({pubCount})</Button>
+                >Indexable ({pubCount})</Button>
+                <Button
+                  size="sm"
+                  variant={filter === "noindex" ? "default" : "outline"}
+                  onClick={() => setFilter("noindex")}
+                >Noindex ({noindexCount})</Button>
               </div>
               <div className="md:ml-auto flex items-center gap-2">
                 <Button
@@ -435,10 +476,10 @@ export default function Admin() {
                     <div className="font-semibold truncate flex items-center gap-2 flex-wrap">
                       {d.title}
                       <Badge
-                        variant={d.is_draft ? "outline" : "default"}
+                        variant={d.is_draft ? "outline" : d.status === "published" ? "default" : "secondary"}
                         className="text-[10px]"
                       >
-                        {d.is_draft ? "Draft" : "Live"}
+                        {d.is_draft ? "Draft" : d.status === "published" ? "Indexable" : "Live · noindex"}
                       </Badge>
                       <Badge
                         variant={d.status === "done" ? "secondary" : d.status === "failed" ? "destructive" : "outline"}
@@ -452,6 +493,20 @@ export default function Admin() {
                       {d.author} · {d.category}
                     </div>
                     <div className="text-[10px] text-muted-foreground/70 truncate">/{d.slug}</div>
+                    <div className="flex flex-wrap gap-1 mt-2">
+                      <Badge variant={contentReady(d) ? "secondary" : "destructive"} className="text-[9px]">
+                        Content {contentReady(d) ? "✓" : "needs work"}
+                      </Badge>
+                      <Badge variant={seoReady(d) ? "secondary" : "destructive"} className="text-[9px]">
+                        SEO {seoReady(d) ? "✓" : "missing"}
+                      </Badge>
+                      <Badge variant={d.cover_url ? "secondary" : "outline"} className="text-[9px]">
+                        Cover {d.cover_url ? "✓" : "—"}
+                      </Badge>
+                      <Badge variant={assetFor(d)?.audio_url ? "secondary" : "outline"} className="text-[9px]">
+                        Audio {assetFor(d)?.audio_url ? "✓" : "—"}
+                      </Badge>
+                    </div>
                   </div>
                 </div>
 
@@ -702,7 +757,7 @@ Category: Productivity
 /* ============ INDEXING PANEL ============ */
 function IndexingPanel({ books }: { books: AdminBook[] }) {
   const SITE = "https://booknomics.com";
-  const published = books.filter((b) => !b.is_draft);
+  const published = books.filter((b) => !b.is_draft && b.status === "published");
   const [thin, setThin] = useState<Record<string, number>>({});
   const [loadingThin, setLoadingThin] = useState(false);
 
