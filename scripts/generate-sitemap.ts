@@ -279,7 +279,10 @@ function renderImageSitemap(items: Array<{ slug: string; title: string; cover: s
     const expectedRedirects = new Map<string, string>();
     for (const [from, to] of [...Object.entries(SLUG_REDIRECTS), ...bookRedirects.map((r) => [r.from, r.to] as [string, string])]) {
       if (from !== to && canonicalSlugs.has(to) && !canonicalSlugs.has(from)) {
-        expectedRedirects.set(`/books/${from}`, `/books/${to}`);
+        expectedRedirects.set(
+          `/books/${encodeURIComponent(from)}`,
+          `/books/${encodeURIComponent(to)}`,
+        );
       }
     }
     const missingRedirects = Array.from(expectedRedirects).filter(
