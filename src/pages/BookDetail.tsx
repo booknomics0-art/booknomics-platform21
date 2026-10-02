@@ -633,7 +633,7 @@ const BookDetail = () => {
                   : ["The book at a glance", "5 key takeaways", "Detailed summary", "The core concepts", "Deeper analysis", "Living with the ideas"];
                 const rawAnalysis = (src.deep_analysis || "").trim();
                 const analysisSections = rawAnalysis
-                  ? rawAnalysis.split(/(?=^###\\s+)/m).map((part) => part.trim()).filter(Boolean)
+                  ? rawAnalysis.split(/(?=^###\s+)/m).map((part) => part.trim()).filter(Boolean)
                   : [];
                 const splitAt = analysisSections.length > 1
                   ? Math.max(1, Math.min(3, Math.ceil(analysisSections.length * 0.35)))
@@ -648,10 +648,10 @@ const BookDetail = () => {
                   : rawAnalysis;
                 const derivedIdeas = !src.key_ideas && analysisSections.length
                   ? analysisSections.slice(0, 8).map((section) => {
-                      const heading = section.match(/^###\\s+(.+)$/m)?.[1]?.trim();
-                      const body = section.replace(/^###\\s+.+$/m, "").trim();
+                      const heading = section.match(/^###\s+(.+)$/m)?.[1]?.trim();
+                      const body = section.replace(/^###\s+.+$/m, "").trim();
                       const firstSentence = body
-                        .split(/(?<=[.!?।])\\s+/)
+                        .split(/(?<=[.!?।])\s+/)
                         .find((sentence) => !isLowSignalHindiText(sentence))
                         ?.trim();
                       return heading ? `- **${heading}**${firstSentence ? ` — ${firstSentence}` : ""}` : "";
