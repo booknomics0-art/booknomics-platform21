@@ -15,7 +15,13 @@ const ENV_SUPABASE_KEY = process.env.VITE_SUPABASE_PUBLISHABLE_KEY?.trim();
 if (!ENV_SUPABASE_URL || !ENV_SUPABASE_KEY) throw new Error('Set VITE_SUPABASE_URL and VITE_SUPABASE_PUBLISHABLE_KEY before building.');
 const SUPABASE_URL = ENV_SUPABASE_URL;
 const SUPABASE_KEY = ENV_SUPABASE_KEY;
-const MIN_EXPECTED_BOOKS = Number(process.env.SITEMAP_MIN_BOOKS || '50');
+const configuredMinBooks = Number(process.env.SITEMAP_MIN_BOOKS || '50');
+const safeConfiguredMinBooks = Number.isFinite(configuredMinBooks) ? Math.max(0, configuredMinBooks) : 50;
+// Never allow a production deployment to silently publish an empty/stale sitemap.
+// Local/preview builds may intentionally set 0 while the catalog is being prepared.
+const MIN_EXPECTED_BOOKS = process.env.VERCEL_ENV === 'production'
+  ? Math.max(50, safeConfiguredMinBooks)
+  : safeConfiguredMinBooks;
 const staticPreview = process.env.ALLOW_STATIC_SITEMAP === 'true';
 if (staticPreview && process.env.VERCEL_ENV === 'production') throw new Error('Static-only sitemap is forbidden in production.');
 const makeClient = () => createClient(SUPABASE_URL, SUPABASE_KEY, {
@@ -96,7 +102,7 @@ async function build(): Promise<{ entries: Entry[]; bookCount: number; staticCou
   if (!staticPreview && bookCount < MIN_EXPECTED_BOOKS) {
     throw new Error(
       `[sitemap] Only ${bookCount} published books returned (expected >= ${MIN_EXPECTED_BOOKS}). ` +
-        `Refusing to write a stale sitemap. Check Supabase connectivity or the is_draft filter.`,
+        `Refusing to write a stale sitemap. Check Supabase connectivity and the is_draft/status filters.`,
     );
   }
 
