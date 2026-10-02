@@ -62,7 +62,7 @@
         document.body.appendChild(sb);
       }
       var _tpFired = false;
-      function _tpTrigger(){ if(_tpFired) return; _tpFired = true; loadGA(); loadClarity(); loadAds(); loadAdsterra(); }
+      function _tpTrigger(){ if(_tpFired) return; _tpFired = true; loadGA(); loadClarity(); loadAds(); }
       // Consent gate: non-essential scripts (GA4, Clarity, AdSense) only run once the visitor accepts.
       function _tpConsent(){
         try { return localStorage.getItem('bn-cookie-consent'); } catch (e) { return 'accepted'; }
@@ -85,7 +85,7 @@
 
     
 
-    <meta name="google-site-verification" content="M6qwobaePtnNuoJth9UeTI1oHuxTbm4k0grRhVsbORg" />
+    <meta name="google-site-verification" content="M6qwobaePtnNuoJth9UeTI1oHuxTbm4k0grRhVsbORg" />\n    <meta name="google-site-verification" content="zbvpT5s8SosdZJkCtS-0aVLONPI0jZerMScqWvMtVrU" />
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Booknomics — Book Summaries in English & Hindi | Read Smarter, Apply Faster</title>
