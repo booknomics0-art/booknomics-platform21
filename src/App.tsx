@@ -82,7 +82,7 @@ const queryClient = new QueryClient({
   },
 });
 
-const GA_ID = "G-029CF4KFMM";
+const GA_ID = "G-1MDPDTDYDQ";
 
 function PageTracker() {
   const loc = useLocation();
