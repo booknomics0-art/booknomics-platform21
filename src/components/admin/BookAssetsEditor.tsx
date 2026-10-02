@@ -159,8 +159,13 @@ export function BookAssetsEditor({ bookId, bookTitle }: { bookId: string; bookTi
   };
 
   const handleAudioUpload = async (file: File) => {
+    const isMp3 = file.type === "audio/mpeg" || file.name.toLowerCase().endsWith(".mp3");
+    if (!isMp3) {
+      toast.error("Please upload an MP3 file only");
+      return;
+    }
     if (file.size > 100 * 1024 * 1024) {
-      toast.error("Max 100MB");
+      toast.error("MP3 must be under 100MB");
       return;
     }
     try {
@@ -379,8 +384,8 @@ export function BookAssetsEditor({ bookId, bookTitle }: { bookId: string; bookTi
 
         <TabsContent value="audio" className="space-y-3 pt-3">
           <Card className="p-4 space-y-2">
-            <Label className="flex items-center gap-1"><Headphones className="h-3 w-3" /> Audio Podcast (MP3, max 100MB)</Label>
-            <input ref={auInput} type="file" accept="audio/*" className="hidden" onChange={(e) => { const f = e.target.files?.[0]; if (f) void handleAudioUpload(f); e.target.value = ""; }} />
+            <Label className="flex items-center gap-1"><Headphones className="h-3 w-3" /> Audio Summary / Podcast (MP3, max 100MB)</Label>
+            <input ref={auInput} type="file" accept=".mp3,audio/mpeg" className="hidden" onChange={(e) => { const f = e.target.files?.[0]; if (f) void handleAudioUpload(f); e.target.value = ""; }} />
             <div className="flex gap-2 items-center flex-wrap">
               <Button size="sm" variant="outline" onClick={() => auInput.current?.click()} disabled={uploadingAu}>
                 {uploadingAu ? <Loader2 className="h-3 w-3 animate-spin mr-1" /> : <UploadCloud className="h-3 w-3 mr-1" />} Upload MP3
