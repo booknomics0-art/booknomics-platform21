@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState, type ReactNode } from "react";
+import { useEffect, useState, type ReactNode } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import { Search, X } from "lucide-react";
 import { Layout } from "@/components/Layout";
@@ -32,7 +32,10 @@ type BrowseProps = {
 const Browse = ({ categoryFilter, titleOverride, introText, skipSeo, aboveContent, belowContent, breadcrumb }: BrowseProps = {}) => {
   const [params, setParams] = useSearchParams();
   const [books, setBooks] = useState<(BookCardData & { language?: string; created_at?: string })[]>([]);
+  const [categories, setCategories] = useState<string[]>([]);
+  const [totalCount, setTotalCount] = useState(0);
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState<string | null>(null);
   const [query, setQuery] = useState(params.get("q") ?? "");
   const [debouncedQuery, setDebouncedQuery] = useState(query);
   useEffect(() => {
@@ -44,43 +47,83 @@ const Browse = ({ categoryFilter, titleOverride, introText, skipSeo, aboveConten
   const sort = (params.get("sort") as SortKey) || "az";
   const page = Math.max(1, parseInt(params.get("page") ?? "1", 10) || 1);
 
+  // Fetch only the small category column in batches. This keeps the filter
+  // complete even after the catalog grows beyond Supabase's 1,000-row cap.
   useEffect(() => {
+    if (categoryFilter) return;
+    let cancelled = false;
+    (async () => {
+      const values = new Set<string>();
+      const batchSize = 500;
+      for (let from = 0; ; from += batchSize) {
+        const { data, error } = await supabase
+          .from("books")
+          .select("category")
+          .eq("is_draft", false)
+          .order("category")
+          .range(from, from + batchSize - 1);
+        if (error || cancelled) return;
+        const batch = data ?? [];
+        batch.forEach((row: any) => { if (row.category) values.add(row.category); });
+        if (batch.length < batchSize) break;
+      }
+      if (!cancelled) setCategories(Array.from(values).sort());
+    })();
+    return () => { cancelled = true; };
+  }, [categoryFilter]);
+
+  // Server-side filtering + pagination keeps the public library light. We no
+  // longer download hundreds/thousands of book cards just to render 24.
+  useEffect(() => {
+    let cancelled = false;
     setLoading(true);
-    supabase.from("books")
-      .select("id,slug,title,author,category,cover_color,cover_url,tagline,rating,reading_time,language,created_at")
-      .eq("is_draft", false)
-      .order("title")
-      .then(({ data }) => { setBooks((data ?? []) as any); setLoading(false); });
-  }, []);
+    setLoadError(null);
 
-  const categories = useMemo(() => Array.from(new Set(books.map(b => b.category).filter(Boolean))).sort(), [books]);
+    (async () => {
+      let request = supabase
+        .from("books")
+        .select("id,slug,title,author,category,cover_color,cover_url,tagline,rating,reading_time,language,created_at", { count: "exact" })
+        .eq("is_draft", false);
 
-  const filtered = useMemo(() => {
-    const q = debouncedQuery.toLowerCase();
-    let list = books.filter(b => {
-      const matchCat = category === "All" || b.category?.toLowerCase() === category.toLowerCase();
-      const matchLang = language === "all" || b.language === language;
-      const matchQ = !q || b.title.toLowerCase().includes(q) || b.author.toLowerCase().includes(q) || b.category?.toLowerCase().includes(q);
-      return matchCat && matchLang && matchQ;
-    });
-    if (sort === "az") list = [...list].sort((a, b) => a.title.localeCompare(b.title));
-    if (sort === "za") list = [...list].sort((a, b) => b.title.localeCompare(a.title));
-    if (sort === "latest") list = [...list].sort((a, b) => (b.created_at ?? "").localeCompare(a.created_at ?? ""));
-    if (sort === "category") list = [...list].sort((a, b) => (a.category ?? "").localeCompare(b.category ?? ""));
-    return list;
-  }, [books, debouncedQuery, category, language, sort]);
+      if (category !== "All") request = request.eq("category", category);
+      if (language !== "all") request = request.eq("language", language);
+
+      const q = debouncedQuery.trim().replace(/[,%()]/g, " ").slice(0, 80);
+      if (q) request = request.or(`title.ilike.%${q}%,author.ilike.%${q}%,category.ilike.%${q}%`);
+
+      if (sort === "latest") request = request.order("created_at", { ascending: false });
+      else if (sort === "za") request = request.order("title", { ascending: false });
+      else if (sort === "category") request = request.order("category").order("title");
+      else request = request.order("title");
+
+      const from = (page - 1) * PER_PAGE;
+      const { data, error, count } = await request.range(from, from + PER_PAGE - 1);
+      if (cancelled) return;
+      if (error) {
+        setBooks([]);
+        setTotalCount(0);
+        setLoadError(error.message);
+      } else {
+        setBooks((data ?? []) as any);
+        setTotalCount(count ?? 0);
+      }
+      setLoading(false);
+    })();
+
+    return () => { cancelled = true; };
+  }, [category, language, sort, page, debouncedQuery]);
 
   useEffect(() => {
     const q = query.trim();
     if (q.length < 2) return;
     const t = setTimeout(() => {
-      trackSearch(q, filtered.length, categoryFilter ? "category_page" : "browse_page");
+      trackSearch(q, totalCount, categoryFilter ? "category_page" : "browse_page");
     }, 800);
     return () => clearTimeout(t);
-  }, [query, filtered.length, categoryFilter]);
+  }, [query, totalCount, categoryFilter]);
 
-  const totalPages = Math.max(1, Math.ceil(filtered.length / PER_PAGE));
-  const pageBooks = filtered.slice((page - 1) * PER_PAGE, page * PER_PAGE);
+  const totalPages = Math.max(1, Math.ceil(totalCount / PER_PAGE));
+  const pageBooks = books;
 
   const update = (key: string, val: string | null) => {
     const next = new URLSearchParams(params);
@@ -124,7 +167,7 @@ const Browse = ({ categoryFilter, titleOverride, introText, skipSeo, aboveConten
       "@type": "ItemList",
       itemListElement: pageBooks.slice(0, 30).map((b, i) => ({
         "@type": "ListItem",
-        position: i + 1,
+        position: (page - 1) * PER_PAGE + i + 1,
         url: `https://booknomics.com/books/${b.slug}`,
         name: b.title,
       })),
@@ -231,7 +274,7 @@ const Browse = ({ categoryFilter, titleOverride, introText, skipSeo, aboveConten
           )}
 
           <span className="text-xs md:text-sm text-muted-foreground ml-auto">
-            {filtered.length} {filtered.length === 1 ? "book" : "books"}
+            {totalCount} {totalCount === 1 ? "book" : "books"}
           </span>
         </div>
 
@@ -287,13 +330,19 @@ const Browse = ({ categoryFilter, titleOverride, introText, skipSeo, aboveConten
               </div>
             ))}
           </div>
+        ) : loadError ? (
+          <div className="text-center py-16">
+            <p className="font-medium">We couldn't load the library.</p>
+            <p className="text-sm text-muted-foreground mt-1">Please refresh and try again.</p>
+            <Button variant="outline" size="sm" className="mt-4" onClick={() => window.location.reload()}>Retry</Button>
+          </div>
         ) : (
           <>
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 md:gap-6">
               {pageBooks.map((b, i) => <BookCard key={b.id} book={b} priority={i < 4} />)}
             </div>
 
-            {filtered.length === 0 && (
+            {totalCount === 0 && (
               <div className="text-center py-20 text-muted-foreground">
                 <p className="mb-3">No books found.</p>
                 {hasActiveFilters && (

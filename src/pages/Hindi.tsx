@@ -11,6 +11,9 @@ import { supabase } from "@/integrations/supabase/client";
 const Hindi = () => {
   const [params, setParams] = useSearchParams();
   const [books, setBooks] = useState<BookCardData[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState<string | null>(null);
+  const [visibleCount, setVisibleCount] = useState(48);
   const [query, setQuery] = useState(params.get("q") ?? "");
   const category = params.get("category") ?? "सभी";
 
@@ -23,12 +26,22 @@ const Hindi = () => {
       link.href = "https://fonts.googleapis.com/css2?family=Noto+Sans+Devanagari:wght@400;500;600;700&family=Tiro+Devanagari+Hindi&display=swap";
       document.head.appendChild(link);
     }
+    setLoading(true);
+    setLoadError(null);
     supabase.from("books")
       .select("id,slug,title,author,category,cover_color,cover_url,tagline,rating,reading_time")
       .eq("language", "hi")
       .eq("is_draft", false)
       .order("title")
-      .then(({ data }) => setBooks(data ?? []));
+      .then(({ data, error }) => {
+        if (error) {
+          setBooks([]);
+          setLoadError(error.message);
+        } else {
+          setBooks(data ?? []);
+        }
+      })
+      .finally(() => setLoading(false));
   }, []);
 
   const categories = useMemo(
@@ -42,6 +55,12 @@ const Hindi = () => {
     const matchQ = !q || b.title.toLowerCase().includes(q) || b.author.toLowerCase().includes(q);
     return matchCat && matchQ;
   });
+
+  useEffect(() => {
+    setVisibleCount(48);
+  }, [query, category]);
+
+  const visibleBooks = filtered.slice(0, visibleCount);
 
   const setCategory = (c: string) => {
     const next = new URLSearchParams(params);
@@ -117,12 +136,32 @@ const Hindi = () => {
             {filtered.length} {filtered.length === 1 ? "पुस्तक" : "पुस्तकें"}
           </div>
 
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-            {filtered.map(b => <BookCard key={b.id} book={b} />)}
-          </div>
+          {loading ? (
+            <div className="text-center py-20 text-muted-foreground">हिंदी पुस्तकें लोड हो रही हैं…</div>
+          ) : loadError ? (
+            <div className="text-center py-20">
+              <p className="font-medium">हिंदी पुस्तकें अभी लोड नहीं हो सकीं।</p>
+              <p className="text-sm text-muted-foreground mt-1">कृपया दोबारा कोशिश करें।</p>
+              <Button variant="outline" size="sm" className="mt-4" onClick={() => window.location.reload()}>फिर कोशिश करें</Button>
+            </div>
+          ) : (
+            <>
+              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                {visibleBooks.map((b, i) => <BookCard key={b.id} book={b} priority={i < 4} />)}
+              </div>
 
-          {filtered.length === 0 && (
-            <div className="text-center py-20 text-muted-foreground">कोई पुस्तक नहीं मिली।</div>
+              {filtered.length === 0 && (
+                <div className="text-center py-20 text-muted-foreground">कोई पुस्तक नहीं मिली।</div>
+              )}
+
+              {visibleCount < filtered.length && (
+                <div className="text-center mt-8">
+                  <Button variant="outline" className="rounded-full" onClick={() => setVisibleCount((n) => n + 48)}>
+                    और पुस्तकें दिखाएँ
+                  </Button>
+                </div>
+              )}
+            </>
           )}
 
           <div className="mt-12 rounded-2xl border border-border bg-card p-6 text-center">

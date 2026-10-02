@@ -108,6 +108,8 @@ const BookDetail = () => {
   const { user } = useAuth();
   const { isPremium } = useTier();
   const [book, setBook] = useState<Book | null>(null);
+  const [bookLoading, setBookLoading] = useState(true);
+  const [bookError, setBookError] = useState<string | null>(null);
   const [related, setRelated] = useState<any[]>([]);
   const [sameLang, setSameLang] = useState<any[]>([]);
   const [inLibrary, setInLibrary] = useState(false);
@@ -129,30 +131,54 @@ const BookDetail = () => {
       navigate(`/books/${aliasTarget}`, { replace: true });
       return;
     }
+    setBook(null);
+    setBookLoading(true);
+    setBookError(null);
     (async () => {
-      // Try canonical slug first, then seo_slug (keyword URL), then any book that has this slug in old_slugs.
-      let { data } = await supabase.from("books").select("id,slug,title,author,category,cover_color,tagline,overview,deep_summary,key_ideas,deep_analysis,daily_application,reading_time,rating,year,created_at,cover_url,language,affiliate_link,is_draft,status,meta_title,meta_description,og_image,seo_slug,seo_keywords,old_slugs").eq("slug", slug).eq("is_draft", false).maybeSingle();
-      if (!data) {
-        const bySeo = await supabase.from("books").select("id,slug,title,author,category,cover_color,tagline,overview,deep_summary,key_ideas,deep_analysis,daily_application,reading_time,rating,year,created_at,cover_url,language,affiliate_link,is_draft,status,meta_title,meta_description,og_image,seo_slug,seo_keywords,old_slugs").eq("seo_slug", slug).eq("is_draft", false).maybeSingle();
-        data = bySeo.data;
-      }
-      if (!data) {
-        const byOld = await supabase.from("books").select("id,slug,title,author,category,cover_color,tagline,overview,deep_summary,key_ideas,deep_analysis,daily_application,reading_time,rating,year,created_at,cover_url,language,affiliate_link,is_draft,status,meta_title,meta_description,og_image,seo_slug,seo_keywords,old_slugs").contains("old_slugs", [slug]).eq("is_draft", false).limit(1).maybeSingle();
-        if (byOld.data) {
-          const target = (byOld.data as any).seo_slug || (byOld.data as any).slug;
-          if (target && target !== slug) {
-            navigate(`/books/${target}`, { replace: true });
-            return;
-          }
-          data = byOld.data;
+      try {
+        const fields = "id,slug,title,author,category,cover_color,tagline,overview,deep_summary,key_ideas,deep_analysis,daily_application,reading_time,rating,year,created_at,cover_url,language,affiliate_link,is_draft,status,meta_title,meta_description,og_image,seo_slug,seo_keywords,old_slugs";
+        // Try canonical slug first, then seo_slug (keyword URL), then any book
+        // that has this slug in old_slugs.
+        const primary = await supabase.from("books").select(fields).eq("slug", slug).eq("is_draft", false).maybeSingle();
+        if (primary.error) throw primary.error;
+        let data = primary.data;
+
+        if (!data) {
+          const bySeo = await supabase.from("books").select(fields).eq("seo_slug", slug).eq("is_draft", false).maybeSingle();
+          if (bySeo.error) throw bySeo.error;
+          data = bySeo.data;
         }
-      }
-      setBook(data as unknown as Book);
-      // Public summary sections are fetched above for every visible book. Premium-only interactive/action fields may still be merged below.
-      if (data) {
-        const { data: prem } = await supabase.rpc("get_premium_summary", { p_book_id: (data as any).id });
-        const row = Array.isArray(prem) ? prem[0] : prem;
-        if (row) setBook((prev) => (prev ? ({ ...prev, ...row } as Book) : prev));
+        if (!data) {
+          const byOld = await supabase.from("books").select(fields).contains("old_slugs", [slug]).eq("is_draft", false).limit(1).maybeSingle();
+          if (byOld.error) throw byOld.error;
+          if (byOld.data) {
+            const target = (byOld.data as any).seo_slug || (byOld.data as any).slug;
+            if (target && target !== slug) {
+              navigate(`/books/${target}`, { replace: true });
+              return;
+            }
+            data = byOld.data;
+          }
+        }
+
+        if (!data) {
+          setBookError("not-found");
+          return;
+        }
+
+        setBook(data as unknown as Book);
+        // Public summary sections are fetched above for every visible book.
+        // Premium-only interactive/action fields may still be merged below.
+        const { data: prem, error: premError } = await supabase.rpc("get_premium_summary", { p_book_id: (data as any).id });
+        if (!premError) {
+          const row = Array.isArray(prem) ? prem[0] : prem;
+          if (row) setBook((prev) => (prev ? ({ ...prev, ...row } as Book) : prev));
+        }
+      } catch (error) {
+        console.error("[BookDetail] load failed", error);
+        setBookError(error instanceof Error ? error.message : "Unable to load this book");
+      } finally {
+        setBookLoading(false);
       }
     })();
   }, [slug, navigate]);
@@ -300,7 +326,31 @@ const BookDetail = () => {
     }
   };
 
-  if (!book) return <Layout><div className="container py-20 text-center text-muted-foreground">Loading…</div></Layout>;
+  if (bookLoading) {
+    return <Layout><div className="container py-20 text-center text-muted-foreground">Loading book…</div></Layout>;
+  }
+
+  if (!book) {
+    const notFound = bookError === "not-found";
+    return (
+      <Layout>
+        <SEO
+          title={notFound ? "Book not found | Booknomics" : "Unable to load book | Booknomics"}
+          description={notFound ? "This Booknomics book page could not be found." : "This book could not be loaded right now."}
+          path={slug ? `/books/${slug}` : "/books"}
+          noindex
+        />
+        <div className="container py-20 text-center">
+          <h1 className="font-serif text-3xl font-bold">{notFound ? "Book not found" : "Unable to load this book"}</h1>
+          <p className="text-muted-foreground mt-3">{notFound ? "The link may be old or the book is no longer public." : "Please retry. Your connection or the database may have been temporarily unavailable."}</p>
+          <div className="flex justify-center gap-2 mt-6">
+            <Button variant="outline" onClick={() => navigate("/browse")}>Browse books</Button>
+            {!notFound && <Button onClick={() => window.location.reload()}>Retry</Button>}
+          </div>
+        </div>
+      </Layout>
+    );
+  }
 
   const isHi = book.language === "hi";
   const bookAny = book as any;
