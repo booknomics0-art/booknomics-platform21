@@ -144,10 +144,10 @@ const Browse = ({ categoryFilter, titleOverride, introText, skipSeo, aboveConten
   const seoTitle = titleOverride
     ? `${titleOverride} | Booknomics`
     : category === "All"
-      ? "Browse 80+ Book Summaries in English & Hindi | Booknomics"
+      ? "Book Summaries in English & Hindi | Booknomics"
       : `${category} Book Summaries — Key Insights & Action Plans | Booknomics`;
   const seoDesc = category === "All"
-    ? "Browse 80+ practical book summaries in English and Hindi. Key insights, action systems, audio scripts, and reflection prompts. Read smarter, apply faster."
+    ? "Browse practical book summaries in English and Hindi with key insights, action systems, audio, and reflection prompts. Read smarter, apply faster."
     : `Explore ${category} book summaries with key insights, practical lessons, and step-by-step action plans on Booknomics — in English and Hindi.`;
 
   // Parameter URLs (/browse?category=…&q=…) must never compete with clean URLs:

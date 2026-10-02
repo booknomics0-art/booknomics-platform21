@@ -102,6 +102,17 @@ type AdminBook = {
 
 type EditState = Pick<AdminBook, "id" | "title" | "author" | "category" | "language" | "slug" | "affiliate_link"> & { overview?: string | null };
 
+function indexReadiness(b: AdminBook) {
+  const missing: string[] = [];
+  if (!b.overview?.trim()) missing.push("overview");
+  if (!b.deep_analysis?.trim()) missing.push("deep analysis");
+  if (!b.key_ideas?.trim()) missing.push("key ideas");
+  if (!b.meta_title?.trim()) missing.push("meta title");
+  if (!b.meta_description?.trim()) missing.push("meta description");
+  if (!b.cover_url) missing.push("cover");
+  return { ready: missing.length === 0, missing };
+}
+
 export default function Admin() {
   const { user, loading, isAdmin } = useAdmin();
   const [raw, setRaw] = useState("");
@@ -217,28 +228,48 @@ export default function Admin() {
 
   const handleTogglePublish = async (b: AdminBook) => {
     const wasPublishing = b.is_draft;
-    // Daily publish cap removed — unlimited publishing.
+    const readiness = indexReadiness(b);
+    const nextStatus = wasPublishing
+      ? (readiness.ready ? "published" : "published_noindex")
+      : "draft";
 
-    const patch: Partial<AdminBook> = {
+    const patch: { is_draft: boolean; status: string } = {
       is_draft: !b.is_draft,
-      status: b.is_draft ? "published" : "draft",
+      status: nextStatus,
     };
     const { error } = await supabase
       .from("books")
       .update(patch)
       .eq("id", b.id);
     if (error) return toast.error(error.message);
+
     if (wasPublishing) {
       trackAdminAddBook(
         { title: b.title, slug: b.slug, category: b.category },
         "manual_upload"
       );
-      // Auto-submit to IndexNow-supported search engines. Google discovery is
-      // handled through the sitemap + Search Console, not the restricted Indexing API.
-      pingIndexNow([`https://booknomics.com/books/${b.slug}`]);
-      
+      if (readiness.ready) {
+        // Auto-submit to IndexNow-supported search engines. Google discovery is
+        // handled through the sitemap + Search Console, not the restricted Indexing API.
+        pingIndexNow([`https://booknomics.com/books/${b.slug}`]);
+      }
     }
-    toast.success(b.is_draft ? "Published · indexing submitted" : "Unpublished (draft)");
+
+    if (!wasPublishing) toast.success("Unpublished (draft)");
+    else if (readiness.ready) toast.success("Published · indexable · discovery submitted");
+    else toast.warning(`Published live · noindex until fixed: ${readiness.missing.join(", ")}`);
+    loadBooks();
+  };
+
+  const handlePromoteIndexable = async (b: AdminBook) => {
+    const readiness = indexReadiness(b);
+    if (!readiness.ready) {
+      return toast.error(`Complete before indexing: ${readiness.missing.join(", ")}`);
+    }
+    const { error } = await supabase.from("books").update({ status: "published" }).eq("id", b.id);
+    if (error) return toast.error(error.message);
+    pingIndexNow([`https://booknomics.com/books/${b.slug}`]);
+    toast.success("Book is now indexable · discovery submitted");
     loadBooks();
   };
 
@@ -370,6 +401,7 @@ export default function Admin() {
   const noindexCount = allBooks.filter((b) => !b.is_draft && b.status === "published_noindex").length;
   const liveCount = allBooks.filter((b) => !b.is_draft).length;
   const hindiLiveCount = allBooks.filter((b) => !b.is_draft && b.language === "hi").length;
+  const englishLiveCount = allBooks.filter((b) => !b.is_draft && b.language === "en").length;
   const missingSeoCount = allBooks.filter((b) => !b.is_draft && (!b.meta_title?.trim() || !b.meta_description?.trim())).length;
   const missingCoverCount = allBooks.filter((b) => !b.is_draft && !b.cover_url).length;
   const assetFor = (b: AdminBook) => Array.isArray(b.book_assets) ? b.book_assets[0] : b.book_assets;
@@ -386,11 +418,40 @@ export default function Admin() {
       <div className="container mx-auto p-4 md:p-8 max-w-5xl">
         <h1 className="text-2xl md:text-3xl font-bold mb-1">Admin Portal</h1>
         <p className="text-sm text-muted-foreground mb-4">
-          Bulk upload · AI generate · HD covers · Edit / Republish / Delete
+          Bulk upload · AI generate · HD covers · MP3 audio · SEO · Indexing · Publish
         </p>
 
-
-
+        <Card className="p-4 mb-5">
+          <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-2 mb-4">
+            <div>
+              <h2 className="font-semibold">Catalog health</h2>
+              <p className="text-xs text-muted-foreground">
+                Indexable = eligible for Google. Noindex = live for visitors but intentionally excluded from search.
+              </p>
+            </div>
+            <div className="text-xs text-muted-foreground">
+              MP3: Edit a book → Assets → Audio → Upload MP3
+            </div>
+          </div>
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2">
+            {[
+              ["Live", liveCount],
+              ["Indexable", pubCount],
+              ["Noindex", noindexCount],
+              ["Drafts", draftCount],
+              ["Hindi", hindiLiveCount],
+              ["English", englishLiveCount],
+              ["Missing SEO", missingSeoCount],
+              ["Missing covers", missingCoverCount],
+              ["Audio ready", audioReadyCount],
+            ].map(([label, value]) => (
+              <div key={String(label)} className="rounded-xl border border-border bg-muted/20 p-3">
+                <div className="text-[10px] uppercase tracking-wide text-muted-foreground">{label}</div>
+                <div className="text-xl font-bold tabular-nums">{value}</div>
+              </div>
+            ))}
+          </div>
+        </Card>
 
         <Tabs defaultValue="books">
           <TabsList className="flex-wrap h-auto">
@@ -587,12 +648,23 @@ export default function Admin() {
                   >
                     <Pencil className="w-4 h-4 mr-1" />Edit
                   </Button>
+                  {!d.is_draft && d.status === "published_noindex" && (
+                    <Button
+                      size="sm"
+                      variant="default"
+                      onClick={() => handlePromoteIndexable(d)}
+                      disabled={!indexReadiness(d).ready}
+                      title={indexReadiness(d).ready ? "Make this page eligible for search indexing" : `Missing: ${indexReadiness(d).missing.join(", ")}`}
+                    >
+                      <CheckCircle2 className="w-4 h-4 mr-1" />Make indexable
+                    </Button>
+                  )}
                   <Button
                     size="sm"
                     onClick={() => handleTogglePublish(d)}
                     variant={d.is_draft ? "default" : "outline"}
                     disabled={false}
-                    title=""
+                    title={d.is_draft ? (indexReadiness(d).ready ? "Publish as indexable" : `Will publish as noindex. Missing: ${indexReadiness(d).missing.join(", ")}`) : "Move back to draft"}
                   >
                     {d.is_draft ? (
                       <><CheckCircle2 className="w-4 h-4 mr-1" />Publish</>
@@ -769,18 +841,33 @@ function IndexingPanel({ books }: { books: AdminBook[] }) {
 
   const checkThinContent = async () => {
     setLoadingThin(true);
-    const { data } = await supabase
-      .from("books_admin")
-      .select("id,overview,key_ideas")
-      .eq("is_draft", false);
     const map: Record<string, number> = {};
-    (data ?? []).forEach((b: any) => {
-      const len = (b.overview ?? "").length + (b.key_ideas ?? "").length;
-      map[b.id] = len;
-    });
+    const pageSize = 500;
+
+    for (let from = 0; ; from += pageSize) {
+      const { data, error } = await supabase
+        .from("books_admin")
+        .select("id,overview,key_ideas")
+        .eq("is_draft", false)
+        .eq("status", "published")
+        .range(from, from + pageSize - 1);
+
+      if (error) {
+        setLoadingThin(false);
+        return toast.error(error.message);
+      }
+
+      const batch = data ?? [];
+      batch.forEach((b: any) => {
+        const len = (b.overview ?? "").length + (b.key_ideas ?? "").length;
+        map[b.id] = len;
+      });
+      if (batch.length < pageSize) break;
+    }
+
     setThin(map);
     setLoadingThin(false);
-    toast.success("Content audit complete");
+    toast.success(`Content audit complete · ${Object.keys(map).length} indexable books checked`);
   };
 
   return (

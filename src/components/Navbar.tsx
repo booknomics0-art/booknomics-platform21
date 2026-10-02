@@ -26,8 +26,8 @@ export const Navbar = () => {
             <BookOpen className="h-5 w-5 text-primary-foreground" />
           </div>
           <div className="leading-tight">
-            <div className="font-serif text-xl font-bold tracking-tight">BookInsight</div>
-            <div className="text-[10px] tracking-[0.18em] text-muted-foreground uppercase">AI · Curated</div>
+            <div className="font-serif text-xl font-bold tracking-tight">Booknomics</div>
+            <div className="text-[10px] tracking-[0.18em] text-muted-foreground uppercase">Read · Apply · Transform</div>
           </div>
         </Link>
 

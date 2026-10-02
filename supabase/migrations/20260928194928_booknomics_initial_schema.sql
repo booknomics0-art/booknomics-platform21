@@ -32,6 +32,9 @@ CREATE TABLE public.books (
 );
 ALTER TABLE public.books ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "Books are public" ON public.books FOR SELECT USING (true);
+-- Supabase Data API grants are explicit on new projects. RLS still controls rows.
+GRANT SELECT ON public.books TO anon, authenticated;
+GRANT ALL ON public.books TO service_role;
 
 -- Library
 CREATE TABLE public.library (

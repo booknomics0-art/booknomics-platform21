@@ -10,9 +10,9 @@ import { Card } from "@/components/ui/card";
 import { auditOnPage, auditPolish, auditHumanized, scoreColor, scoreBg, BookForAudit, bookUrl } from "@/lib/seoScore";
 import { ExternalLink, ArrowRight } from "lucide-react";
 
-type Row = BookForAudit & { is_draft: boolean; created_at: string };
+type Row = BookForAudit & { is_draft: boolean; created_at: string; status?: string | null };
 
-type Filter = "all" | "low_seo" | "needs_polish" | "draft" | "published" | "recent";
+type Filter = "all" | "low_seo" | "needs_polish" | "draft" | "published" | "noindex" | "recent";
 
 export default function SeoDashboardPage() {
   return (
@@ -32,12 +32,20 @@ function Inner() {
 
   useEffect(() => {
     (async () => {
-      const { data, error } = await supabase
-        .from("books_admin")
-        .select("id,slug,title,author,category,language,is_draft,created_at,meta_title,meta_description,og_image,cover_url,tagline,overview,key_ideas,deep_analysis,daily_application,action_system,reflection_questions,affiliate_link")
-        .order("created_at", { ascending: false })
-        .limit(500);
-      if (!error && data) setBooks(data as any);
+      const pageSize = 500;
+      const rows: Row[] = [];
+      for (let from = 0; ; from += pageSize) {
+        const { data, error } = await supabase
+          .from("books_admin")
+          .select("id,slug,title,author,category,language,is_draft,status,created_at,meta_title,meta_description,og_image,cover_url,tagline,overview,key_ideas,deep_analysis,daily_application,action_system,reflection_questions,affiliate_link")
+          .order("created_at", { ascending: false })
+          .range(from, from + pageSize - 1);
+        if (error) break;
+        const batch = (data ?? []) as unknown as Row[];
+        rows.push(...batch);
+        if (batch.length < pageSize) break;
+      }
+      setBooks(rows);
       setLoading(false);
     })();
   }, []);
@@ -55,7 +63,8 @@ function Inner() {
     return scored.filter(({ b, on, po }) => {
       if (term && !`${b.title} ${b.author} ${b.slug}`.toLowerCase().includes(term)) return false;
       if (filter === "draft" && !b.is_draft) return false;
-      if (filter === "published" && b.is_draft) return false;
+      if (filter === "published" && (b.is_draft || b.status !== "published")) return false;
+      if (filter === "noindex" && (b.is_draft || b.status !== "published_noindex")) return false;
       if (filter === "low_seo" && on >= 60) return false;
       if (filter === "needs_polish" && po >= 60) return false;
       if (filter === "recent" && new Date(b.created_at).getTime() < oneWeekAgo) return false;
@@ -77,7 +86,7 @@ function Inner() {
 
       <div className="flex flex-wrap gap-2 items-center">
         <Input placeholder="Search title / author / slug" value={q} onChange={e => setQ(e.target.value)} className="max-w-xs" />
-        {(["all","published","draft","low_seo","needs_polish","recent"] as Filter[]).map(f => (
+        {(["all","published","noindex","draft","low_seo","needs_polish","recent"] as Filter[]).map(f => (
           <Button key={f} size="sm" variant={filter === f ? "default" : "outline"} onClick={() => setFilter(f)}>
             {f.replace("_", " ")}
           </Button>
@@ -113,7 +122,9 @@ function Inner() {
                 <td className="p-3">
                   {b.is_draft
                     ? <Badge variant="outline">Draft</Badge>
-                    : <Badge className="bg-emerald-600 hover:bg-emerald-600">Published</Badge>}
+                    : b.status === "published"
+                      ? <Badge className="bg-emerald-600 hover:bg-emerald-600">Indexable</Badge>
+                      : <Badge variant="secondary">Live · noindex</Badge>}
                 </td>
                 <ScoreCell score={on} />
                 <ScoreCell score={po} />
