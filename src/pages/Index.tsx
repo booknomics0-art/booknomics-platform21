@@ -82,7 +82,6 @@ const Index = () => {
         title="Booknomics — Book Summaries in English & Hindi | Read Smarter, Apply Faster"
         description="Get practical book summaries, key insights, 7-day action trackers and reflection prompts in English & Hindi. Free to start."
         canonical="https://booknomics.com/"
-        alternates={{ en: "/", hi: "/hindi", xDefault: "/" }}
         jsonLd={[orgLd, siteLd]}
       />
       {/* Hero */}
