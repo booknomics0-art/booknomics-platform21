@@ -1,10 +1,11 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { Children, useEffect, useMemo, useRef, useState } from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { Sun, Moon, BookOpen, ArrowUp, Brain, X, ZoomIn, ZoomOut, Download, Maximize2 } from "lucide-react";
 
 type ThemeKey = "light" | "sepia" | "dark";
 type SizeKey = "sm" | "md" | "lg" | "xl";
+type LanguageKey = "en" | "hi";
 
 const THEMES: Record<ThemeKey, Record<string, string>> = {
   light: {
@@ -31,24 +32,81 @@ const SIZE_TIPS: Record<SizeKey, string> = {
   sm: "Small (15px)", md: "Default (18px)", lg: "Large (21px)", xl: "Extra Large (24px)",
 };
 
-let fontsLoaded = false;
-const loadFonts = () => {
-  if (fontsLoaded || typeof document === "undefined") return;
-  fontsLoaded = true;
+const loadedFontSets = new Set<LanguageKey>();
+const loadFonts = (language: LanguageKey) => {
+  if (loadedFontSets.has(language) || typeof document === "undefined") return;
+  loadedFontSets.add(language);
   const l = document.createElement("link");
   l.rel = "stylesheet";
-  l.href = "https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;800&family=Lora:ital,wght@0,400;0,600;1,400&display=swap";
+  l.href = language === "hi"
+    ? "https://fonts.googleapis.com/css2?family=Noto+Sans+Devanagari:wght@500;600;700&family=Noto+Serif+Devanagari:wght@400;500;600&display=swap"
+    : "https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;800&family=Lora:ital,wght@0,400;0,600;1,400&display=swap";
   document.head.appendChild(l);
 };
 
+const HINDI_COPY_REPLACEMENTS: Array<[RegExp, string]> = [
+  [/particular way of seeing/gi, "देखने का विशिष्ट दृष्टिकोण"],
+  [/modern application/gi, "आज के संदर्भ में उपयोग"],
+  [/testable reflection/gi, "परखा जा सकने वाला चिंतन"],
+  [/timeless rule/gi, "सार्वकालिक नियम"],
+  [/hidden assumption/gi, "छिपी हुई मान्यता"],
+  [/strongest example/gi, "सबसे प्रभावी उदाहरण"],
+  [/rhetorical device/gi, "अलंकारिक युक्ति"],
+  [/\binformation\b/gi, "जानकारी"],
+  [/\breader\b/gi, "पाठक"],
+  [/\bessay\b/gi, "निबंध"],
+  [/\bclaim\b/gi, "तर्क"],
+  [/\bexample\b/gi, "उदाहरण"],
+  [/\btone\b/gi, "स्वर"],
+  [/\baudience\b/gi, "पाठक-वर्ग"],
+  [/\bauthor\b/gi, "लेखक"],
+  [/\bbiography\b/gi, "जीवनी"],
+  [/\bpersona\b/gi, "लेखकीय व्यक्तित्व"],
+  [/\brhetoric\b/gi, "अलंकारिक शैली"],
+  [/\bidea\b/gi, "विचार"],
+];
+
+const normalizeHindiMarkdown = (input: string) => {
+  const withRealLineBreaks = input.replace(/\\n/g, "\n");
+  let text = HINDI_COPY_REPLACEMENTS.reduce((acc, [pattern, replacement]) => acc.replace(pattern, replacement), withRealLineBreaks);
+
+  text = text
+    .split("\n")
+    .map((line) => {
+      const heading = line.match(/^\s*\*\*([^*\n]{3,80})\*\*\s*$/);
+      return heading ? `### ${heading[1].trim().replace(/[।.:]+$/, "")}` : line;
+    })
+    .join("\n");
+
+  return text
+    .split(/\n{2,}/)
+    .map((block) => {
+      let kept = 0;
+      return block.replace(/\*\*([^*\n]+)\*\*/g, (_full, inner: string) => {
+        const clean = inner.trim();
+        const words = clean.split(/\s+/).filter(Boolean).length;
+        if (clean.length > 52 || words > 7 || kept >= 2) return clean;
+        kept += 1;
+        return `**${clean}**`;
+      });
+    })
+    .join("\n\n");
+};
+
+const stripKeyMarker = (children: React.ReactNode) =>
+  Children.map(children, (child) =>
+    typeof child === "string" ? child.replace(/^★KEY★\s*/, "") : child,
+  );
+
 const ReadingView = ({
-  content, title, author, category, mindmapUrl,
+  content, title, author, category, mindmapUrl, language = "en",
 }: {
   content: string;
   title?: string;
   author?: string;
   category?: string;
   mindmapUrl?: string | null;
+  language?: LanguageKey;
 }) => {
   const [theme, setTheme] = useState<ThemeKey>(
     () => (typeof window !== "undefined" && (localStorage.getItem("rv-theme") as ThemeKey)) || "light",
@@ -66,7 +124,7 @@ const ReadingView = ({
   const [showTop, setShowTop] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
 
-  useEffect(() => { loadFonts(); }, []);
+  useEffect(() => { loadFonts(language); }, [language]);
   useEffect(() => { localStorage.setItem("rv-theme", theme); }, [theme]);
   useEffect(() => { localStorage.setItem("rv-size", size); }, [size]);
   useEffect(() => { localStorage.setItem("rv-mindmap", mapOpen ? "1" : "0"); }, [mapOpen]);
@@ -92,18 +150,25 @@ const ReadingView = ({
 
   const processed = useMemo(() => {
     if (!content) return "";
-    return content.split("\n").map((ln) => {
+    const normalized = language === "hi" ? normalizeHindiMarkdown(content) : content;
+    return normalized.split("\n").map((ln) => {
       const m = ln.match(/^\s*★\s*(.*)$/);
       return m ? `> ★KEY★ ${m[1]}` : ln;
     }).join("\n");
-  }, [content]);
+  }, [content, language]);
 
   const chapterCounter = useRef(0);
   const lastHeadingKey = useRef<string | null>(null);
   chapterCounter.current = 0;
   lastHeadingKey.current = null;
 
-  const styleVars = { ...THEMES[theme], "--rv-scale": String(SIZE_SCALE[size]) } as React.CSSProperties;
+  const isHindi = language === "hi";
+  const styleVars = {
+    ...THEMES[theme],
+    "--rv-scale": String(SIZE_SCALE[size]),
+    "--rv-body-font": isHindi ? "'Noto Serif Devanagari', serif" : "'Lora', Georgia, serif",
+    "--rv-heading-font": isHindi ? "'Noto Sans Devanagari', system-ui, sans-serif" : "'Playfair Display', Georgia, serif",
+  } as React.CSSProperties;
   const hasMap = !!mindmapUrl && !mapErr;
   const sideBySide = hasMap && mapOpen && !mapFull;
 
@@ -121,7 +186,7 @@ const ReadingView = ({
           aria-pressed={mapOpen}
         >
           <Brain className="h-3.5 w-3.5" />
-          {mapOpen ? "Hide Mind Map" : "View Mind Map"}
+          {mapOpen ? (isHindi ? "माइंड मैप छिपाएँ" : "Hide Mind Map") : (isHindi ? "माइंड मैप देखें" : "View Mind Map")}
         </button>
       )}
       <div className="inline-flex rounded-full border overflow-hidden" style={{ borderColor: "var(--rv-divider)" }}>
@@ -153,13 +218,13 @@ const ReadingView = ({
       {(title || author) && (
         <header className="text-center mb-10">
           {title && (
-            <h1 className="rv-h1" style={{ fontFamily: "'Playfair Display', Georgia, serif", color: "var(--rv-heading)", fontWeight: 800, lineHeight: 1.2, letterSpacing: "-0.5px", margin: 0 }}>
+            <h1 className="rv-h1" style={{ fontFamily: "var(--rv-heading-font)", color: "var(--rv-heading)", fontWeight: 800, lineHeight: 1.2, letterSpacing: isHindi ? "0" : "-0.5px", margin: 0 }}>
               {title}
             </h1>
           )}
-          {author && <p style={{ color: "var(--rv-muted)", fontStyle: "italic", marginTop: 8 }}>by {author}</p>}
-          <p style={{ color: "var(--rv-accent)", fontSize: 12, letterSpacing: "0.2em", textTransform: "uppercase", fontWeight: 600, marginTop: 12 }}>
-            {readingTime} min read{category ? `  ·  ${category}` : ""}
+          {author && <p style={{ color: "var(--rv-muted)", fontStyle: isHindi ? "normal" : "italic", marginTop: 8 }}>{isHindi ? "लेखक: " : "by "}{author}</p>}
+          <p style={{ color: "var(--rv-accent)", fontSize: 12, letterSpacing: isHindi ? "0" : "0.2em", textTransform: isHindi ? "none" : "uppercase", fontWeight: 600, marginTop: 12 }}>
+            {isHindi ? `${readingTime} मिनट का पाठ` : `${readingTime} min read`}{category ? `  ·  ${category}` : ""}
           </p>
           <div aria-hidden style={{ height: 1, background: "var(--rv-divider)", margin: "24px auto 0", width: "60%" }} />
         </header>
@@ -174,22 +239,25 @@ const ReadingView = ({
               lastHeadingKey.current = String(children);
               return (
                 <div className="rv-chapter">
-                  <div className="rv-eyebrow">Chapter {chapterCounter.current}</div>
-                  <h2 {...props} className="rv-h2" style={{ fontFamily: "'Playfair Display', Georgia, serif", color: "var(--rv-heading)", fontWeight: 700, lineHeight: 1.3, margin: 0 }}>
+                  <div className="rv-eyebrow">{isHindi ? `खंड ${chapterCounter.current}` : `Section ${chapterCounter.current}`}</div>
+                  <h2 {...props} className="rv-h2" style={{ fontFamily: "var(--rv-heading-font)", color: "var(--rv-heading)", fontWeight: 700, lineHeight: 1.3, margin: 0 }}>
                     {children}
                   </h2>
                 </div>
               );
             },
             h3: ({ children, ...props }) => (
-              <h3 {...props} className="rv-h3" style={{ fontFamily: "'Playfair Display', Georgia, serif", color: "var(--rv-heading)", fontWeight: 600, lineHeight: 1.3 }}>
+              <h3 {...props} className="rv-h3" style={{ fontFamily: "var(--rv-heading-font)", color: "var(--rv-heading)", fontWeight: 600, lineHeight: 1.35 }}>
                 {children}
               </h3>
             ),
             p: ({ children }) => {
-              const isDrop = lastHeadingKey.current !== null;
-              if (isDrop) lastHeadingKey.current = null;
-              return <p className={isDrop ? "rv-p rv-dropcap" : "rv-p"} style={{ color: "var(--rv-text)" }}>{children}</p>;
+              const isKey = JSON.stringify(children).includes("★KEY★");
+              const cleanedChildren = isKey ? stripKeyMarker(children) : children;
+              const isDrop = !isHindi && lastHeadingKey.current !== null;
+              if (lastHeadingKey.current !== null) lastHeadingKey.current = null;
+              if (isKey) return <span className="rv-key-text">{cleanedChildren}</span>;
+              return <p className={isDrop ? "rv-p rv-dropcap" : "rv-p"} style={{ color: "var(--rv-text)" }}>{cleanedChildren}</p>;
             },
             strong: ({ children }) => <strong className="rv-bold" style={{ color: "var(--rv-heading)", fontWeight: 600 }}>{children}</strong>,
             em: ({ children }) => <em style={{ fontStyle: "italic" }}>{children}</em>,
@@ -199,8 +267,11 @@ const ReadingView = ({
               if (raw.includes("★KEY★")) {
                 return (
                   <div className="rv-key-card">
-                    <span style={{ fontSize: "1.4em", lineHeight: 1 }}>💡</span>
-                    <div className="rv-key">{children}</div>
+                    <span style={{ fontSize: "1.35em", lineHeight: 1 }} aria-hidden>💡</span>
+                    <div>
+                      <div className="rv-key-label">{isHindi ? "मुख्य सीख" : "Key insight"}</div>
+                      <div className="rv-key">{children}</div>
+                    </div>
                   </div>
                 );
               }
@@ -244,7 +315,7 @@ const ReadingView = ({
   ) : null;
 
   return (
-    <div ref={ref} className="rv-root relative rounded-2xl" style={styleVars}>
+    <div ref={ref} lang={language} className={`rv-root relative rounded-2xl ${isHindi ? "rv-hi" : "rv-en"}`} style={styleVars}>
       <div aria-hidden className="rv-progress-wrap">
         <div className="rv-progress" style={{ width: `${progress}%` }} />
       </div>
@@ -286,7 +357,7 @@ const ReadingView = ({
         .rv-root {
           background: var(--rv-bg);
           color: var(--rv-text);
-          font-family: 'Lora', Georgia, serif;
+          font-family: var(--rv-body-font);
           padding: clamp(20px, 4vw, 48px);
           transition: background .3s ease, color .3s ease;
         }
@@ -299,10 +370,10 @@ const ReadingView = ({
         .rv-h2 { font-size: calc(26px * var(--rv-scale)); }
         .rv-h3 { font-size: calc(20px * var(--rv-scale)); margin-top: calc(32px * var(--rv-scale)); margin-bottom: calc(10px * var(--rv-scale)); }
         .rv-prose { font-size: calc(18px * var(--rv-scale)); line-height: calc(1.85 - (var(--rv-scale) - 1) * 0.25); transition: font-size .3s ease, line-height .3s ease; }
-        .rv-prose p, .rv-prose li { font-family: 'Lora', Georgia, serif; }
+        .rv-prose p, .rv-prose li { font-family: var(--rv-body-font); }
         .rv-p { margin-bottom: calc(20px * var(--rv-scale)); }
         .rv-dropcap::first-letter {
-          font-family: 'Playfair Display', Georgia, serif;
+          font-family: var(--rv-heading-font);
           float: left; font-size: 3.4em; line-height: 0.9;
           padding: 4px 10px 0 0; color: var(--rv-accent); font-weight: 800;
         }
@@ -319,12 +390,26 @@ const ReadingView = ({
         }
         .rv-key-card {
           background: var(--rv-highlight-bg);
-          border-radius: 10px;
+          border: 1px solid color-mix(in srgb, var(--rv-accent) 28%, transparent);
+          border-radius: 12px;
           padding: calc(16px * var(--rv-scale)) calc(18px * var(--rv-scale));
-          margin: calc(24px * var(--rv-scale)) 0;
+          margin: calc(18px * var(--rv-scale)) 0;
           display: flex; gap: 12px; align-items: flex-start;
           color: var(--rv-heading); font-weight: 500;
         }
+        .rv-key-label {
+          color: var(--rv-accent);
+          font-family: var(--rv-heading-font);
+          font-size: 0.72em;
+          font-weight: 700;
+          letter-spacing: .06em;
+          margin-bottom: 4px;
+        }
+        .rv-key-text { display: inline; }
+        .rv-hi .rv-eyebrow { letter-spacing: 0; text-transform: none; font-size: 13px; }
+        .rv-hi .rv-prose { line-height: 1.9; }
+        .rv-hi .rv-p { margin-bottom: calc(22px * var(--rv-scale)); }
+        .rv-hi .rv-h1, .rv-hi .rv-h2, .rv-hi .rv-h3 { letter-spacing: 0; }
         .rv-ul, .rv-ol { padding-left: 22px; margin: 12px 0 calc(20px * var(--rv-scale)); }
         .rv-ul { list-style: disc; } .rv-ol { list-style: decimal; }
         .rv-li { margin-bottom: 6px; }

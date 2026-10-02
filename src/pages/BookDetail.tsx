@@ -104,6 +104,60 @@ const EmptyState = ({ onGenerate, loading, label }: { onGenerate: () => void; lo
   </div>
 );
 
+const isLowSignalHindiText = (text: string) => {
+  const normalized = (text || "").toLowerCase();
+  if (!normalized) return false;
+  const boilerplate = [
+    "particular way of seeing",
+    "essay केवल information नहीं देता",
+    "की जाँच करते समय claim, example और tone",
+    "दूसरा प्रश्न audience का है",
+    "तीसरा स्तर modern application का है",
+  ];
+  const repeated = (normalized.match(/यह दिखाता है कि/g) || []).length;
+  return boilerplate.some((marker) => normalized.includes(marker)) || repeated >= 4;
+};
+
+const extractReaderTakeaways = (
+  primary: string,
+  overview: string,
+  analysis: string,
+  max = 5,
+) => {
+  const result: string[] = [];
+  const seen = new Set<string>();
+
+  const add = (raw: string) => {
+    const clean = stripMarkdown(raw)
+      .replace(/\\n/g, " ")
+      .replace(/^[-*•\d.)\s]+/, "")
+      .replace(/\s+/g, " ")
+      .trim();
+    if (clean.length < 28 || isLowSignalHindiText(clean)) return;
+    const first = clean.split(/(?<=[.!?।])\s+/)[0]?.trim() || clean;
+    const takeaway = first.length > 210 ? `${first.slice(0, 207).trimEnd()}…` : first;
+    const key = takeaway.toLowerCase().replace(/[^\p{L}\p{N}]+/gu, " ").trim();
+    if (!key || seen.has(key)) return;
+    seen.add(key);
+    result.push(takeaway);
+  };
+
+  const addBlocks = (text: string) => {
+    text
+      .replace(/\\n/g, "\n")
+      .split(/\n{2,}|(?=^###\s+)/m)
+      .map((block) => block.replace(/^#{1,6}\s+.*$/m, "").trim())
+      .filter(Boolean)
+      .forEach(add);
+  };
+
+  if (primary && !isLowSignalHindiText(primary)) addBlocks(primary);
+  if (result.length < max && overview) addBlocks(overview);
+  if (result.length < max && analysis) addBlocks(analysis);
+
+  return result.slice(0, max);
+};
+
 const BookDetail = () => {
   const { slug } = useParams();
   const navigate = useNavigate();
@@ -460,7 +514,7 @@ const BookDetail = () => {
       <div className="bg-hero border-b border-border">
         <div className="container py-6 md:py-12">
           <Button variant="ghost" size="sm" onClick={() => navigate(-1)} className="mb-3 gap-2">
-            <ArrowLeft className="h-4 w-4" /> Back
+            <ArrowLeft className="h-4 w-4" /> {isHi ? "वापस" : "Back"}
           </Button>
           <nav aria-label="Breadcrumb" className="mb-4 md:mb-6 text-xs md:text-sm text-muted-foreground">
             <ol className="flex flex-wrap items-center gap-1.5">
@@ -487,9 +541,21 @@ const BookDetail = () => {
             </div>
             <div>
               <div className="text-[10px] md:text-xs tracking-[0.2em] uppercase text-primary font-semibold mb-2 md:mb-3">{book.category}</div>
-              <h1 className="font-serif text-2xl md:text-6xl font-bold tracking-tight leading-[1.1]">{book.title}</h1>
-              <p className="text-base md:text-xl text-muted-foreground mt-2 md:mt-3">by {book.author}</p>
-              {book.tagline && <p className="font-serif italic text-base md:text-2xl mt-4 md:mt-6 text-foreground/80">"{book.tagline}"</p>}
+              <h1
+                className={`font-serif text-2xl md:text-6xl font-bold leading-[1.1] ${isHi ? "tracking-normal" : "tracking-tight"}`}
+                style={isHi ? { fontFamily: "'Noto Sans Devanagari', system-ui, sans-serif" } : undefined}
+              >
+                {book.title}
+              </h1>
+              <p className="text-base md:text-xl text-muted-foreground mt-2 md:mt-3">{isHi ? "लेखक: " : "by "}{book.author}</p>
+              {book.tagline && (
+                <p
+                  className={`font-serif text-base md:text-2xl mt-4 md:mt-6 text-foreground/80 ${isHi ? "not-italic" : "italic"}`}
+                  style={isHi ? { fontFamily: "'Noto Serif Devanagari', serif" } : undefined}
+                >
+                  "{book.tagline}"
+                </p>
+              )}
 
               <div className="flex flex-wrap items-center gap-5 mt-6 text-sm text-muted-foreground">
                 {reviewStats.count > 0 && (
@@ -550,9 +616,9 @@ const BookDetail = () => {
             <div className="-mx-4 md:mx-0 mb-6 md:mb-8 overflow-x-auto scrollbar-none">
               <TabsList className={`inline-flex w-max lg:flex lg:w-full px-4 md:px-0 gap-1`}>
                 <TabsTrigger value="summary" className="flex-1 text-xs md:text-sm">{isHi ? "सार" : "Summary"}</TabsTrigger>
-                <TabsTrigger value="action" className="flex-1 gap-1 text-xs md:text-sm">{!user && <Lock className="h-3 w-3" />}Action</TabsTrigger>
-                <TabsTrigger value="tracker" className="flex-1 gap-1 text-xs md:text-sm">{!user && <Lock className="h-3 w-3" />}Tracker</TabsTrigger>
-                <TabsTrigger value="notes" className="flex-1 gap-1 text-xs md:text-sm">{!user && <Lock className="h-3 w-3" />}Notes</TabsTrigger>
+                <TabsTrigger value="action" className="flex-1 gap-1 text-xs md:text-sm">{!user && <Lock className="h-3 w-3" />}{isHi ? "अभ्यास" : "Action"}</TabsTrigger>
+                <TabsTrigger value="tracker" className="flex-1 gap-1 text-xs md:text-sm">{!user && <Lock className="h-3 w-3" />}{isHi ? "ट्रैकर" : "Tracker"}</TabsTrigger>
+                <TabsTrigger value="notes" className="flex-1 gap-1 text-xs md:text-sm">{!user && <Lock className="h-3 w-3" />}{isHi ? "नोट्स" : "Notes"}</TabsTrigger>
                 <TabsTrigger value="mastery" className="flex-1 gap-1 text-xs md:text-sm">{isHi ? "महारत" : "Mastery"}</TabsTrigger>
                 <TabsTrigger value="community" className="lg:hidden text-xs md:text-sm">{isHi ? "चर्चा" : "Community"}</TabsTrigger>
               </TabsList>
@@ -561,12 +627,13 @@ const BookDetail = () => {
             <TabsContent value="summary">
               {(() => {
                 const src = lang === "hi" && hiContent ? hiContent : book;
-                const labels = lang === "hi"
-                  ? ["एक नज़र में", "विस्तृत सारांश", "मूल अवधारणाएँ", "गहरा विश्लेषण", "विचारों के साथ जीना"]
-                  : ["The book at a glance", "Detailed summary", "The core concepts", "Deeper analysis", "Living with the ideas"];
+                const readerIsHi = isHi || lang === "hi";
+                const labels = readerIsHi
+                  ? ["किताब एक नज़र में", "5 मुख्य सीख", "विस्तृत सारांश", "मुख्य विचार", "गहन विश्लेषण", "जीवन में कैसे लागू करें"]
+                  : ["The book at a glance", "5 key takeaways", "Detailed summary", "The core concepts", "Deeper analysis", "Living with the ideas"];
                 const rawAnalysis = (src.deep_analysis || "").trim();
                 const analysisSections = rawAnalysis
-                  ? rawAnalysis.split(/(?=^###\\s+)/m).map((s) => s.trim()).filter(Boolean)
+                  ? rawAnalysis.split(/(?=^###\\s+)/m).map((part) => part.trim()).filter(Boolean)
                   : [];
                 const splitAt = analysisSections.length > 1
                   ? Math.max(1, Math.min(3, Math.ceil(analysisSections.length * 0.35)))
@@ -583,30 +650,41 @@ const BookDetail = () => {
                   ? analysisSections.slice(0, 8).map((section) => {
                       const heading = section.match(/^###\\s+(.+)$/m)?.[1]?.trim();
                       const body = section.replace(/^###\\s+.+$/m, "").trim();
-                      const firstSentence = body.split(/(?<=[.!?।])\\s+/)[0]?.trim();
+                      const firstSentence = body
+                        .split(/(?<=[.!?।])\\s+/)
+                        .find((sentence) => !isLowSignalHindiText(sentence))
+                        ?.trim();
                       return heading ? `- **${heading}**${firstSentence ? ` — ${firstSentence}` : ""}` : "";
                     }).filter(Boolean).join("\n")
                   : "";
+                const keyIdeasAreLowSignal = readerIsHi && isLowSignalHindiText(src.key_ideas || "");
+                const effectiveKeyIdeas = keyIdeasAreLowSignal ? "" : (src.key_ideas || derivedIdeas);
+                const takeaways = extractReaderTakeaways(
+                  effectiveKeyIdeas,
+                  src.overview || "",
+                  rawAnalysis,
+                  5,
+                );
+                const takeawayMarkdown = takeaways.map((takeaway) => `★ ${takeaway}`).join("\n\n");
                 const derivedApplication = !src.daily_application
                   ? [
-                      `1. ${isHi ? "इस पुस्तक के एक मुख्य विचार को अपने शब्दों में लिखें।" : "Write one core idea from this book in your own words."}`,
-                      `2. ${isHi ? "ऊपर के किसी एक सेक्शन से एक ठोस उदाहरण चुनें।" : "Choose one concrete example from a section above."}`,
-                      `3. ${isHi ? "एक असहमति या सीमा नोट करें।" : "Note one disagreement, limitation, or boundary condition."}`,
-                      `4. ${isHi ? "आज के जीवन में एक छोटा प्रयोग तय करें।" : "Define one small real-world experiment for today."}`,
-                      `5. ${isHi ? "सप्ताह के अंत में देखें कि आपकी समझ बदली या नहीं।" : "Review at the end of the week whether your understanding changed."}`,
+                      `1. ${readerIsHi ? "इस पुस्तक के एक मुख्य विचार को अपने शब्दों में लिखें।" : "Write one core idea from this book in your own words."}`,
+                      `2. ${readerIsHi ? "ऊपर के किसी एक भाग से एक ठोस उदाहरण चुनें।" : "Choose one concrete example from a section above."}`,
+                      `3. ${readerIsHi ? "लेखक के तर्क की एक सीमा या असहमति नोट करें।" : "Note one disagreement, limitation, or boundary condition."}`,
+                      `4. ${readerIsHi ? "आज के जीवन में एक छोटा, मापने योग्य प्रयोग तय करें।" : "Define one small real-world experiment for today."}`,
+                      `5. ${readerIsHi ? "सप्ताह के अंत में लिखें कि आपकी समझ या व्यवहार में क्या बदला।" : "Review at the end of the week whether your understanding changed."}`,
                     ].join("\n")
                   : "";
 
-                const chapterTexts = [
-                  src.overview,
-                  src.deep_summary || derivedSummary,
-                  src.key_ideas || derivedIdeas,
-                  src.deep_summary ? rawAnalysis : derivedAnalysis,
-                  src.daily_application || derivedApplication,
-                ];
-                const parts = chapterTexts
-                  .map((t, i) => (t ? `## ${labels[i]}\n\n${t}` : ""))
-                  .filter(Boolean);
+                const sections = [
+                  { label: labels[0], text: src.overview },
+                  { label: labels[1], text: takeawayMarkdown },
+                  { label: labels[2], text: src.deep_summary || derivedSummary },
+                  { label: labels[3], text: effectiveKeyIdeas },
+                  { label: labels[4], text: src.deep_summary ? rawAnalysis : derivedAnalysis },
+                  { label: labels[5], text: src.daily_application || derivedApplication },
+                ].filter((section) => Boolean(section.text?.trim()));
+                const parts = sections.map(({ label, text }) => `## ${label}\n\n${text}`);
                 const merged = linkifyMarkdown(parts.join("\n\n---\n\n"), linkTargets, 1);
                 return <>
                   <section className="py-4">
@@ -616,6 +694,7 @@ const BookDetail = () => {
                         title={book.title}
                         author={book.author}
                         category={(book as any).category || undefined}
+                        language={(isHi || lang === "hi") ? "hi" : "en"}
                       />
                     </Suspense>
                   </section>
