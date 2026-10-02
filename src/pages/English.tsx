@@ -57,6 +57,7 @@ const English = () => {
       .select("id,slug,title,author,category,cover_color,cover_url,tagline,rating,reading_time")
       .eq("language", "en")
       .eq("is_draft", false)
+      .in("status", ["published", "published_noindex"])
       .then(({ data }) => {
         const all = (data ?? []) as BookCardData[];
         const featured = FEATURED_SLUGS
