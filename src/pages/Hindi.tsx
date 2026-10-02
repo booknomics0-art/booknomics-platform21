@@ -8,6 +8,17 @@ import { Button } from "@/components/ui/button";
 import { SEO } from "@/components/SEO";
 import { supabase } from "@/integrations/supabase/client";
 
+const FEATURED_HINDI_BOOKS = [
+  { title: "गोदान", slug: "godan-munshi-premchand-saransh" },
+  { title: "गुनाहों का देवता", slug: "gunahon-ka-devta-dharamvir-bharti-saransh" },
+  { title: "कामायनी", slug: "kamayani-jaishankar-prasad-saransh" },
+  { title: "गबन", slug: "gaban-munshi-premchand-saransh" },
+  { title: "चंद्रकांता", slug: "chandrakanta-devakinandan-khatri-saransh" },
+  { title: "चरित्रहीन", slug: "charitraheen-sharatchandra-saransh" },
+  { title: "तमस", slug: "tamas-bhisham-sahni-saransh" },
+  { title: "आधे-अधूरे", slug: "adhe-adhure-mohan-rakesh-saransh" },
+] as const;
+
 const Hindi = () => {
   const [params, setParams] = useSearchParams();
   const [books, setBooks] = useState<BookCardData[]>([]);
@@ -106,6 +117,9 @@ const Hindi = () => {
     setParams(next);
   };
 
+  // Keep meaningful crawl targets in the initial HTML/JSON-LD while the
+  // client-side Supabase request is still resolving.
+  const collectionItems = books.length > 0 ? books : FEATURED_HINDI_BOOKS;
   const collectionLd = {
     "@context": "https://schema.org",
     "@type": "CollectionPage",
@@ -113,7 +127,7 @@ const Hindi = () => {
     url: "https://booknomics.com/hindi",
     mainEntity: {
       "@type": "ItemList",
-      itemListElement: books.slice(0, 30).map((b, i) => ({
+      itemListElement: collectionItems.slice(0, 30).map((b, i) => ({
         "@type": "ListItem",
         position: i + 1,
         url: `https://booknomics.com/books/${b.slug}`,
@@ -169,9 +183,30 @@ const Hindi = () => {
             ))}
           </div>
 
-          <div className="text-sm text-muted-foreground mb-6">
-            {totalCount} {totalCount === 1 ? "पुस्तक" : "पुस्तकें"}
+          <div className="text-sm text-muted-foreground mb-6" aria-live="polite">
+            {loading
+              ? "हिंदी पुस्तकें लोड हो रही हैं…"
+              : loadError
+                ? "पुस्तकालय अस्थायी रूप से उपलब्ध नहीं है"
+                : `${totalCount} ${totalCount === 1 ? "पुस्तक" : "पुस्तकें"}`}
           </div>
+
+          {!query.trim() && category === "सभी" && (
+            <div className="rounded-xl border border-border bg-card/60 p-4 md:p-5 mb-8">
+              <h2 className="font-serif text-lg md:text-xl font-semibold mb-3">लोकप्रिय हिंदी पुस्तक सारांश</h2>
+              <div className="flex flex-wrap gap-2">
+                {FEATURED_HINDI_BOOKS.map((book) => (
+                  <Link
+                    key={book.slug}
+                    to={`/books/${book.slug}`}
+                    className="rounded-full border border-border bg-background px-3 py-1.5 text-xs md:text-sm hover:border-primary/50 hover:text-primary transition-colors"
+                  >
+                    {book.title}
+                  </Link>
+                ))}
+              </div>
+            </div>
+          )}
 
           {loading ? (
             <div className="text-center py-20 text-muted-foreground">हिंदी पुस्तकें लोड हो रही हैं…</div>
