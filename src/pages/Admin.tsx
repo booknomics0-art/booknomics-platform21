@@ -102,6 +102,17 @@ type AdminBook = {
 
 type EditState = Pick<AdminBook, "id" | "title" | "author" | "category" | "language" | "slug" | "affiliate_link"> & { overview?: string | null };
 
+function indexReadiness(b: AdminBook) {
+  const missing: string[] = [];
+  if (!b.overview?.trim()) missing.push("overview");
+  if (!b.deep_analysis?.trim()) missing.push("deep analysis");
+  if (!b.key_ideas?.trim()) missing.push("key ideas");
+  if (!b.meta_title?.trim()) missing.push("meta title");
+  if (!b.meta_description?.trim()) missing.push("meta description");
+  if (!b.cover_url) missing.push("cover");
+  return { ready: missing.length === 0, missing };
+}
+
 export default function Admin() {
   const { user, loading, isAdmin } = useAdmin();
   const [raw, setRaw] = useState("");
@@ -217,28 +228,48 @@ export default function Admin() {
 
   const handleTogglePublish = async (b: AdminBook) => {
     const wasPublishing = b.is_draft;
-    // Daily publish cap removed — unlimited publishing.
+    const readiness = indexReadiness(b);
+    const nextStatus = wasPublishing
+      ? (readiness.ready ? "published" : "published_noindex")
+      : "draft";
 
     const patch: Partial<AdminBook> = {
       is_draft: !b.is_draft,
-      status: b.is_draft ? "published" : "draft",
+      status: nextStatus,
     };
     const { error } = await supabase
       .from("books")
       .update(patch)
       .eq("id", b.id);
     if (error) return toast.error(error.message);
+
     if (wasPublishing) {
       trackAdminAddBook(
         { title: b.title, slug: b.slug, category: b.category },
         "manual_upload"
       );
-      // Auto-submit to IndexNow-supported search engines. Google discovery is
-      // handled through the sitemap + Search Console, not the restricted Indexing API.
-      pingIndexNow([`https://booknomics.com/books/${b.slug}`]);
-      
+      if (readiness.ready) {
+        // Auto-submit to IndexNow-supported search engines. Google discovery is
+        // handled through the sitemap + Search Console, not the restricted Indexing API.
+        pingIndexNow([`https://booknomics.com/books/${b.slug}`]);
+      }
     }
-    toast.success(b.is_draft ? "Published · indexing submitted" : "Unpublished (draft)");
+
+    if (!wasPublishing) toast.success("Unpublished (draft)");
+    else if (readiness.ready) toast.success("Published · indexable · discovery submitted");
+    else toast.warning(`Published live · noindex until fixed: ${readiness.missing.join(", ")}`);
+    loadBooks();
+  };
+
+  const handlePromoteIndexable = async (b: AdminBook) => {
+    const readiness = indexReadiness(b);
+    if (!readiness.ready) {
+      return toast.error(`Complete before indexing: ${readiness.missing.join(", ")}`);
+    }
+    const { error } = await supabase.from("books").update({ status: "published" }).eq("id", b.id);
+    if (error) return toast.error(error.message);
+    pingIndexNow([`https://booknomics.com/books/${b.slug}`]);
+    toast.success("Book is now indexable · discovery submitted");
     loadBooks();
   };
 
@@ -617,12 +648,23 @@ export default function Admin() {
                   >
                     <Pencil className="w-4 h-4 mr-1" />Edit
                   </Button>
+                  {!d.is_draft && d.status === "published_noindex" && (
+                    <Button
+                      size="sm"
+                      variant="default"
+                      onClick={() => handlePromoteIndexable(d)}
+                      disabled={!indexReadiness(d).ready}
+                      title={indexReadiness(d).ready ? "Make this page eligible for search indexing" : `Missing: ${indexReadiness(d).missing.join(", ")}`}
+                    >
+                      <CheckCircle2 className="w-4 h-4 mr-1" />Make indexable
+                    </Button>
+                  )}
                   <Button
                     size="sm"
                     onClick={() => handleTogglePublish(d)}
                     variant={d.is_draft ? "default" : "outline"}
                     disabled={false}
-                    title=""
+                    title={d.is_draft ? (indexReadiness(d).ready ? "Publish as indexable" : `Will publish as noindex. Missing: ${indexReadiness(d).missing.join(", ")}`) : "Move back to draft"}
                   >
                     {d.is_draft ? (
                       <><CheckCircle2 className="w-4 h-4 mr-1" />Publish</>
