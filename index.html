@@ -1,6 +1,15 @@
 <!doctype html>
 <html lang="en">
   <head>
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-1MDPDTDYDQ"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'G-1MDPDTDYDQ');
+    </script>
     <meta name="google-site-verification" content="zbvpT5s8SosdZJkCtS-0aVLONPI0jZerMScqWvMtVrU" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -28,11 +37,7 @@
 
     <!-- All third-parties (Clarity, GA4, AdSense) deferred until first interaction or idle to protect LCP -->
     <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      window.gtag = gtag;
-      gtag('js', new Date());
-      function loadClarity(){
+function loadClarity(){
         if (window.__IS_BOT__ || window.__clarityLoaded) return; window.__clarityLoaded = true;
         (function(c,l,a,r,i,t,y){
           c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
@@ -40,14 +45,7 @@
           y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
         })(window, document, "clarity", "script", "wsaflnarx1");
       }
-      function loadGA(){
-        if (window.__IS_BOT__ || window.__gaLoaded) return; window.__gaLoaded = true;
-        var s = document.createElement('script');
-        s.async = true; s.src = 'https://www.googletagmanager.com/gtag/js?id=G-029CF4KFMM';
-        document.head.appendChild(s);
-        gtag('config', 'G-029CF4KFMM', { anonymize_ip: true });
-      }
-      function loadAds(){
+function loadAds(){
         if (window.__IS_BOT__ || window.__adsLoaded) return; window.__adsLoaded = true;
         var s = document.createElement('script');
         s.async = true; s.crossOrigin = 'anonymous';
@@ -55,7 +53,7 @@
         document.head.appendChild(s);
       }
       var _tpFired = false;
-      function _tpTrigger(){ if(_tpFired) return; _tpFired = true; loadGA(); loadClarity(); loadAds(); }
+      function _tpTrigger(){ if(_tpFired) return; _tpFired = true; loadClarity(); loadAds(); }
       // Consent gate: non-essential scripts (GA4, Clarity, AdSense) only run once the visitor accepts.
       function _tpConsent(){
         try { return localStorage.getItem('bn-cookie-consent'); } catch (e) { return 'accepted'; }
