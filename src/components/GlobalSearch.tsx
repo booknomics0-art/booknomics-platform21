@@ -109,7 +109,16 @@ export const GlobalSearch = ({
           {searching ? (
             <div className="p-4 text-sm text-muted-foreground">Searching…</div>
           ) : results.length === 0 ? (
-            <div className="p-4 text-sm text-muted-foreground">No matches. Press Enter to browse.</div>
+            <div className="p-4 text-sm text-muted-foreground">
+              <div>No matches. Press Enter to browse.</div>
+              <Link
+                to={`/request-book?title=${encodeURIComponent(q.trim())}`}
+                onClick={() => setOpen(false)}
+                className="inline-block mt-2 text-primary hover:underline"
+              >
+                Can't find it? Request this book →
+              </Link>
+            </div>
           ) : (
             <ul className="max-h-[60vh] overflow-y-auto py-1">
               {results.map(r => (
