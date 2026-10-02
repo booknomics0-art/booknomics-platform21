@@ -1,6 +1,24 @@
 <!doctype html>
 <html lang="en">
   <head>
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-1MDPDTDYDQ"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'G-1MDPDTDYDQ');
+    </script>
+    <meta name="google-site-verification" content="zbvpT5s8SosdZJkCtS-0aVLONPI0jZerMScqWvMtVrU" />
+    <!-- Microsoft Clarity -->
+    <script type="text/javascript">
+      (function(c,l,a,r,i,t,y){
+          c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+          t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+          y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+      })(window, document, "clarity", "script", "yre2cjh6gg");
+    </script>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link rel="preconnect" href="%VITE_SUPABASE_URL%" crossorigin />
@@ -25,27 +43,8 @@
       })();
     </script>
 
-    <!-- All third-parties (Clarity, GA4, AdSense) deferred until first interaction or idle to protect LCP -->
+    <!-- AdSense remains deferred until first interaction or idle to protect LCP -->
     <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      window.gtag = gtag;
-      gtag('js', new Date());
-      function loadClarity(){
-        if (window.__IS_BOT__ || window.__clarityLoaded) return; window.__clarityLoaded = true;
-        (function(c,l,a,r,i,t,y){
-          c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
-          t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
-          y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
-        })(window, document, "clarity", "script", "wsaflnarx1");
-      }
-      function loadGA(){
-        if (window.__IS_BOT__ || window.__gaLoaded) return; window.__gaLoaded = true;
-        var s = document.createElement('script');
-        s.async = true; s.src = 'https://www.googletagmanager.com/gtag/js?id=G-029CF4KFMM';
-        document.head.appendChild(s);
-        gtag('config', 'G-029CF4KFMM', { anonymize_ip: true });
-      }
       function loadAds(){
         if (window.__IS_BOT__ || window.__adsLoaded) return; window.__adsLoaded = true;
         var s = document.createElement('script');
@@ -54,8 +53,8 @@
         document.head.appendChild(s);
       }
       var _tpFired = false;
-      function _tpTrigger(){ if(_tpFired) return; _tpFired = true; loadGA(); loadClarity(); loadAds(); }
-      // Consent gate: non-essential scripts (GA4, Clarity, AdSense) only run once the visitor accepts.
+      function _tpTrigger(){ if(_tpFired) return; _tpFired = true; loadAds(); }
+      // Consent gate: deferred advertising script only runs once the visitor accepts.
       function _tpConsent(){
         try { return localStorage.getItem('bn-cookie-consent'); } catch (e) { return 'accepted'; }
       }
@@ -78,7 +77,6 @@
     
 
     <meta name="google-site-verification" content="M6qwobaePtnNuoJth9UeTI1oHuxTbm4k0grRhVsbORg" />
-    <meta name="google-site-verification" content="zbvpT5s8SosdZJkCtS-0aVLONPI0jZerMScqWvMtVrU" />
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Booknomics — Book Summaries in English & Hindi | Read Smarter, Apply Faster</title>
