@@ -233,7 +233,7 @@ export default function Admin() {
       ? (readiness.ready ? "published" : "published_noindex")
       : "draft";
 
-    const patch: Partial<AdminBook> = {
+    const patch: { is_draft: boolean; status: string } = {
       is_draft: !b.is_draft,
       status: nextStatus,
     };
