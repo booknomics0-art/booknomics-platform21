@@ -223,7 +223,7 @@ const ReadingView = ({
             </h1>
           )}
           {author && <p style={{ color: "var(--rv-muted)", fontStyle: isHindi ? "normal" : "italic", marginTop: 8 }}>{isHindi ? "लेखक: " : "by "}{author}</p>}
-          <p style={{ color: "var(--rv-accent)", fontSize: 12, letterSpacing: "0.2em", textTransform: "uppercase", fontWeight: 600, marginTop: 12 }}>
+          <p style={{ color: "var(--rv-accent)", fontSize: 12, letterSpacing: isHindi ? "0" : "0.2em", textTransform: isHindi ? "none" : "uppercase", fontWeight: 600, marginTop: 12 }}>
             {isHindi ? `${readingTime} मिनट का पाठ` : `${readingTime} min read`}{category ? `  ·  ${category}` : ""}
           </p>
           <div aria-hidden style={{ height: 1, background: "var(--rv-divider)", margin: "24px auto 0", width: "60%" }} />
