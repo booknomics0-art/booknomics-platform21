@@ -33,10 +33,10 @@ const Index = () => {
   ];
   // Trending books link straight to their canonical book pages.
   const trending = [
-    { label: "Atomic Habits", path: "/books/atomic-habits" },
-    { label: "Bhagavad Gita", path: "/books/bhagavad-gita-hi" },
-    { label: "Chanakya Niti", path: "/books/chanakya-niti" },
-    { label: "Wings of Fire", path: "/books/wings-of-fire" },
+    { label: "Atomic Habits", path: "/books/atomic-habits-james-clear-summary" },
+    { label: "Bhagavad Gita", path: "/books/bhagavad-gita-hindi-saransh" },
+    { label: "Thinking, Fast and Slow", path: "/books/thinking-fast-and-slow-daniel-kahneman-summary" },
+    { label: "Godan", path: "/books/godan-munshi-premchand-saransh" },
   ];
 
   useEffect(() => {
