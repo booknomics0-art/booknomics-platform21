@@ -1,0 +1,1 @@
+The historical generate-batch*.cjs scripts are disabled because they contain generic, prewritten literary claims that are not guaranteed to be accurate for each book. Use book-specific, source-verified generation and the existing parser/DB quality gates instead.
