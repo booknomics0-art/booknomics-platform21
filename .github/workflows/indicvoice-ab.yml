@@ -19,9 +19,6 @@ jobs:
         run: |
           sudo apt-get update -qq
           sudo apt-get install -y espeak-ng libespeak-ng1 espeak-ng-data ffmpeg
-          ldconfig -p | grep espeak-ng || true
-          dpkg -L libespeak-ng1 | grep 'libespeak-ng.so' || true
-          dpkg -L espeak-ng-data | grep '/phontab$' || true
       - name: Install IndicVoice CPU-only
         run: |
           python -m pip install --upgrade pip
@@ -29,6 +26,20 @@ jobs:
           pip install git+https://github.com/Bindkushal/indic-g2p.git
           pip install git+https://github.com/Bindkushal/indic-voice.git
           pip install soundfile spacy
+      - name: Patch PyTorch 2.6 voice-pack compatibility
+        run: |
+          python - <<'PY'
+          import pathlib
+          import indicvoice.pipeline as pipeline
+          path = pathlib.Path(pipeline.__file__)
+          text = path.read_text(encoding='utf-8')
+          old = 'torch.load(f, weights_only=True)'
+          new = 'torch.load(f, weights_only=False)'
+          if old not in text:
+              raise SystemExit(f'Expected loader line not found in {path}')
+          path.write_text(text.replace(old, new), encoding='utf-8')
+          print('Patched trusted official Bindkushal voice-pack loader:', path)
+          PY
       - name: Generate Hindi female samples
         run: |
           mkdir -p indicvoice_samples
@@ -39,11 +50,7 @@ jobs:
 
           import indicg2p.espeak
           from phonemizer.backend.espeak.wrapper import EspeakWrapper
-          candidates = (
-              glob.glob('/usr/lib/x86_64-linux-gnu/libespeak-ng.so*')
-              + glob.glob('/usr/lib/*/libespeak-ng.so*')
-          )
-          candidates = [p for p in candidates if '.so' in p]
+          candidates = glob.glob('/usr/lib/x86_64-linux-gnu/libespeak-ng.so*') + glob.glob('/usr/lib/*/libespeak-ng.so*')
           if not candidates:
               raise RuntimeError('system libespeak-ng not found')
           lib = sorted(candidates, key=len)[0]
@@ -52,7 +59,7 @@ jobs:
 
           from indicvoice import IndicPipeline
 
-          text = '''नमस्कार। आप सुन रहे हैं बुकनॉमिक्स पर प्रेमचंद के महान उपन्यास गोदान का सार। होरी एक साधारण किसान है, जिसकी सबसे बड़ी इच्छा है कि उसके घर एक गाय हो। यह छोटी-सी इच्छा धीरे-धीरे कर्ज़, सामाजिक दबाव, परिवार की जिम्मेदारियों और गांव की कठोर व्यवस्था से जुड़ जाती है। गोदान केवल एक किसान की कहानी नहीं, बल्कि उस समाज का चित्र है जहाँ मेहनत करने वाला व्यक्ति भी सम्मान और सुरक्षा के लिए संघर्ष करता रहता है।'''
+          text = '''नमस्कार। आप सुन रहे हैं बुकनॉमिक्स पर प्रेमचंद के उपन्यास गोदान का सार। होरी एक साधारण किसान है, जिसकी सबसे बड़ी इच्छा है कि उसके घर एक गाय हो। लेकिन यही छोटी-सी इच्छा कर्ज़, सामाजिक दबाव और परिवार की जिम्मेदारियों से जुड़कर उसके जीवन को कठिन बना देती है।'''
 
           pipeline = IndicPipeline(lang_code='hi', repo_id='Bindkushal/IndicVoice-82M')
           for voice in ['af_heart', 'af_bella']:
@@ -61,12 +68,14 @@ jobs:
                   pieces.append(audio)
               wav = np.concatenate(pieces) if pieces else np.zeros(24000, dtype='float32')
               sf.write(f'indicvoice_samples/{voice}.wav', wav, 24000)
+              print(voice, 'samples=', len(wav), 'seconds=', len(wav)/24000)
           PY
       - name: Master samples
         run: |
           for f in indicvoice_samples/*.wav; do
             out="${f%.wav}.mp3"
             ffmpeg -hide_banner -loglevel error -y -i "$f" -af "loudnorm=I=-16:LRA=7:TP=-1.5" -ar 48000 -ac 1 -c:a libmp3lame -b:a 96k "$out"
+            ffprobe -v error -show_entries format=duration,bit_rate -of default=noprint_wrappers=1 "$out"
           done
       - name: Upload samples
         uses: actions/upload-artifact@v4
