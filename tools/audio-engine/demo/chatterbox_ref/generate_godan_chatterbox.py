@@ -87,8 +87,6 @@ def main() -> None:
     device = "cuda" if torch.cuda.is_available() else "cpu"
     print(f"Loading Chatterbox Multilingual on {device}...", flush=True)
 
-    # Some Chatterbox multilingual checkpoints were saved with CUDA tensors.
-    # Force map_location on CPU so the free GitHub runner can load them safely.
     original_torch_load = torch.load
     if device == "cpu":
         def cpu_safe_torch_load(*args, **kwargs):
@@ -97,7 +95,7 @@ def main() -> None:
         torch.load = cpu_safe_torch_load
 
     try:
-        model = ChatterboxMultilingualTTS.from_pretrained(device=device, t3_model="v3")
+        model = ChatterboxMultilingualTTS.from_pretrained(device=device)
     finally:
         torch.load = original_torch_load
 
@@ -149,7 +147,7 @@ def main() -> None:
         final_seconds = get_duration(OUT_PATH)
         INFO_PATH.write_text(
             "\n".join([
-                "provider=ResembleAI Chatterbox Multilingual V3",
+                "provider=ResembleAI Chatterbox Multilingual",
                 f"device={device}",
                 "language=hi",
                 f"reference={REF_PATH.name}",
