@@ -1,0 +1,42 @@
+name: Generate Godan Free Female V2
+
+on:
+  push:
+    branches:
+      - feature/local-audio-engine
+    paths:
+      - 'tools/audio-engine/demo/generate_godan_free_v2.py'
+      - 'tools/audio-engine/demo/godan_20min_hi.txt'
+      - '.github/workflows/godan-free-female-v2.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  generate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install TTS and ffmpeg
+        run: |
+          python -m pip install --upgrade edge-tts
+          sudo apt-get update -qq
+          sudo apt-get install -y ffmpeg
+      - name: Generate free Hindi female MP3
+        run: python tools/audio-engine/demo/generate_godan_free_v2.py
+      - name: Show selected voice and duration
+        run: cat tools/audio-engine/demo/godan_free_voice_v2.txt
+      - name: Upload demo audio
+        uses: actions/upload-artifact@v4
+        with:
+          name: godan-free-female-v2
+          path: |
+            tools/audio-engine/demo/godan_20min_hi_free_female_v2.mp3
+            tools/audio-engine/demo/godan_free_voice_v2.txt
+          if-no-files-found: error
+          retention-days: 7
