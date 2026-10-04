@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
-import { CheckCircle2, XCircle, Trophy, Sparkles, RotateCcw, Brain } from "lucide-react";
+import { CheckCircle2, XCircle, Trophy, Sparkles, RotateCcw, Brain, ArrowRight } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
@@ -15,6 +15,7 @@ export type QuizQuestion = {
   explanation?: string;
 };
 export type Flashcard = { id: string; front: string; back: string };
+type Language = "en" | "hi";
 
 interface Props {
   bookId: string;
@@ -22,13 +23,16 @@ interface Props {
   flashcards: Flashcard[];
 }
 
-function FlipCard({ card }: { card: Flashcard }) {
+const cp = (hi: boolean, en: string, hindi: string) => hi ? hindi : en;
+
+function FlipCard({ card, language }: { card: Flashcard; language: Language }) {
   const [flipped, setFlipped] = useState(false);
+  const hi = language === "hi";
   return (
     <button
       onClick={() => setFlipped((f) => !f)}
       className="group relative w-full aspect-[4/3] [perspective:1000px] focus:outline-none"
-      aria-label="Flip card"
+      aria-label={cp(hi, "Flip card", "कार्ड पलटें")}
     >
       <div
         className={cn(
@@ -37,14 +41,14 @@ function FlipCard({ card }: { card: Flashcard }) {
         )}
       >
         <div className="absolute inset-0 [backface-visibility:hidden] rounded-2xl border border-gold/30 bg-gradient-to-br from-card to-muted/40 p-5 flex flex-col justify-between shadow-paper">
-          <div className="text-[10px] tracking-[0.2em] uppercase text-primary font-semibold">Concept</div>
+          <div className="text-[10px] tracking-[0.2em] uppercase text-primary font-semibold">{cp(hi, "Recall", "याद करें")}</div>
           <div className="font-serif text-lg md:text-xl leading-snug text-foreground">{card.front}</div>
-          <div className="text-xs text-muted-foreground flex items-center gap-1"><RotateCcw className="h-3 w-3" /> Tap to reveal</div>
+          <div className="text-xs text-muted-foreground flex items-center gap-1"><RotateCcw className="h-3 w-3" /> {cp(hi, "Answer first, then reveal", "पहले जवाब सोचें, फिर पलटें")}</div>
         </div>
         <div className="absolute inset-0 [backface-visibility:hidden] [transform:rotateY(180deg)] rounded-2xl border border-primary/30 bg-gradient-to-br from-primary/10 via-gold/10 to-card p-5 flex flex-col justify-between shadow-cover">
-          <div className="text-[10px] tracking-[0.2em] uppercase text-primary font-semibold">Insight</div>
+          <div className="text-[10px] tracking-[0.2em] uppercase text-primary font-semibold">{cp(hi, "Check", "मिलान करें")}</div>
           <div className="font-serif text-base md:text-lg leading-snug text-foreground/90">{card.back}</div>
-          <div className="text-xs text-muted-foreground flex items-center gap-1"><RotateCcw className="h-3 w-3" /> Tap to flip back</div>
+          <div className="text-xs text-muted-foreground flex items-center gap-1"><RotateCcw className="h-3 w-3" /> {cp(hi, "Flip back", "वापस पलटें")}</div>
         </div>
       </div>
     </button>
@@ -56,6 +60,13 @@ export function MasteryTab({ bookId, quiz, flashcards }: Props) {
   const [answers, setAnswers] = useState<Record<string, number>>({});
   const [submitted, setSubmitted] = useState(false);
   const [reviewed, setReviewed] = useState<Set<string>>(new Set());
+  const [language, setLanguage] = useState<Language>("en");
+  const hi = language === "hi";
+
+  useEffect(() => {
+    supabase.from("books").select("language").eq("id", bookId).maybeSingle()
+      .then(({ data }) => data?.language === "hi" && setLanguage("hi"));
+  }, [bookId]);
 
   const total = quiz.length;
   const score = useMemo(
@@ -64,6 +75,7 @@ export function MasteryTab({ bookId, quiz, flashcards }: Props) {
   );
   const pct = total ? Math.round((score / total) * 100) : 0;
   const allAnswered = total > 0 && quiz.every((q) => answers[q.id] !== undefined);
+  const answeredCount = quiz.filter(q => answers[q.id] !== undefined).length;
 
   useEffect(() => {
     if (!submitted || !user) return;
@@ -81,7 +93,7 @@ export function MasteryTab({ bookId, quiz, flashcards }: Props) {
         },
         { onConflict: "user_id,book_id" }
       );
-      if (!error && badge) toast.success("🏆 Book Master badge awarded!");
+      if (!error && badge) toast.success(cp(hi, "Book Master badge unlocked!", "Book Master badge मिल गया!"));
     })();
   }, [submitted]); // eslint-disable-line
 
@@ -91,18 +103,39 @@ export function MasteryTab({ bookId, quiz, flashcards }: Props) {
     return (
       <div className="text-center py-16 border border-dashed border-border rounded-2xl bg-muted/30">
         <Brain className="h-10 w-10 mx-auto text-primary mb-4" />
-        <h3 className="font-serif text-2xl font-semibold mb-1">Mastery content coming soon</h3>
-        <p className="text-muted-foreground text-sm">An interactive quiz and flashcards will appear here once published.</p>
+        <h3 className="font-serif text-2xl font-semibold mb-1">{cp(hi, "Mastery practice is being prepared", "महारत अभ्यास तैयार हो रहा है")}</h3>
+        <p className="text-muted-foreground text-sm">{cp(hi, "Quiz and recall cards will appear here once published.", "क्विज़ और recall cards प्रकाशित होते ही यहाँ दिखेंगे।")}</p>
       </div>
     );
   }
 
   return (
     <section className="py-4 space-y-12">
+      <div className="rounded-2xl border border-gold/25 bg-gold/5 p-5">
+        <div className="flex items-start gap-3">
+          <Brain className="h-5 w-5 text-primary mt-0.5 shrink-0" />
+          <div>
+            <h2 className="font-serif text-xl md:text-2xl font-bold mb-1">{cp(hi, "Can you explain it without looking?", "क्या आप बिना देखे समझा सकते हैं?")}</h2>
+            <p className="text-sm text-muted-foreground leading-relaxed">
+              {cp(hi,
+                "Rereading feels familiar. Recall shows what actually stayed. Answer from memory first — then use the explanation to close the gap.",
+                "दोबारा पढ़ना परिचित लगता है; recall बताता है कि सच में क्या याद रहा। पहले याद से जवाब दें, फिर explanation से gap भरें।"
+              )}
+            </p>
+          </div>
+        </div>
+      </div>
+
       {quiz.length > 0 && (
         <div>
-          <div className="text-xs tracking-[0.2em] uppercase text-primary font-semibold mb-3">Interactive Quiz</div>
-          <h2 className="font-serif text-3xl md:text-4xl font-bold tracking-tight mb-6">Test your mastery</h2>
+          <div className="text-xs tracking-[0.2em] uppercase text-primary font-semibold mb-3">{cp(hi, "Active Recall", "Active Recall")}</div>
+          <div className="flex items-end justify-between gap-4 flex-wrap mb-6">
+            <div>
+              <h2 className="font-serif text-3xl md:text-4xl font-bold tracking-tight">{cp(hi, "Test what stayed", "देखें क्या याद रहा")}</h2>
+              {!submitted && <p className="text-sm text-muted-foreground mt-2">{cp(hi, `${answeredCount}/${total} answered`, `${answeredCount}/${total} जवाब दिए`)}</p>}
+            </div>
+            {!submitted && total > 0 && <Progress value={(answeredCount / total) * 100} className="h-2 w-36" />}
+          </div>
 
           {submitted && (
             <div className={cn(
@@ -111,14 +144,16 @@ export function MasteryTab({ bookId, quiz, flashcards }: Props) {
             )}>
               <div className="flex items-center gap-3 mb-2">
                 <Trophy className={cn("h-6 w-6", pct === 100 ? "text-gold" : "text-primary")} />
-                <h3 className="font-serif text-2xl font-bold">Mastery Score: {pct}%</h3>
+                <h3 className="font-serif text-2xl font-bold">{cp(hi, "Mastery score", "महारत स्कोर")}: {pct}%</h3>
               </div>
               <Progress value={pct} className="h-2 mb-3" />
               <p className="text-sm text-muted-foreground">
-                {pct === 100 ? "Perfect — Book Master badge unlocked!" : `${score} of ${total} correct. Review the explanations and try again.`}
+                {pct === 100
+                  ? cp(hi, "Perfect recall. Now try explaining the book in three sentences without looking.", "बहुत बढ़िया। अब बिना देखे किताब को तीन वाक्यों में समझाने की कोशिश करें।")
+                  : cp(hi, `${score} of ${total} correct. Read only the explanations you missed, then retake.`, `${total} में से ${score} सही। सिर्फ गलत answers की explanation देखें, फिर दोबारा प्रयास करें।`)}
               </p>
               <Button onClick={reset} variant="outline" size="sm" className="mt-4 rounded-full gap-2">
-                <RotateCcw className="h-3 w-3" /> Retake
+                <RotateCcw className="h-3 w-3" /> {cp(hi, "Retake", "फिर से करें")}
               </Button>
             </div>
           )}
@@ -128,7 +163,7 @@ export function MasteryTab({ bookId, quiz, flashcards }: Props) {
               const sel = answers[q.id];
               return (
                 <div key={q.id} className="rounded-2xl border border-border p-5 bg-card">
-                  <div className="text-xs text-primary font-semibold mb-2">Question {qi + 1} / {total}</div>
+                  <div className="text-xs text-primary font-semibold mb-2">{cp(hi, "Question", "प्रश्न")} {qi + 1} / {total}</div>
                   <div className="font-serif text-lg md:text-xl mb-4">{q.question}</div>
                   <div className="grid gap-2">
                     {q.options.map((opt, oi) => {
@@ -158,8 +193,8 @@ export function MasteryTab({ bookId, quiz, flashcards }: Props) {
                     })}
                   </div>
                   {submitted && q.explanation && (
-                    <div className="mt-3 text-sm text-muted-foreground bg-muted/40 rounded-lg p-3">
-                      <span className="font-semibold text-foreground">Why: </span>{q.explanation}
+                    <div className="mt-3 text-sm text-muted-foreground bg-muted/40 rounded-lg p-3 leading-relaxed">
+                      <span className="font-semibold text-foreground">{cp(hi, "Why: ", "क्यों: ")}</span>{q.explanation}
                     </div>
                   )}
                 </div>
@@ -170,14 +205,14 @@ export function MasteryTab({ bookId, quiz, flashcards }: Props) {
           {!submitted && (
             <Button
               onClick={() => {
-                if (!user) { toast.error("Sign in to save your mastery score"); }
+                if (!user) { toast.error(cp(hi, "Sign in to save your mastery score", "महारत स्कोर सेव करने के लिए साइन इन करें")); }
                 setSubmitted(true);
               }}
               disabled={!allAnswered}
               size="lg"
               className="mt-6 bg-gold text-primary-foreground hover:opacity-90 rounded-full gap-2"
             >
-              <Sparkles className="h-4 w-4" /> Submit & see score
+              <Sparkles className="h-4 w-4" /> {cp(hi, "Check my recall", "मेरी याददाश्त जाँचें")}
             </Button>
           )}
         </div>
@@ -185,16 +220,20 @@ export function MasteryTab({ bookId, quiz, flashcards }: Props) {
 
       {flashcards.length > 0 && (
         <div>
-          <div className="text-xs tracking-[0.2em] uppercase text-primary font-semibold mb-3">Active Recall</div>
-          <h2 className="font-serif text-3xl md:text-4xl font-bold tracking-tight mb-6">Insight flashcards</h2>
+          <div className="text-xs tracking-[0.2em] uppercase text-primary font-semibold mb-3">{cp(hi, "Memory Loop", "Memory Loop")}</div>
+          <h2 className="font-serif text-3xl md:text-4xl font-bold tracking-tight mb-2">{cp(hi, "Recall cards", "Recall cards")}</h2>
+          <p className="text-sm text-muted-foreground mb-6">{cp(hi, "Say the answer out loud before you flip. Recognition is easier than recall.", "कार्ड पलटने से पहले जवाब बोलें। पहचानना आसान है; याद से निकालना असली अभ्यास है।")}</p>
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {flashcards.map((c) => (
               <div key={c.id} onClick={() => setReviewed((s) => new Set(s).add(c.id))}>
-                <FlipCard card={c} />
+                <FlipCard card={c} language={language} />
               </div>
             ))}
           </div>
-          <p className="text-xs text-muted-foreground mt-3">Reviewed {reviewed.size} / {flashcards.length}</p>
+          <div className="mt-4 flex items-center gap-2 text-xs text-muted-foreground">
+            <ArrowRight className="h-3.5 w-3.5 text-primary" />
+            {cp(hi, `Reviewed ${reviewed.size}/${flashcards.length}. Stop when you can explain each card in your own words.`, `${reviewed.size}/${flashcards.length} देखे। तब रुकें जब हर card को अपने शब्दों में समझा सकें।`)}
+          </div>
         </div>
       )}
     </section>
