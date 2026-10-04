@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import base64
+import os
 import re
 import shutil
 import subprocess
@@ -14,8 +15,9 @@ from chatterbox.mtl_tts import ChatterboxMultilingualTTS
 ROOT = Path(__file__).resolve().parent
 TEXT_PATH = ROOT.parent / "godan_20min_hi.txt"
 REF_PATH = ROOT / "godan_ref_short.wav"
-OUT_PATH = ROOT / "godan_20min_hi_chatterbox.mp3"
-INFO_PATH = ROOT / "godan_chatterbox_info.txt"
+SAMPLE_MODE = os.getenv("SAMPLE_MODE", "0") == "1"
+OUT_PATH = ROOT / ("godan_hi_chatterbox_sample.mp3" if SAMPLE_MODE else "godan_20min_hi_chatterbox.mp3")
+INFO_PATH = ROOT / ("godan_chatterbox_sample_info.txt" if SAMPLE_MODE else "godan_chatterbox_info.txt")
 
 TARGET_SECONDS = 20 * 60
 MAX_CHARS = 270
@@ -101,7 +103,9 @@ def main() -> None:
 
     text = TEXT_PATH.read_text(encoding="utf-8").strip()
     chunks = split_text(text)
-    print(f"Narration chunks: {len(chunks)}", flush=True)
+    if SAMPLE_MODE:
+        chunks = chunks[:3]
+    print(f"Narration chunks: {len(chunks)}; sample_mode={SAMPLE_MODE}", flush=True)
 
     torch.manual_seed(SEED)
     if torch.cuda.is_available():
@@ -135,7 +139,10 @@ def main() -> None:
         ])
 
         raw_seconds = get_duration(raw)
-        tempo = max(0.90, min(1.10, raw_seconds / TARGET_SECONDS))
+        if SAMPLE_MODE:
+            tempo = 1.0
+        else:
+            tempo = max(0.90, min(1.10, raw_seconds / TARGET_SECONDS))
         print(f"Raw duration={raw_seconds:.2f}s; atempo={tempo:.5f}", flush=True)
         run([
             "ffmpeg", "-hide_banner", "-loglevel", "error", "-y",
@@ -155,6 +162,7 @@ def main() -> None:
                 f"exaggeration={EXAGGERATION}",
                 f"cfg_weight={CFG_WEIGHT}",
                 f"temperature={TEMPERATURE}",
+                f"sample_mode={SAMPLE_MODE}",
                 f"chunks={len(chunks)}",
                 f"raw_duration_seconds={raw_seconds:.2f}",
                 f"tempo={tempo:.5f}",
@@ -163,7 +171,7 @@ def main() -> None:
             ]) + "\n",
             encoding="utf-8",
         )
-        print(f"DONE: {OUT_PATH} ({final_seconds/60:.2f} min)", flush=True)
+        print(f"DONE: {OUT_PATH} ({final_seconds:.2f}s)", flush=True)
     finally:
         shutil.rmtree(tmp, ignore_errors=True)
 
