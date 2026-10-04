@@ -1,0 +1,57 @@
+name: Generate IndicVoice Hindi A/B
+
+on:
+  push:
+    branches:
+      - feature/indicvoice-ab
+  workflow_dispatch:
+
+jobs:
+  generate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install audio tools
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y espeak-ng ffmpeg
+      - name: Install IndicVoice
+        run: |
+          python -m pip install --upgrade pip
+          pip install git+https://github.com/Bindkushal/indic-g2p.git
+          pip install git+https://github.com/Bindkushal/indic-voice.git
+          pip install soundfile
+      - name: Generate Hindi female samples
+        run: |
+          mkdir -p indicvoice_samples
+          python - <<'PY'
+          import soundfile as sf
+          from indicvoice import IndicPipeline
+
+          text = '''नमस्कार। आप सुन रहे हैं बुकनॉमिक्स पर प्रेमचंद के महान उपन्यास गोदान का सार। होरी एक साधारण किसान है, जिसकी सबसे बड़ी इच्छा है कि उसके घर एक गाय हो। यह छोटी-सी इच्छा धीरे-धीरे कर्ज़, सामाजिक दबाव, परिवार की जिम्मेदारियों और गांव की कठोर व्यवस्था से जुड़ जाती है। गोदान केवल एक किसान की कहानी नहीं, बल्कि उस समाज का चित्र है जहाँ मेहनत करने वाला व्यक्ति भी सम्मान और सुरक्षा के लिए संघर्ष करता रहता है।'''
+
+          pipeline = IndicPipeline(lang_code='hi', repo_id='Bindkushal/IndicVoice-82M')
+          for voice in ['af_heart', 'af_bella']:
+              pieces = []
+              for _, _, audio in pipeline(text, voice=voice):
+                  pieces.append(audio)
+              import numpy as np
+              wav = np.concatenate(pieces) if pieces else np.zeros(24000, dtype='float32')
+              sf.write(f'indicvoice_samples/{voice}.wav', wav, 24000)
+          PY
+      - name: Master samples
+        run: |
+          for f in indicvoice_samples/*.wav; do
+            out="${f%.wav}.mp3"
+            ffmpeg -hide_banner -loglevel error -y -i "$f" -af "loudnorm=I=-16:LRA=7:TP=-1.5" -ar 48000 -ac 1 -c:a libmp3lame -b:a 96k "$out"
+          done
+      - name: Upload samples
+        uses: actions/upload-artifact@v4
+        with:
+          name: indicvoice-hindi-ab
+          path: indicvoice_samples/*.mp3
+          retention-days: 7
