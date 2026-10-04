@@ -1,4 +1,4 @@
-name: Generate IndicVoice Hindi A/B
+name: Generate Native Hindi Female A/B
 
 on:
   push:
@@ -15,10 +15,10 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.11'
-      - name: Install audio tools
+      - name: Install system tools
         run: |
           sudo apt-get update -qq
-          sudo apt-get install -y espeak-ng libespeak-ng1 espeak-ng-data ffmpeg
+          sudo apt-get install -y espeak-ng libespeak-ng1 espeak-ng-data ffmpeg curl
       - name: Install IndicVoice CPU-only
         run: |
           python -m pip install --upgrade pip
@@ -26,51 +26,58 @@ jobs:
           pip install git+https://github.com/Bindkushal/indic-g2p.git
           pip install git+https://github.com/Bindkushal/indic-voice.git
           pip install soundfile spacy
-      - name: Patch PyTorch 2.6 voice-pack compatibility
+      - name: Download real Hindi female voice packs
+        run: |
+          mkdir -p voicepacks
+          curl -fL --retry 3 'https://huggingface.co/Bindkushal/IndicVoice-82M/resolve/main/voices/hf_alpha.pt?download=true' -o voicepacks/hf_alpha.pt
+          curl -fL --retry 3 'https://huggingface.co/Bindkushal/IndicVoice-82M/resolve/main/voices/hf_beta.pt?download=true' -o voicepacks/hf_beta.pt
+          ls -lh voicepacks
+          python - <<'PY'
+          from pathlib import Path
+          for p in [Path('voicepacks/hf_alpha.pt'), Path('voicepacks/hf_beta.pt')]:
+              b = p.read_bytes()[:32]
+              print(p, p.stat().st_size, b)
+              if b.startswith(b'version https://git-lfs'):
+                  raise SystemExit(f'{p} is still an LFS pointer, not the real voice pack')
+          PY
+      - name: Patch trusted voice-pack loader for PyTorch 2.6
         run: |
           python - <<'PY'
           import pathlib
           import indicvoice.pipeline as pipeline
           path = pathlib.Path(pipeline.__file__)
           text = path.read_text(encoding='utf-8')
-          old = 'torch.load(f, weights_only=True)'
-          new = 'torch.load(f, weights_only=False)'
-          if old not in text:
-              raise SystemExit(f'Expected loader line not found in {path}')
-          path.write_text(text.replace(old, new), encoding='utf-8')
-          print('Patched trusted official Bindkushal voice-pack loader:', path)
+          text = text.replace('torch.load(f, weights_only=True)', 'torch.load(f, weights_only=False)')
+          path.write_text(text, encoding='utf-8')
+          print('Patched:', path)
           PY
-      - name: Generate Hindi female samples
+      - name: Generate native Hindi female samples
         run: |
           mkdir -p indicvoice_samples
           python - <<'PY'
           import glob
           import numpy as np
           import soundfile as sf
-
           import indicg2p.espeak
           from phonemizer.backend.espeak.wrapper import EspeakWrapper
+
           candidates = glob.glob('/usr/lib/x86_64-linux-gnu/libespeak-ng.so*') + glob.glob('/usr/lib/*/libespeak-ng.so*')
           if not candidates:
               raise RuntimeError('system libespeak-ng not found')
-          lib = sorted(candidates, key=len)[0]
-          print('Forcing system eSpeak library:', lib)
-          EspeakWrapper.set_library(lib)
+          EspeakWrapper.set_library(sorted(candidates, key=len)[0])
 
           from indicvoice import IndicPipeline
-
           text = '''नमस्कार। आप सुन रहे हैं बुकनॉमिक्स पर प्रेमचंद के उपन्यास गोदान का सार। होरी एक साधारण किसान है, जिसकी सबसे बड़ी इच्छा है कि उसके घर एक गाय हो। लेकिन यही छोटी-सी इच्छा कर्ज़, सामाजिक दबाव और परिवार की जिम्मेदारियों से जुड़कर उसके जीवन को कठिन बना देती है।'''
-
           pipeline = IndicPipeline(lang_code='hi', repo_id='Bindkushal/IndicVoice-82M')
-          for voice in ['af_heart', 'af_bella']:
-              pieces = []
-              for _, _, audio in pipeline(text, voice=voice):
-                  pieces.append(audio)
+
+          for name in ['hf_alpha', 'hf_beta']:
+              voice = f'voicepacks/{name}.pt'
+              pieces = [audio for _, _, audio in pipeline(text, voice=voice)]
               wav = np.concatenate(pieces) if pieces else np.zeros(24000, dtype='float32')
-              sf.write(f'indicvoice_samples/{voice}.wav', wav, 24000)
-              print(voice, 'samples=', len(wav), 'seconds=', len(wav)/24000)
+              sf.write(f'indicvoice_samples/{name}.wav', wav, 24000)
+              print(name, 'duration=', len(wav)/24000)
           PY
-      - name: Master samples
+      - name: Master and inspect samples
         run: |
           for f in indicvoice_samples/*.wav; do
             out="${f%.wav}.mp3"
@@ -80,6 +87,6 @@ jobs:
       - name: Upload samples
         uses: actions/upload-artifact@v4
         with:
-          name: indicvoice-hindi-ab
+          name: native-hindi-female-ab
           path: indicvoice_samples/*.mp3
           retention-days: 7
