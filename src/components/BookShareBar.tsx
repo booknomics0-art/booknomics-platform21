@@ -8,7 +8,7 @@ interface Props {
   isHindi: boolean;
 }
 
-/** Share bar — floating pill (bottom-right) on mobile, vertical rail on desktop. */
+/** Share bar — floating pill unless the viewport has room for an outside rail. */
 export function BookShareBar({ url, title, isHindi }: Props) {
   const [copied, setCopied] = useState(false);
   const [open, setOpen] = useState(false);
@@ -59,9 +59,9 @@ export function BookShareBar({ url, title, isHindi }: Props) {
 
   return (
     <>
-      {/* Desktop: vertical rail on the left */}
+      {/* A 1400px content container needs a clear side gutter for this fixed rail. */}
       <aside
-        className="hidden lg:flex fixed left-4 top-1/2 -translate-y-1/2 z-30 flex-col items-center gap-2 rounded-2xl border border-border bg-background/90 px-2 py-3 shadow-paper backdrop-blur"
+        className="hidden min-[1600px]:flex fixed left-4 top-1/2 -translate-y-1/2 z-30 flex-col items-center gap-2 rounded-2xl border border-border bg-background/90 px-2 py-3 shadow-paper backdrop-blur"
         aria-label={label}
       >
         <span className="text-[10px] font-medium uppercase tracking-wider text-muted-foreground mb-1">
@@ -89,9 +89,9 @@ export function BookShareBar({ url, title, isHindi }: Props) {
         </button>
       </aside>
 
-      {/* Mobile: floating FAB bottom-right, above the MobileNav (h≈56px + safe area) */}
+      {/* Compact viewports: existing FAB, above the MobileNav (h≈56px + safe area). */}
       <div
-        className="lg:hidden fixed right-4 z-40 flex flex-col items-end gap-2"
+        className="min-[1600px]:hidden fixed right-4 z-40 flex flex-col items-end gap-2"
         style={{ bottom: "calc(72px + env(safe-area-inset-bottom))" }}
       >
         {open && (
