@@ -1,8 +1,6 @@
 from __future__ import annotations
 
 import base64
-import math
-import os
 import re
 import shutil
 import subprocess
@@ -88,7 +86,20 @@ def main() -> None:
 
     device = "cuda" if torch.cuda.is_available() else "cpu"
     print(f"Loading Chatterbox Multilingual on {device}...", flush=True)
-    model = ChatterboxMultilingualTTS.from_pretrained(device=device, t3_model="v3")
+
+    # Some Chatterbox multilingual checkpoints were saved with CUDA tensors.
+    # Force map_location on CPU so the free GitHub runner can load them safely.
+    original_torch_load = torch.load
+    if device == "cpu":
+        def cpu_safe_torch_load(*args, **kwargs):
+            kwargs.setdefault("map_location", torch.device("cpu"))
+            return original_torch_load(*args, **kwargs)
+        torch.load = cpu_safe_torch_load
+
+    try:
+        model = ChatterboxMultilingualTTS.from_pretrained(device=device, t3_model="v3")
+    finally:
+        torch.load = original_torch_load
 
     text = TEXT_PATH.read_text(encoding="utf-8").strip()
     chunks = split_text(text)
