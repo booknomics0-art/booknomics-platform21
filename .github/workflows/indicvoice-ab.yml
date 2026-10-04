@@ -24,7 +24,7 @@ jobs:
           python -m pip install --upgrade pip
           pip install git+https://github.com/Bindkushal/indic-g2p.git
           pip install git+https://github.com/Bindkushal/indic-voice.git
-          pip install soundfile
+          pip install soundfile spacy
       - name: Generate Hindi female samples
         run: |
           mkdir -p indicvoice_samples
