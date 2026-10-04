@@ -21,6 +21,11 @@ jobs:
       - name: Install deps
         run: npm ci
 
+      - name: Reconcile production sitemaps
+        env:
+          SITEMAP_MIN_BOOKS: "50"
+        run: npm run check:sitemap:prod
+
       - name: Run indexing monitor (SAMPLE=all)
         env:
           SAMPLE: all

@@ -36,9 +36,20 @@ const decode = (s: string) =>
     console.error(`FAIL — sitemap HTTP ${res.status}`);
     process.exit(1);
   }
+
+  const contentType = res.headers.get("content-type") ?? "";
   const xml = await res.text();
+  if (/text\/html/i.test(contentType) || !/<urlset\b/i.test(xml) || !/xmlns:image=/i.test(xml)) {
+    console.error(`FAIL — image sitemap is not valid image-sitemap XML (content-type: ${contentType || "missing"})`);
+    process.exit(1);
+  }
+
   const urls = Array.from(xml.matchAll(/<image:loc>([^<]+)<\/image:loc>/g)).map((m) => decode(m[1].trim()));
   console.log(`[img-sitemap] ${urls.length} image URLs to check`);
+  if (urls.length === 0) {
+    console.error("FAIL — image sitemap contains zero image URLs");
+    process.exit(1);
+  }
 
   const results = await pool(urls, CONCURRENCY, async (u) => ({ u, code: await head(u) }));
   const bad = results.filter((r) => r.code !== 200);

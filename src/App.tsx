@@ -7,6 +7,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
 import { PageLoader } from "@/components/LoadingSpinner";
 import Index from "./pages/Index.tsx";
+import Browse from "./pages/Browse.tsx";
 import Hindi from "./pages/Hindi.tsx";
 import Resources from "./pages/Resources.tsx";
 import ReadingTracker from "./pages/resources/ReadingTracker.tsx";
@@ -35,7 +36,6 @@ const lazy = <T extends ComponentType<any>>(importer: () => Promise<{ default: T
     }
   });
 
-const Browse = lazy(() => import("./pages/Browse.tsx"));
 const BookDetail = lazy(() => import("./pages/BookDetail.tsx"));
 const Auth = lazy(() => import("./pages/Auth.tsx"));
 const Library = lazy(() => import("./pages/Library.tsx"));
