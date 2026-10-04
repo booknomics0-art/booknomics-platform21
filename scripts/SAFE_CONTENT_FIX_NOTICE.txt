@@ -1,0 +1,12 @@
+Booknomics content safety notice
+
+Legacy fix-phase scripts that auto-expand book summaries with generic prose are disabled.
+They must not be used to reach word-count or quality thresholds.
+
+Required workflow for missing/short content:
+1. Audit the book and identify the exact missing section.
+2. Use book-specific, source-verified facts, themes, examples and analysis.
+3. Do not invent literary influence, translations, awards, historical context, structure, symbolism, philosophy, reception or character traits.
+4. Re-run content-quality checks before publishing/indexing.
+
+The production database also blocks known repeated/generic template content from becoming indexable.
