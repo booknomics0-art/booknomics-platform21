@@ -117,8 +117,22 @@ const Browse = ({ categoryFilter, titleOverride, introText, skipSeo, aboveConten
         setTotalCount(0);
         setLoadError(error.message);
       } else {
-        setBooks((data ?? []) as any);
-        setTotalCount(count ?? 0);
+        const rows = (data ?? []) as any;
+        const resolvedCount = count ?? 0;
+        // An unfiltered production catalog returning zero is an infrastructure
+        // failure signal, not a valid empty-library state. Do not render "0 books"
+        // to users or crawlers when the database/environment is misconfigured.
+        const suspiciousEmptyCatalog =
+          category === "All" &&
+          language === "all" &&
+          !debouncedQuery.trim() &&
+          page === 1 &&
+          resolvedCount === 0;
+        setBooks(rows);
+        setTotalCount(resolvedCount);
+        if (suspiciousEmptyCatalog) {
+          setLoadError("Public catalog unexpectedly returned zero books. Check the production database configuration.");
+        }
       }
       setLoading(false);
     })();
