@@ -61,6 +61,9 @@ def clean_markdown(text: str) -> str:
     if not text:
         return ""
     text = html.unescape(text)
+    # Never let reasoning traces become spoken audio. Some local thinking models
+    # may emit <think> blocks even when the prompt requests narration only.
+    text = re.sub(r"<think\b[^>]*>.*?</think>", " ", text, flags=re.I | re.S)
     text = re.sub(r"<script\b[^>]*>.*?</script>", " ", text, flags=re.I | re.S)
     text = re.sub(r"<style\b[^>]*>.*?</style>", " ", text, flags=re.I | re.S)
     text = re.sub(r"<[^>]+>", " ", text)
@@ -216,7 +219,7 @@ SOURCE MATERIAL:
 {source}
 ---
 """.strip()
-    proc = run(["ollama", "run", model], input_text=prompt)
+    proc = run(["ollama", "run", model, "--think=false"], input_text=prompt)
     out = clean_markdown(proc.stdout)
     if word_count(out) < max(900, int(target_words * 0.5)):
         raise RuntimeError(f"Ollama output too short ({word_count(out)} words)")
