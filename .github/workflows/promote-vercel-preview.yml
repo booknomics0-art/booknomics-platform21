@@ -1,0 +1,45 @@
+name: Promote Vercel Preview
+
+on:
+  workflow_dispatch:
+    inputs:
+      deployment:
+        description: Successful Vercel preview URL or deployment ID
+        required: true
+        type: string
+
+permissions:
+  contents: read
+
+concurrency:
+  group: vercel-production-promotion
+  cancel-in-progress: false
+
+jobs:
+  promote:
+    name: Promote existing preview to production
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    environment: production
+    steps:
+      - name: Require Vercel token
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+        run: |
+          if [ -z "$VERCEL_TOKEN" ]; then
+            echo "::error::Missing repository secret VERCEL_TOKEN. Add it once in GitHub Actions secrets before running this workflow."
+            exit 1
+          fi
+
+      - name: Install Vercel CLI
+        run: npm install --global vercel
+
+      - name: Promote successful preview without rebuilding
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          DEPLOYMENT: ${{ inputs.deployment }}
+        run: |
+          vercel promote "$DEPLOYMENT" \
+            --yes \
+            --scope shivam-4d29 \
+            --token "$VERCEL_TOKEN"
