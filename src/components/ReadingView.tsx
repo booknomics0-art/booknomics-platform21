@@ -25,12 +25,43 @@ const THEMES: Record<ThemeKey, Record<string, string>> = {
   },
 };
 
-// Proportional scaling presets — every typographic value derives from --rv-scale.
 const SIZE_SCALE: Record<SizeKey, number> = { sm: 0.85, md: 1, lg: 1.18, xl: 1.34 };
 const SIZE_LABELS: Record<SizeKey, string> = { sm: "A⁻", md: "A", lg: "A⁺", xl: "A⁺⁺" };
 const SIZE_TIPS: Record<SizeKey, string> = {
   sm: "Small (15px)", md: "Default (18px)", lg: "Large (21px)", xl: "Extra Large (24px)",
 };
+
+const SECTION_LABELS: Record<LanguageKey, Record<string, string>> = {
+  en: {
+    "The book at a glance": "Understand it in 2 minutes",
+    "5 key takeaways": "5 ideas worth keeping",
+    "Detailed summary": "The full journey",
+    "The core concepts": "What really matters",
+    "Deeper analysis": "What most readers miss",
+    "Living with the ideas": "Put it to work today",
+  },
+  hi: {
+    "किताब एक नज़र में": "2 मिनट में किताब समझें",
+    "5 मुख्य सीख": "5 बातें जो साथ रहेंगी",
+    "विस्तृत सारांश": "पूरी यात्रा",
+    "मुख्य विचार": "असल विचार, बिना शोर",
+    "गहन विश्लेषण": "जो पहली नज़र में छूट जाता है",
+    "जीवन में कैसे लागू करें": "आज से क्या बदलें",
+  },
+};
+
+const SECTION_CUES: Record<LanguageKey, string[]> = {
+  en: ["Start here", "Worth keeping", "See the full picture", "The core", "One layer deeper", "Make it yours"],
+  hi: ["शुरुआत यहीं से", "याद रखने लायक", "अब पूरी तस्वीर", "विचार की धड़कन", "एक परत और गहरी", "अब आपकी बारी"],
+};
+
+const refineSectionHeadings = (input: string, language: LanguageKey) =>
+  input.split("\n").map((line) => {
+    const match = line.match(/^(##\s+)(.+?)\s*$/);
+    if (!match) return line;
+    const replacement = SECTION_LABELS[language][match[2]];
+    return replacement ? `${match[1]}${replacement}` : line;
+  }).join("\n");
 
 const loadedFontSets = new Set<LanguageKey>();
 const loadFonts = (language: LanguageKey) => {
@@ -150,7 +181,8 @@ const ReadingView = ({
 
   const processed = useMemo(() => {
     if (!content) return "";
-    const normalized = language === "hi" ? normalizeHindiMarkdown(content) : content;
+    const refined = refineSectionHeadings(content, language);
+    const normalized = language === "hi" ? normalizeHindiMarkdown(refined) : refined;
     return normalized.split("\n").map((ln) => {
       const m = ln.match(/^\s*★\s*(.*)$/);
       return m ? `> ★KEY★ ${m[1]}` : ln;
@@ -226,6 +258,9 @@ const ReadingView = ({
           <p style={{ color: "var(--rv-accent)", fontSize: 12, letterSpacing: isHindi ? "0" : "0.2em", textTransform: isHindi ? "none" : "uppercase", fontWeight: 600, marginTop: 12 }}>
             {isHindi ? `${readingTime} मिनट का पाठ` : `${readingTime} min read`}{category ? `  ·  ${category}` : ""}
           </p>
+          <p className="rv-reading-intent">
+            {isHindi ? "समझने के लिए पढ़ें। सवाल करने के लिए रुकें। वही रखें जो आपके काम आए।" : "Read to understand. Pause to question. Keep only what earns its place."}
+          </p>
           <div aria-hidden style={{ height: 1, background: "var(--rv-divider)", margin: "24px auto 0", width: "60%" }} />
         </header>
       )}
@@ -237,9 +272,10 @@ const ReadingView = ({
             h2: ({ children, ...props }) => {
               chapterCounter.current += 1;
               lastHeadingKey.current = String(children);
+              const cue = SECTION_CUES[language][chapterCounter.current - 1] || (isHindi ? `खंड ${chapterCounter.current}` : `Section ${chapterCounter.current}`);
               return (
                 <div className="rv-chapter">
-                  <div className="rv-eyebrow">{isHindi ? `खंड ${chapterCounter.current}` : `Section ${chapterCounter.current}`}</div>
+                  <div className="rv-eyebrow">{cue}</div>
                   <h2 {...props} className="rv-h2" style={{ fontFamily: "var(--rv-heading-font)", color: "var(--rv-heading)", fontWeight: 700, lineHeight: 1.3, margin: 0 }}>
                     {children}
                   </h2>
@@ -331,7 +367,6 @@ const ReadingView = ({
         Article
       )}
 
-      {/* Mobile / full-screen overlay */}
       {hasMap && (mapFull || (mapOpen && typeof window !== "undefined" && window.innerWidth < 1024)) && (
         <div className="fixed inset-0 z-[60] bg-black/85 backdrop-blur-sm flex flex-col">
           <div className="flex items-center justify-between p-3 text-white">
@@ -365,8 +400,9 @@ const ReadingView = ({
         .rv-progress { height: 100%; background: var(--rv-accent); border-radius: 2px; transition: width 120ms linear; }
         .rv-article { max-width: calc(680px + (var(--rv-scale) - 1) * 120px); transition: max-width .3s ease; }
         .rv-h1 { font-size: calc(30px * var(--rv-scale)); }
+        .rv-reading-intent { max-width: 560px; margin: 14px auto 0; color: var(--rv-muted); font-size: calc(14px * var(--rv-scale)); line-height: 1.6; }
         .rv-chapter { margin-top: calc(48px * var(--rv-scale)); margin-bottom: calc(16px * var(--rv-scale)); }
-        .rv-eyebrow { color: var(--rv-accent); font-size: 12px; letter-spacing: .25em; text-transform: uppercase; font-weight: 700; margin-bottom: 6px; }
+        .rv-eyebrow { color: var(--rv-accent); font-size: 12px; letter-spacing: .2em; text-transform: uppercase; font-weight: 700; margin-bottom: 6px; }
         .rv-h2 { font-size: calc(26px * var(--rv-scale)); }
         .rv-h3 { font-size: calc(20px * var(--rv-scale)); margin-top: calc(32px * var(--rv-scale)); margin-bottom: calc(10px * var(--rv-scale)); }
         .rv-prose { font-size: calc(18px * var(--rv-scale)); line-height: calc(1.85 - (var(--rv-scale) - 1) * 0.25); transition: font-size .3s ease, line-height .3s ease; }
