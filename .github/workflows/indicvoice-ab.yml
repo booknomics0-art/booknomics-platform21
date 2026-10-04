@@ -22,9 +22,10 @@ jobs:
           ldconfig -p | grep espeak-ng || true
           dpkg -L libespeak-ng1 | grep 'libespeak-ng.so' || true
           dpkg -L espeak-ng-data | grep '/phontab$' || true
-      - name: Install IndicVoice
+      - name: Install IndicVoice CPU-only
         run: |
           python -m pip install --upgrade pip
+          pip install torch==2.6.0 --index-url https://download.pytorch.org/whl/cpu
           pip install git+https://github.com/Bindkushal/indic-g2p.git
           pip install git+https://github.com/Bindkushal/indic-voice.git
           pip install soundfile spacy
@@ -36,9 +37,6 @@ jobs:
           import numpy as np
           import soundfile as sf
 
-          # indic-g2p currently imports espeakng-loader first. On hosted Linux that
-          # loader can point to a bundled library whose data directory is absent.
-          # Import it, then force phonemizer back to Ubuntu's system libespeak-ng.
           import indicg2p.espeak
           from phonemizer.backend.espeak.wrapper import EspeakWrapper
           candidates = (
