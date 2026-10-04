@@ -1,43 +1,42 @@
-// Polish a single book's narrative sections: grammar, syntax, flow.
-// Keeps meaning, language, length, and tags intact.
+// Polish a single book's narrative + learning sections without changing facts.
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.49.4";
 import { corsHeaders, checkRateLimit, maybePruneRateLimits, rateLimitedResponse } from "../_shared/security.ts";
 
 const FIELDS = [
-  "tagline",            // #HOOK
-  "overview",           // #SUMMARY
-  "key_ideas",          // #KEY_INSIGHTS
-  "daily_application",  // #APPLY_TODAY
-  "reflection_questions", // #REFLECTION
-  "action_system",      // #ACTION_SYSTEM
-  "deep_analysis",      // #AUDIO_SCRIPT
+  "tagline", "overview", "deep_summary", "key_ideas", "deep_analysis",
+  "daily_application", "action_system", "practice_tracker",
+  "reflection_questions", "real_life_example",
 ] as const;
 
 type FieldKey = typeof FIELDS[number];
 
 function buildPrompt(lang: "en" | "hi", title: string, author: string, sections: Record<FieldKey, string>) {
   const langRule = lang === "hi"
-    ? "Output language: Hindi (Devanagari). Use shuddh, saral Hindi. Fix matra, ling, vachan, kaarak. Warm, readable tone. DO NOT translate to English."
-    : "Output language: clean, natural modern English. Active voice. Warm, professional, Gen-Z friendly tone. DO NOT translate to Hindi.";
+    ? "Write natural Hindi in Devanagari. Reduce awkward Hinglish, but keep common English terms when clearer."
+    : "Write clean modern English with active voice and natural rhythm.";
 
-  return `You are a senior editor polishing book-summary content for booknomics.com.
-
+  return `You are the senior editor for Booknomics.
 Book: "${title}" by ${author}
 ${langRule}
 
-POLISH RULES (apply to every section):
-- Fix grammar, spelling, punctuation, sentence structure.
-- Break run-ons; merge choppy fragments; smooth transitions.
-- Remove redundancy and awkward word order.
-- Keep parallel structure in bullet lists.
-- Keep #ACTION_SYSTEM numbered 1,2,3...
-- Preserve markdown (bullets, numbering, headings).
-- Keep approximate length similar (±15%).
-- DO NOT change meaning, facts, characters, or author intent.
-- DO NOT add new ideas or spoilers.
-- Return EXACTLY the same set of sections. If a section is empty, return empty string.
+Improve readability and engagement without changing facts or adding new claims.
+Rules:
+- CURRENT CONTENT is the only factual source. Never invent plot points, characters, quotes, research, history, awards, influence, author intent, examples presented as fact, or new spoilers.
+- Open sections strongly; remove generic introductions, filler, repetition and vague praise.
+- Prefer concrete nouns/verbs, varied sentence rhythm and short mobile-friendly paragraphs.
+- Preserve markdown. Use bold sparingly.
+- overview: surface the central tension/question quickly.
+- deep_summary: clear progression; each paragraph must advance understanding.
+- key_ideas: distinct ideas, each with why it matters + implication.
+- deep_analysis: tensions, assumptions, trade-offs and limits already supported by the source.
+- daily_application/action_system: small specific actions; first step under 10 minutes. Do not force productivity advice onto fiction.
+- practice_tracker: seven days should deepen, not repeat; end with one carry-forward choice.
+- reflection_questions: thoughtful, non-generic, not yes/no.
+- real_life_example: if not factual in source, explicitly frame as composite/hypothetical.
+- Keep overall length roughly similar (±20%). Empty input field must remain empty.
 
-Return ONLY a JSON object with keys: tagline, overview, key_ideas, daily_application, reflection_questions, action_system, deep_analysis.
+Return ONLY JSON with exactly these keys:
+${FIELDS.join(", ")}.
 
 CURRENT CONTENT:
 ${FIELDS.map(f => `### ${f}\n${sections[f] || ""}`).join("\n\n")}`;
@@ -54,18 +53,17 @@ Deno.serve(async (req) => {
 
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
     if (!LOVABLE_API_KEY) {
-      console.error("LOVABLE_API_KEY not configured");
       return new Response(JSON.stringify({ error: "AI service not configured" }), { status: 500, headers: { ...corsHeaders(req), "Content-Type": "application/json" } });
     }
 
     const admin = createClient(Deno.env.get("SUPABASE_URL")!, Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!);
-
-    // Admin-only
     const auth = req.headers.get("Authorization");
     if (!auth) return new Response(JSON.stringify({ error: "Auth required" }), { status: 401, headers: { ...corsHeaders(req), "Content-Type": "application/json" } });
+
     const userClient = createClient(Deno.env.get("SUPABASE_URL")!, Deno.env.get("SUPABASE_ANON_KEY")!, { global: { headers: { Authorization: auth } } });
     const { data: ures, error: uerr } = await userClient.auth.getUser();
     if (uerr || !ures.user) return new Response(JSON.stringify({ error: "Not authenticated" }), { status: 401, headers: { ...corsHeaders(req), "Content-Type": "application/json" } });
+
     const { data: roleRow } = await admin.from("user_roles").select("role").eq("user_id", ures.user.id).eq("role", "admin").maybeSingle();
     if (!roleRow) return new Response(JSON.stringify({ error: "Admin only" }), { status: 403, headers: { ...corsHeaders(req), "Content-Type": "application/json" } });
 
@@ -73,7 +71,7 @@ Deno.serve(async (req) => {
     if (!rl.ok) return rateLimitedResponse(req, rl.retryAfterSeconds);
 
     const { data: book, error: be } = await admin.from("books")
-      .select("title,author,language,tagline,overview,key_ideas,daily_application,reflection_questions,action_system,deep_analysis")
+      .select("title,author,language,tagline,overview,deep_summary,key_ideas,deep_analysis,daily_application,action_system,practice_tracker,reflection_questions,real_life_example")
       .eq("id", book_id).maybeSingle();
     if (be || !book) {
       return new Response(JSON.stringify({ error: "Book not found" }), { status: 404, headers: { ...corsHeaders(req), "Content-Type": "application/json" } });
@@ -81,8 +79,6 @@ Deno.serve(async (req) => {
 
     const lang: "en" | "hi" = book.language === "hi" ? "hi" : "en";
     const sections = Object.fromEntries(FIELDS.map(f => [f, (book as any)[f] || ""])) as Record<FieldKey, string>;
-
-    // Skip if all empty
     if (FIELDS.every(f => !sections[f].trim())) {
       return new Response(JSON.stringify({ skipped: true, reason: "empty" }), { headers: { ...corsHeaders(req), "Content-Type": "application/json" } });
     }
@@ -93,11 +89,11 @@ Deno.serve(async (req) => {
       body: JSON.stringify({
         model: "google/gemini-3-flash-preview",
         messages: [
-          { role: "system", content: "You are a senior bilingual (English/Hindi) editor. Output strict JSON only." },
+          { role: "system", content: "You are a rigorous bilingual book editor. Output strict JSON only." },
           { role: "user", content: buildPrompt(lang, book.title, book.author, sections) },
         ],
         response_format: { type: "json_object" },
-        max_tokens: 12000,
+        max_tokens: 16000,
       }),
     });
 
@@ -111,41 +107,25 @@ Deno.serve(async (req) => {
 
     const aiJson = await aiRes.json();
     const content = aiJson.choices?.[0]?.message?.content;
-    if (!content) {
-      return new Response(JSON.stringify({ error: "Polish failed" }), { status: 502, headers: { ...corsHeaders(req), "Content-Type": "application/json" } });
-    }
-    let parsed: Record<string, unknown>;
-    try {
-      parsed = JSON.parse(content);
-    } catch {
-      console.error("Polish AI returned invalid JSON");
-      return new Response(JSON.stringify({ error: "Polish failed" }), { status: 502, headers: { ...corsHeaders(req), "Content-Type": "application/json" } });
-    }
+    if (!content) return new Response(JSON.stringify({ error: "Polish failed" }), { status: 502, headers: { ...corsHeaders(req), "Content-Type": "application/json" } });
 
-    // Build patch — only update fields that came back non-empty AND were non-empty originally
+    let parsed: Record<string, unknown>;
+    try { parsed = JSON.parse(content); }
+    catch { return new Response(JSON.stringify({ error: "Polish failed" }), { status: 502, headers: { ...corsHeaders(req), "Content-Type": "application/json" } }); }
+
     const patch: Record<string, string> = {};
     for (const f of FIELDS) {
       const v = typeof parsed[f] === "string" ? parsed[f].trim() : "";
-      if (v && sections[f].trim()) patch[f] = v.slice(0, 20000);
+      if (v && sections[f].trim()) patch[f] = v.slice(0, 30000);
     }
-    if (Object.keys(patch).length === 0) {
-      return new Response(JSON.stringify({ error: "Polish failed" }), { status: 502, headers: { ...corsHeaders(req), "Content-Type": "application/json" } });
-    }
+    if (!Object.keys(patch).length) return new Response(JSON.stringify({ error: "Polish failed" }), { status: 502, headers: { ...corsHeaders(req), "Content-Type": "application/json" } });
 
     const { error: ue } = await admin.from("books").update(patch).eq("id", book_id);
-    if (ue) {
-      console.error("Polish save failed:", ue.message);
-      return new Response(JSON.stringify({ error: "Failed to save polished content" }), { status: 500, headers: { ...corsHeaders(req), "Content-Type": "application/json" } });
-    }
+    if (ue) return new Response(JSON.stringify({ error: "Failed to save polished content" }), { status: 500, headers: { ...corsHeaders(req), "Content-Type": "application/json" } });
 
-    return new Response(JSON.stringify({ ok: true, fields: Object.keys(patch) }), {
-      headers: { ...corsHeaders(req), "Content-Type": "application/json" },
-    });
+    return new Response(JSON.stringify({ ok: true, fields: Object.keys(patch) }), { headers: { ...corsHeaders(req), "Content-Type": "application/json" } });
   } catch (e) {
     console.error("polish-book-content error:", e);
-    return new Response(JSON.stringify({ error: "Polish failed" }), {
-      status: 500,
-      headers: { ...corsHeaders(req), "Content-Type": "application/json" },
-    });
+    return new Response(JSON.stringify({ error: "Polish failed" }), { status: 500, headers: { ...corsHeaders(req), "Content-Type": "application/json" } });
   }
 });
