@@ -10,3 +10,5 @@ Required workflow for missing/short content:
 4. Re-run content-quality checks before publishing/indexing.
 
 The production database also blocks known repeated/generic template content from becoming indexable.
+
+Deployment note: frontend UX refinements were re-triggered after the previous Vercel build-rate-limit window cleared.
