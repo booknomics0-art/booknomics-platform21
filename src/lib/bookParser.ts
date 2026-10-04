@@ -97,6 +97,37 @@ const hasLowSignalHindiTemplate = (sections: Record<string, string>) => {
   return markerHits >= 2 || genericApplyHits >= 4 || repeatedSeeing >= 6;
 };
 
+const hasLowSignalEnglishTemplate = (sections: Record<string, string>) => {
+  const text = [
+    sections.SUMMARY,
+    sections.KEY_INSIGHTS,
+    sections.APPLY_TODAY,
+    sections.AUDIO_SCRIPT,
+  ].filter(Boolean).join("\n").toLowerCase();
+
+  const knownMarkers = [
+    "helps identify what the author treats as linguistic evidence",
+    "raises a basic methodological question",
+    "evidence matters as well",
+    "record one period assumption that should not be universalized",
+    "language study changes over time",
+  ];
+  const markerHits = knownMarkers.filter((marker) => text.includes(marker)).length;
+
+  const repeatedMethod = (text.match(/raises a basic methodological question/g) || []).length;
+  const repeatedEvidence = (text.match(/evidence matters as well/g) || []).length;
+
+  return markerHits >= 2 || repeatedMethod >= 3 || repeatedEvidence >= 3;
+};
+
+const normalizeAnalysisFormatting = (text: string | undefined) => {
+  if (!text) return null;
+  return text
+    .replace(/\\n/g, "\n")
+    .replace(/\*\*/g, "")
+    .trim() || null;
+};
+
 const SECTION_TAGS = [
   "HOOK", "SUMMARY", "KEY_INSIGHTS", "APPLY_TODAY", "REFLECTION",
   "ACTION_SYSTEM", "AUDIO_SCRIPT",
@@ -168,6 +199,12 @@ export function parseBulkBooks(raw: string): { books: ParsedBook[]; errors: stri
       );
       continue;
     }
+    if (language === "en" && hasLowSignalEnglishTemplate(sections)) {
+      errors.push(
+        `Book #${idx} (${header.title}): English content looks like repeated/generic template text. Rewrite the affected sections with book-specific evidence, examples, and analysis before importing.`,
+      );
+      continue;
+    }
 
     const audio_url = sections.AUDIO_URL?.trim() || null;
     const mindmap_url = sections.MINDMAP_URL?.trim() || null;
@@ -199,7 +236,7 @@ export function parseBulkBooks(raw: string): { books: ParsedBook[]; errors: stri
       daily_application: sections.APPLY_TODAY || null,
       reflection_questions: sections.REFLECTION || null,
       action_system: sections.ACTION_SYSTEM || null,
-      deep_analysis: sections.AUDIO_SCRIPT || null,
+      deep_analysis: normalizeAnalysisFormatting(sections.AUDIO_SCRIPT),
       cover_color: "amber",
       audio_url,
       mindmap_url,
