@@ -1,4 +1,4 @@
-name: Generate Native Hindi Female A/B
+name: Tune Hindi Narrator Fluency
 
 on:
   push:
@@ -26,21 +26,19 @@ jobs:
           pip install git+https://github.com/Bindkushal/indic-g2p.git
           pip install git+https://github.com/Bindkushal/indic-voice.git
           pip install soundfile spacy
-      - name: Download real Hindi female voice packs
+      - name: Download Hindi female Alpha voice
         run: |
           mkdir -p voicepacks
           curl -fL --retry 3 'https://huggingface.co/Bindkushal/IndicVoice-82M/resolve/main/voices/hf_alpha.pt?download=true' -o voicepacks/hf_alpha.pt
-          curl -fL --retry 3 'https://huggingface.co/Bindkushal/IndicVoice-82M/resolve/main/voices/hf_beta.pt?download=true' -o voicepacks/hf_beta.pt
-          ls -lh voicepacks
           python - <<'PY'
           from pathlib import Path
-          for p in [Path('voicepacks/hf_alpha.pt'), Path('voicepacks/hf_beta.pt')]:
-              b = p.read_bytes()[:32]
-              print(p, p.stat().st_size, b)
-              if b.startswith(b'version https://git-lfs'):
-                  raise SystemExit(f'{p} is still an LFS pointer, not the real voice pack')
+          p = Path('voicepacks/hf_alpha.pt')
+          b = p.read_bytes()[:32]
+          print(p, p.stat().st_size, b)
+          if b.startswith(b'version https://git-lfs'):
+              raise SystemExit('hf_alpha is an LFS pointer, not the real voice pack')
           PY
-      - name: Patch trusted voice-pack loader for PyTorch 2.6
+      - name: Patch trusted voice-pack loader
         run: |
           python - <<'PY'
           import pathlib
@@ -51,9 +49,9 @@ jobs:
           path.write_text(text, encoding='utf-8')
           print('Patched:', path)
           PY
-      - name: Generate native Hindi female samples
+      - name: Generate Alpha fluency candidates
         run: |
-          mkdir -p indicvoice_samples
+          mkdir -p alpha_fluency
           python - <<'PY'
           import glob
           import numpy as np
@@ -67,26 +65,42 @@ jobs:
           EspeakWrapper.set_library(sorted(candidates, key=len)[0])
 
           from indicvoice import IndicPipeline
-          text = '''नमस्कार। आप सुन रहे हैं बुकनॉमिक्स पर प्रेमचंद के उपन्यास गोदान का सार। होरी एक साधारण किसान है, जिसकी सबसे बड़ी इच्छा है कि उसके घर एक गाय हो। लेकिन यही छोटी-सी इच्छा कर्ज़, सामाजिक दबाव और परिवार की जिम्मेदारियों से जुड़कर उसके जीवन को कठिन बना देती है।'''
           pipeline = IndicPipeline(lang_code='hi', repo_id='Bindkushal/IndicVoice-82M')
+          voice = 'voicepacks/hf_alpha.pt'
 
-          for name in ['hf_alpha', 'hf_beta']:
-              voice = f'voicepacks/{name}.pt'
+          texts = {
+              '01_alpha_natural_flow': 'नमस्कार, आप सुन रहे हैं बुकनॉमिक्स पर प्रेमचंद के उपन्यास गोदान का सार। होरी एक साधारण किसान है, और उसकी सबसे बड़ी इच्छा बस इतनी है कि उसके घर एक गाय हो। लेकिन यही छोटी-सी इच्छा धीरे-धीरे कर्ज़, समाज के दबाव और परिवार की जिम्मेदारियों से जुड़कर उसकी ज़िंदगी को बेहद कठिन बना देती है।',
+              '02_alpha_hindi_belt': 'नमस्कार, आप सुन रहे हैं बुकनॉमिक्स। आज बात करते हैं प्रेमचंद के महान उपन्यास गोदान की। कहानी के केंद्र में है होरी, एक सीधा-सादा किसान। उसकी बस एक छोटी-सी चाहत है, घर में एक गाय हो। मगर यही चाहत आगे चलकर कर्ज़, समाज के दबाव और परिवार की जिम्मेदारियों में ऐसी उलझती है कि उसकी पूरी ज़िंदगी संघर्ष बन जाती है।',
+              '03_alpha_connected': 'नमस्कार, आप सुन रहे हैं बुकनॉमिक्स, और आज हम बात करेंगे प्रेमचंद के महान उपन्यास गोदान की। होरी एक सीधा-सादा किसान है जिसकी सबसे बड़ी इच्छा है कि उसके घर एक गाय हो, मगर यही छोटी-सी चाहत धीरे-धीरे कर्ज़, सामाजिक दबाव और परिवार की जिम्मेदारियों से जुड़ती जाती है, और उसकी ज़िंदगी लगातार मुश्किल होती चली जाती है।'
+          }
+
+          for name, text in texts.items():
               pieces = [audio for _, _, audio in pipeline(text, voice=voice)]
               wav = np.concatenate(pieces) if pieces else np.zeros(24000, dtype='float32')
-              sf.write(f'indicvoice_samples/{name}.wav', wav, 24000)
+              sf.write(f'alpha_fluency/{name}.wav', wav, 24000)
               print(name, 'duration=', len(wav)/24000)
           PY
-      - name: Master and inspect samples
+      - name: Master fluency variants
         run: |
-          for f in indicvoice_samples/*.wav; do
-            out="${f%.wav}.mp3"
-            ffmpeg -hide_banner -loglevel error -y -i "$f" -af "loudnorm=I=-16:LRA=7:TP=-1.5" -ar 48000 -ac 1 -c:a libmp3lame -b:a 96k "$out"
-            ffprobe -v error -show_entries format=duration,bit_rate -of default=noprint_wrappers=1 "$out"
+          ffmpeg -hide_banner -loglevel error -y -i alpha_fluency/01_alpha_natural_flow.wav \
+            -af "atempo=1.04,loudnorm=I=-16:LRA=7:TP=-1.5" -ar 48000 -ac 1 -c:a libmp3lame -b:a 112k \
+            alpha_fluency/01_alpha_natural_flow.mp3
+
+          ffmpeg -hide_banner -loglevel error -y -i alpha_fluency/02_alpha_hindi_belt.wav \
+            -af "atempo=1.05,loudnorm=I=-16:LRA=7:TP=-1.5" -ar 48000 -ac 1 -c:a libmp3lame -b:a 112k \
+            alpha_fluency/02_alpha_hindi_belt.mp3
+
+          ffmpeg -hide_banner -loglevel error -y -i alpha_fluency/03_alpha_connected.wav \
+            -af "silenceremove=stop_periods=-1:stop_duration=0.32:stop_threshold=-42dB:stop_silence=0.12,atempo=1.03,loudnorm=I=-16:LRA=7:TP=-1.5" \
+            -ar 48000 -ac 1 -c:a libmp3lame -b:a 112k alpha_fluency/03_alpha_connected.mp3
+
+          for f in alpha_fluency/*.mp3; do
+            echo "--- $f"
+            ffprobe -v error -show_entries format=duration,bit_rate -of default=noprint_wrappers=1 "$f"
           done
       - name: Upload samples
         uses: actions/upload-artifact@v4
         with:
-          name: native-hindi-female-ab
-          path: indicvoice_samples/*.mp3
+          name: alpha-hindi-fluency-tuning
+          path: alpha_fluency/*.mp3
           retention-days: 7
