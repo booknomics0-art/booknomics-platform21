@@ -1,0 +1,41 @@
+name: Generate Godan Chatterbox Free
+
+on:
+  push:
+    branches:
+      - feature/chatterbox-audio-demo
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  generate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install system audio tools
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y ffmpeg
+      - name: Install Chatterbox
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install chatterbox-tts
+      - name: Generate Hindi reference-conditioned audio
+        run: python tools/audio-engine/demo/chatterbox_ref/generate_godan_chatterbox.py
+      - name: Show generation report
+        run: cat tools/audio-engine/demo/chatterbox_ref/godan_chatterbox_info.txt
+      - name: Upload demo audio
+        uses: actions/upload-artifact@v4
+        with:
+          name: godan-chatterbox-free-20min
+          path: |
+            tools/audio-engine/demo/chatterbox_ref/godan_20min_hi_chatterbox.mp3
+            tools/audio-engine/demo/chatterbox_ref/godan_chatterbox_info.txt
+          if-no-files-found: error
+          retention-days: 7
