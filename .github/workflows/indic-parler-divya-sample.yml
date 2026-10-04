@@ -1,0 +1,82 @@
+name: Generate AI4Bharat Divya Hindi Samples
+
+on:
+  push:
+    branches:
+      - feature/indic-parler-divya-sample
+  workflow_dispatch:
+
+jobs:
+  generate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install Gradio client
+        run: |
+          python -m pip install --upgrade pip
+          pip install gradio_client
+      - name: Generate Divya Hindi samples on official AI4Bharat ZeroGPU Space
+        run: |
+          mkdir -p divya_samples
+          python - <<'PY'
+          import os
+          import shutil
+          from gradio_client import Client
+
+          text = '''नमस्कार। आप सुन रहे हैं बुकनॉमिक्स पर प्रेमचंद के महान उपन्यास गोदान का सार। होरी एक साधारण किसान है, जिसकी सबसे बड़ी इच्छा है कि उसके घर एक गाय हो। यह छोटी-सी इच्छा धीरे-धीरे कर्ज़, सामाजिक दबाव, परिवार की जिम्मेदारियों और गांव की कठोर व्यवस्था से जुड़ जाती है। गोदान केवल एक किसान की कहानी नहीं, बल्कि उस समाज का चित्र है जहाँ मेहनत करने वाला व्यक्ति भी सम्मान और सुरक्षा के लिए संघर्ष करता रहता है।'''
+
+          styles = {
+              '01_warm_audiobook': "Divya speaks in natural native Hindi with a warm, calm, mature female audiobook voice. She narrates expressively but not dramatically, at a moderate conversational pace, with clear Hindi pronunciation, natural pauses, gentle sentence endings, and a very high-quality close studio recording with no background noise.",
+              '02_calm_storytelling': "Divya speaks in natural native Hindi with a soft, warm and emotionally engaging female storytelling voice. Her pace is relaxed and smooth, pronunciation is very clear, pauses feel human and natural, and the recording is close, clean and studio quality with no background noise.",
+              '03_professional': "Divya speaks in natural native Hindi with a confident, clear, professional female narration voice. She uses a moderate pace, precise pronunciation, subtle expression, natural breathing and pauses, and a high-quality close studio recording with no background noise. The delivery should sound human, polished and suitable for a premium audiobook.",
+          }
+
+          client = Client("ai4bharat/indic-parler-tts")
+
+          def find_path(value):
+              if isinstance(value, str) and os.path.exists(value):
+                  return value
+              if isinstance(value, (list, tuple)):
+                  for item in value:
+                      p = find_path(item)
+                      if p:
+                          return p
+              if isinstance(value, dict):
+                  for item in value.values():
+                      p = find_path(item)
+                      if p:
+                          return p
+              return None
+
+          for name, description in styles.items():
+              print(f"Generating {name}...", flush=True)
+              try:
+                  result = client.predict(text, description, api_name="/generate_finetuned")
+              except Exception as exc:
+                  print("Direct endpoint failed:", repr(exc), flush=True)
+                  print(client.view_api(return_format="dict"), flush=True)
+                  raise
+              print("Result:", result, flush=True)
+              src = find_path(result)
+              if not src:
+                  raise RuntimeError(f"Could not locate returned audio file for {name}: {result!r}")
+              dst = f"divya_samples/{name}.mp3"
+              shutil.copyfile(src, dst)
+              print(f"Saved {dst}", flush=True)
+          PY
+      - name: Inspect outputs
+        run: |
+          ls -lh divya_samples
+          for f in divya_samples/*.mp3; do
+            ffprobe -v error -show_entries format=duration,bit_rate -of default=noprint_wrappers=1 "$f" || true
+          done
+      - name: Upload samples
+        uses: actions/upload-artifact@v4
+        with:
+          name: ai4bharat-divya-hindi-samples
+          path: divya_samples/*.mp3
+          retention-days: 7
