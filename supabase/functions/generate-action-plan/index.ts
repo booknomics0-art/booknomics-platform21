@@ -2,34 +2,41 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
 import { corsHeaders, checkRateLimit, maybePruneRateLimits, rateLimitedResponse } from "../_shared/security.ts";
 
 const GENRE_ADDONS_EN: Record<string, string> = {
-  "Self-Help": "Habit OS: Cue–Craving–Response–Reward mapping, 2-Minute Rule plan, Environment Design checklist.",
-  "Spiritual": "Reflection System: principle → today's situation, 5-min daily contemplation, Dharma vs Desire worksheet.",
-  "Business": "Decision Toolkit: SWOT / First Principles, 2 mini case scenarios, startup action checklist.",
-  "Finance": "Money System: rule of thumb (50-30-20), risk scenarios, simple calculator steps.",
-  "Literature": "Insight Engine: theme → modern society link, character → behavior lessons, discussion prompts.",
-  "Hindi Literature": "Insight Engine: theme → modern society link, character → behavior lessons, discussion prompts.",
-  "Philosophy": "Thinking Framework: concept → real dilemma, If–Then reasoning map, pros/cons of viewpoint.",
-  "Motivation": "7-Day Challenge: day-wise micro tasks, progress checklist.",
-  "Science": "Concept → Application: simple explanation, real-world use cases, common misconceptions.",
-  "History": "Context Engine: 3–5 timeline points, cause → effect map, today's relevance.",
-  "Politics": "Context Engine: 3–5 timeline points, cause → effect map, today's relevance.",
-  "Education": "Exam Booster: 5 PYQ-style questions, revision bullets, memory hooks.",
-  "Psychology": "Behavior Lab: trigger → response map, weekly self-observation log, 1 micro-experiment.",
-  "Productivity": "System Build: daily routine template, weekly review checklist, focus blockers list.",
+  "Self-Help": "Habit OS: cue → response → reward mapping, tiny-start plan, environment design, relapse recovery.",
+  "Spiritual": "Reflection System: principle → today's situation, 5-minute contemplation, values-vs-impulse worksheet.",
+  "Business": "Decision Toolkit: first-principles question, one small experiment, decision review, real trade-off.",
+  "Finance": "Money System: one rule to test, risk boundary, simple numbers, review trigger. Never invent financial claims.",
+  "Literature": "Insight Engine: theme → character/choice → reader reflection → one real-life observation. Do not force habit advice onto fiction.",
+  "Hindi Literature": "Insight Engine: theme → character/choice → reader reflection → one real-life observation. Do not force habit advice onto fiction.",
+  "Philosophy": "Thinking Framework: concept → real dilemma → counterargument → personal test.",
+  "Motivation": "7-Day Challenge: one tiny action each day, friction audit, review and reset.",
+  "Science": "Concept → Observation: explain the idea, notice it in the real world, test understanding, flag uncertainty.",
+  "History": "Context Engine: cause → consequence → competing interpretation → today's caution. Do not invent dates or events.",
+  "Politics": "Context Engine: claim → evidence → counterview → present-day relevance. Avoid partisan persuasion.",
+  "Education": "Recall Loop: retrieval question, explain-in-your-own-words, spaced review, one transfer task.",
+  "Psychology": "Behavior Lab: trigger → response map, observation log, one reversible micro-experiment.",
+  "Productivity": "System Build: one priority, friction removal, daily check-in, weekly review.",
 };
 
 const GENRE_ADDONS_HI: Record<string, string> = {
-  "Self-Help": "Habit Tracker जोड़ें: cue → craving → response → reward, 2-minute rule, environment design checklist।",
-  "Spiritual": "Daily reflection जोड़ें: सिद्धांत → आज की स्थिति, 5 मिनट का चिंतन, धर्म vs इच्छा वर्कशीट।",
-  "Hindi Literature": "Character lessons: पात्रों से सीख, theme → आज के समाज से जोड़, चर्चा प्रश्न।",
-  "Finance": "Money rules + examples: 50-30-20 नियम, risk scenarios, सरल calculation steps।",
-  "Business": "Decision toolkit: SWOT / first principles, 2 case scenarios, startup checklist।",
-  "Philosophy": "Thinking framework: सिद्धांत → real dilemma, If-Then reasoning map, pros/cons।",
-  "Motivation": "7-दिन का challenge: हर दिन micro task, progress checklist।",
-  "Science": "Concept → Application: सरल व्याख्या, real-world use, आम ग़लतफ़हमियाँ।",
-  "Politics": "Context engine: 3-5 timeline points, cause → effect map, आज की प्रासंगिकता।",
-  "Education": "Exam booster: 5 PYQ-style प्रश्न, revision bullets, memory hooks।",
+  "Self-Help": "Habit OS: संकेत → प्रतिक्रिया → परिणाम, बहुत छोटा पहला कदम, environment design, relapse recovery।",
+  "Spiritual": "Reflection System: सिद्धांत → आज की स्थिति, 5 मिनट चिंतन, मूल्य बनाम आवेग worksheet।",
+  "Hindi Literature": "Insight Engine: विषय → पात्र/निर्णय → पाठक का चिंतन → एक वास्तविक जीवन अवलोकन। कथा पर जबरन habit advice मत थोपो।",
+  "Literature": "Insight Engine: विषय → पात्र/निर्णय → पाठक का चिंतन → एक वास्तविक जीवन अवलोकन। कथा पर जबरन habit advice मत थोपो।",
+  "Finance": "Money System: एक नियम जिसे परखा जा सके, risk boundary, सरल संख्याएँ, review trigger। कोई वित्तीय तथ्य गढ़ना नहीं।",
+  "Business": "Decision Toolkit: first-principles प्रश्न, एक छोटा प्रयोग, decision review, वास्तविक trade-off।",
+  "Philosophy": "Thinking Framework: विचार → वास्तविक दुविधा → counterargument → personal test।",
+  "Motivation": "7-दिन challenge: रोज़ एक छोटा काम, friction audit, review और reset।",
+  "Science": "Concept → Observation: विचार समझो, दुनिया में उसे पहचानो, अपनी समझ परखो, uncertainty साफ़ लिखो।",
+  "Politics": "Context Engine: तर्क → evidence → counterview → आज की relevance। partisan persuasion से बचो।",
+  "History": "Context Engine: कारण → परिणाम → दूसरा दृष्टिकोण → आज की सावधानी। तारीख/घटना invent मत करो।",
+  "Education": "Recall Loop: retrieval question, अपने शब्दों में समझाओ, spaced review, transfer task।",
+  "Psychology": "Behavior Lab: trigger → response map, observation log, एक reversible micro-experiment।",
+  "Productivity": "System Build: एक priority, friction कम करना, daily check-in, weekly review।",
 };
+
+const compact = (value: unknown, limit: number) =>
+  typeof value === "string" ? value.replace(/\\n/g, "\n").trim().slice(0, limit) : "";
 
 Deno.serve(async (req) => {
   maybePruneRateLimits();
@@ -46,7 +53,6 @@ Deno.serve(async (req) => {
       Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!
     );
 
-    // Require authenticated user (any signed-in user can generate / load cache)
     const auth = req.headers.get("Authorization");
     if (!auth?.startsWith("Bearer ")) {
       return new Response(JSON.stringify({ error: "Please log in to generate your action plan." }), { status: 401, headers: { ...corsHeaders(req), "Content-Type": "application/json" } });
@@ -58,27 +64,23 @@ Deno.serve(async (req) => {
     }
     const userId = ures.user.id;
 
-    // Rate limit: AI generation is costly — cap per user.
     const rl = checkRateLimit(`action-plan:${userId}`, 10, 60 * 60);
     if (!rl.ok) return rateLimitedResponse(req, rl.retryAfterSeconds);
 
-    // Determine whether the caller may persist to the shared book row.
-    // Only admins may write shared book content. Everyone else can still
-    // generate/read, but nothing is persisted to the shared `books` table.
     const { data: role } = await supabase
       .from("user_roles")
       .select("role").eq("user_id", userId).eq("role", "admin").maybeSingle();
     const isAdmin = !!role;
-    const { data: tier, error: tierError } = await userClient.rpc('my_active_tier');
-    if (!isAdmin && (tierError || !tier || tier === 'free')) {
-      return new Response(JSON.stringify({ error: 'Premium subscription required' }), {
-        status: 403, headers: { ...corsHeaders(req), 'Content-Type': 'application/json' },
+    const { data: tier, error: tierError } = await userClient.rpc("my_active_tier");
+    if (!isAdmin && (tierError || !tier || tier === "free")) {
+      return new Response(JSON.stringify({ error: "Premium subscription required" }), {
+        status: 403, headers: { ...corsHeaders(req), "Content-Type": "application/json" },
       });
     }
 
     const { data: book, error: bookErr } = await supabase
       .from("books")
-      .select("id, title, author, category, language, action_system, practice_tracker, reflection_questions, real_life_example")
+      .select("id,title,author,category,language,overview,deep_summary,key_ideas,deep_analysis,daily_application,action_system,practice_tracker,reflection_questions,real_life_example")
       .eq("id", book_id)
       .eq("is_draft", false)
       .maybeSingle();
@@ -89,7 +91,6 @@ Deno.serve(async (req) => {
 
     const isHindi = book.language === "hi";
 
-    // Cache hit (skip if force=true). Non-admins only ever see cached content.
     if (!force && book.action_system && book.practice_tracker && book.reflection_questions && (!isHindi || book.real_life_example)) {
       return new Response(JSON.stringify({
         cached: true,
@@ -100,42 +101,80 @@ Deno.serve(async (req) => {
       }), { headers: { ...corsHeaders(req), "Content-Type": "application/json" } });
     }
 
-    const addon = (isHindi ? GENRE_ADDONS_HI : GENRE_ADDONS_EN)[book.category] || (isHindi ? "इस किताब की genre के अनुसार practical action steps।" : "Practical action steps tailored to this book's genre.");
+    const addon = (isHindi ? GENRE_ADDONS_HI : GENRE_ADDONS_EN)[book.category] || (isHindi
+      ? "किताब की प्रकृति के अनुसार एक छोटा, यथार्थवादी और मापने योग्य अभ्यास बनाओ।"
+      : "Create one small, realistic, measurable practice that fits the nature of this book.");
+
+    const sourceContext = [
+      compact(book.overview, 3500) && `OVERVIEW:\n${compact(book.overview, 3500)}`,
+      compact(book.key_ideas, 3500) && `KEY IDEAS:\n${compact(book.key_ideas, 3500)}`,
+      compact(book.deep_summary, 6000) && `DEEP SUMMARY:\n${compact(book.deep_summary, 6000)}`,
+      compact(book.deep_analysis, 5000) && `ANALYSIS:\n${compact(book.deep_analysis, 5000)}`,
+      compact(book.daily_application, 2500) && `EXISTING APPLICATION:\n${compact(book.daily_application, 2500)}`,
+    ].filter(Boolean).join("\n\n");
 
     let prompt: string;
     if (isHindi) {
-      prompt = `तुम एक expert educator और behavioral coach हो।
+      prompt = `तुम Booknomics के senior learning designer, editor और behavioral coach हो।
 
-किताब: "${book.title}" — लेखक: ${book.author}
+किताब: "${book.title}" — ${book.author}
 Genre: ${book.category}
 
-Task: इस किताब की professional, engaging और actionable Hindi summary बनाओ। भाषा सरल और साफ हो, कोई fluff नहीं, practical examples दो, user तुरंत action ले सके।
+नीचे दिया गया SOURCE CONTEXT ही factual आधार है। इसी से काम करो। SOURCE में जो तथ्य, पात्र, घटना, सिद्धांत या दावा नहीं है, उसे गढ़ो मत। अगर किसी detail पर भरोसा नहीं है तो उसे general रखो।
 
-Genre-विशेष add-on: ${addon}
+SOURCE CONTEXT:
+${sourceContext || "केवल title/author/category उपलब्ध हैं; इसलिए कोई book-specific fact invent मत करो।"}
 
-केवल valid JSON लौटाओ (no code fences, no extra prose), exact schema:
+लक्ष्य: reader को guilt, hype या fake motivation से नहीं, clarity + curiosity + छोटे wins से आगे बढ़ाना। Output इतना उपयोगी हो कि reader पढ़ते ही पहला कदम लेना चाहे। भाषा स्वाभाविक Hindi (Devanagari) हो; जरूरत पड़ने पर आम English terms रख सकते हो, लेकिन Hinglish overload नहीं।
+
+Genre direction: ${addon}
+
+QUALITY RULES:
+- generic self-help filler नहीं। हर step को SOURCE के किसी idea/theme से जोड़ो।
+- fiction/literature में productivity advice मत थोपो; observation, empathy, character-choice, theme reflection और discussion प्रयोग करो।
+- पहला action 10 मिनट से कम का हो।
+- हर section में concrete verb, clear outcome और friction-removal हो।
+- moral preaching, exaggerated claims, fake quotes, invented research, invented examples नहीं।
+- real-life example को "composite example" की तरह लिखो; किसी वास्तविक व्यक्ति/घटना का झूठा दावा मत करो।
+- headings छोटी और memorable हों।
+
+केवल valid JSON लौटाओ, exact schema:
 {
-  "action_system": "Markdown text (300–500 शब्द) — एक concrete step-by-step Action Plan जिसे reader आज से शुरू कर सके। ## headings और numbered steps use करो।",
-  "practice_tracker": "Markdown text (200–350 शब्द) — 7 दिन का Practice Plan, हर दिन का छोटा task। एक markdown table बनाओ columns: Day | Task | Status (- [ ])।",
-  "reflection_questions": "Markdown text — exactly 5–7 numbered reflection questions जो self-thinking trigger करें।",
-  "real_life_example": "Markdown text (120–180 शब्द) — एक relatable Indian context की real-life example/कहानी जो book के idea को जीवंत करे।"
+  "action_system": "Markdown 450–650 शब्द. शुरुआत एक 2-line hook से: 'सिर्फ पढ़ें नहीं—इसे आज़माएँ।' फिर ## आज के 10 मिनट, ## इस हफ्ते का प्रयोग, ## friction हटाएँ, ## कब रुककर सोचें, ## 7वें दिन review. Numbered steps + checkboxes जहाँ उपयोगी हों।",
+  "practice_tracker": "Markdown 250–400 शब्द. पहले 'इस हफ्ते का एक लक्ष्य' और 'success का छोटा माप' लिखो। फिर 7-day markdown table: Day | Tiny practice | 2-minute reflection | Done. Tasks धीरे-धीरे deepen हों, repeat filler नहीं। अंत में ## Carry Forward में अगले हफ्ते के लिए सिर्फ 1 चीज़ चुनवाओ।",
+  "reflection_questions": "Markdown. Exactly 7 प्रश्न. क्रम: notice → connect → challenge → counterview → personal pattern → action → one-sentence takeaway. प्रश्न book-specific हों।",
+  "real_life_example": "Markdown 150–220 शब्द. साफ़ label: 'Composite example'. भारतीय या सार्वभौमिक everyday context में एक छोटी scene-based कहानी; SOURCE के core idea को दिखाए, sermon न बने।"
 }`;
     } else {
-      prompt = `You are an expert educator and behavioral designer.
+      prompt = `You are Booknomics' senior learning designer, editor, and behavioral coach.
 
 Book: "${book.title}" by ${book.author}
 Genre: ${book.category}
-Language: English
 
-Produce a HIGH-VALUE actionable summary. Practical, no fluff, simple language, real-life examples.
-Genre-specific add-on: ${addon}
+Treat the SOURCE CONTEXT below as the factual boundary. Do not invent characters, scenes, claims, research, quotations, historical facts, or author intent that are not supported by it. If context is thin, stay general rather than guessing.
 
-Return ONLY valid JSON matching this exact schema (no code fences):
+SOURCE CONTEXT:
+${sourceContext || "Only title/author/category are available; do not invent book-specific facts."}
+
+Goal: create momentum through clarity, curiosity, and small wins — not hype, guilt, streak anxiety, or manipulative copy. The reader should immediately know what to try next.
+
+Genre direction: ${addon}
+
+QUALITY RULES:
+- No generic self-help filler. Tie each step to a specific idea/theme present in SOURCE.
+- For fiction/literature, do not force productivity habits; use observation, empathy, character choices, theme reflection, and discussion experiments.
+- The first action must take under 10 minutes.
+- Every section needs a concrete verb, a visible outcome, and reduced friction.
+- No moralizing, fake quotes, invented studies, invented facts, or inflated promises.
+- Any story must be clearly framed as a composite example, not a factual case study.
+- Keep headings short and memorable.
+
+Return ONLY valid JSON, exact schema:
 {
-  "action_system": "Markdown (300–500 words) — concrete step-by-step Action System the reader can start TODAY. Use ## headings and numbered steps.",
-  "practice_tracker": "Markdown (200–350 words) — a 7-day Practice & Tracker plan as a markdown table with columns: Day | Task | Status (- [ ]).",
-  "reflection_questions": "Markdown — exactly 5–7 numbered reflection questions.",
-  "real_life_example": "Markdown (120–180 words) — one relatable real-life story or example that brings the book's core idea to life."
+  "action_system": "Markdown 450–650 words. Open with a 2-line hook: 'Don't just read it — test it.' Then use ## Start in 10 minutes, ## This week's experiment, ## Remove the friction, ## When to pause and question it, ## Day-7 review. Use numbered steps and checkboxes where useful.",
+  "practice_tracker": "Markdown 250–400 words. Start with 'One goal for this week' and a tiny success measure. Then a 7-day markdown table: Day | Tiny practice | 2-minute reflection | Done. Tasks should deepen gradually, not repeat. End with ## Carry Forward and choose only one thing for next week.",
+  "reflection_questions": "Markdown. Exactly 7 questions ordered: notice → connect → challenge → counterview → personal pattern → action → one-sentence takeaway. Make them book-specific.",
+  "real_life_example": "Markdown 150–220 words. Explicitly label it 'Composite example'. Use a short scene from everyday life that makes the SOURCE idea concrete without pretending it is a true case study."
 }`;
     }
 
@@ -149,7 +188,7 @@ Return ONLY valid JSON matching this exact schema (no code fences):
         model: "google/gemini-2.5-flash",
         messages: [{ role: "user", content: prompt }],
         response_format: { type: "json_object" },
-        max_tokens: 4000,
+        max_tokens: 5200,
       }),
     });
 
@@ -178,7 +217,6 @@ Return ONLY valid JSON matching this exact schema (no code fences):
       real_life_example: typeof parsed.real_life_example === "string" ? parsed.real_life_example.slice(0, 20000) : null,
     };
 
-    // Persist to the shared book row ONLY for admins.
     if (isAdmin) {
       const { error: upErr } = await supabase.from("books").update(update).eq("id", book.id);
       if (upErr) {
