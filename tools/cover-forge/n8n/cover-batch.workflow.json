@@ -1,0 +1,202 @@
+{
+  "name": "Booknomics — Cover Forge batch",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "booknomics-covers",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "webhook-covers",
+      "name": "Trigger (POST /booknomics-covers)",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [-460, 300],
+      "webhookId": "booknomics-covers"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Validate + normalise the request. Everything the CLI needs is optional.\nconst body = $input.first().json.body ?? $input.first().json;\nconst num = (v, d) => (v === undefined || v === null || v === '' ? d : Number(v));\nconst limit = Math.min(Math.max(num(body.limit, 100), 1), 500);\nconst offset = Math.max(num(body.offset, 0), 0);\nconst templates = ['band','classic','arch','split','poster','minimal','side'];\n\nreturn [{ json: {\n  repo: body.repo || '/srv/booknomics/tools/cover-forge',\n  source: body.source === 'db' ? '--from-db' : '--drafts ../../content-drafts',\n  limit,\n  offset,\n  concurrency: Math.min(Math.max(num(body.concurrency, 6), 1), 12),\n  template: templates.includes(body.template) ? body.template : '',\n  seed: body.seed ?? 0,\n  artDir: body.artDir || '',\n  upload: body.upload !== false,\n  skipExisting: body.skipExisting !== false,\n  startedAt: new Date().toISOString(),\n} }];"
+      },
+      "id": "validate",
+      "name": "Validate request",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [-240, 300]
+    },
+    {
+      "parameters": {
+        "command": "=cd {{ $json.repo }} && node generate.mjs {{ $json.source }} --out covers --offset {{ $json.offset }} --limit {{ $json.limit }} --concurrency {{ $json.concurrency }} --seed {{ $json.seed }}{{ $json.template ? ' --template ' + $json.template : '' }}{{ $json.artDir ? ' --art-dir ' + $json.artDir : '' }}"
+      },
+      "id": "generate",
+      "name": "Generate covers",
+      "type": "n8n-nodes-base.executeCommand",
+      "typeVersion": 1,
+      "position": [-20, 300],
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "command": "=cd {{ $('Validate request').item.json.repo }} && node check.mjs --out covers --drafts ../../content-drafts --concurrency 6"
+      },
+      "id": "check",
+      "name": "Quality gate",
+      "type": "n8n-nodes-base.executeCommand",
+      "typeVersion": 1,
+      "position": [200, 300],
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": { "caseSensitive": true, "version": 2 },
+          "combinator": "and",
+          "conditions": [
+            {
+              "id": "ok",
+              "leftValue": "={{ $json.exitCode }}",
+              "rightValue": 0,
+              "operator": { "type": "number", "operation": "equals" }
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "if-ok",
+      "name": "Gate passed?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [420, 300]
+    },
+    {
+      "parameters": {
+        "command": "=cd {{ $('Validate request').item.json.repo }} && {{ $('Validate request').item.json.upload ? 'node upload.mjs --manifest covers/manifest.json --apply' : 'echo \"upload disabled\"' }}{{ $('Validate request').item.json.skipExisting ? ' --skip-existing' : '' }}"
+      },
+      "id": "upload",
+      "name": "Upload to Supabase",
+      "type": "n8n-nodes-base.executeCommand",
+      "typeVersion": 1,
+      "position": [660, 220]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Report back: how many covers are in the manifest, template spread, coverage.\nconst fs = require('fs');\nconst req = $('Validate request').item.json;\nconst manifest = JSON.parse(fs.readFileSync(`${req.repo}/covers/manifest.json`, 'utf8'));\nconst templates = {};\nfor (const b of manifest.books) templates[b.templateId] = (templates[b.templateId] || 0) + 1;\nreturn [{ json: {\n  ok: true,\n  generated: manifest.count,\n  failures: manifest.failures.length,\n  templates,\n  bytes: manifest.books.reduce((s, b) => s + b.bytes, 0),\n  upload: req.upload,\n  offset: req.offset,\n  limit: req.limit,\n} }];"
+      },
+      "id": "report",
+      "name": "Build report",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [900, 220]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify($json) }}",
+        "options": {}
+      },
+      "id": "respond",
+      "name": "Respond",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [1140, 220]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Any node that failed lands here (executeCommand is set to continue on error).\nconst item = $input.first().json;\nreturn [{ json: {\n  ok: false,\n  stage: 'generate-or-check',\n  stderr: item.stderr || item.error || '',\n  stdout: item.stdout || '',\n  hint: 'Run the same command by hand in tools/cover-forge; check.mjs prints the failing slug and reason.',\n} }];"
+      },
+      "id": "fail",
+      "name": "Failure detail",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [660, 460]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify($json) }}",
+        "options": { "responseCode": 500 }
+      },
+      "id": "respond-fail",
+      "name": "Respond (error)",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [900, 460]
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "0 3 * * 1"
+            }
+          ]
+        }
+      },
+      "id": "schedule",
+      "name": "Weekly top-up (Mon 03:00)",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [-460, 520]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Weekly top-up: only books that still have no cover, 200 at a time.\nreturn [{ json: {\n  repo: '/srv/booknomics/tools/cover-forge',\n  source: 'db',\n  limit: 200,\n  offset: 0,\n  concurrency: 8,\n  template: '',\n  seed: 0,\n  artDir: '',\n  upload: true,\n  skipExisting: true,\n} }];"
+      },
+      "id": "schedule-defaults",
+      "name": "Weekly defaults",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [-240, 520]
+    }
+  ],
+  "connections": {
+    "Trigger (POST /booknomics-covers)": {
+      "main": [[{ "node": "Validate request", "type": "main", "index": 0 }]]
+    },
+    "Validate request": {
+      "main": [[{ "node": "Generate covers", "type": "main", "index": 0 }]]
+    },
+    "Generate covers": {
+      "main": [
+        [{ "node": "Quality gate", "type": "main", "index": 0 }],
+        [{ "node": "Failure detail", "type": "main", "index": 0 }]
+      ]
+    },
+    "Quality gate": {
+      "main": [
+        [{ "node": "Gate passed?", "type": "main", "index": 0 }],
+        [{ "node": "Failure detail", "type": "main", "index": 0 }]
+      ]
+    },
+    "Gate passed?": {
+      "main": [
+        [{ "node": "Upload to Supabase", "type": "main", "index": 0 }],
+        [{ "node": "Failure detail", "type": "main", "index": 0 }]
+      ]
+    },
+    "Upload to Supabase": {
+      "main": [[{ "node": "Build report", "type": "main", "index": 0 }]]
+    },
+    "Build report": {
+      "main": [[{ "node": "Respond", "type": "main", "index": 0 }]]
+    },
+    "Failure detail": {
+      "main": [[{ "node": "Respond (error)", "type": "main", "index": 0 }]]
+    },
+    "Weekly top-up (Mon 03:00)": {
+      "main": [[{ "node": "Weekly defaults", "type": "main", "index": 0 }]]
+    },
+    "Weekly defaults": {
+      "main": [[{ "node": "Generate covers", "type": "main", "index": 0 }]]
+    }
+  },
+  "settings": { "executionOrder": "v1", "saveDataErrorExecution": "all", "saveDataSuccessExecution": "all" },
+  "staticData": null,
+  "meta": { "templateCredsSetupCompleted": false },
+  "tags": [{ "name": "booknomics" }, { "name": "covers" }],
+  "active": false,
+  "versionId": "1",
+  "pinData": {}
+}
