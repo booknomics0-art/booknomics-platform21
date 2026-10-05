@@ -1,25 +1,57 @@
 # Booknomics
 
-> Practical book summaries with key insights, action plans, and reflection prompts across psychology, philosophy, business, and self-growth — in English and Hindi.
+> Bilingual learning platform with practical book summaries, key ideas, deeper analysis, reflection prompts, action plans, and audio experiences in English and Hindi.
 
-Booknomics curates a structured library of book summaries. Every book follows the same shape: overview, key ideas, deep analysis, daily application, action system, and reflection questions. Premium readers also get a 7-day habit tracker and personal notes.
+Canonical site: https://www.booknomics.com/
 
-## Pages
+Booknomics helps readers understand useful ideas from books and turn them into practical actions. The site is organized around English and Hindi book-summary pages, editorial category hubs, learning resources, and application tools.
 
-- [Home](/): Introduction, featured books, popular categories.
-- [Browse](/browse): The full library with filters by category, language, and sort.
-- [Hindi Library](/hindi): हिंदी पुस्तक सारांश — Hindi book summaries.
-- [Community](/community): Reader discussions, leaderboard, trending questions.
-- [About](/about): What Booknomics is and how we choose books.
-- [Sign in](/auth): Account access for library, notes, and premium features.
+## Primary discovery pages
 
-## Examples
+- [Home](https://www.booknomics.com/): Main Booknomics learning and discovery experience.
+- [English Book Summaries](https://www.booknomics.com/english): English summaries, topic guidance, and category paths.
+- [Hindi Library](https://www.booknomics.com/hindi): हिंदी पुस्तक सारांश और हिंदी पुस्तक खोज।
+- [Best Hindi Book Summaries](https://www.booknomics.com/best-hindi-book-summaries): Curated Hindi reading guide and starting points.
+- [Browse](https://www.booknomics.com/browse): Search and filter the public book library.
+- [Resources](https://www.booknomics.com/resources): Reading trackers, summary templates, and learning guides.
+- [About](https://www.booknomics.com/about): What Booknomics is and how the platform approaches books.
 
-- [Atomic Habits](/books/atomic-habits): Sample book summary structure.
-- [The Psychology of Money](/books/the-psychology-of-money): Sample finance summary.
+## Book page structure
 
-## Optional
+A Booknomics book page can include:
+- overview and context
+- key ideas
+- deeper analysis
+- practical or daily application
+- reflection questions
+- action systems or trackers
+- related books and internal learning paths
+- audio or other learning assets when available
 
-- [Privacy Policy](/privacy)
-- [Terms of Service](/terms)
-- [Disclaimer](/disclaimer)
+The original book author and the Booknomics summary guide are separate. Booknomics pages are independent learning guides and are not presented as text written or endorsed by the original author unless explicitly stated.
+
+## Content production and quality
+
+Booknomics uses an editorial production workflow that can include software and AI-assisted drafting, formatting, translation, or enrichment. Content-quality and SEO checks are part of the workflow, and lower-confidence pages can remain excluded from search indexing while they are improved.
+
+## Languages
+
+- English: `en`
+- Hindi: `hi`
+
+Verified language counterparts may use hreflang relationships. Unverified translations are not treated as equivalent pages.
+
+## Crawling and canonicalization
+
+- Preferred host: `https://www.booknomics.com`
+- Public sitemap: https://www.booknomics.com/sitemap.xml
+- Book sitemap: https://www.booknomics.com/books-sitemap.xml
+- Image sitemap: https://www.booknomics.com/image-sitemap.xml
+- Robots policy: https://www.booknomics.com/robots.txt
+
+## Legal
+
+- [Privacy Policy](https://www.booknomics.com/privacy)
+- [Terms](https://www.booknomics.com/terms)
+- [Disclaimer](https://www.booknomics.com/disclaimer)
+- [Copyright / DMCA](https://www.booknomics.com/copyright)
