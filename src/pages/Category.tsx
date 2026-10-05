@@ -27,36 +27,88 @@ const CATEGORY_INTROS: Record<string, string> = {
   spirituality: "Spirituality book summaries — meditation, awareness, surrender, and the path to inner clarity.",
 };
 
-const SITE = "https://booknomics.com";
+const SITE = "https://www.booknomics.com";
 
 const CATEGORY_ALIASES: Record<string, string> = {
   "self-help": "Personal Development",
   "hindi-literature": "साहित्य",
 };
 
+type CatalogRow = {
+  category: string | null;
+  status: string | null;
+  title: string | null;
+  slug: string | null;
+  seo_slug: string | null;
+};
+
+const normalizeTitle = (value: string) =>
+  value
+    .toLowerCase()
+    .replace(/\([^)]*\)/g, " ")
+    .replace(/[’']/g, "")
+    .replace(/[^a-z0-9\u0900-\u097F]+/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+
+const resolvePublishedPick = (label: string, rows: CatalogRow[]) => {
+  const wanted = normalizeTitle(label);
+  if (!wanted) return null;
+
+  const published = rows.filter((row) => row.status === "published" && row.title && (row.seo_slug || row.slug));
+  const exact = published.find((row) => normalizeTitle(row.title || "") === wanted);
+  if (exact) return exact.seo_slug || exact.slug;
+
+  // Curated labels are sometimes intentionally shorter than the catalog title
+  // (for example "Influence" vs "Influence: The Psychology of Persuasion").
+  // Only use a one-way prefix fallback after filtering to indexable books.
+  const prefixed = published.find((row) => {
+    const title = normalizeTitle(row.title || "");
+    return title.startsWith(`${wanted} `);
+  });
+  return prefixed ? (prefixed.seo_slug || prefixed.slug) : null;
+};
+
 const Category = () => {
   const { category } = useParams();
   const [resolved, setResolved] = useState<string | null | undefined>(undefined);
   const [count, setCount] = useState(0);
+  const [pickTargets, setPickTargets] = useState<Record<string, string>>({});
 
   useEffect(() => {
     if (!category) return;
-    supabase.from("books").select("category,status")
+    setPickTargets({});
+
+    supabase.from("books").select("category,status,title,slug,seo_slug")
       .eq("is_draft", false)
       .in("status", ["published", "published_noindex"])
       .then(({ data }) => {
-        const rows = data ?? [];
-        const all = rows.map((r: any) => r.category).filter(Boolean);
+        const rows = (data ?? []) as CatalogRow[];
+        const all = rows.map((r) => r.category).filter(Boolean) as string[];
         const cats = Array.from(new Set(all));
         const requestedSlug = category.toLowerCase();
         const alias = CATEGORY_ALIASES[requestedSlug];
         const match = alias && cats.includes(alias)
           ? alias
           : cats.find((c) => slugifyCategory(String(c)) === requestedSlug);
+
         setResolved(match ?? null);
         if (match) {
-          setCount(rows.filter((r: any) => r.category === match && r.status === "published").length);
+          setCount(rows.filter((r) => r.category === match && r.status === "published").length);
+        } else {
+          setCount(0);
         }
+
+        // categoryContent stores editorial labels, not permanent database IDs.
+        // Resolve every curated pick to today's indexable seo_slug at runtime so
+        // slug migrations cannot silently turn high-authority category links into 404s.
+        const editorial = getCategoryContent(requestedSlug);
+        const nextTargets: Record<string, string> = {};
+        for (const pick of editorial?.picks ?? []) {
+          const target = resolvePublishedPick(pick.label, rows);
+          if (target) nextTargets[pick.slug] = target;
+        }
+        setPickTargets(nextTargets);
       });
   }, [category]);
 
@@ -68,6 +120,10 @@ const Category = () => {
 
   const slug = category.toLowerCase();
   const content = getCategoryContent(slug);
+  const activePicks = (content?.picks ?? []).flatMap((pick) => {
+    const target = pickTargets[pick.slug];
+    return target ? [{ ...pick, target }] : [];
+  });
   const intro =
     content?.lead ??
     CATEGORY_INTROS[slug] ??
@@ -103,15 +159,15 @@ const Category = () => {
   const faqs = content?.faqs ?? [
     {
       q: `What are the best ${resolved} books to read?`,
-      a: `Booknomics curates ${count}+ ${resolved} book summaries, each with key insights, an action plan, reflection questions, and an audio summary.`,
+      a: `Booknomics currently has ${count} indexable ${resolved} book summaries, with structured insights and practical sections. Extra learning assets such as audio are included when available.`,
     },
     {
       q: `Are Booknomics ${resolved} summaries free to read?`,
-      a: "Yes. Every book summary on Booknomics is free to read. Premium unlocks habit trackers, personal notes, reflection prompts, and downloadable PDFs.",
+      a: "Public Booknomics summaries are free to read. Optional account or premium features can add tools such as notes, trackers, or downloads where available.",
     },
     {
       q: `How long does it take to read a ${resolved} summary?`,
-      a: "Each summary is designed to be read in 10–15 minutes, with key insights distilled from the original book.",
+      a: "Reading time varies by title and depth. Use the summary to understand the core argument, then open the original book when its evidence, writing, or detail matters.",
     },
   ];
 
@@ -145,27 +201,27 @@ const Category = () => {
 
   const below = content ? (
     <>
-      {/* Editor's picks — internal links to key book pages */}
-      <section className="container pb-12" aria-labelledby="category-picks">
-        <h2 id="category-picks" className="font-serif text-2xl md:text-3xl font-bold tracking-tight mb-5">
-          Where to start
-        </h2>
-        <ul className="grid md:grid-cols-2 gap-3">
-          {content.picks.map((p) => (
-            <li key={p.slug}>
-              <Link
-                to={`/books/${p.slug}`}
-                className="block rounded-xl border border-border bg-card p-4 hover:border-primary hover:shadow-paper transition-all"
-              >
-                <span className="font-serif text-base md:text-lg font-semibold block">{p.label}</span>
-                <span className="text-xs md:text-sm text-muted-foreground">{p.note}</span>
-              </Link>
-            </li>
-          ))}
-        </ul>
-      </section>
+      {activePicks.length > 0 && (
+        <section className="container pb-12" aria-labelledby="category-picks">
+          <h2 id="category-picks" className="font-serif text-2xl md:text-3xl font-bold tracking-tight mb-5">
+            Where to start
+          </h2>
+          <ul className="grid md:grid-cols-2 gap-3">
+            {activePicks.map((p) => (
+              <li key={`${p.slug}:${p.target}`}>
+                <Link
+                  to={`/books/${p.target}`}
+                  className="block rounded-xl border border-border bg-card p-4 hover:border-primary hover:shadow-paper transition-all"
+                >
+                  <span className="font-serif text-base md:text-lg font-semibold block">{p.label}</span>
+                  <span className="text-xs md:text-sm text-muted-foreground">{p.note}</span>
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
 
-      {/* FAQ */}
       <section className="container pb-12 max-w-3xl" aria-labelledby="category-faq">
         <h2 id="category-faq" className="font-serif text-2xl md:text-3xl font-bold tracking-tight mb-5">
           Frequently asked questions
@@ -180,7 +236,6 @@ const Category = () => {
         </Accordion>
       </section>
 
-      {/* Related */}
       <section className="container pb-16" aria-labelledby="category-related">
         <h2 id="category-related" className="font-serif text-2xl md:text-3xl font-bold tracking-tight mb-5">
           Related collections and resources
@@ -213,7 +268,7 @@ const Category = () => {
         description={description}
         canonical={canonical}
         lang={isHindi ? "hi" : "en"}
-        noindex={!content && count < 3}
+        noindex={count < 3}
         jsonLd={[collectionLd, breadcrumbLd]}
       />
       <Browse

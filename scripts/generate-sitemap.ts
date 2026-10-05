@@ -9,7 +9,7 @@ import { SLUG_REDIRECTS } from "../src/lib/slugRedirects";
 import { auditSeoSlug } from "../src/lib/seoSlugTools";
 import { CATEGORY_CONTENT } from "../src/content/categoryContent";
 
-const BASE_URL = "https://booknomics.com";
+const BASE_URL = "https://www.booknomics.com";
 
 const ENV_SUPABASE_URL = process.env.VITE_SUPABASE_URL?.trim();
 const ENV_SUPABASE_KEY = process.env.VITE_SUPABASE_PUBLISHABLE_KEY?.trim();
