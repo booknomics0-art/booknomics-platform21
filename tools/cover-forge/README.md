@@ -71,18 +71,35 @@ fine: books without artwork keep the procedural design.
 
 ## How a cover is composed
 
+A cover is driven by a **theme**, not a dice roll. `src/themes.mjs` scores each
+book's own signals — the title, the category, the draft's *प्रमुख विषय* list,
+its शैली/टोन, and (weakly, only when repeated) the prose — against 17 literary
+moods (`devotion`, `grief`, `rebellion`, `love`, `social`, `nature`, `travel`,
+`mind`, `history`, `satire`, `thought`, `woman`, `modern`, `adventure`,
+`family`, `myth`, `creation`). The winning mood fixes the palette pool, the
+motif pool and the layout pool, so colour, artwork and typography all tell the
+same story. Specific categories (महाकाव्य, यात्रा वृत्तांत, व्यंग्य …) carry a
+prior strong enough to decide vague prose. The manifest records `themeId`,
+`themeLabel`, `themeScore` and `themeMatched` — the words that produced the
+decision — so every cover is explainable.
+
 | Stage | Rule |
 | --- | --- |
 | Canvas | 800×1200, rendered at 2× and downscaled (supersampled), JPEG q88 progressive, mozjpeg, 4:4:4 |
-| Palette | 14 curated palettes, chosen by category (poetry warm, prose cool, essays mono, …) and cycled by index across the catalog so colours stay evenly spread |
-| Motif | 20 procedural drawings (chakra, diya, lotus, mountains, moon phases, seigaiha, eye, bauhaus grid, …); index × 7 so it never repeats the neighbouring cover |
-| Template | 8 layouts (band, classic, arch, split, poster, minimal, side, photo), cycled per book |
+| Theme | 17 moods matched from the book's own details; `--theme <id>` forces one, `--explain` prints the decision |
+| Palette | 14 curated palettes, drawn from the theme's pool and cycled by index so two books of one mood still differ |
+| Motif | 20 procedural drawings (chakra, diya, lotus, mountains, moon phases, seigaiha, eye, bauhaus grid, …), drawn from the theme's pool |
+| Template | 8 layouts (band, classic, arch, split, poster, minimal, side, photo), drawn from the theme's pool; `photo` only when art exists |
 | Text | Title + author + category + BOOKNOMICS wordmark, in Noto Serif/Sans Devanagari for Hindi and Fraunces/EB Garamond/Inter for English |
-| Fitting | Advance-width wrapping with an 6% safety factor for Devanagari, shrinking 110→52 px until it fits the box; `--deep` re-measures the *rendered* ink |
+| Fitting | Advance-width wrapping with a 6% safety factor for Devanagari, shrinking 110→52 px until it fits the box; `--deep` re-measures the *rendered* ink |
 | Grain | Light paper-grain overlay (disable with `--no-grain`) |
 
 Determinism: the same book always produces the same cover unless `--seed`
 changes. That is what makes the manifest, the checks and the sharding useful.
+
+`node sheet.mjs <dir> <out.jpg> [cols]` builds a contact sheet and, when the
+run wrote a manifest, captions every tile with title, author and the chosen
+theme — that is the intended way to review a batch.
 
 ## Quality gate
 

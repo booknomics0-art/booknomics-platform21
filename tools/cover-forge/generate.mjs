@@ -16,6 +16,7 @@ import { fontSetFor } from "./src/fonts.mjs";
 import { paletteIds, getPalette } from "./src/palettes.mjs";
 import { TEMPLATE_IDS } from "./src/layouts.mjs";
 import { motifIds } from "./src/motifs.mjs";
+import { themeIds, themeFor, getTheme } from "./src/themes.mjs";
 
 const { values: args } = parseArgs({
   options: {
@@ -31,6 +32,8 @@ const { values: args } = parseArgs({
     template: { type: "string" },
     palette: { type: "string" },
     motif: { type: "string" },
+    theme: { type: "string" },
+    explain: { type: "boolean", default: false },
     seed: { type: "string", default: "0" },
     "art-dir": { type: "string" },
     "art-position": { type: "string" },
@@ -59,6 +62,8 @@ Usage: node generate.mjs [options]
   --only <slugs>        comma-separated slug filter
   --all                 ignore --limit (used with --from-db)
   --concurrency <n>     parallel renders (default 4)
+  --theme <id>          force a mood: ${themeIds().join(", ")}
+  --explain             print the theme/palette/motif decision for each book
   --template <id>       force a template: ${TEMPLATE_IDS.join(", ")}
   --palette <id>        force a palette: ${paletteIds().join(", ")}
   --motif <id>          force a motif: ${motifIds().join(", ")}
@@ -87,6 +92,10 @@ if (args.palette && !getPalette(args.palette)) {
 }
 if (args.template && !TEMPLATE_IDS.includes(args.template)) {
   console.error(`Unknown template "${args.template}". Available: ${TEMPLATE_IDS.join(", ")}`);
+  process.exit(2);
+}
+if (args.theme && !getTheme(args.theme)) {
+  console.error(`Unknown theme "${args.theme}". Available: ${themeIds().join(", ")}`);
   process.exit(2);
 }
 
@@ -150,6 +159,7 @@ async function worker(list, index) {
         template: args.template,
         palette: args.palette,
         motif: args.motif,
+        theme: args.theme,
         seed: args.seed,
         artDir: args["art-dir"],
         artPosition: args["art-position"],
@@ -160,8 +170,12 @@ async function worker(list, index) {
       if (args["emit-svg"]) fs.writeFileSync(path.join(outDir, `${book.slug}.svg`), svg);
       items.push({ slug: book.slug, title: book.title, author: book.author, category: book.category || "", language: book.language || "", file: path.basename(file), ...meta });
       for (const w of warnings) console.warn(`  ! ${book.slug}: ${w}`);
+      if (args.explain) {
+        const why = items.at(-1).themeMatched?.length ? items.at(-1).themeMatched.slice(0, 4).join(", ") : "सामान्य (fallback)";
+        console.log(`  · ${items.at(-1).slug}\n      ${items.at(-1).themeLabel} [${items.at(-1).themeId}] ← ${why}\n      ${items.at(-1).palette} · ${items.at(-1).templateId} · ${items.at(-1).motifId}`);
+      }
       done += 1;
-      if (done % 25 === 0 || done === queue.length) {
+      if (!args.explain && (done % 25 === 0 || done === queue.length)) {
         const rate = done / ((Date.now() - startedAt) / 1000);
         console.log(`  ${done}/${queue.length} covers (${rate.toFixed(1)}/s)`);
       }

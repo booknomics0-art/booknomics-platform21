@@ -34,12 +34,12 @@
 
 ### रास्ता A — Procedural covers (आज से चल सकता है)
 
-एक program हर book के metadata (title, author, category, language) से cover
-बनाता है: gradient + vector motif + साफ़ typography. कोई API नहीं, कोई
-per-cover ख़र्च नहीं।
+एक program हर book की details (title, author, श्रेणी, विषय, शैली/टोन) से cover
+बनाता है: theme engine mood चुनता है → उसी से palette + vector motif + layout,
+ऊपर साफ़ Devanagari typography. कोई API नहीं, कोई per-cover ख़र्च नहीं।
 
-- 450 covers 2 मिनट में बने (concurrency 8, ~3.6 covers/सेकंड)
-- औसत 47 KB, सबसे बड़ा 92 KB — यानी 3000 covers ≈ 140 MB
+- 450 covers ~2.5 मिनट में बने (concurrency 8, ~3 covers/सेकंड)
+- औसत 46 KB, सबसे बड़ा 90 KB — यानी 3000 covers ≈ 140 MB
 - Devanagari सही render होता है (Noto Serif/Sans Devanagari, HarfBuzz shaping)
 - हर cover deterministic — एक ही book का cover हमेशा एक जैसा
 
@@ -128,6 +128,19 @@ node generate.mjs --from-db --all --offset 750 --limit 750 --out covers
 
 Template और palette cycles book की पूरी सूची में उसकी position से तय होती हैं,
 इसलिए शार्ड वाले covers उसी डिज़ाइन पर बनते हैं जो पूरे run में बनते।
+
+### 4.1 Theme engine — cover, book की कहानी सुनाए
+
+`--from-db`/drafts से आने वाली **book की अपनी details** (title, श्रेणी, draft की
+*प्रमुख विषय* सूची, शैली/टोन) को 17 "moods" से match किया जाता है — जैसे
+`devotion`, `grief`, `rebellion`, `love`, `social`, `nature`, `travel`,
+`adventure`, `family`, `myth`… जो mood जीतता है वही palette, motif और layout
+तय करता है। तो गोदान भूरा-मिट्टी (किसान/कर्ज़) जैसा लगता है, भगवद् गीता
+सुनहरा-कमल, चंद्रकांता रहस्य-भरा, और कफ़न-जैसी किताब स्याही-सी मलाल भरी।
+
+Har cover ka फैसला manifest me likha rehta hai (`themeId`, `themeLabel`,
+`themeMatched`), और `--explain` se terminal me, `sheet.mjs` se picture ke
+neeche — taki aap turant dekh sako ki *kisi cover ko woh look kyun mila*.
 
 ---
 

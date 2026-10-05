@@ -4,9 +4,10 @@ import fs from "node:fs";
 import path from "node:path";
 import { Resvg } from "@resvg/resvg-js";
 import sharp from "sharp";
-import { COVER, chooseMotif, chooseTemplate, composeCover } from "./layouts.mjs";
+import { COVER, chooseTemplate, composeCover } from "./layouts.mjs";
 import { hashText, rng } from "./util.mjs";
 import { paletteFor, getPalette } from "./palettes.mjs";
+import { themeFor, cycle, getTheme } from "./themes.mjs";
 import { fontFiles, missingGlyphs } from "./fonts.mjs";
 
 const SS = 2; // supersample factor: render 1600x2400, then downscale to 800x1200
@@ -63,13 +64,25 @@ export async function renderCover(book, opts = {}) {
   const rand = rng(seed);
 
   const index = opts.index ?? 0;
-  const palette = opts.palette ? getPalette(opts.palette) : paletteFor(book, index);
-  if (!palette) throw new Error(`Unknown palette: ${opts.palette}`);
 
   const artPath = opts.artPath || findArt(opts.artDir, book.slug);
-  const templateId = opts.template || chooseTemplate(index, palette, Boolean(artPath));
-  const motifId = opts.motif || chooseMotif(index, book.slug || book.title);
 
+  // Theme first: it decides palette, motif and layout, so the cover reads as
+  // one idea. --theme forces a mood, otherwise the book's own signals decide.
+  const theme = opts.theme ? getTheme(opts.theme) : themeFor(book, index);
+  if (!theme) throw new Error(`Unknown theme: ${opts.theme}`);
+  const finalPalette = opts.palette
+    ? getPalette(opts.palette)
+    : getPalette(cycle(theme.palettes, book, index)) || paletteFor(book, index);
+  if (!finalPalette) throw new Error(opts.palette ? `Unknown palette: ${opts.palette}` : `theme ${theme.id} has no usable palette`);
+  const templateId = opts.template || (artPath ? "photo" : cycle(theme.templates, book, index) || chooseTemplate(index, finalPalette, false));
+  const motifId = opts.motif || cycle(theme.motifs, book, index);
+  // Loud failure beats a cover that quietly used the wrong pool (see themes.mjs:
+  // a theme wrapper without palettes/motifs used to fall through silently).
+  if (!motifId) throw new Error(`theme "${theme.id}" has no motif pool for ${book.slug}`);
+  if (!templateId) throw new Error(`theme "${theme.id}" has no template pool for ${book.slug}`);
+
+  const palette = finalPalette;
   const { below, above, ...meta } = composeCover({
     book,
     palette,
@@ -120,6 +133,10 @@ export async function renderCover(book, opts = {}) {
       ...meta,
       templateId,
       motifId,
+      themeId: theme.id,
+      themeLabel: theme.label,
+      themeMatched: theme.matched || [],
+      themeScore: theme.score || 0,
       palette: palette.id,
       art: artPath ? path.basename(artPath) : null,
       width: COVER.W,
