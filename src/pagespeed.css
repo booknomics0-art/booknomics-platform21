@@ -1,0 +1,18 @@
+/* PageSpeed/Lighthouse accessibility hardening.
+   Keep the existing palette, but use the darker end of the same amber family
+   for small text/links so it clears WCAG AA on the paper background. */
+:root {
+  --primary: 32 70% 36%;
+}
+
+/* The decorative gold gradient is intentionally bright. Dark foreground text
+   is substantially more legible on it than the previous near-white text. */
+.bg-gold.text-primary-foreground,
+.bg-gold .text-primary-foreground {
+  color: hsl(var(--foreground));
+}
+
+/* Preserve the existing dark-mode accent, which already has adequate contrast. */
+.dark {
+  --primary: 38 85% 60%;
+}
