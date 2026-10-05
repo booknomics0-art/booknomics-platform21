@@ -7,14 +7,8 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
 import { PageLoader } from "@/components/LoadingSpinner";
 import Index from "./pages/Index.tsx";
-import Browse from "./pages/Browse.tsx";
-import Hindi from "./pages/Hindi.tsx";
-import Resources from "./pages/Resources.tsx";
-import ReadingTracker from "./pages/resources/ReadingTracker.tsx";
-import SummaryTemplate from "./pages/resources/SummaryTemplate.tsx";
-import BestSummaryWebsites from "./pages/resources/BestSummaryWebsites.tsx";
-import HindiGuide from "./pages/resources/HindiGuide.tsx";
 import { PricingModalProvider } from "@/components/PricingModal";
+import { capturePendingReferral } from "@/lib/referrals";
 
 const LAZY_RETRY_KEY = "booknomics-lazy-route-retry";
 
@@ -36,6 +30,16 @@ const lazy = <T extends ComponentType<any>>(importer: () => Promise<{ default: T
     }
   });
 
+// Keep only the homepage in the initial bundle. Every other route is loaded on
+// demand through the resilient lazy loader above. This materially reduces the
+// homepage JS cost while retaining automatic recovery from stale Vite chunks.
+const Browse = lazy(() => import("./pages/Browse.tsx"));
+const Hindi = lazy(() => import("./pages/Hindi.tsx"));
+const Resources = lazy(() => import("./pages/Resources.tsx"));
+const ReadingTracker = lazy(() => import("./pages/resources/ReadingTracker.tsx"));
+const SummaryTemplate = lazy(() => import("./pages/resources/SummaryTemplate.tsx"));
+const BestSummaryWebsites = lazy(() => import("./pages/resources/BestSummaryWebsites.tsx"));
+const HindiGuide = lazy(() => import("./pages/resources/HindiGuide.tsx"));
 const BookDetail = lazy(() => import("./pages/BookDetail.tsx"));
 const Auth = lazy(() => import("./pages/Auth.tsx"));
 const Library = lazy(() => import("./pages/Library.tsx"));
@@ -69,7 +73,6 @@ const AdminDemand = lazy(() => import("./pages/admin/AdminDemand.tsx"));
 const RequestBook = lazy(() => import("./pages/RequestBook.tsx"));
 const IndexingQueue = lazy(() => import("./pages/admin/IndexingQueue.tsx"));
 const OAuthConsent = lazy(() => import("./pages/OAuthConsent.tsx"));
-import { capturePendingReferral } from "@/lib/referrals";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -160,7 +163,6 @@ const App = () => (
                 <Route path="/contact" element={<Contact />} />
                 <Route path="/press" element={<Press />} />
                 <Route path="/blog" element={<Blog />} />
-
                 <Route path="/blog/:slug" element={<BlogPost />} />
                 <Route path="*" element={<NotFound />} />
               </Routes>
