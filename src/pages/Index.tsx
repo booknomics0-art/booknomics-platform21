@@ -11,6 +11,41 @@ import heroImage from "@/assets/hero-book.jpg";
 import { SocialConnect } from "@/components/SocialConnect";
 import { AdBanner } from "@/components/AdBanner";
 
+// PageSpeed identified the 1024px JPEG as the mobile LCP bottleneck. Keep the
+// existing photographic hero unchanged on tablet/desktop, while mobile gets a
+// tiny inline illustration with the same warm open-book visual language. A
+// matching <source> prevents the browser from downloading the 111 KB JPEG on
+// narrow screens at all.
+const mobileHeroImage = `data:image/svg+xml;charset=UTF-8,${encodeURIComponent(`
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 768 768" role="img" aria-label="Open book with golden ideas">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#fffaf0"/>
+      <stop offset="1" stop-color="#ecd09a"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="50%" cy="38%" r="45%">
+      <stop offset="0" stop-color="#f7c85d" stop-opacity=".58"/>
+      <stop offset="1" stop-color="#f7c85d" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <rect width="768" height="768" rx="54" fill="url(#bg)"/>
+  <circle cx="384" cy="292" r="250" fill="url(#glow)"/>
+  <g fill="none" stroke="#b87425" stroke-width="10" stroke-linecap="round" opacity=".9">
+    <path d="M384 220v-55"/>
+    <path d="M330 239l-32-42"/>
+    <path d="M438 239l32-42"/>
+  </g>
+  <g fill="#d69634">
+    <circle cx="384" cy="137" r="13"/>
+    <circle cx="286" cy="183" r="10"/>
+    <circle cx="482" cy="183" r="10"/>
+  </g>
+  <path d="M115 348c95-39 184-24 269 36v235c-82-55-171-72-269-38z" fill="#fffdf8" stroke="#b9803f" stroke-width="8"/>
+  <path d="M653 348c-95-39-184-24-269 36v235c82-55 171-72 269-38z" fill="#fffdf8" stroke="#b9803f" stroke-width="8"/>
+  <path d="M384 384v235" stroke="#9a642d" stroke-width="10"/>
+  <path d="M154 404c76-25 141-12 192 20M154 455c76-25 141-12 192 20M614 404c-76-25-141-12-192 20M614 455c-76-25-141-12-192 20" fill="none" stroke="#e7c998" stroke-width="9" stroke-linecap="round"/>
+</svg>`)} `;
+
 const Index = () => {
   const [featured, setFeatured] = useState<BookCardData[]>([]);
   const [popular, setPopular] = useState<BookCardData[]>([]);
@@ -102,17 +137,17 @@ const Index = () => {
             </p>
             <div className="mt-6 md:mt-8 max-w-xl">
               <GlobalSearch placeholder="Search books, authors or topics…" size="lg" />
-              <div className="mt-3 flex flex-wrap gap-1.5 text-[11px] text-muted-foreground">
+              <div className="mt-2 flex flex-wrap items-center gap-x-1.5 text-[11px] text-muted-foreground">
                 <span className="opacity-70">Trending:</span>
                 {trending.map((t, i) => (
                   <span key={t.path} className="inline-flex items-center gap-1.5">
-                    {i > 0 && <span>·</span>}
-                    <Link to={t.path} className="hover:text-primary underline-offset-2 hover:underline">{t.label}</Link>
+                    {i > 0 && <span aria-hidden="true">·</span>}
+                    <Link to={t.path} className="inline-flex min-h-11 items-center px-1 hover:text-primary underline-offset-2 hover:underline">{t.label}</Link>
                   </span>
                 ))}
               </div>
             </div>
-            <div className="mt-6 md:mt-8 flex flex-wrap gap-3">
+            <div className="mt-5 md:mt-8 flex flex-wrap gap-3">
               <Button
                 asChild
                 size="lg"
@@ -134,15 +169,19 @@ const Index = () => {
           </div>
           <div className="relative">
             <div className="rounded-3xl overflow-hidden shadow-cover">
-              <img
-                src={heroImage}
-                alt="An open book with golden ideas rising from its pages"
-                width={1024}
-                height={1024}
-                fetchPriority="high"
-                decoding="async"
-                className="w-full h-full object-cover"
-              />
+              <picture className="block w-full">
+                <source media="(max-width: 767px)" srcSet={mobileHeroImage} />
+                <img
+                  src={heroImage}
+                  alt="An open book with golden ideas rising from its pages"
+                  width={1024}
+                  height={1024}
+                  fetchPriority="high"
+                  decoding="async"
+                  sizes="(max-width: 767px) 100vw, 50vw"
+                  className="w-full h-full object-cover"
+                />
+              </picture>
             </div>
             <div className="absolute -bottom-4 -left-4 bg-card border border-border rounded-2xl p-4 shadow-cover max-w-[240px] hidden md:block">
               <div className="text-[10px] tracking-[0.2em] uppercase text-primary font-semibold mb-1">Today's idea</div>
@@ -185,7 +224,7 @@ const Index = () => {
           </div>
           <Link
             to="/browse"
-            className="text-xs md:text-sm font-medium text-foreground/70 hover:text-primary inline-flex items-center gap-1.5"
+            className="min-h-11 px-2 text-xs md:text-sm font-medium text-foreground/70 hover:text-primary inline-flex items-center gap-1.5"
           >
             See all <ArrowRight className="h-3 w-3 md:h-4 md:w-4" />
           </Link>
@@ -210,7 +249,7 @@ const Index = () => {
             <Link
               key={cat.path}
               to={cat.path}
-              className="bg-card border border-border rounded-xl p-3 md:p-5 hover:border-primary hover:shadow-paper transition-all text-center font-serif text-sm md:text-lg"
+              className="min-h-11 bg-card border border-border rounded-xl p-3 md:p-5 hover:border-primary hover:shadow-paper transition-all text-center font-serif text-sm md:text-lg flex items-center justify-center"
             >
               {cat.label}
             </Link>
@@ -229,7 +268,7 @@ const Index = () => {
             <Link
               key={l.path}
               to={l.path}
-              className="inline-flex items-center gap-1.5 rounded-full border border-border bg-card px-4 py-1.5 hover:border-primary hover:text-primary transition"
+              className="min-h-11 inline-flex items-center gap-1.5 rounded-full border border-border bg-card px-4 py-2 hover:border-primary hover:text-primary transition"
             >
               {l.label}
             </Link>
@@ -274,7 +313,6 @@ const Index = () => {
           ))}
         </div>
       </section>
-
 
       {/* Popular */}
       <section className="container py-10 md:py-20">
