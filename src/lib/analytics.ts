@@ -1,6 +1,7 @@
 // GA4 analytics helper. Safe no-op on localhost or if gtag is missing.
-
-const GA_ID = "G-029CF4KFMM";
+// Keep this ID aligned with index.html and App.tsx so page views and custom
+// events land in the same GA4 property.
+const GA_ID = "G-1MDPDTDYDQ";
 
 function canTrack(): boolean {
   if (typeof window === "undefined") return false;
