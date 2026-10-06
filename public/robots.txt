@@ -14,7 +14,27 @@ Disallow: /payment
 Disallow: /success
 Disallow: /cancel
 
+# OpenAI search discovery. OAI-SearchBot controls eligibility for ChatGPT Search.
+User-agent: OAI-SearchBot
+Allow: /
+
+# User-triggered ChatGPT fetches (not the automatic search crawler).
+User-agent: ChatGPT-User
+Allow: /
+
+# OpenAI model-training crawler. Kept separate from Search eligibility.
 User-agent: GPTBot
+Allow: /
+
+# Major search / answer engines used by readers in India.
+User-agent: Googlebot
+Allow: /
+
+User-agent: Bingbot
+Allow: /
+
+# Google product token used for Gemini-related model/grounding controls.
+User-agent: Google-Extended
 Allow: /
 
 User-agent: PerplexityBot
@@ -23,9 +43,7 @@ Allow: /
 User-agent: ClaudeBot
 Allow: /
 
-User-agent: Google-Extended
-Allow: /
-
+# Low-value SEO/scraping crawlers remain blocked to protect crawl resources.
 User-agent: AhrefsBot
 Disallow: /
 
