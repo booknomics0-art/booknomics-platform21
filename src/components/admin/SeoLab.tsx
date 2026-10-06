@@ -9,10 +9,44 @@ import { Badge } from "@/components/ui/badge";
 import { Sparkles, CheckCircle2, AlertCircle, Globe } from "lucide-react";
 import { toast } from "sonner";
 
-const SITE = "https://booknomics.com";
+const SITE = "https://www.booknomics.com";
 
 type Props = { bookId: string };
 type Suggestion = { title: string; description: string; rationale?: string };
+type AuditDetails = Record<string, boolean | number | string | null>;
+type AiAudit = {
+  aeo_score: number | null;
+  geo_score: number | null;
+  ai_visibility_score: number | null;
+  scoring_version: string | null;
+  aeo_details: AuditDetails | null;
+  geo_details: AuditDetails | null;
+  updated_at: string | null;
+};
+
+const GAP_LABELS: Record<string, string> = {
+  overview_ok: "Book-specific overview",
+  key_ideas_ok: "Book-specific key ideas",
+  analysis_ok: "Substantive analysis",
+  application_ok: "Practical application",
+  meta_title_ok: "Meta title",
+  meta_description_ok: "Meta description",
+  title_description_ok: "Title + description pair",
+  identity_ok: "Author/category identity",
+  year_present: "Publication year",
+  intent_terms_ok: "Intent/query terms",
+  cover_ok: "Useful book cover",
+  boilerplate_clear: "Remove repeated boilerplate",
+  direct_answer_ok: "Direct concise answer",
+};
+
+const scoreClass = (score: number | null) => {
+  if (score == null) return "border-border bg-muted/30";
+  if (score >= 98) return "border-emerald-500/40 bg-emerald-500/10";
+  if (score >= 95) return "border-primary/40 bg-primary/10";
+  if (score >= 90) return "border-amber-500/40 bg-amber-500/10";
+  return "border-destructive/40 bg-destructive/10";
+};
 
 export function SeoLab({ bookId }: Props) {
   const [loading, setLoading] = useState(true);
@@ -24,13 +58,26 @@ export function SeoLab({ bookId }: Props) {
   const [keyword, setKeyword] = useState("");
   const [body, setBody] = useState("");
   const [suggestions, setSuggestions] = useState<Suggestion[]>([]);
+  const [audit, setAudit] = useState<AiAudit | null>(null);
 
   useEffect(() => {
     (async () => {
-      const { data } = await supabase
-        .from("books_admin")
-        .select("title, meta_title, meta_description, slug, overview, key_ideas, category")
-        .eq("id", bookId).maybeSingle();
+      const [bookResult, auditResult] = await Promise.all([
+        supabase
+          .from("books_admin")
+          .select("title, meta_title, meta_description, slug, overview, key_ideas, category")
+          .eq("id", bookId)
+          .maybeSingle(),
+        supabase
+          .from("seo_audits")
+          .select("aeo_score, geo_score, ai_visibility_score, scoring_version, aeo_details, geo_details, updated_at")
+          .eq("book_id", bookId)
+          .order("updated_at", { ascending: false })
+          .limit(1)
+          .maybeSingle(),
+      ]);
+
+      const data = bookResult.data;
       if (data) {
         setTitle(data.meta_title ?? data.title ?? "");
         setDesc(data.meta_description ?? "");
@@ -38,6 +85,7 @@ export function SeoLab({ bookId }: Props) {
         setKeyword(data.title ?? "");
         setBody(`${data.overview ?? ""}\n${data.key_ideas ?? ""}`);
       }
+      if (auditResult.data) setAudit(auditResult.data as unknown as AiAudit);
       setLoading(false);
     })();
   }, [bookId]);
@@ -56,6 +104,17 @@ export function SeoLab({ bookId }: Props) {
     const pct = words.length ? +(count / words.length * 100).toFixed(2) : 0;
     return { first100, count, total: words.length, pct };
   }, [keyword, body]);
+
+  const readinessGaps = useMemo(() => {
+    if (!audit) return [] as string[];
+    const keys = new Set<string>();
+    [audit.aeo_details, audit.geo_details].forEach((details) => {
+      Object.entries(details ?? {}).forEach(([key, value]) => {
+        if (value === false && GAP_LABELS[key]) keys.add(key);
+      });
+    });
+    return Array.from(keys).map((key) => GAP_LABELS[key]);
+  }, [audit]);
 
   const save = async () => {
     setSaving(true);
@@ -98,6 +157,54 @@ export function SeoLab({ bookId }: Props) {
             {desc || "No meta description yet."}
           </div>
         </div>
+      </Card>
+
+      {/* AEO / GEO readiness */}
+      <Card className="p-4 space-y-3">
+        <div className="flex items-start justify-between gap-3 flex-wrap">
+          <div>
+            <h3 className="font-semibold text-sm">SEO + AEO/GEO Readiness</h3>
+            <p className="text-xs text-muted-foreground mt-1">Internal readiness score — not a ranking or AI-citation guarantee.</p>
+          </div>
+          {audit?.scoring_version && <Badge variant="outline" className="text-[10px]">{audit.scoring_version}</Badge>}
+        </div>
+
+        {audit ? (
+          <>
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+              <div className={`rounded-xl border p-4 ${scoreClass(audit.aeo_score)}`}>
+                <div className="text-xs text-muted-foreground">AEO</div>
+                <div className="text-3xl font-bold mt-1">{audit.aeo_score ?? "—"}<span className="text-sm font-normal text-muted-foreground">/100</span></div>
+                <div className="text-[11px] text-muted-foreground mt-1">Answer-engine extractability</div>
+              </div>
+              <div className={`rounded-xl border p-4 ${scoreClass(audit.geo_score)}`}>
+                <div className="text-xs text-muted-foreground">GEO</div>
+                <div className="text-3xl font-bold mt-1">{audit.geo_score ?? "—"}<span className="text-sm font-normal text-muted-foreground">/100</span></div>
+                <div className="text-[11px] text-muted-foreground mt-1">Generative citation readiness</div>
+              </div>
+              <div className={`rounded-xl border p-4 ${scoreClass(audit.ai_visibility_score)}`}>
+                <div className="text-xs text-muted-foreground">AI Visibility</div>
+                <div className="text-3xl font-bold mt-1">{audit.ai_visibility_score ?? "—"}<span className="text-sm font-normal text-muted-foreground">/100</span></div>
+                <div className="text-[11px] text-muted-foreground mt-1">Combined internal readiness</div>
+              </div>
+            </div>
+
+            <div>
+              <div className="text-xs font-medium mb-2">Highest-impact gaps</div>
+              {readinessGaps.length ? (
+                <div className="flex flex-wrap gap-2">
+                  {readinessGaps.map((gap) => <Badge key={gap} variant="outline" className="text-[10px]">{gap}</Badge>)}
+                </div>
+              ) : (
+                <div className="text-xs text-emerald-700 dark:text-emerald-400 flex items-center gap-1">
+                  <CheckCircle2 className="w-3.5 h-3.5" /> No failed signals in the latest rubric.
+                </div>
+              )}
+            </div>
+          </>
+        ) : (
+          <div className="text-xs text-muted-foreground">No AEO/GEO audit has been stored for this page yet.</div>
+        )}
       </Card>
 
       {/* Editors */}
