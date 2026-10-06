@@ -94,6 +94,7 @@ if (!existsSync(BOOKS_DIR)) {
 let touched = 0;
 let removedItems = 0;
 let removedOverviewSections = 0;
+let cleanedFaqAnswers = 0;
 
 for (const entry of readdirSync(BOOKS_DIR, { withFileTypes: true })) {
   if (!entry.isDirectory()) continue;
@@ -136,6 +137,19 @@ for (const entry of readdirSync(BOOKS_DIR, { withFileTypes: true })) {
     removedOverviewSections++;
   }
 
+  html = html.replace(/(<h3>[^<]+ का संक्षिप्त सारांश क्या है\?<\/h3><p>)([\s\S]*?)(<\/p>)/gi, (full, start, answer, end) => {
+    if (!isLowSignal(answer)) return full;
+    cleanedFaqAnswers++;
+    return `${start}${escapeHtml(cleanAnswer || fallbackAnswer(html))}${end}`;
+  });
+
+  html = html.replace(/(<h3>[^<]+ की मुख्य बातें क्या हैं\?<\/h3><p>)([\s\S]*?)(<\/p>)/gi, (full, start, answer, end) => {
+    if (!isLowSignal(answer)) return full;
+    cleanedFaqAnswers++;
+    const replacement = cleanTakeaways.length ? cleanTakeaways.slice(0, 3).join(" ") : (cleanAnswer || fallbackAnswer(html));
+    return `${start}${escapeHtml(replacement)}${end}`;
+  });
+
   html = updateStructuredData(html, cleanAnswer || fallbackAnswer(html), cleanTakeaways);
 
   if (html !== original) {
@@ -144,4 +158,4 @@ for (const entry of readdirSync(BOOKS_DIR, { withFileTypes: true })) {
   }
 }
 
-console.log(`[guard-aeo-prerender] guarded ${touched} Hindi snapshots; removed ${removedItems} low-signal takeaway items and ${removedOverviewSections} low-signal overview sections`);
+console.log(`[guard-aeo-prerender] guarded ${touched} Hindi snapshots; removed ${removedItems} low-signal takeaway items, ${removedOverviewSections} low-signal overview sections, and cleaned ${cleanedFaqAnswers} visible FAQ answers`);
