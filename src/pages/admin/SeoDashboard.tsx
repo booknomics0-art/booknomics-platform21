@@ -12,7 +12,7 @@ import { ExternalLink, ArrowRight } from "lucide-react";
 
 type Row = BookForAudit & { is_draft: boolean; created_at: string; status?: string | null };
 
-type Filter = "all" | "low_seo" | "needs_polish" | "draft" | "published" | "noindex" | "recent";
+type Filter = "all" | "hindi" | "low_seo" | "needs_polish" | "draft" | "published" | "noindex" | "recent";
 
 export default function SeoDashboardPage() {
   return (
@@ -62,6 +62,7 @@ function Inner() {
     const oneWeekAgo = Date.now() - 7 * 86400000;
     return scored.filter(({ b, on, po }) => {
       if (term && !`${b.title} ${b.author} ${b.slug}`.toLowerCase().includes(term)) return false;
+      if (filter === "hindi" && b.language !== "hi") return false;
       if (filter === "draft" && !b.is_draft) return false;
       if (filter === "published" && (b.is_draft || b.status !== "published")) return false;
       if (filter === "noindex" && (b.is_draft || b.status !== "published_noindex")) return false;
@@ -86,9 +87,9 @@ function Inner() {
 
       <div className="flex flex-wrap gap-2 items-center">
         <Input placeholder="Search title / author / slug" value={q} onChange={e => setQ(e.target.value)} className="max-w-xs" />
-        {(["all","published","noindex","draft","low_seo","needs_polish","recent"] as Filter[]).map(f => (
+        {(["all","hindi","published","noindex","draft","low_seo","needs_polish","recent"] as Filter[]).map(f => (
           <Button key={f} size="sm" variant={filter === f ? "default" : "outline"} onClick={() => setFilter(f)}>
-            {f.replace("_", " ")}
+            {f === "hindi" ? "Hindi only" : f.replace("_", " ")}
           </Button>
         ))}
         <div className="ml-auto text-sm text-muted-foreground">{filtered.length} pages</div>
