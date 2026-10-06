@@ -1,27 +1,38 @@
 import { DocPage } from "@/components/DocPage";
-import { Sparkles, BookOpen, Compass, Heart, Target, AlertTriangle, Layers, Globe } from "lucide-react";
+import { BookOpen, Globe, Heart, Target } from "lucide-react";
 
 const values = [
-  { icon: BookOpen, title: "Quality over quantity", body: "A focused library, chosen with care. Every public title should earn its place through usefulness and quality." },
-  { icon: Globe, title: "Bilingual accessibility", body: "Every summary in English & Hindi — ideas should travel across languages." },
-  { icon: Target, title: "Practical growth", body: "Every book ships with an action plan, habit tracker, and reflection prompts." },
-  { icon: Heart, title: "Read with reverence", body: "A great book deserves a quiet room. We try to provide one." },
+  { icon: BookOpen, title: "Quality before scale", body: "A public page should be useful, book-specific, and accurate enough to earn indexing. Lower-confidence pages can stay out of search while they are improved." },
+  { icon: Globe, title: "Hindi + English accessibility", body: "We build dedicated Hindi and English discovery experiences so readers can learn in the language that works best for them." },
+  { icon: Target, title: "Practical learning", body: "Summaries are designed to move from understanding to application through key ideas, reflection, and action-oriented sections." },
+  { icon: Heart, title: "Respect the source work", body: "The original book and author remain the source work. Booknomics publishes an independent study guide; it does not pretend to be the author or publisher." },
 ];
 
 const orgLd = {
   "@context": "https://schema.org",
   "@type": "Organization",
+  "@id": "https://www.booknomics.com/#organization",
   name: "Booknomics",
-  url: "https://booknomics.com",
-  logo: "https://booknomics.com/placeholder.svg",
-  description: "Booknomics turns the world's best non-fiction into structured, bilingual action plans.",
+  url: "https://www.booknomics.com/",
+  description: "Booknomics is a bilingual learning platform for practical book summaries, deeper analysis, reflection, and action in Hindi and English.",
+  areaServed: { "@type": "Country", name: "India" },
+  knowsLanguage: ["hi", "en"],
+  knowsAbout: [
+    "Hindi book summaries",
+    "English book summaries",
+    "literature",
+    "non-fiction",
+    "book analysis",
+    "reading and learning",
+  ],
+  publishingPrinciples: "https://www.booknomics.com/about#editorial-process",
 };
 
 const About = () => (
   <DocPage
     eyebrow="Our story"
-    title="A quiet library for restless minds."
-    intro="Booknomics is a deliberate project: a small library of the world's most transformative non-fiction books — structured for action, not just consumption."
+    title="A practical library for readers who want to understand and apply books."
+    intro="Booknomics is a bilingual learning platform for Hindi and English readers. We turn books into structured study guides with concise answers, deeper analysis, key ideas, reflection, and practical application."
     sections={[
       {
         id: "mission",
@@ -29,44 +40,63 @@ const About = () => (
         body: (
           <>
             <p>
-              We exist to turn <strong>reading into life-transformation</strong>. Most people finish a great book and forget 90% within a week. We believe that's a failure of <em>format</em>, not memory.
+              We exist to make serious reading easier to <strong>understand, revisit, and apply</strong>. A summary should not be a pile of generic bullet points; it should help a reader grasp what a book is about, why its ideas matter, and where the limits or practical implications are.
             </p>
             <p>
-              Booknomics rebuilds the book as a system: the core ideas, the deep analysis, the daily application, and the reflection prompts — all in one quiet, beautiful place. In English and in Hindi.
+              Hindi is a major focus for Booknomics. We are building a dedicated Hindi discovery layer for Indian readers while continuing to serve English readers on the same platform.
             </p>
           </>
         ),
       },
       {
-        id: "problem",
-        title: "The Problem",
+        id: "what-we-publish",
+        title: "What We Publish",
         body: (
           <>
-            <p>Most book summaries fail because they are <strong>passive consumption disguised as learning</strong>:</p>
+            <p>Booknomics covers literature, classics, philosophy, self-improvement, business, psychology, spirituality, history, and other reading categories. Individual pages may include:</p>
             <ul>
-              <li>Bullet-point dumps with no narrative</li>
-              <li>No connection between idea and daily action</li>
-              <li>No structure — every summary feels different</li>
-              <li>Only available in English, leaving billions behind</li>
-              <li>No reflection layer, so insights never compound</li>
+              <li>a concise book-at-a-glance answer</li>
+              <li>the original book title and author</li>
+              <li>overview, key ideas, and deeper analysis</li>
+              <li>practical application and reflection prompts</li>
+              <li>related books and topic paths</li>
+              <li>audio or other learning assets when available</li>
             </ul>
-            <p>You read, you nod, you forget. Nothing actually changes.</p>
+            <p>
+              Booknomics pages are independent study guides. Unless explicitly stated otherwise, they are not written, sponsored, or endorsed by the original author or publisher.
+            </p>
           </>
         ),
       },
       {
-        id: "solution",
-        title: "The Booknomics Solution",
+        id: "editorial-process",
+        title: "How Our Editorial Workflow Works",
         body: (
           <>
-            <p>Every book follows the same three-stage rhythm — the <strong>Read → Apply → Transform</strong> framework:</p>
-            <ol>
-              <li><strong>Read</strong> — Overview, Key Ideas, and Deep Analysis written with editorial care.</li>
-              <li><strong>Apply</strong> — A daily action plan, habit tracker, and one-page action system.</li>
-              <li><strong>Transform</strong> — Reflection notes, milestones, and a personal growth dashboard.</li>
-            </ol>
             <p>
-              Same structure, every book. The shape of the experience is the promise. Open any summary and you'll know exactly where to find what you came for — and what to do with it tomorrow morning.
+              Our workflow can use software and AI-assisted drafting, formatting, translation, enrichment, and quality checks. Automation is a production tool, not a substitute for factual standards.
+            </p>
+            <p>For public, indexable pages we aim to verify and preserve the things that matter most:</p>
+            <ol>
+              <li><strong>Identity:</strong> correct title, author, language, category, and canonical URL.</li>
+              <li><strong>Specificity:</strong> the page should discuss the actual book rather than repeat generic boilerplate.</li>
+              <li><strong>Answer clarity:</strong> important questions should have concise, extractable answers before deeper context.</li>
+              <li><strong>Source separation:</strong> the original book is the source work; Booknomics is the publisher of the independent summary page.</li>
+              <li><strong>Search quality:</strong> incomplete, duplicate, or lower-confidence pages can remain <code>noindex</code> until they meet the publishing gate.</li>
+            </ol>
+          </>
+        ),
+      },
+      {
+        id: "corrections",
+        title: "Accuracy and Corrections",
+        body: (
+          <>
+            <p>
+              Book summaries can contain factual, bibliographic, translation, or interpretation errors. When we identify a material problem, our preferred response is to correct it, quarantine the page from indexing when necessary, and keep the canonical record consistent rather than amplify a known error.
+            </p>
+            <p>
+              Readers should use Booknomics as a learning guide, not as a replacement for the original book or a scholarly edition when exact quotations, editions, or academic citation are required.
             </p>
           </>
         ),
@@ -94,18 +124,18 @@ const About = () => (
         body: (
           <>
             <p>
-              No intrusive pop-ups or social bars. No infinite scroll. No noise. Every summary is built to be applied — not just read.
+              We will keep the reader experience primary. Search engines and AI answer systems should be able to understand our pages because the content is clear and structured—not because the page is stuffed with hidden keywords or manufactured claims.
             </p>
             <p>
-              If you finish a book on Booknomics and your week looks the same, we've failed at our job.
+              The goal is simple: when someone searches for a book, author, idea, character, theme, or practical lesson, Booknomics should be a useful source worth reading and, when an answer engine chooses, worth citing.
             </p>
           </>
         ),
       },
     ]}
     seo={{
-      title: "About Booknomics — Turning reading into transformation",
-      description: "Booknomics curates structured, bilingual book summaries with action plans, habit trackers, and reflection prompts. Read → Apply → Transform.",
+      title: "About Booknomics — Hindi & English Book Summaries and Editorial Standards",
+      description: "Learn how Booknomics creates structured Hindi and English book summaries, separates source works from editorial guides, and applies quality and indexing checks.",
       path: "/about",
       jsonLd: orgLd,
     }}
