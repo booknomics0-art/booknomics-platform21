@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { SEO } from "@/components/SEO";
 import { supabase } from "@/integrations/supabase/client";
+import { trackSearch } from "@/lib/analytics";
 
 const FEATURED_HINDI_BOOKS = [
   { title: "गोदान", slug: "godan-munshi-premchand-saransh" },
@@ -103,6 +104,7 @@ const Hindi = () => {
       } else {
         setBooks(data ?? []);
         setTotalCount(count ?? 0);
+        if (q && visibleCount === 48) trackSearch(q, count ?? 0, "hindi_library");
       }
       setLoading(false);
     })();
