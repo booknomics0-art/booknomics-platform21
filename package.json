@@ -8,7 +8,7 @@
     "prebuild": "node --import tsx scripts/check-env.ts && node --import tsx scripts/generate-sitemap.ts",
     "dev": "vite",
     "build": "vite build",
-    "postbuild": "node scripts/prerender-aeo-geo.mjs",
+    "postbuild": "node scripts/prerender-aeo-geo.mjs && node scripts/guard-aeo-prerender.mjs",
     "build:dev": "vite build --mode development",
     "lint": "eslint .",
     "preview": "vite preview",
