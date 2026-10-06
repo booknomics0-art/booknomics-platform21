@@ -38,10 +38,15 @@ function replaceMeta(html, attr, key, value) {
   return pattern.test(html) ? html.replace(pattern, tag) : html.replace("</head>", `  ${tag}\n</head>`);
 }
 
-function prepareHead(html, { lang = "hi", title, description, canonical, image, jsonLd }) {
+function prepareHead(html, { lang = "hi", title, description, canonical, image, jsonLd, noindex = false }) {
   let out = html.replace(/<html\s+lang=["'][^"']+["']>/i, `<html lang="${lang}">`);
   out = out.replace(/<title>[\s\S]*?<\/title>/i, `<title>${escapeHtml(title)}</title>`);
   out = replaceMeta(out, "name", "description", description);
+  const robots = noindex
+    ? "noindex,follow"
+    : "index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1";
+  out = replaceMeta(out, "name", "robots", robots);
+  out = replaceMeta(out, "name", "googlebot", robots);
   out = replaceMeta(out, "property", "og:title", title);
   out = replaceMeta(out, "property", "og:description", description);
   out = replaceMeta(out, "name", "twitter:title", title);
@@ -75,12 +80,17 @@ async function supabase(path) {
   return response.json();
 }
 
-const publishedHindi = await supabase(
-  "books?select=id,slug,seo_slug,title,author,category,cover_url,tagline,overview,key_ideas,meta_title,meta_description,reading_time,rating&language=eq.hi&is_draft=eq.false&status=eq.published&order=title.asc&limit=500"
+const liveHindi = await supabase(
+  "books?select=id,slug,seo_slug,title,author,category,cover_url,tagline,overview,key_ideas,meta_title,meta_description,reading_time,rating,status&language=eq.hi&is_draft=eq.false&status=in.(published,published_noindex)&order=title.asc&limit=1000"
 );
 
-if (!Array.isArray(publishedHindi) || publishedHindi.length < 20) {
-  throw new Error(`prerender-seo: expected published Hindi catalog, got ${publishedHindi?.length ?? 0}`);
+if (!Array.isArray(liveHindi)) {
+  throw new Error("prerender-seo: Hindi catalog response is not an array");
+}
+
+const publishedHindi = liveHindi.filter((book) => book.status === "published");
+if (publishedHindi.length < 20) {
+  throw new Error(`prerender-seo: expected published Hindi catalog, got ${publishedHindi.length}`);
 }
 
 const featured = publishedHindi.slice(0, 48);
@@ -111,7 +121,7 @@ const hindiRoot = `
     <p>Booknomics हिंदी पुस्तकालय</p>
     <h1>हिंदी पुस्तक सारांश</h1>
     <p>${escapeHtml(hindiDescription)}</p>
-    <p><strong>${publishedHindi.length}</strong> प्रकाशित हिंदी पुस्तक सारांश उपलब्ध हैं।</p>
+    <p><strong>${publishedHindi.length}</strong> इंडेक्स योग्य हिंदी पुस्तक सारांश उपलब्ध हैं।</p>
   </header>
   <section aria-labelledby="popular-hindi-books">
     <h2 id="popular-hindi-books">लोकप्रिय हिंदी पुस्तकें</h2>
@@ -134,8 +144,9 @@ let hindiHtml = prepareHead(template, {
 hindiHtml = hindiHtml.replace('<div id="root"></div>', `<div id="root">${hindiRoot}</div>`);
 writeRoute("/hindi", hindiHtml);
 
-let writtenBooks = 0;
-for (const book of publishedHindi) {
+let writtenIndexable = 0;
+let writtenNoindex = 0;
+for (const book of liveHindi) {
   const slug = book.seo_slug || book.slug;
   if (!slug || !book.title) continue;
   const canonical = `${BASE}/books/${encodeURI(slug)}`;
@@ -144,6 +155,7 @@ for (const book of publishedHindi) {
   const image = book.cover_url || `${BASE}/og-default.svg`;
   const overview = clamp(book.overview || book.tagline || "", 1400);
   const keyIdeas = clamp(book.key_ideas || "", 900);
+  const isNoindex = book.status === "published_noindex";
   const bookLd = {
     "@context": "https://schema.org",
     "@type": "WebPage",
@@ -173,10 +185,10 @@ for (const book of publishedHindi) {
     <p><a href="/hindi">और हिंदी पुस्तक सारांश देखें</a></p>
   </article>
 </main>`;
-  let html = prepareHead(template, { title, description, canonical, image, jsonLd: bookLd });
+  let html = prepareHead(template, { title, description, canonical, image, jsonLd: bookLd, noindex: isNoindex });
   html = html.replace('<div id="root"></div>', `<div id="root">${staticRoot}</div>`);
   writeRoute(`/books/${slug}`, html);
-  writtenBooks++;
+  if (isNoindex) writtenNoindex++; else writtenIndexable++;
 }
 
-console.log(`[prerender-seo] wrote /hindi + ${writtenBooks} published Hindi book snapshots`);
+console.log(`[prerender-seo] wrote /hindi + ${writtenIndexable} indexable + ${writtenNoindex} noindex Hindi snapshots`);
