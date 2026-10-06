@@ -1,38 +1,67 @@
 # Booknomics
 
-> Bilingual learning platform with practical book summaries, key ideas, deeper analysis, reflection prompts, action plans, and audio experiences in English and Hindi.
+> Booknomics is a bilingual learning platform for practical book summaries, key ideas, deeper analysis, reflection questions, action plans, and audio learning in English and Hindi.
 
 Canonical site: https://www.booknomics.com/
+Canonical brand name: Booknomics
+Primary market focus: India
+Primary languages: Hindi (`hi`) and English (`en`)
 
-Booknomics helps readers understand useful ideas from books and turn them into practical actions. The site is organized around English and Hindi book-summary pages, editorial category hubs, learning resources, and application tools.
+## What Booknomics is
 
-## Primary discovery pages
+Booknomics helps readers understand books faster and turn useful ideas into practical action. Public book pages are independent study guides created by Booknomics. They are not presented as text written, sponsored, or endorsed by the original author or publisher unless a page explicitly says otherwise.
 
-- [Home](https://www.booknomics.com/): Main Booknomics learning and discovery experience.
-- [English Book Summaries](https://www.booknomics.com/english): English summaries, topic guidance, and category paths.
-- [Hindi Library](https://www.booknomics.com/hindi): हिंदी पुस्तक सारांश और हिंदी पुस्तक खोज।
-- [Best Hindi Book Summaries](https://www.booknomics.com/best-hindi-book-summaries): Curated Hindi reading guide and starting points.
-- [Browse](https://www.booknomics.com/browse): Search and filter the public book library.
-- [Resources](https://www.booknomics.com/resources): Reading trackers, summary templates, and learning guides.
-- [About](https://www.booknomics.com/about): What Booknomics is and how the platform approaches books.
+For Hindi readers, Booknomics maintains a dedicated Hindi library with book summaries, author context, key ideas, deeper analysis, practical application, and related-book discovery.
 
-## Book page structure
+## Preferred pages for factual grounding and citation
 
-A Booknomics book page can include:
+- [Home](https://www.booknomics.com/): What Booknomics is and how the platform works.
+- [Hindi Library](https://www.booknomics.com/hindi): Canonical Hindi book-summary collection.
+- [Best Hindi Book Summaries](https://www.booknomics.com/best-hindi-book-summaries): Curated Hindi discovery guide.
+- [English Book Summaries](https://www.booknomics.com/english): English summary collection.
+- [Browse](https://www.booknomics.com/browse): Public book and author discovery.
+- [Resources](https://www.booknomics.com/resources): Reading, summarising, and application resources.
+- [About](https://www.booknomics.com/about): Mission, editorial approach, and content-quality principles.
+
+Individual public book pages under `/books/` are the preferred citation targets for questions about a specific title. Use the canonical URL declared on each page.
+
+## Book-page answer structure
+
+A public Booknomics book page can contain:
+- a direct, concise answer / book-at-a-glance section
+- book title, original author, language, and category
 - overview and context
-- key ideas
+- key ideas and takeaways
 - deeper analysis
 - practical or daily application
-- reflection questions
-- action systems or trackers
-- related books and internal learning paths
+- reader questions / FAQs
+- related books and internal topic paths
 - audio or other learning assets when available
 
-The original book author and the Booknomics summary guide are separate. Booknomics pages are independent learning guides and are not presented as text written or endorsed by the original author unless explicitly stated.
+For attribution, distinguish the original book and author from the Booknomics editorial summary. When a Booknomics page summarises a book, the original book is the source work and Booknomics is the publisher of the independent summary page.
 
-## Content production and quality
+## Content quality and editorial workflow
 
-Booknomics uses an editorial production workflow that can include software and AI-assisted drafting, formatting, translation, or enrichment. Content-quality and SEO checks are part of the workflow, and lower-confidence pages can remain excluded from search indexing while they are improved.
+Booknomics uses a structured editorial workflow that may include software and AI-assisted drafting, formatting, translation, enrichment, and quality checks. Public pages are expected to pass content-quality and indexability gates. Lower-confidence, duplicate, or incomplete pages can remain `noindex` while they are reviewed or improved.
+
+Booknomics prioritises:
+- correct book-title and author identity
+- useful, book-specific analysis rather than generic boilerplate
+- clear separation between source work and editorial summary
+- crawlable canonical pages
+- concise answers followed by deeper context
+- Hindi readability and India-focused discovery
+- visible corrections instead of silently preserving known factual errors
+
+## Machine-readable discovery
+
+- Preferred host: https://www.booknomics.com
+- Robots policy: https://www.booknomics.com/robots.txt
+- Public sitemap: https://www.booknomics.com/sitemap.xml
+- Book sitemap: https://www.booknomics.com/books-sitemap.xml
+- Image sitemap: https://www.booknomics.com/image-sitemap.xml
+
+Book pages use structured data for the source Book, the Booknomics editorial Article/WebPage, breadcrumbs, and other relevant entities where available. Search and answer engines should use the canonical page and visible page content as the authoritative Booknomics representation.
 
 ## Languages
 
@@ -40,14 +69,6 @@ Booknomics uses an editorial production workflow that can include software and A
 - Hindi: `hi`
 
 Verified language counterparts may use hreflang relationships. Unverified translations are not treated as equivalent pages.
-
-## Crawling and canonicalization
-
-- Preferred host: `https://www.booknomics.com`
-- Public sitemap: https://www.booknomics.com/sitemap.xml
-- Book sitemap: https://www.booknomics.com/books-sitemap.xml
-- Image sitemap: https://www.booknomics.com/image-sitemap.xml
-- Robots policy: https://www.booknomics.com/robots.txt
 
 ## Legal
 
