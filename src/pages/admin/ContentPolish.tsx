@@ -13,6 +13,25 @@ import { toast } from "sonner";
 const FIELDS = ["tagline","overview","key_ideas","daily_application","action_system","reflection_questions","deep_analysis"] as const;
 type Field = typeof FIELDS[number];
 
+const PAGE_SIZE = 500;
+const MAX_ADMIN_BOOKS = 5000;
+
+async function fetchBooksForPolish() {
+  const rows: BookForAudit[] = [];
+  for (let from = 0; from < MAX_ADMIN_BOOKS; from += PAGE_SIZE) {
+    const { data, error } = await supabase
+      .from("books_admin")
+      .select("*")
+      .order("created_at", { ascending: false })
+      .range(from, from + PAGE_SIZE - 1);
+    if (error) throw error;
+    const page = (data || []) as any[];
+    rows.push(...(page as BookForAudit[]));
+    if (page.length < PAGE_SIZE) break;
+  }
+  return rows;
+}
+
 export default function ContentPolishPage() {
   return (
     <AdminGuard>
@@ -30,11 +49,20 @@ function Inner() {
   const [q, setQ] = useState("");
   const [selectedId, setSelectedId] = useState<string | null>(focusId);
 
-  useEffect(() => { (async () => {
-    const { data } = await supabase.from("books_admin").select("*").order("created_at", { ascending: false }).limit(500);
-    setBooks((data || []) as any);
-    if (!focusId && data?.[0]) setSelectedId(data[0].id);
-  })(); }, [focusId]);
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      try {
+        const data = await fetchBooksForPolish();
+        if (cancelled) return;
+        setBooks(data);
+        if (!focusId && data[0]) setSelectedId(data[0].id);
+      } catch (e: any) {
+        if (!cancelled) toast.error(e?.message || "Could not load books for content audit");
+      }
+    })();
+    return () => { cancelled = true; };
+  }, [focusId]);
 
   const book = books.find(b => b.id === selectedId) || null;
   const term = q.trim().toLowerCase();
@@ -44,6 +72,7 @@ function Inner() {
     <div className="grid md:grid-cols-[260px_1fr] gap-4">
       <Card className="p-3 max-h-[75vh] overflow-y-auto">
         <Input placeholder="Search" value={q} onChange={e => setQ(e.target.value)} className="mb-2" />
+        <div className="mb-2 text-[11px] text-muted-foreground">{list.length} books loaded for audit</div>
         <ul className="space-y-1">
           {list.map(b => (
             <li key={b.id}>
