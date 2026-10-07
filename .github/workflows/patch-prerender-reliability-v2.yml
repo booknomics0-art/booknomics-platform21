@@ -1,0 +1,81 @@
+name: Apply resilient prerender patch
+
+on:
+  push:
+    branches:
+      - fix/public-authority-prerender-20261007
+    paths:
+      - .github/workflows/patch-prerender-reliability-v2.yml
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: fix/public-authority-prerender-20261007
+          fetch-depth: 0
+      - name: Patch English prerender database reads
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          p = Path('scripts/prerender-en-crawl.mjs')
+          s = p.read_text()
+          s = s.replace('const PAGE_SIZE = 250;', 'const PAGE_SIZE = 80;')
+
+          start = s.index('async function api(path) {')
+          end = s.index('\n\nasync function fetchPaged', start)
+          api = '''const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+
+async function api(path, maxAttempts = 4) {
+  let lastError;
+  for (let attempt = 1; attempt <= maxAttempts; attempt++) {
+    try {
+      const response = await fetch(`${SUPABASE_URL}/rest/v1/${path}`, {
+        headers: {
+          apikey: SUPABASE_KEY,
+          Authorization: `Bearer ${SUPABASE_KEY}`,
+          Accept: "application/json",
+        },
+        signal: AbortSignal.timeout(30000),
+      });
+      if (response.ok) return response.json();
+
+      const body = await response.text();
+      const retryable = response.status === 429 || response.status >= 500 || body.includes("57014");
+      lastError = new Error(`prerender-en-crawl: Supabase ${response.status} ${body}`);
+      if (!retryable || attempt === maxAttempts) throw lastError;
+    } catch (error) {
+      lastError = error;
+      const retryable = error?.name === "TimeoutError" || error?.name === "AbortError" || /Supabase (429|5\\d\\d)|57014/.test(String(error?.message || error));
+      if (!retryable || attempt === maxAttempts) throw error;
+    }
+    const delay = 600 * (2 ** (attempt - 1));
+    console.warn(`[prerender-en-crawl] transient Supabase failure; retry ${attempt + 1}/${maxAttempts} after ${delay}ms`);
+    await sleep(delay);
+  }
+  throw lastError;
+}'''
+          s = s[:start] + api + s[end:]
+
+          start = s.index('const [englishPublic, publishedAll] = await Promise.all([')
+          end = s.index('\n\nconst publishedEnglish', start)
+          fetches = '''// Fetch large-content catalogs sequentially so production builds do not pile two
+// expensive ordered queries onto Supabase at the same time.
+const englishPublic = await fetchPaged({ language: "en", statuses: ["published", "published_noindex"] });
+const publishedAll = await fetchPaged({ language: null, statuses: ["published"] });'''
+          s = s[:start] + fetches + s[end:]
+          p.write_text(s)
+          PY
+      - name: Commit patch
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add scripts/prerender-en-crawl.mjs
+          if git diff --cached --quiet; then exit 0; fi
+          git commit -m "fix(seo): make Supabase prerender pagination resilient"
+          git push origin HEAD:fix/public-authority-prerender-20261007
