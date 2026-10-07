@@ -1,0 +1,98 @@
+name: Harden Supabase prerender pagination
+
+on:
+  push:
+    branches:
+      - fix/public-authority-prerender-20261007
+    paths:
+      - .github/workflows/patch-prerender-reliability.yml
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: fix/public-authority-prerender-20261007
+          fetch-depth: 0
+      - name: Reduce query pressure and retry transient database timeouts
+        run: |
+          node <<'NODE'
+          const fs = require('fs');
+          const p = 'scripts/prerender-en-crawl.mjs';
+          let s = fs.readFileSync(p, 'utf8');
+
+          s = s.replace('const PAGE_SIZE = 250;', 'const PAGE_SIZE = 80;');
+
+          const oldApi = `async function api(path) {
+  const response = await fetch(\`${'${SUPABASE_URL}'}/rest/v1/${'${path}'}\`, {
+    headers: {
+      apikey: SUPABASE_KEY,
+      Authorization: \`Bearer ${'${SUPABASE_KEY}'}\`,
+      Accept: "application/json",
+    },
+    signal: AbortSignal.timeout(20000),
+  });
+  if (!response.ok) throw new Error(\`prerender-en-crawl: Supabase ${'${response.status}'} ${'${await response.text()}'}\`);
+  return response.json();
+}`;
+
+          const newApi = `const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+
+async function api(path, maxAttempts = 4) {
+  let lastError;
+  for (let attempt = 1; attempt <= maxAttempts; attempt++) {
+    try {
+      const response = await fetch(\`${'${SUPABASE_URL}'}/rest/v1/${'${path}'}\`, {
+        headers: {
+          apikey: SUPABASE_KEY,
+          Authorization: \`Bearer ${'${SUPABASE_KEY}'}\`,
+          Accept: "application/json",
+        },
+        signal: AbortSignal.timeout(30000),
+      });
+      if (response.ok) return response.json();
+
+      const body = await response.text();
+      const retryable = response.status === 429 || response.status >= 500 || body.includes('57014');
+      lastError = new Error(\`prerender-en-crawl: Supabase ${'${response.status}'} ${'${body}'}\`);
+      if (!retryable || attempt === maxAttempts) throw lastError;
+    } catch (error) {
+      lastError = error;
+      const retryable = error?.name === 'TimeoutError' || error?.name === 'AbortError' || /Supabase (429|5\\d\\d)|57014/.test(String(error?.message || error));
+      if (!retryable || attempt === maxAttempts) throw error;
+    }
+    const delay = 600 * (2 ** (attempt - 1));
+    console.warn(\`[prerender-en-crawl] transient Supabase failure; retry ${'${attempt + 1}'}/${'${maxAttempts}'} after ${'${delay}'}ms\`);
+    await sleep(delay);
+  }
+  throw lastError;
+}`;
+
+          if (!s.includes(oldApi)) throw new Error('api block not found');
+          s = s.replace(oldApi, newApi);
+
+          const oldFetch = `const [englishPublic, publishedAll] = await Promise.all([
+  fetchPaged({ language: "en", statuses: ["published", "published_noindex"] }),
+  fetchPaged({ language: null, statuses: ["published"] }),
+]);`;
+          const newFetch = `// Fetch these catalogs sequentially: both select large text columns and running them
+// concurrently can exceed the database statement timeout during busy production builds.
+const englishPublic = await fetchPaged({ language: "en", statuses: ["published", "published_noindex"] });
+const publishedAll = await fetchPaged({ language: null, statuses: ["published"] });`;
+          if (!s.includes(oldFetch)) throw new Error('parallel fetch block not found');
+          s = s.replace(oldFetch, newFetch);
+
+          fs.writeFileSync(p, s);
+          NODE
+      - name: Commit patch
+        run: |
+          if git diff --quiet -- scripts/prerender-en-crawl.mjs; then exit 0; fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add scripts/prerender-en-crawl.mjs
+          git commit -m "fix(seo): make Supabase prerender pagination resilient"
+          git push origin HEAD:fix/public-authority-prerender-20261007
