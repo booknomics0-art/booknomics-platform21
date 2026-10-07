@@ -8,7 +8,7 @@
     "prebuild": "node --import tsx scripts/check-env.ts && node --import tsx scripts/generate-sitemap.ts",
     "dev": "vite",
     "build": "vite build",
-    "postbuild": "node scripts/prerender-en-crawl.mjs && node scripts/prerender-aeo-geo.mjs && node scripts/guard-aeo-prerender.mjs && node scripts/guard-public-prerender.mjs",
+    "postbuild": "node scripts/prerender-en-crawl.mjs && node scripts/prerender-aeo-geo.mjs && node scripts/guard-aeo-prerender.mjs && node scripts/guard-public-prerender.mjs && node --import tsx scripts/prerender-public-pages.ts && node scripts/guard-public-authority.mjs",
     "build:dev": "vite build --mode development",
     "lint": "eslint .",
     "preview": "vite preview",
@@ -76,7 +76,7 @@
     "remark-gfm": "^4.0.1",
     "sonner": "^1.7.4",
     "tailwind-merge": "^2.6.0",
-    "tailwindcss-animate": "^1.0.7",
+    "tailwindcss-animate": "^1.0.0",
     "vaul": "^0.9.9",
     "zod": "^4.4.3"
   },
