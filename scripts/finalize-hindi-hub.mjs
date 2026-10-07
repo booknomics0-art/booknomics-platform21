@@ -70,7 +70,7 @@ const categorySections = [...groups.entries()]
   })
   .join("\n");
 
-const directory = `<section id="hindi-crawl-directory"><h2>सभी इंडेक्स योग्य हिंदी पुस्तक सारांश</h2><p>इस सूची में ${books.length} गुणवत्ता-अनुमोदित, इंडेक्स योग्य हिंदी पुस्तक पृष्ठ हैं।</p>${categorySections}</section>`;
+const directory = `<section id="hindi-crawl-directory"><h2>सभी इंडेक्स योग्य हिंदी पुस्तक सारांश</h2><p>इस सूची में ${books.length} इंडेक्स योग्य हिंदी पुस्तक पृष्ठ हैं। अधूरे या कम-भरोसे वाले पृष्ठ indexing से बाहर रखे जाते हैं।</p>${categorySections}</section>`;
 
 let html = readFileSync(HINDI_FILE, "utf8");
 const target = /<section><h2>लोकप्रिय हिंदी पुस्तकें<\/h2><ul>[\s\S]*?<\/ul><\/section>/;
