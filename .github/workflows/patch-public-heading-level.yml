@@ -1,0 +1,36 @@
+name: Align public prerender heading levels
+
+on:
+  push:
+    branches:
+      - fix/public-authority-prerender-20261007
+    paths:
+      - .github/workflows/patch-public-heading-level.yml
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: fix/public-authority-prerender-20261007
+      - name: Preserve markdown heading hierarchy under page H1
+        run: |
+          node <<'NODE'
+          const fs = require('fs');
+          const p = 'scripts/prerender-public-pages.ts';
+          let s = fs.readFileSync(p, 'utf8');
+          s = s.replace('const level = Math.min(4, heading[1].length + 1);', 'const level = Math.min(4, Math.max(2, heading[1].length));');
+          fs.writeFileSync(p, s);
+          NODE
+      - name: Commit patch
+        run: |
+          if git diff --quiet -- scripts/prerender-public-pages.ts; then exit 0; fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add scripts/prerender-public-pages.ts
+          git commit -m "fix(seo): preserve blog heading hierarchy"
+          git push origin HEAD:fix/public-authority-prerender-20261007
