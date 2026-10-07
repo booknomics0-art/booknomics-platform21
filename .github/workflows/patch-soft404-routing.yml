@@ -1,0 +1,79 @@
+name: Patch soft-404 routing
+
+on:
+  push:
+    branches:
+      - fix/soft-404-routing-20261007
+    paths:
+      - .github/workflows/patch-soft404-routing.yml
+
+permissions:
+  contents: write
+
+jobs:
+  patch-routing:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: fix/soft-404-routing-20261007
+          fetch-depth: 0
+
+      - name: Replace blanket SPA rewrite with scoped routes
+        run: |
+          node <<'NODE'
+          const fs = require('fs');
+          const path = 'vercel.json';
+          const config = JSON.parse(fs.readFileSync(path, 'utf8'));
+
+          config.rewrites = [
+            { source: '/auth', destination: '/index.html' },
+            { source: '/.lovable/oauth/consent', destination: '/index.html' },
+            { source: '/library', destination: '/index.html' },
+            { source: '/about', destination: '/index.html' },
+            { source: '/dashboard', destination: '/index.html' },
+            { source: '/community', destination: '/index.html' },
+            { source: '/admin', destination: '/index.html' },
+            { source: '/admin/(.*)', destination: '/index.html' },
+            { source: '/resources', destination: '/index.html' },
+            { source: '/resources/7-day-reading-action-tracker', destination: '/index.html' },
+            { source: '/resources/book-summary-template', destination: '/index.html' },
+            { source: '/resources/best-book-summary-websites', destination: '/index.html' },
+            { source: '/resources/best-hindi-book-summaries-guide', destination: '/index.html' },
+            { source: '/request-book', destination: '/index.html' },
+            { source: '/privacy', destination: '/index.html' },
+            { source: '/privacy-policy', destination: '/index.html' },
+            { source: '/terms', destination: '/index.html' },
+            { source: '/disclaimer', destination: '/index.html' },
+            { source: '/copyright', destination: '/index.html' },
+            { source: '/dmca', destination: '/index.html' },
+            { source: '/best-hindi-book-summaries', destination: '/index.html' },
+            { source: '/referrals', destination: '/index.html' },
+            { source: '/paths', destination: '/index.html' },
+            { source: '/paths/(.*)', destination: '/index.html' },
+            { source: '/contact', destination: '/index.html' },
+            { source: '/press', destination: '/index.html' },
+            { source: '/blog', destination: '/index.html' },
+            { source: '/blog/(.*)', destination: '/index.html' }
+          ];
+
+          config.redirects = Array.isArray(config.redirects) ? config.redirects : [];
+          const bookRedirect = { source: '/book/:slug', destination: '/books/:slug', permanent: true };
+          if (!config.redirects.some(r => r.source === bookRedirect.source)) {
+            config.redirects.unshift(bookRedirect);
+          }
+
+          fs.writeFileSync(path, JSON.stringify(config));
+          NODE
+
+      - name: Commit routing patch
+        run: |
+          if git diff --quiet -- vercel.json; then
+            echo "No routing changes needed"
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add vercel.json
+          git commit -m "fix(seo): return real 404s outside valid SPA routes"
+          git push origin HEAD:fix/soft-404-routing-20261007
