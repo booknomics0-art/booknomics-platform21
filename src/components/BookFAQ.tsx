@@ -6,7 +6,14 @@ export interface FaqItem {
   a: string;
 }
 
-/** Auto-build 4 generic FAQ items from book data — used both for visible UI and FAQPage JSON-LD. */
+/**
+ * Build visible, reader-first FAQ items from verified book metadata.
+ *
+ * Keep these answers intentionally conservative: some Booknomics pages are
+ * published_noindex while their long-form editorial review is still in
+ * progress. The FAQ must never promise sections or facts that are not yet
+ * present on the page.
+ */
 export function buildBookFaqs(args: {
   title: string;
   author: string;
@@ -17,46 +24,48 @@ export function buildBookFaqs(args: {
 }): FaqItem[] {
   const { title, author, category, readingTime, isHindi, tagline } = args;
   const hook = (tagline || "").trim().replace(/\s+/g, " ").slice(0, 220);
+
   if (isHindi) {
     return [
       {
         q: `${title} किताब किस बारे में है?`,
         a: hook
-          ? `${title} (${author}) — ${hook}. यह ${category} श्रेणी की एक लोकप्रिय किताब है, और Booknomics पर आप इसका हिंदी सारांश, मुख्य विचार, गहन विश्लेषण और 7-दिन एक्शन प्लान मुफ़्त में पढ़ सकते हैं।`
-          : `${title} ${author} द्वारा लिखी गई एक ${category} किताब है। Booknomics पर इसका मुफ़्त हिंदी सारांश, मुख्य विचार, गहन विश्लेषण और 7-दिन एक्शन प्लान उपलब्ध है।`,
+          ? `${title} (${author}) — ${hook}. यह ${category} श्रेणी की कृति है। इस पेज पर Booknomics इसका हिंदी सारांश और विश्लेषण प्रस्तुत करता है; जहाँ संपादकीय सत्यापन जारी है, सामग्री को उसी के अनुसार अपडेट किया जाता है।`
+          : `${title} ${author} की ${category} श्रेणी की कृति है। इस पेज पर Booknomics इसका हिंदी सारांश, संदर्भ और विश्लेषण प्रस्तुत करता है।`,
       },
       {
-        q: `${title} का सारांश पढ़ने में कितना समय लगता है?`,
-        a: `Booknomics पर ${title} का हिंदी सारांश लगभग ${readingTime} मिनट में पढ़ा जा सकता है, जिसमें मुख्य अंश, गहन विश्लेषण और एक्शन प्लान शामिल हैं।`,
+        q: `${title} का Booknomics पेज पढ़ने में कितना समय लगता है?`,
+        a: `इस पेज का वर्तमान अनुमानित पढ़ने का समय लगभग ${readingTime} मिनट है। सामग्री के विस्तार और संपादकीय अपडेट के साथ यह समय बदल सकता है।`,
       },
       {
-        q: `${title} के मुख्य सबक क्या हैं?`,
-        a: `${title} के मुख्य सबक "मुख्य अवधारणाएँ" अनुभाग में दिए गए हैं — इनमें ${author} के सबसे शक्तिशाली विचार, उनके पीछे का तर्क, और रोज़मर्रा की ज़िंदगी में उनका उपयोग कैसे करें, शामिल है।`,
+        q: `${title} के बारे में इस पेज पर क्या मिलेगा?`,
+        a: `Booknomics का लक्ष्य ${title} के बारे में कृति-विशिष्ट हिंदी सारांश, प्रमुख विचार या पात्र, थीम, संदर्भ और विश्लेषण देना है। केवल वही विवरण रखा जाता है जिसे उपलब्ध स्रोतों और संपादकीय जाँच से समर्थित किया जा सके।`,
       },
       {
-        q: `क्या ${title} का सारांश Booknomics पर मुफ़्त है?`,
-        a: `हाँ — ${title} का पूरा सारांश, मुख्य विचार, reflection questions और 7-दिन एक्शन प्लान Booknomics पर पूरी तरह मुफ़्त है। पढ़ने के लिए किसी सब्सक्रिप्शन की ज़रूरत नहीं है।`,
+        q: `क्या यह ${title} का पूरा हिंदी अनुवाद है?`,
+        a: `नहीं। यह मूल पुस्तक का पूरा अनुवाद या प्रतिस्थापन नहीं है। Booknomics स्वतंत्र, शोध-आधारित हिंदी सारांश और विश्लेषण देता है और कॉपीराइटेड मूल पाठ को पूर्ण रूप से पुनर्प्रकाशित नहीं करता।`,
       },
     ];
   }
+
   return [
     {
       q: `What is ${title} about?`,
       a: hook
-        ? `${title} by ${author} — ${hook}. It's a popular ${category} book, and on Booknomics you can read a free summary with key ideas, deep analysis, and a 7-day action plan.`
-        : `${title} is a ${category} book by ${author}. On Booknomics you'll find a free summary with the key ideas, deep analysis, reflection prompts and a 7-day action plan.`,
+        ? `${title} by ${author} — ${hook}. It is a ${category} work. This Booknomics page provides a summary and analysis, with content updated as editorial verification is completed.`
+        : `${title} is a ${category} work by ${author}. This Booknomics page provides a summary, context, and analysis.`,
     },
     {
-      q: `How long does it take to read the ${title} summary on Booknomics?`,
-      a: `The ${title} summary on Booknomics takes about ${readingTime} minutes to read, including key insights, deep analysis and the action plan.`,
+      q: `How long does this ${title} page take to read?`,
+      a: `The current estimated reading time is about ${readingTime} minutes. It may change as the page is expanded or editorially updated.`,
     },
     {
-      q: `What are the main lessons of ${title}?`,
-      a: `The main lessons are organised in the "Core concepts" section of the summary — the most actionable ideas from ${author}, the reasoning behind them, and how to apply them in daily life.`,
+      q: `What does the Booknomics page for ${title} include?`,
+      a: `Booknomics aims to provide a work-specific summary, key ideas or characters, themes, context, and analysis. Details are kept only when they can be supported by available sources and editorial review.`,
     },
     {
-      q: `Is the ${title} summary on Booknomics free?`,
-      a: `Yes — the full ${title} summary, key ideas, reflection prompts and 7-day action plan are completely free on Booknomics. No subscription needed.`,
+      q: `Is this a full copy or translation of ${title}?`,
+      a: `No. Booknomics provides an independent research-based summary and analysis, not a substitute for the complete copyrighted book or an authorised full translation.`,
     },
   ];
 }

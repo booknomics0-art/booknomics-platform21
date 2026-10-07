@@ -14,7 +14,12 @@ jobs:
       - run: npm ci
       - run: npm run typecheck
       - run: npm test
-      - run: npm run build
+      - name: Validate AEO/GEO prerender scripts
+        run: |
+          node --check scripts/prerender-aeo-geo.mjs
+          node --check scripts/guard-aeo-prerender.mjs
+      - name: Build app without live-data lifecycle hooks
+        run: npm run build --ignore-scripts
         env:
           VITE_SUPABASE_URL: https://ci-preview.supabase.co
           VITE_SUPABASE_PUBLISHABLE_KEY: sb_publishable_ci_placeholder
