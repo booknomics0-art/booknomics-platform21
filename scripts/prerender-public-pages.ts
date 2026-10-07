@@ -53,7 +53,7 @@ function markdownToHtml(markdown = "") {
     const heading = line.match(/^(#{1,4})\s+(.+)$/);
     if (heading) {
       flushParagraph(); closeList();
-      const level = Math.min(4, heading[1].length + 1);
+      const level = Math.min(4, Math.max(2, heading[1].length));
       out.push(`<h${level}>${inlineMarkdown(heading[2])}</h${level}>`);
       continue;
     }
