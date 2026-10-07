@@ -10,14 +10,14 @@ import { supabase } from "@/integrations/supabase/client";
 import { trackSearch } from "@/lib/analytics";
 
 const FEATURED_HINDI_BOOKS = [
-  { title: "गोदान", slug: "godan-munshi-premchand-saransh" },
-  { title: "गुनाहों का देवता", slug: "gunahon-ka-devta-dharamvir-bharti-saransh" },
-  { title: "कामायनी", slug: "kamayani-jaishankar-prasad-saransh" },
-  { title: "गबन", slug: "gaban-munshi-premchand-saransh" },
-  { title: "चंद्रकांता", slug: "chandrakanta-devakinandan-khatri-saransh" },
-  { title: "चरित्रहीन", slug: "charitraheen-sharatchandra-saransh" },
-  { title: "तमस", slug: "tamas-bhisham-sahni-saransh" },
-  { title: "आधे-अधूरे", slug: "adhe-adhure-mohan-rakesh-saransh" },
+  { title: "रक्तकरबी", slug: "रक्तकरबी" },
+  { title: "ढाई घर", slug: "ढाई-घर-गिरिराज-किशोर-saransh" },
+  { title: "अंतराल", slug: "अंतराल-नरेनदर-कोहली-सारांश" },
+  { title: "अधिकार", slug: "अधिकार-नरेनदर-कोहली-सारांश" },
+  { title: "अँधेरे के जुगनू", slug: "अंधेरे-के-जुगनू-रांगेय-राघव-सारांश" },
+  { title: "अभ्युदय", slug: "अभयुदय-नरेनदर-कोहली-सारांश" },
+  { title: "अवसर", slug: "अवसर-नरेनदर-कोहली-सारांश" },
+  { title: "अहिल्याबाई", slug: "अहिलयाबाई-वृंदावनलाल-वरमा-सारांश" },
 ] as const;
 
 const Hindi = () => {
@@ -51,7 +51,7 @@ const Hindi = () => {
           .select("category")
           .eq("language", "hi")
           .eq("is_draft", false)
-          .in("status", ["published", "published_noindex"])
+          .eq("status", "published")
           .order("category")
           .range(from, from + batchSize - 1);
         if (error || cancelled) return;
@@ -85,7 +85,7 @@ const Hindi = () => {
         .select("id,slug,title,author,category,cover_color,cover_url,tagline,rating,reading_time", { count: "exact" })
         .eq("language", "hi")
         .eq("is_draft", false)
-        .in("status", ["published", "published_noindex"]);
+        .eq("status", "published");
 
       if (category !== "सभी") request = request.eq("category", category);
 
@@ -120,19 +120,20 @@ const Hindi = () => {
   };
 
   // Keep meaningful crawl targets in the initial HTML/JSON-LD while the
-  // client-side Supabase request is still resolving.
+  // client-side Supabase request is still resolving. Featured fallback books
+  // are kept in sync with the current published/indexable Hindi set.
   const collectionItems = books.length > 0 ? books : FEATURED_HINDI_BOOKS;
   const collectionLd = {
     "@context": "https://schema.org",
     "@type": "CollectionPage",
     name: "Hindi Book Summaries",
-    url: "https://booknomics.com/hindi",
+    url: "https://www.booknomics.com/hindi",
     mainEntity: {
       "@type": "ItemList",
       itemListElement: collectionItems.slice(0, 30).map((b, i) => ({
         "@type": "ListItem",
         position: i + 1,
-        url: `https://booknomics.com/books/${b.slug}`,
+        url: `https://www.booknomics.com/books/${b.slug}`,
         name: b.title,
       })),
     },
@@ -142,8 +143,8 @@ const Hindi = () => {
     <Layout>
       <SEO
         title="हिंदी पुस्तक सारांश — Best Hindi Book Summaries | Booknomics"
-        description="ओशो, चाणक्य, प्रेमचंद, महादेवी वर्मा और अन्य लेखकों की किताबों के विस्तृत सारांश और मुख्य विचार।"
-        canonical="https://booknomics.com/hindi"
+        description="हिंदी में चुनी हुई किताबों के विस्तृत सारांश, मुख्य विचार, गहन विश्लेषण और व्यावहारिक सीख Booknomics पर पढ़ें।"
+        canonical="https://www.booknomics.com/hindi"
         lang="hi"
         jsonLd={collectionLd}
         breadcrumbs={[{ name: "Home", path: "/" }, { name: "Hindi", path: "/hindi" }]}
