@@ -5,6 +5,7 @@ import "./index.css";
 import "./pagespeed.css";
 import "./fonts.css";
 import "./editorial.css";
+import "./homepage-refinements.css";
 import { clearStaleChunkRefreshParam, recoverFromStaleChunk } from "@/lib/chunkRecovery";
 
 window.addEventListener("vite:preloadError", (event) => {

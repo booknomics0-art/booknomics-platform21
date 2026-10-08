@@ -1,0 +1,271 @@
+/* Homepage refinements: compact flow + premium readable-books shelf. */
+
+.bn-search-section-compact {
+  padding-bottom: clamp(2.25rem, 4vw, 3.75rem);
+}
+
+.bn-section-after-search {
+  padding-top: clamp(1.5rem, 3vw, 3rem);
+}
+
+.bn-section.bn-readable-section {
+  position: relative;
+  overflow: hidden;
+  padding: clamp(3rem, 5vw, 5rem) clamp(1.25rem, 3vw, 3rem);
+  margin-top: clamp(1.5rem, 3vw, 3rem);
+  margin-bottom: clamp(4rem, 7vw, 7rem);
+  border: 1px solid hsl(var(--primary) / .28);
+  border-radius: clamp(1.6rem, 3vw, 2.8rem);
+  background:
+    radial-gradient(circle at 88% 0%, hsl(var(--primary) / .18), transparent 24rem),
+    radial-gradient(circle at 8% 100%, hsl(var(--primary) / .08), transparent 26rem),
+    hsl(var(--foreground));
+  color: hsl(var(--background));
+  box-shadow: 0 32px 90px -64px hsl(var(--foreground) / .75);
+}
+
+.bn-readable-section::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: .12;
+  background-image:
+    linear-gradient(hsl(var(--background) / .08) 1px, transparent 1px),
+    linear-gradient(90deg, hsl(var(--background) / .08) 1px, transparent 1px);
+  background-size: 72px 72px;
+  mask-image: linear-gradient(to bottom, black, transparent 82%);
+}
+
+.bn-readable-heading {
+  position: relative;
+  z-index: 1;
+  margin-bottom: clamp(2.25rem, 4vw, 3.5rem);
+}
+
+.bn-readable-heading > div {
+  max-width: 50rem;
+}
+
+.bn-readable-heading h2 {
+  color: hsl(var(--background));
+}
+
+.bn-readable-heading p {
+  color: hsl(var(--background) / .64);
+}
+
+.bn-readable-section .bn-text-link {
+  color: hsl(var(--background) / .74);
+}
+
+.bn-readable-section .bn-text-link:hover {
+  color: hsl(var(--primary-glow));
+}
+
+.bn-readable-grid {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: clamp(1.5rem, 2.4vw, 2.4rem) clamp(1rem, 1.8vw, 1.6rem);
+}
+
+.bn-readable-card {
+  min-width: 0;
+  display: block;
+  color: inherit;
+  text-decoration: none;
+}
+
+.bn-readable-cover-wrap {
+  position: relative;
+  overflow: visible;
+  isolation: isolate;
+}
+
+.bn-readable-cover-wrap .bn-book-card-cover {
+  border: 1px solid hsl(var(--background) / .12);
+  border-radius: 1rem;
+  background: hsl(25 15% 10%);
+  box-shadow:
+    0 26px 60px -32px hsl(0 0% 0% / .92),
+    0 10px 24px -14px hsl(0 0% 0% / .7);
+  transition: transform .34s cubic-bezier(.2,.8,.2,1), border-color .34s ease, box-shadow .34s ease;
+}
+
+.bn-readable-cover-wrap .bn-book-card-cover img {
+  object-fit: contain;
+  background: hsl(25 15% 10%);
+  image-rendering: auto;
+  transition: transform .4s cubic-bezier(.2,.8,.2,1);
+}
+
+.bn-readable-card:hover .bn-book-card-cover,
+.bn-readable-card:focus-visible .bn-book-card-cover {
+  transform: translateY(-7px);
+  border-color: hsl(var(--primary) / .7);
+  box-shadow:
+    0 34px 74px -34px hsl(0 0% 0% / .95),
+    0 12px 30px -16px hsl(var(--primary) / .25);
+}
+
+.bn-readable-card:hover .bn-book-card-cover img {
+  transform: scale(1.015);
+}
+
+.bn-readable-rank {
+  position: absolute;
+  z-index: 3;
+  right: .65rem;
+  bottom: .65rem;
+  display: inline-flex;
+  min-width: 2.1rem;
+  height: 2.1rem;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid hsl(var(--primary) / .5);
+  border-radius: 999px;
+  background: hsl(var(--foreground) / .88);
+  color: hsl(var(--primary-glow));
+  font-size: .64rem;
+  font-weight: 800;
+  letter-spacing: .12em;
+  backdrop-filter: blur(10px);
+}
+
+.bn-readable-copy {
+  padding: 1rem .15rem 0;
+}
+
+.bn-readable-copy h3 {
+  color: hsl(var(--background));
+  font-size: clamp(1.08rem, 1.55vw, 1.42rem);
+  line-height: 1.2 !important;
+  letter-spacing: -.025em !important;
+  overflow-wrap: anywhere;
+}
+
+.bn-readable-copy > p {
+  margin-top: .42rem;
+  color: hsl(var(--background) / .58);
+  font-size: .82rem;
+  line-height: 1.45;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.bn-readable-meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: .75rem;
+  margin-top: .78rem;
+  padding-top: .72rem;
+  border-top: 1px solid hsl(var(--background) / .11);
+  color: hsl(var(--background) / .48);
+  font-size: .7rem;
+  font-weight: 600;
+}
+
+@media (max-width: 1023px) {
+  .bn-readable-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 767px) {
+  .bn-search-section-compact {
+    padding-top: 3.2rem;
+    padding-bottom: 2.25rem;
+  }
+
+  .bn-section-after-search {
+    padding-top: 1.5rem;
+  }
+
+  .bn-section.bn-readable-section {
+    width: calc(100% - 1rem);
+    padding: 2.5rem .85rem 2.75rem;
+    margin-top: 1rem;
+    margin-bottom: 3.5rem;
+    border-radius: 1.5rem;
+  }
+
+  .bn-readable-heading {
+    padding-inline: .25rem;
+    margin-bottom: 1.8rem;
+  }
+
+  .bn-readable-heading h2 {
+    font-size: clamp(2.2rem, 11vw, 3.25rem);
+  }
+
+  .bn-readable-heading p {
+    margin-top: .8rem;
+    font-size: .92rem;
+    line-height: 1.6;
+  }
+
+  .bn-readable-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1.45rem .75rem;
+  }
+
+  .bn-readable-cover-wrap .bn-book-card-cover {
+    border-radius: .75rem;
+  }
+
+  .bn-readable-rank {
+    right: .45rem;
+    bottom: .45rem;
+    min-width: 1.75rem;
+    height: 1.75rem;
+    font-size: .56rem;
+  }
+
+  .bn-readable-copy {
+    padding-top: .72rem;
+  }
+
+  .bn-readable-copy h3 {
+    font-size: .98rem;
+    line-height: 1.22 !important;
+  }
+
+  .bn-readable-copy > p {
+    margin-top: .32rem;
+    font-size: .72rem;
+  }
+
+  .bn-readable-meta {
+    gap: .4rem;
+    margin-top: .58rem;
+    padding-top: .55rem;
+    font-size: .62rem;
+  }
+}
+
+@media (max-width: 380px) {
+  .bn-readable-grid {
+    gap-inline: .6rem;
+  }
+
+  .bn-readable-copy h3 {
+    font-size: .92rem;
+  }
+
+  .bn-readable-meta {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: .18rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bn-readable-cover-wrap .bn-book-card-cover,
+  .bn-readable-cover-wrap .bn-book-card-cover img {
+    transition-duration: .01ms !important;
+  }
+}
