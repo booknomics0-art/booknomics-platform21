@@ -4,7 +4,6 @@ import { ThemeToggle } from "./ThemeToggle";
 import { Button } from "@/components/ui/button";
 import { useAdmin } from "@/hooks/useAdmin";
 import { TierSimulator } from "./TierSimulator";
-import { usePricingModal } from "./PricingModal";
 import { useTier } from "@/hooks/useTier";
 import { FollowMenu } from "./FollowMenu";
 
@@ -12,7 +11,6 @@ export const Navbar = () => {
   const { user, loading, signOut, isAdmin } = useAdmin();
   const showAdmin = !loading && isAdmin;
   const navigate = useNavigate();
-  const openPricing = usePricingModal();
   const { isPremium, tier } = useTier();
 
   const linkCls = ({ isActive }: { isActive: boolean }) =>
@@ -45,15 +43,6 @@ export const Navbar = () => {
         <div className="flex items-center gap-2">
           <div className="hidden xl:block"><FollowMenu /></div>
           {showAdmin && <div className="hidden md:block"><TierSimulator /></div>}
-          {!isPremium && (
-            <Button
-              onClick={openPricing}
-              size="sm"
-              className="bn-premium-button hidden lg:inline-flex gap-1.5 rounded-full"
-            >
-              <Crown className="h-4 w-4 text-primary" /> Premium
-            </Button>
-          )}
           {isPremium && (
             <span className="hidden sm:inline-flex items-center gap-1 rounded-full bg-primary/10 text-primary border border-primary/25 px-2.5 py-1 text-[11px] font-semibold uppercase tracking-wider">
               <Crown className="h-3 w-3" /> {tier}
