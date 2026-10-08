@@ -9,21 +9,14 @@ import { PageLoader } from "@/components/LoadingSpinner";
 import Index from "./pages/Index.tsx";
 import { PricingModalProvider } from "@/components/PricingModal";
 import { capturePendingReferral } from "@/lib/referrals";
-
-const LAZY_RETRY_KEY = "booknomics-lazy-route-retry";
+import { isStaleChunkError, recoverFromStaleChunk } from "@/lib/chunkRecovery";
 
 const lazy = <T extends ComponentType<any>>(importer: () => Promise<{ default: T }>) =>
   reactLazy(async () => {
     try {
-      const mod = await importer();
-      if (typeof window !== "undefined") sessionStorage.removeItem(LAZY_RETRY_KEY);
-      return mod;
+      return await importer();
     } catch (error) {
-      const message = error instanceof Error ? error.message : String(error);
-      const staleChunk = /dynamically imported module|module script|chunkloaderror|loading chunk|failed to fetch/i.test(message);
-      if (typeof window !== "undefined" && staleChunk && !sessionStorage.getItem(LAZY_RETRY_KEY)) {
-        sessionStorage.setItem(LAZY_RETRY_KEY, "1");
-        window.location.reload();
+      if (isStaleChunkError(error) && recoverFromStaleChunk()) {
         return new Promise<{ default: T }>(() => {});
       }
       throw error;

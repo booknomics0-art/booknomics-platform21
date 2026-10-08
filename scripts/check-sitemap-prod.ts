@@ -10,7 +10,7 @@ Object.assign(
   { ...loadEnv(process.env.NODE_ENV || "production", process.cwd(), ""), ...process.env },
 );
 
-const SITE = "https://booknomics.com";
+const SITE = "https://www.booknomics.com";
 const SITEMAP_URL = `${SITE}/sitemap.xml`;
 const BOOKS_SITEMAP_URL = `${SITE}/books-sitemap.xml`;
 const MIN_BOOKS = Math.max(1, Number(process.env.SITEMAP_MIN_BOOKS || "50") || 50);

@@ -12,22 +12,20 @@ import {
 } from "@/components/ui/accordion";
 import { SEO } from "@/components/SEO";
 import { supabase } from "@/integrations/supabase/client";
+import { slugifyCategory } from "@/lib/categorySlug";
 
 const FEATURED_SLUGS = [
-  "atomic-habits",
-  "deep-work",
-  "thinking-fast-and-slow",
-  "the-7-habits",
-  "sapiens",
-  "man-search-meaning",
-  "the-power-of-now",
-  "rich-dad-poor-dad",
-  "wings-of-fire",
-  "the-alchemist",
+  "atomic-habits-james-clear-summary",
+  "deep-work-cal-newport-summary",
+  "thinking-fast-and-slow-daniel-kahneman-summary",
+  "the-7-habits-of-highly-effective-people-stephen-r-covey-summary",
+  "man-s-search-for-meaning-viktor-e-frankl-summary",
+  "rich-dad-poor-dad-robert-t-kiyosaki-with-sharon-lechter-summary",
+  "wings-of-fire-a-p-j-abdul-kalam-summary",
 ];
 
 const CATEGORIES = ["Self-Help", "Philosophy", "Business", "Psychology", "Spirituality", "History"];
-const PAGE_URL = "https://booknomics.com/english";
+const PAGE_URL = "https://www.booknomics.com/english";
 
 const FAQS = [
   {
@@ -52,7 +50,7 @@ const English = () => {
   const [books, setBooks] = useState<BookCardData[]>([]);
 
   useEffect(() => {
-    const fields = "id,slug,title,author,category,cover_color,cover_url,tagline,rating,reading_time" as const;
+    const fields = "id,slug,seo_slug,title,author,category,cover_color,cover_url,tagline,rating,reading_time" as const;
     Promise.all([
       supabase
         .from("books")
@@ -70,7 +68,7 @@ const English = () => {
         .order("title")
         .limit(24),
     ]).then(([featuredResult, fallbackResult]) => {
-      const all = [...(featuredResult.data ?? []), ...(fallbackResult.data ?? [])] as BookCardData[];
+      const all = [...(featuredResult.data ?? []), ...(fallbackResult.data ?? [])].map((b: any) => ({ ...b, slug: b.seo_slug || b.slug })) as BookCardData[];
       const bySlug = new Map(all.map((b) => [b.slug, b]));
       const featured = FEATURED_SLUGS.map((slug) => bySlug.get(slug)).filter(Boolean) as BookCardData[];
       const rest = all.filter((b) => !FEATURED_SLUGS.includes(b.slug));
@@ -83,7 +81,7 @@ const English = () => {
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
     itemListElement: [
-      { "@type": "ListItem", position: 1, name: "Home", item: "https://booknomics.com/" },
+      { "@type": "ListItem", position: 1, name: "Home", item: "https://www.booknomics.com/" },
       { "@type": "ListItem", position: 2, name: "English Book Summaries", item: PAGE_URL },
     ],
   };
@@ -98,7 +96,7 @@ const English = () => {
       itemListElement: books.slice(0, 20).map((b, i) => ({
         "@type": "ListItem",
         position: i + 1,
-        url: `https://booknomics.com/books/${b.slug}`,
+        url: `https://www.booknomics.com/books/${b.slug}`,
         name: b.title,
       })),
     },
@@ -210,7 +208,7 @@ const English = () => {
           {CATEGORIES.map((cat) => (
             <Link
               key={cat}
-              to={`/browse?category=${encodeURIComponent(cat)}&lang=en`}
+              to={`/category/${slugifyCategory(cat)}`}
               className="bg-card border border-border rounded-xl p-3 md:p-5 hover:border-primary hover:shadow-paper transition-all text-center font-serif text-sm md:text-lg"
             >
               {cat}

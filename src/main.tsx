@@ -3,16 +3,11 @@ import { HelmetProvider } from "react-helmet-async";
 import App from "./App.tsx";
 import "./index.css";
 import "./pagespeed.css";
+import { clearStaleChunkRefreshParam, recoverFromStaleChunk } from "@/lib/chunkRecovery";
 
-const PRELOAD_RELOAD_KEY = "booknomics-vite-preload-reload";
 window.addEventListener("vite:preloadError", (event) => {
   event.preventDefault();
-  const now = Date.now();
-  const lastReload = Number(sessionStorage.getItem(PRELOAD_RELOAD_KEY) || "0");
-  if (now - lastReload > 10_000) {
-    sessionStorage.setItem(PRELOAD_RELOAD_KEY, String(now));
-    window.location.reload();
-  }
+  recoverFromStaleChunk();
 });
 
 const root = document.getElementById("root");
@@ -33,3 +28,7 @@ if (root) {
     </HelmetProvider>
   );
 }
+
+// A successful boot means the cache-busting navigation did its job. Remove the
+// temporary query parameter without another network request so public URLs stay clean.
+clearStaleChunkRefreshParam();

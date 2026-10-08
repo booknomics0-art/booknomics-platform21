@@ -242,22 +242,22 @@ const BookDetail = () => {
   useEffect(() => {
     if (!book) return;
     supabase.from("books")
-      .select("id,slug,title,author,category,cover_color,cover_url,tagline,rating,reading_time")
+      .select("id,slug,seo_slug,title,author,category,cover_color,cover_url,tagline,rating,reading_time")
       .eq("is_draft", false)
       .eq("status", "published")
       .eq("category", book.category)
       .neq("id", book.id)
       .limit(6)
-      .then(({ data }) => setRelated(data ?? []));
+      .then(({ data }) => setRelated((data ?? []).map((row: any) => ({ ...row, slug: row.seo_slug || row.slug }))));
     supabase.from("books")
-      .select("id,slug,title,author,category,cover_color,cover_url,tagline,rating,reading_time")
+      .select("id,slug,seo_slug,title,author,category,cover_color,cover_url,tagline,rating,reading_time")
       .eq("is_draft", false)
       .eq("status", "published")
       .eq("language", book.language)
       .neq("id", book.id)
       .neq("category", book.category)
       .limit(4)
-      .then(({ data }) => setSameLang(data ?? []));
+      .then(({ data }) => setSameLang((data ?? []).map((row: any) => ({ ...row, slug: row.seo_slug || row.slug }))));
   }, [book]);
 
   useEffect(() => {
@@ -279,13 +279,13 @@ const BookDetail = () => {
   useEffect(() => {
     if (!book) return;
     supabase.from("books")
-      .select("title,slug")
+      .select("title,slug,seo_slug")
       .eq("is_draft", false)
       .eq("status", "published")
       .eq("language", book.language)
       .neq("id", book.id)
       .limit(120)
-      .then(({ data }) => setLinkTargets((data ?? []) as LinkTarget[]));
+      .then(({ data }) => setLinkTargets((data ?? []).map((row: any) => ({ title: row.title, slug: row.seo_slug || row.slug })) as LinkTarget[]));
   }, [book]);
 
   // Only explicit database relationships may create language alternates.
@@ -425,11 +425,11 @@ const BookDetail = () => {
   const seoDesc = bookAny.meta_description || (isHi ? fallbackDesc.slice(0, 158) : (rawDesc ? rawDesc.slice(0, 155) : fallbackDesc));
   const canonicalSlug = (bookAny.seo_slug as string | null) || book.slug;
   const seoPath = `/books/${canonicalSlug}`;
-  const canonical = `https://booknomics.com${seoPath}`;
+  const canonical = `https://www.booknomics.com${seoPath}`;
   const ogImg = bookAny.og_image || book.cover_url || undefined;
   const readMins = book.reading_time ?? 12;
   const absImage = book.cover_url
-    ? (book.cover_url.startsWith("http") ? book.cover_url : `https://booknomics.com${book.cover_url.startsWith("/") ? "" : "/"}${book.cover_url}`)
+    ? (book.cover_url.startsWith("http") ? book.cover_url : `https://www.booknomics.com${book.cover_url.startsWith("/") ? "" : "/"}${book.cover_url}`)
     : undefined;
   const bookLd: Record<string, any> = {
     "@context": "https://schema.org",
@@ -448,8 +448,8 @@ const BookDetail = () => {
     description: seoDesc,
     inLanguage: isHi ? "hi" : "en",
     mainEntityOfPage: { "@type": "WebPage", "@id": canonical },
-    author: { "@type": "Organization", name: "Booknomics", url: "https://booknomics.com" },
-    publisher: { "@type": "Organization", name: "Booknomics", url: "https://booknomics.com" },
+    author: { "@type": "Organization", name: "Booknomics", url: "https://www.booknomics.com" },
+    publisher: { "@type": "Organization", name: "Booknomics", url: "https://www.booknomics.com" },
     about: {
       "@type": "Book",
       name: book.title,
@@ -458,20 +458,20 @@ const BookDetail = () => {
     timeRequired: `PT${readMins}M`,
     ...(absImage ? { image: [absImage] } : {}),
   };
-  const categoryCrumb = `https://booknomics.com/category/${slugifyCategory(book.category)}`;
+  const categoryCrumb = `https://www.booknomics.com/category/${slugifyCategory(book.category)}`;
   const breadcrumbLd = {
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
     itemListElement: [
-      { "@type": "ListItem", position: 1, name: "Home", item: "https://booknomics.com/" },
-      { "@type": "ListItem", position: 2, name: isHi ? "Hindi" : "Browse", item: isHi ? "https://booknomics.com/hindi" : "https://booknomics.com/browse" },
+      { "@type": "ListItem", position: 1, name: "Home", item: "https://www.booknomics.com/" },
+      { "@type": "ListItem", position: 2, name: isHi ? "Hindi" : "Browse", item: isHi ? "https://www.booknomics.com/hindi" : "https://www.booknomics.com/browse" },
       { "@type": "ListItem", position: 3, name: book.category, item: categoryCrumb },
       { "@type": "ListItem", position: 4, name: book.title, item: canonical },
     ],
   };
 
   // hreflang pairs: when a counterpart edition exists, pair EN ⇄ HI; x-default = English version.
-  const counterpartUrl = counterpart ? `https://booknomics.com/books/${counterpart.slug}` : null;
+  const counterpartUrl = counterpart ? `https://www.booknomics.com/books/${counterpart.slug}` : null;
   const hreflangAlternates = counterpartUrl
     ? {
         en: isHi ? counterpartUrl : canonical,
@@ -527,7 +527,7 @@ const BookDetail = () => {
               </li>
               <li aria-hidden>›</li>
               <li>
-                <Link to={`/browse?category=${encodeURIComponent(book.category)}`} className="hover:text-primary">
+                <Link to={`/category/${slugifyCategory(book.category)}`} className="hover:text-primary">
                   {book.category}
                 </Link>
               </li>

@@ -82,7 +82,7 @@ const Hindi = () => {
     (async () => {
       let request = supabase
         .from("books")
-        .select("id,slug,title,author,category,cover_color,cover_url,tagline,rating,reading_time", { count: "exact" })
+        .select("id,slug,seo_slug,title,author,category,cover_color,cover_url,tagline,rating,reading_time", { count: "exact" })
         .eq("language", "hi")
         .eq("is_draft", false)
         .eq("status", "published");
@@ -102,7 +102,7 @@ const Hindi = () => {
         setTotalCount(0);
         setLoadError(error.message);
       } else {
-        setBooks(data ?? []);
+        setBooks((data ?? []).map((row: any) => ({ ...row, slug: row.seo_slug || row.slug })));
         setTotalCount(count ?? 0);
         if (q && visibleCount === 48) trackSearch(q, count ?? 0, "hindi_library");
       }
