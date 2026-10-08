@@ -1,0 +1,78 @@
+name: One-time canonical redirect sync
+
+on:
+  push:
+    branches:
+      - fix/google-ranking-render-stability-20261008
+
+permissions:
+  contents: write
+
+jobs:
+  sync:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout branch
+        uses: actions/checkout@v4
+        with:
+          ref: fix/google-ranking-render-stability-20261008
+          fetch-depth: 0
+
+      - name: Add missing hosting redirects
+        shell: bash
+        run: |
+          node <<'NODE'
+          const fs = require('fs');
+          const path = 'vercel.json';
+          const config = JSON.parse(fs.readFileSync(path, 'utf8'));
+          const required = [
+            {
+              source: '/books/chand-ka-muh-dharamvir-bharti-saransh',
+              destination: '/books/chand-ka-muh-tedha-hai-muktibodh-saransh',
+              permanent: true,
+            },
+            {
+              source: '/books/dharti-dhan-na-apan-bhisham-sahni-saransh',
+              destination: '/books/dharti-dhan-na-apna-jagdish-chandra-saransh',
+              permanent: true,
+            },
+            {
+              source: '/books/kalam-ka-sipahi-shivmangal-singh-suman-saransh',
+              destination: '/books/kalam-ka-sipahi-amrit-rai-saransh',
+              permanent: true,
+            },
+            {
+              source: '/books/kavita-ke-bahane-dharamvir-bharti-saransh',
+              destination: '/books/kavita-ke-bahane-kunwar-narayan-saransh',
+              permanent: true,
+            },
+          ];
+
+          config.redirects = Array.isArray(config.redirects) ? config.redirects : [];
+          const bySource = new Map(config.redirects.map((r, i) => [r.source, i]));
+          for (const redirect of required) {
+            const i = bySource.get(redirect.source);
+            if (i === undefined) {
+              config.redirects.push(redirect);
+              bySource.set(redirect.source, config.redirects.length - 1);
+            } else {
+              config.redirects[i] = redirect;
+            }
+          }
+          fs.writeFileSync(path, JSON.stringify(config));
+          NODE
+
+      - name: Remove one-time workflow and commit
+        shell: bash
+        run: |
+          rm -f .github/workflows/sync-vercel-redirects-once.yml
+          git config user.name 'booknomics-seo-bot'
+          git config user.email 'booknomics0@gmail.com'
+          git add vercel.json .github/workflows/sync-vercel-redirects-once.yml
+          if git diff --cached --quiet; then
+            echo 'No redirect changes required.'
+            exit 0
+          fi
+          git commit -m 'Sync missing canonical book redirects'
+          git push origin HEAD:fix/google-ranking-render-stability-20261008
