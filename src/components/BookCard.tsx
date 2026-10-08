@@ -138,7 +138,7 @@ export const BookCover = ({ book, size = "md", priority = false }: { book: BookC
     const w2 = w1 * 2;
     const h1 = Math.round(w1 * 1.5);
     return (
-      <div className={`${sizes[size]} w-full rounded-md shadow-cover overflow-hidden relative bg-muted`}>
+      <div className={`bn-book-card-cover ${sizes[size]} w-full rounded-md shadow-cover overflow-hidden relative bg-muted`}>
         <img
           src={toRender(w1)}
           srcSet={isSupabase ? `${toRender(w1)} 1x, ${toRender(w2)} 2x` : undefined}
@@ -157,15 +157,15 @@ export const BookCover = ({ book, size = "md", priority = false }: { book: BookC
   }
 
   return (
-    <div className={`${sizes[size]} w-full rounded-md shadow-cover overflow-hidden relative bg-muted`}>
+    <div className={`bn-book-card-cover ${sizes[size]} w-full rounded-md shadow-cover overflow-hidden relative bg-muted`}>
       <CustomBookCover book={book} size={size} />
     </div>
   );
 };
 
 export const BookCard = ({ book, priority = false }: { book: BookCardData; priority?: boolean }) => (
-  <Link to={`/books/${book.slug}`} className="group block">
-    <div className="bg-card rounded-xl shadow-paper overflow-hidden transition-all duration-300 hover:-translate-y-1 hover:shadow-cover border border-border/50">
+  <Link to={`/books/${book.slug}`} className="group block h-full">
+    <div className="bn-book-card bg-card rounded-xl shadow-paper overflow-hidden transition-all duration-300 border border-border/50">
       <div className="p-3 md:p-5 pb-2 md:pb-3 relative">
         <span className="absolute top-2 left-2 md:top-3 md:left-3 z-10 max-w-[72%] truncate text-[9px] md:text-[10px] tracking-[0.15em] uppercase font-medium bg-background/90 backdrop-blur px-2 py-0.5 md:px-2.5 md:py-1 rounded-full border border-border">
           {book.category}
@@ -173,23 +173,18 @@ export const BookCard = ({ book, priority = false }: { book: BookCardData; prior
         <BookCover book={book} size="md" priority={priority} />
       </div>
       <div className="px-3 md:px-5 pb-3 md:pb-5">
-        <h3 className="font-serif text-sm md:text-lg font-semibold leading-snug group-hover:text-primary transition-colors line-clamp-2">
+        <h3 className="bn-book-card-title font-serif text-sm md:text-lg font-semibold group-hover:text-primary transition-colors line-clamp-2">
           {book.title}
         </h3>
-        <p className="text-xs md:text-sm text-muted-foreground mt-0.5 truncate">{book.author}</p>
+        <p className="text-xs md:text-sm text-muted-foreground mt-1 truncate">{book.author}</p>
         {book.tagline && (
-          <p
-            title={book.tagline}
-            className="text-[11px] md:text-xs text-muted-foreground mt-1.5 md:mt-2 italic whitespace-nowrap overflow-hidden text-ellipsis"
-          >
+          <p title={book.tagline} className="text-[11px] md:text-xs text-muted-foreground mt-1.5 md:mt-2 italic line-clamp-1">
             “{book.tagline}”
           </p>
         )}
-        <div className="hidden md:flex items-center gap-3 mt-3 text-xs text-muted-foreground">
+        <div className="mt-3 flex items-center justify-between text-[10px] md:text-xs text-muted-foreground">
           <span>{book.reading_time ?? 12} min read</span>
-        </div>
-        <div className="flex md:hidden items-center gap-2 mt-1.5 text-[10px] text-muted-foreground">
-          <span>{book.reading_time ?? 12} min</span>
+          {book.rating ? <span aria-label={`${book.rating} rating`}>★ {Number(book.rating).toFixed(1)}</span> : null}
         </div>
       </div>
     </div>
