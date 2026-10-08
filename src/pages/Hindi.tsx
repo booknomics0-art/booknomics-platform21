@@ -5,6 +5,7 @@ import { Layout } from "@/components/Layout";
 import { BookCard, BookCardData } from "@/components/BookCard";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { SEO } from "@/components/SEO";
 import { supabase } from "@/integrations/supabase/client";
 import { trackSearch } from "@/lib/analytics";
@@ -23,7 +24,7 @@ const FEATURED_HINDI_BOOKS = [
 const Hindi = () => {
   const [params, setParams] = useSearchParams();
   const [books, setBooks] = useState<BookCardData[]>([]);
-  const [categories, setCategories] = useState<string[]>(["सभी"]);
+  const [categories, setCategories] = useState<string[]>([]);
   const [totalCount, setTotalCount] = useState(0);
   const [loading, setLoading] = useState(true);
   const [loadError, setLoadError] = useState<string | null>(null);
@@ -51,7 +52,7 @@ const Hindi = () => {
         batch.forEach((row: any) => { if (row.category) values.add(row.category); });
         if (batch.length < batchSize) break;
       }
-      if (!cancelled) setCategories(["सभी", ...Array.from(values).sort()]);
+      if (!cancelled) setCategories(Array.from(values).sort());
     })();
 
     return () => { cancelled = true; };
@@ -160,27 +161,30 @@ const Hindi = () => {
           </div>
         </section>
 
-        <section className="container py-10 md:py-14">
-          <div className="flex flex-wrap gap-2 mb-10">
-            {categories.map(c => (
-              <Button
-                key={c}
-                variant={category === c ? "default" : "outline"}
-                onClick={() => setCategory(c)}
-                className={`rounded-full ${category === c ? "bg-gold text-primary-foreground" : ""}`}
-                size="sm"
+        <section className="container py-6 md:py-9">
+          <div className="flex flex-col sm:flex-row sm:items-center gap-3 mb-8">
+            <Select value={category} onValueChange={setCategory}>
+              <SelectTrigger
+                className="w-full sm:w-auto sm:min-w-[210px] h-10 rounded-full bg-background text-sm"
+                aria-label="पुस्तक श्रेणी चुनें"
               >
-                {c}
-              </Button>
-            ))}
-          </div>
+                <SelectValue placeholder="सभी श्रेणियाँ" />
+              </SelectTrigger>
+              <SelectContent className="max-h-72">
+                <SelectItem value="सभी">सभी श्रेणियाँ</SelectItem>
+                {categories.map(c => (
+                  <SelectItem key={c} value={c}>{c}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
 
-          <div className="text-sm text-muted-foreground mb-6" aria-live="polite">
-            {loading
-              ? "हिंदी पुस्तकें लोड हो रही हैं…"
-              : loadError
-                ? "पुस्तकालय अस्थायी रूप से उपलब्ध नहीं है"
-                : `${totalCount} ${totalCount === 1 ? "पुस्तक" : "पुस्तकें"}`}
+            <div className="text-xs md:text-sm text-muted-foreground sm:ml-auto" aria-live="polite">
+              {loading
+                ? "हिंदी पुस्तकें लोड हो रही हैं…"
+                : loadError
+                  ? "पुस्तकालय अस्थायी रूप से उपलब्ध नहीं है"
+                  : `${totalCount} ${totalCount === 1 ? "पुस्तक" : "पुस्तकें"}`}
+            </div>
           </div>
 
           {!query.trim() && category === "सभी" && (
