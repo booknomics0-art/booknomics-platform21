@@ -3,6 +3,7 @@ import { HelmetProvider } from "react-helmet-async";
 import App from "./App.tsx";
 import "./index.css";
 import "./pagespeed.css";
+import "./fonts.css";
 import "./editorial.css";
 import { clearStaleChunkRefreshParam, recoverFromStaleChunk } from "@/lib/chunkRecovery";
 
