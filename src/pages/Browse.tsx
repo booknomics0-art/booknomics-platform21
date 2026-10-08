@@ -94,7 +94,7 @@ const Browse = ({ categoryFilter, titleOverride, introText, skipSeo, aboveConten
     (async () => {
       let request = supabase
         .from("books")
-        .select("id,slug,title,author,category,cover_color,cover_url,tagline,rating,reading_time,language,created_at", { count: "exact" })
+        .select("id,slug,seo_slug,title,author,category,cover_color,cover_url,tagline,rating,reading_time,language,created_at", { count: "exact" })
         .eq("is_draft", false)
         .in("status", ["published", "published_noindex"]);
 
@@ -128,7 +128,7 @@ const Browse = ({ categoryFilter, titleOverride, introText, skipSeo, aboveConten
           !debouncedQuery.trim() &&
           page === 1 &&
           resolvedCount === 0;
-        setBooks(rows);
+        setBooks(rows.map((row: any) => ({ ...row, slug: row.seo_slug || row.slug })));
         setTotalCount(resolvedCount);
         if (suspiciousEmptyCatalog) {
           setLoadError("Public catalog unexpectedly returned zero books. Check the production database configuration.");
@@ -192,13 +192,13 @@ const Browse = ({ categoryFilter, titleOverride, introText, skipSeo, aboveConten
     "@context": "https://schema.org",
     "@type": "CollectionPage",
     name: heading,
-    url: `https://booknomics.com${seoPath}`,
+    url: `https://www.booknomics.com${seoPath}`,
     mainEntity: {
       "@type": "ItemList",
       itemListElement: collectionItems.slice(0, 30).map((b, i) => ({
         "@type": "ListItem",
         position: (page - 1) * PER_PAGE + i + 1,
-        url: `https://booknomics.com/books/${b.slug}`,
+        url: `https://www.booknomics.com/books/${b.slug}`,
         name: b.title,
       })),
     },
