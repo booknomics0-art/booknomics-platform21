@@ -1,0 +1,28 @@
+{
+  "name": "booknomics-cover-studio",
+  "private": true,
+  "type": "module",
+  "description": "Composes 800x1200 Booknomics book covers: AI artwork + exact Devanagari/Latin typography.",
+  "scripts": {
+    "compose": "node compose.mjs"
+  },
+  "dependencies": {
+    "@expo-google-fonts/amita": "^0.4.1",
+    "@expo-google-fonts/cinzel": "^0.4.2",
+    "@expo-google-fonts/cormorant-garamond": "^0.4.1",
+    "@expo-google-fonts/eczar": "^0.4.1",
+    "@expo-google-fonts/kalam": "^0.4.1",
+    "@expo-google-fonts/khand": "^0.4.1",
+    "@expo-google-fonts/laila": "^0.4.1",
+    "@expo-google-fonts/martel": "^0.4.1",
+    "@expo-google-fonts/mukta": "^0.4.1",
+    "@expo-google-fonts/noto-serif-devanagari": "^0.4.1",
+    "@expo-google-fonts/oswald": "^0.4.2",
+    "@expo-google-fonts/playfair-display": "^0.4.2",
+    "@expo-google-fonts/rozha-one": "^0.4.1",
+    "@expo-google-fonts/teko": "^0.4.1",
+    "@expo-google-fonts/tiro-devanagari-hindi": "^0.4.1",
+    "@expo-google-fonts/yatra-one": "^0.4.1",
+    "sharp": "^0.34.5"
+  }
+}

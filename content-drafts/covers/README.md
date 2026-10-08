@@ -8,6 +8,9 @@
 | `raktakarabi-cover.jpg` | रक्तकरबी — रवींद्रनाथ ठाकुर | 165 KB |
 | `chitra-cover.jpg` | चित्रा — रवींद्रनाथ ठाकुर | 139 KB |
 
+Story covers for the rest of the Hindi section (books without a cover) live in
+[`hindi/`](hindi/README.md), made with `tools/cover-studio`.
+
 ## What changed in v2
 
 The first pass had no text. That was wrong for three reasons, all of which came
