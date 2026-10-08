@@ -1,0 +1,14 @@
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:wght@600;700&family=Inter:wght@400;500;600;700&family=Noto+Sans+Devanagari:wght@400;500;600;700&family=Noto+Serif+Devanagari:wght@600;700&display=swap');
+
+html,
+body {
+  font-family: Inter, "Noto Sans Devanagari", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+.font-serif,
+h1,
+h2,
+h3,
+.serif {
+  font-family: Fraunces, "Noto Serif Devanagari", "Noto Sans Devanagari", Georgia, serif;
+}
