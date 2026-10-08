@@ -88,6 +88,18 @@
     {"source":"/books/kalam-ka-sipahi-shivmangal-singh-suman-saransh","destination":"/books/kalam-ka-sipahi-amrit-rai-saransh","permanent":true},
     {"source":"/books/kavita-ke-bahane-dharamvir-bharti-saransh","destination":"/books/kavita-ke-bahane-kunwar-narayan-saransh","permanent":true},
 
+    {"source":"/books/alices-adventures-in-wonderland-lewis-carroll-en","destination":"/books/alices-adventures-in-wonderland-lewis-carroll-summary","permanent":true},
+    {"source":"/books/atlas-shrugged-centennial-ed-hc-ayn-rand-sophie-bastide-foltz-adrian-rand-summary","destination":"/books/atlas-shrugged-ayn-rand-summary","permanent":true},
+    {"source":"/books/city-of-god-volume-i-augustine-en","destination":"/books/city-of-god-volume-i-augustine-summary","permanent":true},
+    {"source":"/books/crime-and-punishment-dostoevsky-en","destination":"/books/crime-and-punishment-dostoevsky-summary","permanent":true},
+    {"source":"/books/frankenstein-mary-shelley-en","destination":"/books/frankenstein-mary-shelley-summary","permanent":true},
+    {"source":"/books/mary-shelley-s-frankenstein-or-the-modern-prometheus-1818-text-mary-shelley-summary","destination":"/books/frankenstein-1818-mary-shelley-summary","permanent":true},
+    {"source":"/books/moby-dick-herman-melville-en","destination":"/books/moby-dick-herman-melville-book-summary","permanent":true},
+    {"source":"/books/pride-and-prejudice-jane-austen-en","destination":"/books/pride-and-prejudice-jane-austen-summary","permanent":true},
+    {"source":"/books/romeo-and-juliet-william-shakespeare-en","destination":"/books/romeo-and-juliet-william-shakespeare-summary","permanent":true},
+    {"source":"/books/the-mysterious-benedict-society-the-mysterious-benedict-society-1-trenton-lee-stewart-summary","destination":"/books/the-mysterious-benedict-society-trenton-lee-stewart-summary","permanent":true},
+    {"source":"/books/the-player-of-games-iain-banks-summary","destination":"/books/the-player-of-games-iain-m-banks-summary","permanent":true},
+
     {"source":"/books/rich-dad-poor-dad-2-robert-t-kiyosaki-sharon-l-lechter-summary","destination":"/books/margin-of-safety-seth-a-klarman-summary","permanent":true},
     {"source":"/books/your-money-or-your-life-vicki-robin-summary","destination":"/books/the-barefoot-investor-scott-pape-summary","permanent":true},
     {"source":"/books/traction-gabriel-weinberg-summary","destination":"/books/zero-to-sold-arvid-kahl-summary","permanent":true},
