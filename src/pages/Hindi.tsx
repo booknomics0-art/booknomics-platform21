@@ -33,14 +33,6 @@ const Hindi = () => {
   const category = params.get("category") ?? "सभी";
 
   useEffect(() => {
-    if (!document.getElementById("noto-hindi-font")) {
-      const link = document.createElement("link");
-      link.id = "noto-hindi-font";
-      link.rel = "stylesheet";
-      link.href = "https://fonts.googleapis.com/css2?family=Noto+Sans+Devanagari:wght@400;500;600;700&family=Tiro+Devanagari+Hindi&display=swap";
-      document.head.appendChild(link);
-    }
-
     let cancelled = false;
     (async () => {
       const values = new Set<string>();
@@ -119,9 +111,6 @@ const Hindi = () => {
     setParams(next);
   };
 
-  // Keep meaningful crawl targets in the initial HTML/JSON-LD while the
-  // client-side Supabase request is still resolving. Featured fallback books
-  // are kept in sync with the current published/indexable Hindi set.
   const collectionItems = books.length > 0 ? books : FEATURED_HINDI_BOOKS;
   const collectionLd = {
     "@context": "https://schema.org",
@@ -149,11 +138,11 @@ const Hindi = () => {
         jsonLd={collectionLd}
         breadcrumbs={[{ name: "Home", path: "/" }, { name: "Hindi", path: "/hindi" }]}
       />
-      <div style={{ fontFamily: "'Noto Sans Devanagari', 'Inter', sans-serif" }}>
+      <div lang="hi" className="bn-hindi-page">
         <section className="bg-hero border-b border-border">
-          <div className="container py-16">
-            <div className="text-xs tracking-[0.2em] uppercase text-primary font-semibold mb-3">हिंदी पुस्तकालय 🇮🇳</div>
-            <h1 className="text-5xl md:text-6xl font-bold tracking-tight mb-6" style={{ fontFamily: "'Tiro Devanagari Hindi', serif" }}>
+          <div className="container py-16 md:py-20">
+            <div className="text-xs tracking-[0.12em] uppercase text-primary font-semibold mb-3">हिंदी पुस्तकालय</div>
+            <h1 className="text-5xl md:text-6xl font-bold mb-6">
               ज्ञान की हिंदी यात्रा
             </h1>
             <p className="text-muted-foreground max-w-xl mb-8 text-lg leading-relaxed">
@@ -171,7 +160,7 @@ const Hindi = () => {
           </div>
         </section>
 
-        <section className="container py-10">
+        <section className="container py-10 md:py-14">
           <div className="flex flex-wrap gap-2 mb-10">
             {categories.map(c => (
               <Button
@@ -195,7 +184,7 @@ const Hindi = () => {
           </div>
 
           {!query.trim() && category === "सभी" && (
-            <div className="rounded-xl border border-border bg-card/60 p-4 md:p-5 mb-8">
+            <div className="rounded-2xl border border-border bg-card/60 p-4 md:p-5 mb-8">
               <h2 className="font-serif text-lg md:text-xl font-semibold mb-3">लोकप्रिय हिंदी पुस्तक सारांश</h2>
               <div className="flex flex-wrap gap-2">
                 {FEATURED_HINDI_BOOKS.map((book) => (
@@ -221,7 +210,7 @@ const Hindi = () => {
             </div>
           ) : (
             <>
-              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5 md:gap-7">
                 {books.map((b, i) => <BookCard key={b.id} book={b} priority={i < 4} />)}
               </div>
 
