@@ -2,14 +2,13 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { ArrowRight, Languages, Search, Sparkles } from "lucide-react";
 import { Layout } from "@/components/Layout";
-import { BookCard, type BookCardData } from "@/components/BookCard";
+import { BookCard, BookCover, type BookCardData } from "@/components/BookCard";
 import { Button } from "@/components/ui/button";
 import { SEO } from "@/components/SEO";
 import { GlobalSearch } from "@/components/GlobalSearch";
 import { supabase } from "@/integrations/supabase/client";
 import { SocialConnect } from "@/components/SocialConnect";
 import { HomepageHero } from "@/components/HomepageHero";
-import { ScrollTypographyStory } from "@/components/ScrollTypographyStory";
 
 const HERO_SLUGS = [
   "atomic-habits-james-clear-summary",
@@ -19,6 +18,17 @@ const HERO_SLUGS = [
   "godan-munshi-premchand-saransh",
   "nirmala-munshi-premchand-saransh",
   "gaban-munshi-premchand-saransh",
+] as const;
+
+const MOST_READABLE_SLUGS = [
+  "atomic-habits-james-clear-summary",
+  "deep-work-cal-newport-summary",
+  "the-psychology-of-money-morgan-housel-summary",
+  "thinking-fast-and-slow-daniel-kahneman-summary",
+  "rich-dad-poor-dad-robert-t-kiyosaki-with-sharon-lechter-summary",
+  "the-7-habits-of-highly-effective-people-stephen-r-covey-summary",
+  "how-to-win-friends-and-influence-people-dale-carnegie-summary",
+  "the-power-of-habit-charles-duhigg-summary",
 ] as const;
 
 const Index = () => {
@@ -62,9 +72,7 @@ const Index = () => {
           .eq("is_draft", false)
           .eq("status", "published")
           .not("cover_url", "is", null)
-          .order("rating", { ascending: false })
-          .order("created_at", { ascending: false })
-          .limit(6),
+          .in("slug", [...MOST_READABLE_SLUGS]),
         supabase
           .from("books")
           .select(fields)
@@ -72,15 +80,20 @@ const Index = () => {
           .eq("status", "published")
           .not("cover_url", "is", null)
           .order("created_at", { ascending: false })
-          .range(6, 13),
+          .limit(8),
       ]);
 
       if (cancelled) return;
       const heroRows = (hero ?? []) as BookCardData[];
-      const order = new Map(HERO_SLUGS.map((slug, index) => [slug, index]));
-      heroRows.sort((a, b) => (order.get(a.slug) ?? 99) - (order.get(b.slug) ?? 99));
+      const heroOrder = new Map(HERO_SLUGS.map((slug, index) => [slug, index]));
+      heroRows.sort((a, b) => (heroOrder.get(a.slug) ?? 99) - (heroOrder.get(b.slug) ?? 99));
+
+      const featuredRows = (feat ?? []) as BookCardData[];
+      const featuredOrder = new Map(MOST_READABLE_SLUGS.map((slug, index) => [slug, index]));
+      featuredRows.sort((a, b) => (featuredOrder.get(a.slug) ?? 99) - (featuredOrder.get(b.slug) ?? 99));
+
       setHeroBooks(heroRows);
-      setFeatured((feat ?? []) as BookCardData[]);
+      setFeatured(featuredRows);
       setPopular((pop ?? []) as BookCardData[]);
     })();
     return () => { cancelled = true; };
@@ -117,7 +130,7 @@ const Index = () => {
 
       <HomepageHero books={visualBooks} />
 
-      <section className="container bn-search-section" aria-labelledby="home-search-title">
+      <section className="container bn-search-section bn-search-section-compact" aria-labelledby="home-search-title">
         <div className="bn-search-copy">
           <span className="bn-section-label"><Search className="h-3.5 w-3.5" /> Find your next idea</span>
           <h2 id="home-search-title">Search by book, author or topic.</h2>
@@ -128,9 +141,7 @@ const Index = () => {
         </div>
       </section>
 
-      <ScrollTypographyStory books={visualBooks} />
-
-      <section className="container bn-section" aria-labelledby="outcome-heading">
+      <section className="container bn-section bn-section-after-search" aria-labelledby="outcome-heading">
         <div className="bn-section-heading">
           <span className="bn-section-label"><Sparkles className="h-3.5 w-3.5" /> Start with your goal</span>
           <h2 id="outcome-heading">What do you want to change?</h2>
@@ -150,16 +161,32 @@ const Index = () => {
         </div>
       </section>
 
-      <section className="container bn-section" aria-labelledby="featured-heading">
-        <div className="bn-section-heading bn-section-heading-row">
+      <section className="container bn-section bn-readable-section" aria-labelledby="featured-heading">
+        <div className="bn-section-heading bn-section-heading-row bn-readable-heading">
           <div>
-            <span className="bn-section-label">Curated this week</span>
-            <h2 id="featured-heading">Worth your attention.</h2>
+            <span className="bn-section-label">Reader favourites</span>
+            <h2 id="featured-heading">Most readable books.</h2>
+            <p>Approachable, practical and consistently useful — a strong place to begin.</p>
           </div>
           <Link to="/browse" className="bn-text-link">See the full library <ArrowRight className="h-4 w-4" /></Link>
         </div>
-        <div className="grid grid-cols-2 md:grid-cols-3 gap-4 md:gap-7">
-          {featured.map((book, index) => <BookCard key={book.id} book={book} priority={index < 2} />)}
+        <div className="bn-readable-grid">
+          {featured.map((book, index) => (
+            <Link key={book.id} to={`/books/${book.slug}`} className="bn-readable-card group">
+              <div className="bn-readable-cover-wrap">
+                <BookCover book={book} size="lg" priority={index < 4} />
+                <span className="bn-readable-rank">{String(index + 1).padStart(2, "0")}</span>
+              </div>
+              <div className="bn-readable-copy">
+                <h3>{book.title}</h3>
+                <p>{book.author}</p>
+                <div className="bn-readable-meta">
+                  <span>{book.reading_time ?? 12} min read</span>
+                  {book.rating ? <span>★ {Number(book.rating).toFixed(1)}</span> : null}
+                </div>
+              </div>
+            </Link>
+          ))}
         </div>
       </section>
 
