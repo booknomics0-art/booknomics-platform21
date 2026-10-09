@@ -99,8 +99,13 @@ const SD_BIN = process.env.SD_BIN || "";
 const IMAGE_PROVIDER = (process.env.IMAGE_PROVIDER || (OPENAI_KEY ? "openai" : GEMINI_KEY ? "gemini" : SD_BIN ? "local" : "openai")).toLowerCase();
 const IMAGE_MODEL = process.env.IMAGE_MODEL || (IMAGE_PROVIDER === "gemini" ? "gemini-2.5-flash-image" : IMAGE_PROVIDER === "local" ? "flux.1-schnell" : "gpt-image-1");
 const IMAGE_QUALITY = process.env.IMAGE_QUALITY || "medium";
-const TEXT_PROVIDER = OPENAI_KEY ? "openai" : GH_MODELS_TOKEN ? "github" : "openai";
-const TEXT_MODEL = process.env.TEXT_MODEL || (TEXT_PROVIDER === "github" ? "openai/gpt-4.1-mini" : "gpt-4.1-mini");
+// Any OpenAI-compatible chat endpoint (e.g. the keyless https://text.pollinations.ai/openai). GitHub Models was
+// retired on 2026-07-30, so the engine uses TEXT_URL.
+const TEXT_URL = process.env.TEXT_URL || "";
+const TEXT_KEY = process.env.TEXT_KEY || "";
+const TEXT_DELAY_MS = Number(process.env.TEXT_DELAY_MS) || 0;
+const TEXT_PROVIDER = TEXT_URL ? "url" : OPENAI_KEY ? "openai" : GH_MODELS_TOKEN ? "github" : "openai";
+const TEXT_MODEL = process.env.TEXT_MODEL || (TEXT_PROVIDER === "url" ? "openai" : TEXT_PROVIDER === "github" ? "openai/gpt-4.1-mini" : "gpt-4.1-mini");
 const SB = (process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL || "").replace(/\/+$/, "");
 const SB_KEY = process.env.VITE_SUPABASE_PUBLISHABLE_KEY || process.env.SUPABASE_ANON_KEY || "";
 
@@ -329,6 +334,10 @@ async function openai(pathname, body, opts) {
 
 /** Chat completion for scene planning: OpenAI if keyed, else GitHub Models (free with GITHUB_TOKEN). */
 async function textChat(body) {
+  if (TEXT_PROVIDER === "url") {
+    const { response_format, ...rest } = body; // not every compatible endpoint accepts it; the prompt asks for JSON
+    return postJSON(TEXT_URL, TEXT_KEY ? { Authorization: `Bearer ${TEXT_KEY}` } : {}, { ...rest, model: TEXT_MODEL }, { tries: 8 });
+  }
   if (TEXT_PROVIDER === "github") return postJSON(GH_MODELS_URL, { Authorization: `Bearer ${GH_MODELS_TOKEN}` }, { ...body, model: TEXT_MODEL });
   return openai("/chat/completions", body);
 }
@@ -463,6 +472,15 @@ async function summary(lines) {
 
 // ---------------------------------------------------------------- plan
 
+/** The plan JSON from a chat reply, tolerating code fences or a few words around it. */
+function parsePlans(res) {
+  const txt = typeof res === "string" ? res : String(res?.choices?.[0]?.message?.content ?? "");
+  const a = txt.indexOf("{"), b = txt.lastIndexOf("}");
+  if (a < 0 || b <= a) throw new Error(`no JSON in the reply: ${txt.slice(0, 120)}`);
+  const j = JSON.parse(txt.slice(a, b + 1));
+  return Array.isArray(j) ? j : j.books || [];
+}
+
 /** The planner invents the theme name; make sure no other cover has used it. */
 function uniqueTheme(p, used) {
   const clean = (x) => String(x || "").toLowerCase().replace(/[^a-z' -]+/g, " ").replace(/\s+/g, " ").trim().split(" ").slice(0, 3).join(" ");
@@ -527,7 +545,7 @@ async function plan(manifest) {
       RECENT: recent.slice(-24),
       books: chunk.map((b) => {
         const r = live.get(b.id);
-        return { id: b.id, title: r.title, author: r.author, category: r.category, about: String(r.overview || "").replace(/\s+/g, " ").slice(0, TEXT_PROVIDER === "github" ? 400 : 1400) };
+        return { id: b.id, title: r.title, author: r.author, category: r.category, about: String(r.overview || "").replace(/\s+/g, " ").slice(0, TEXT_PROVIDER === "openai" ? 1400 : 500) };
       }),
     };
     let plans = [];
@@ -540,7 +558,7 @@ async function plan(manifest) {
           { role: "user", content: JSON.stringify(payload) },
         ],
       });
-      plans = JSON.parse(res.choices?.[0]?.message?.content || "{}").books || [];
+      plans = parsePlans(res);
       rateLimited = 0;
     } catch (e) {
       // Too big for the free tier's per-request token limit: halve the chunk and try this part again.
@@ -588,6 +606,7 @@ async function plan(manifest) {
     }
     await saveManifest(manifest);
     console.log(`planned ${planned}/${todo.length}`);
+    if (TEXT_DELAY_MS) await sleep(TEXT_DELAY_MS);
   }
   await saveManifest(manifest);
   if (QUEUE && !DRY) {

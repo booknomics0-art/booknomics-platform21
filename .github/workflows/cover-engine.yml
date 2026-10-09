@@ -1,7 +1,7 @@
 name: Cover engine (keyless)
 
 # Makes every remaining Hindi cover with NO API key.
-#   plan    scenes + a unique colour theme per book from GitHub Models (the built-in GITHUB_TOKEN)
+#   plan    scenes + a unique colour theme per book from a keyless text model (text.pollinations.ai; GitHub Models is retired)
 #   render  80 runners (20 at a time) draw the art with FLUX.1-schnell on their own CPU (stable-diffusion.cpp),
 #           compose the approved foil cover and push every cover as soon as it is made
 #   merge   folds the results into manifest.json, the README progress rows and the preview sheet
@@ -51,11 +51,13 @@ jobs:
         if: steps.cfg.outputs.stop != 'true'
         working-directory: tools/cover-studio
         run: npm ci --no-audit --no-fund
-      - name: Plan scenes (GitHub Models, no key)
+      - name: Plan scenes (keyless text model)
         if: steps.cfg.outputs.stop != 'true'
         continue-on-error: true
         env:
-          GH_MODELS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TEXT_URL: https://text.pollinations.ai/openai
+          TEXT_MODEL: openai
+          TEXT_DELAY_MS: 3000
         run: node tools/cover-studio/auto.mjs plan --plan-per 10 --queue "$QUEUE" --minutes 200
       - name: Commit the plan
         if: steps.cfg.outputs.stop != 'true'
