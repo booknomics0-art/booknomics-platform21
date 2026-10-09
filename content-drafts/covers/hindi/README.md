@@ -33,12 +33,13 @@ Format: 800×1200 JPG (2:3, what `BookCard` renders), about 150 KB each. `<slug>
 |---|---|---|
 | Samples in the approved look | 3 | done: गोदान (yellow · light), काबुलीवाला (blue · dark), घरे-बाइरे (red · dark) |
 | Narendra Kohli | 13 | done: बंधन (pearl white · light), अधिकार (green · light), कर्म (crimson · dark), धर्म (purple · dark), अंतराल (slate teal · dark), प्रच्छन्न (rose pink · light), प्रत्यक्ष (sapphire · light), निर्बन्ध (fiery orange · dark), आनुषंगिक (lavender · dark), दीक्षा (saffron · dark), अवसर (olive · light), युद्ध (storm blue · dark), अभ्युदय (coral · dark) |
-| Other Devanagari titles, batch 1 | 5 | done: क्षुधित पाषाण (emerald · dark), पथेर पाँचाली (silver grey · light), श्रीकांत (ink black · dark), अपने-अपने अजनबी (icy white · light), ऐ लड़की (marigold · light) |
-| Other Devanagari titles: classics, Tagore, Khatri, Rahul, pulp, … | 82 | pending |
+| Other Devanagari titles, first five | 5 | done: क्षुधित पाषाण (emerald · dark), पथेर पाँचाली (silver grey · light), श्रीकांत (ink black · dark), अपने-अपने अजनबी (icy white · light), ऐ लड़की (marigold · light) |
+| **50-book batch 1** (`"batch": 1` in the manifest) | 50 | 8 done: भूतनाथ (charcoal · dark), काजर की कोठरी (kohl black · dark), नरेंद्र-मोहिनी (peach · light), वीरेंद्र वीर (copper · dark), जय यौधेय (bronze · light), विस्मृत यात्री (glacier blue · light), मधुर स्वप्न (turquoise · dark), अँधेरे के जुगनू (firefly green · dark). 2 redo: चंद्रकांता संतति (fake script on a carved door), सिंह सेनापति (Roman-style armour). 40 pending |
+| **50-book batch 2** (`"batch": 2`) | 32 | pending (the rest of the pulp thrillers) |
 | Regional-literature summaries with Latin titles in the DB (`भारतीय क्षेत्रीय साहित्य · …`) | ~589 | not in the manifest yet. **The title will be written in Devanagari on the cover** |
 
-`node tools/cover-studio/prompts.mjs --stats` gives the live count. The image tool makes up to 10
-artworks per working session, so the set is built in batches.
+`node tools/cover-studio/prompts.mjs --stats` gives the live count. Work is planned in batches of 50 books;
+the image tool makes at most 10 artworks per working session, so each 50-book batch takes five sessions.
 
 Skipped on purpose:
 - **चित्रा**: a cover already exists (`../chitra-cover.jpg`). It only needs uploading.

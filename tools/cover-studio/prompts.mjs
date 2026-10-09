@@ -30,7 +30,7 @@ export function buildPrompt(b) {
     light
       ? "Keep the people in the lower two-thirds; the top third is soft, bright sky or plain light background with nothing in it, for a title added later."
       : "Keep the people in the lower two-thirds; the top third is calm, dark sky or shadowed background with nothing in it, for a title added later.",
-    "No text, letters, numbers, logos, signature or watermark.",
+    "No text, letters, numbers, logos, signature or watermark — and no script, inscriptions or symbols anywhere in the scene (walls, doors, signs, banners, books, paper): carvings are ornamental patterns only.",
   ]
     .filter(Boolean)
     .join(" ");
