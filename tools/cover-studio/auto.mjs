@@ -452,6 +452,12 @@ function commit(files, message) {
 
 async function summary(lines) {
   console.log(lines.join("\n"));
+  // In Actions, also as annotations: they can be read through the API even when the logs cannot.
+  if (process.env.GITHUB_ACTIONS) {
+    const esc = (x) => String(x).replace(/%/g, "%25").replace(/\r/g, "%0D").replace(/\n/g, "%0A").slice(0, 900);
+    for (const l of lines.filter((x) => x && !x.startsWith("- ")).slice(0, 3)) console.log(`::notice::${esc(l)}`);
+    for (const l of lines.filter((x) => x.startsWith("- ")).slice(0, 8)) console.log(`::warning::${esc(l)}`);
+  }
   if (process.env.GITHUB_STEP_SUMMARY) await fs.appendFile(process.env.GITHUB_STEP_SUMMARY, lines.join("\n") + "\n\n");
 }
 
@@ -513,7 +519,7 @@ async function plan(manifest) {
 
   let planned = 0;
   const problems = [];
-  const PER = PLAN_PER || (TEXT_PROVIDER === "github" ? 4 : 6); // GitHub Models free tier: ~8k input tokens per request
+  let PER = PLAN_PER || (TEXT_PROVIDER === "github" ? 4 : 6); // GitHub Models free tier: ~8k input tokens per request
   let rateLimited = 0;
   for (let i = 0; i < todo.length && inTime(); i += PER) {
     const chunk = todo.slice(i, i + PER);
@@ -521,7 +527,7 @@ async function plan(manifest) {
       RECENT: recent.slice(-24),
       books: chunk.map((b) => {
         const r = live.get(b.id);
-        return { id: b.id, title: r.title, author: r.author, category: r.category, about: String(r.overview || "").replace(/\s+/g, " ").slice(0, TEXT_PROVIDER === "github" ? 600 : 1400) };
+        return { id: b.id, title: r.title, author: r.author, category: r.category, about: String(r.overview || "").replace(/\s+/g, " ").slice(0, TEXT_PROVIDER === "github" ? 400 : 1400) };
       }),
     };
     let plans = [];
@@ -537,6 +543,13 @@ async function plan(manifest) {
       plans = JSON.parse(res.choices?.[0]?.message?.content || "{}").books || [];
       rateLimited = 0;
     } catch (e) {
+      // Too big for the free tier's per-request token limit: halve the chunk and try this part again.
+      if (/^(413|400)\b/.test(e.message) && /token|too large|length|size/i.test(e.message) && PER > 2) {
+        PER = Math.max(2, Math.floor(PER / 2));
+        problems.push(`request too large, now ${PER} books per request: ${e.message.slice(0, 160)}`);
+        i -= PER; // the loop adds PER back: this chunk's start again, now smaller
+        continue;
+      }
       if (/^429\b/.test(e.message)) {
         problems.push(`rate limit reached after ${planned} plan(s); the rest is planned on the next run`);
         break;

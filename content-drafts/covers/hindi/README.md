@@ -48,7 +48,7 @@ Format: 800×1200 JPG (2:3, what `BookCard` renders), about 150 KB each. `<slug>
 The list of cover-less books comes from `tools/cover-studio/data/coverless-hindi.json`, written by the workflow *Snapshot cover-less Hindi books* (the sandbox cannot reach Supabase); every batch is still re-checked live before its covers are made.
 
 **Keyless cover engine (running now):** `.github/workflows/cover-engine.yml` needs no API key at all. GitHub Models
-(the built-in `GITHUB_TOKEN`) writes each book's scene and a new colour-theme name, then 40 Actions runners (20 at a time)
+(the built-in `GITHUB_TOKEN`) writes each book's scene and a new colour-theme name, then 80 Actions runners (20 at a time)
 draw the art with FLUX.1-schnell on their own CPUs (stable-diffusion.cpp), compose the same foil cover and push every cover
 as soon as it is made; a final merge step updates `manifest.json`, these progress rows and `_preview-latest.jpg`.
 Restart: change `tools/cover-studio/engine/run.json` and push; `"stop": true` ends a running engine.
