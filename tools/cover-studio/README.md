@@ -1,6 +1,6 @@
 # Cover studio
 
-Makes 800×1200 Booknomics covers. The default **`foil` layout** is the approved reference look
+Makes 800×1200 Booknomics covers (JPG, quality 84, about 150 KB each; `.png` or `.webp` output also works). The default **`foil` layout** is the approved reference look
 (the यशोधरा cover the user shared):
 - a photorealistic film-still scene from the story. Every cover gets a film finish so it does not
   read as a glossy AI render: saturation ×0.93, fine monochrome grain (soft-light) and a gentle

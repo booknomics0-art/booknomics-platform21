@@ -5,7 +5,7 @@
 // SAFE BY DEFAULT
 //   • Dry run unless --apply is given.
 //   • Skips every book that already has a cover_url (re-checked live just before writing), unless --force.
-//   • Objects are never overwritten: each upload gets a new path  <folder>/<book-id>/<timestamp>.webp
+//   • Objects are never overwritten: each upload gets a new path  <folder>/<book-id>/<timestamp>.<ext>
 //
 // ENV (read from the shell or the repo-root .env; never commit real keys)
 //   SUPABASE_URL or VITE_SUPABASE_URL
@@ -92,7 +92,7 @@ const ready = [];
 for (const b of manifest.books) {
   if (only && !only.has(b.slug) && !only.has(b.key)) continue;
   if (b.status !== "done") continue;
-  const file = path.join(outDir, b.file || `${b.slug}.webp`);
+  const file = path.join(outDir, b.file || `${b.slug}.jpg`);
   try {
     await fs.access(file);
     ready.push({ b, file });

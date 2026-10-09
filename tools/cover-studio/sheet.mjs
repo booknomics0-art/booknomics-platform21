@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 // Contact sheet for quick visual QA of composed covers (.png or .jpg output).
-//   node sheet.mjs out.jpg cover1.webp cover2.webp ...   [--cols 5] [--w 300]
+//   node sheet.mjs out.jpg cover1.jpg cover2.jpg ...   [--cols 5] [--w 300]
 import sharp from "sharp";
 
 const args = process.argv.slice(2);

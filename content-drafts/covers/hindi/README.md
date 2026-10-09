@@ -24,7 +24,7 @@ its own scene from its story. Both are recorded per book in `manifest.json` (`th
 The artwork is AI-generated without text. The title, author and brand are set by
 `tools/cover-studio/compose.mjs`, so the Devanagari matches the database exactly.
 
-Format: 800×1200 WebP (2:3, what `BookCard` renders). `<slug>.webp` matches `books.slug`.
+Format: 800×1200 JPG (2:3, what `BookCard` renders), about 150 KB each. `<slug>.jpg` matches `books.slug`.
 `_preview-latest.jpg` is a contact sheet of the latest batch, for review only, and is never uploaded.
 
 ## Progress
@@ -32,9 +32,9 @@ Format: 800×1200 WebP (2:3, what `BookCard` renders). `<slug>.webp` matches `bo
 | | Books | Status |
 |---|---|---|
 | Samples in the approved look | 3 | done: गोदान (yellow · light), काबुलीवाला (blue · dark), घरे-बाइरे (red · dark) |
-| Narendra Kohli, batch 1 | 8 | done: बंधन (pearl white · light), अधिकार (green · light), कर्म (crimson · dark), धर्म (purple · dark), अंतराल (slate teal · dark), प्रच्छन्न (rose pink · light), प्रत्यक्ष (sapphire · light), दीक्षा (saffron · dark) |
-| Narendra Kohli, still to make | 2 + 3 | निर्बन्ध (redo: first render gave Krishna a beard), आनुषंगिक (redo: the bed-of-arrows scene was blocked by image moderation), then अवसर, युद्ध, अभ्युदय |
-| Other Devanagari titles: classics, Tagore, Khatri, Rahul, pulp, … | 87 | pending |
+| Narendra Kohli | 13 | done: बंधन (pearl white · light), अधिकार (green · light), कर्म (crimson · dark), धर्म (purple · dark), अंतराल (slate teal · dark), प्रच्छन्न (rose pink · light), प्रत्यक्ष (sapphire · light), निर्बन्ध (fiery orange · dark), आनुषंगिक (lavender · dark), दीक्षा (saffron · dark), अवसर (olive · light), युद्ध (storm blue · dark), अभ्युदय (coral · dark) |
+| Other Devanagari titles, batch 1 | 5 | done: क्षुधित पाषाण (emerald · dark), पथेर पाँचाली (silver grey · light), श्रीकांत (ink black · dark), अपने-अपने अजनबी (icy white · light), ऐ लड़की (marigold · light) |
+| Other Devanagari titles: classics, Tagore, Khatri, Rahul, pulp, … | 82 | pending |
 | Regional-literature summaries with Latin titles in the DB (`भारतीय क्षेत्रीय साहित्य · …`) | ~589 | not in the manifest yet. **The title will be written in Devanagari on the cover** |
 
 `node tools/cover-studio/prompts.mjs --stats` gives the live count. The image tool makes up to 10
@@ -49,7 +49,7 @@ Skipped on purpose:
 
 **Automatic (GitHub Actions):** `.github/workflows/upload-hindi-covers.yml` runs on every push that
 changes this folder. It uploads every finished cover (`status: "done"`) to the Supabase
-`book-covers` bucket under `hindi-story-covers/<book-id>/<timestamp>.webp` and sets
+`book-covers` bucket under `hindi-story-covers/<book-id>/<timestamp>.jpg` and sets
 `books.cover_url`, but only for books that still have no cover. The public URLs are listed in
 the run summary and in the `hindi-cover-urls` artifact.
 
@@ -58,7 +58,7 @@ Secrets and variables → Actions → New repository secret; the value is in Sup
 Settings → API Keys). Without it the workflow only prints a reminder. Re-run the latest run after
 adding the secret.
 
-**One at a time:** Admin → find the book → **HD Cover** (cloud icon) → pick `<slug>.webp`.
+**One at a time:** Admin → find the book → **HD Cover** (cloud icon) → pick `<slug>.jpg`.
 
 **All finished covers at once:**
 

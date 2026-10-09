@@ -8,7 +8,7 @@
  * 800x1200 (2:3), the ratio BookCard renders with object-contain.
  *
  * Single cover:
- *   node compose.mjs --art art.png --out cover.webp --title "गोदान" --author "मुंशी प्रेमचंद" \
+ *   node compose.mjs --art art.png --out cover.jpg --title "गोदान" --author "मुंशी प्रेमचंद" \
  *        [--font mukta] [--mode dark|light] [--title-color #hex] [--author-color #hex] [--shade #hex]
  *
  * Batch (reads content-drafts/covers/hindi/manifest.json by default):
@@ -689,7 +689,7 @@ export async function writeCover(pngBuf, outPath) {
   await fs.mkdir(path.dirname(outPath), { recursive: true });
   const ext = path.extname(outPath).toLowerCase();
   const img = sharp(pngBuf);
-  if (ext === ".jpg" || ext === ".jpeg") await img.jpeg({ quality: 88, progressive: true, mozjpeg: true }).toFile(outPath);
+  if (ext === ".jpg" || ext === ".jpeg") await img.jpeg({ quality: 84, progressive: true, mozjpeg: true }).toFile(outPath);
   else if (ext === ".webp") await img.webp({ quality: 84, effort: 6, smartSubsample: true }).toFile(outPath);
   else await img.png().toFile(outPath);
   return (await fs.stat(outPath)).size;
@@ -720,7 +720,7 @@ async function main() {
     for (const b of manifest.books) {
       if (only && !only.has(b.slug) && !only.has(b.key)) continue;
       if (!only && b.status === "done" && !args.force) continue;
-      b.file = b.file || `${b.slug}.webp`;
+      b.file = (b.file || `${b.slug}.jpg`).replace(/\.webp$/i, ".jpg");
       let artPath = null;
       for (const ext of ["png", "webp", "jpg"]) {
         try {
@@ -744,7 +744,7 @@ async function main() {
     return;
   }
   if (!args.art || !args.out || !args.title || !args.author) {
-    console.error("Usage: node compose.mjs --art art.png --out cover.webp --title T --author A [--font key] [--mode dark|light]");
+    console.error("Usage: node compose.mjs --art art.png --out cover.jpg --title T --author A [--font key] [--mode dark|light]");
     process.exit(2);
   }
   const png = await composeCover({ ...args, titleTop: args.titleTop ? Number(args.titleTop) : undefined });
