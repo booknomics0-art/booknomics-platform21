@@ -22,7 +22,7 @@ concurrency:
 jobs:
   probe:
     runs-on: ubuntu-latest
-    timeout-minutes: 120
+    timeout-minutes: 150
     env:
       W: 640
       H: 960
@@ -54,46 +54,85 @@ jobs:
           print(f"catalog: {len(d)} models; image-output models: {img or 'none'}")
           PY
 
-      - name: Get stable-diffusion.cpp (CPU build)
+      - name: Start a memory monitor
         run: |
-          url=$(curl -s https://api.github.com/repos/leejet/stable-diffusion.cpp/releases/latest | python3 -c "
+          nohup bash -c 'while true; do echo "$(date +%T) $(free -m | awk "/Mem:/{print \"used=\"\$3\" avail=\"\$7}") $(free -m | awk "/Swap:/{print \"swap=\"\$3}") load=$(cut -d" " -f1 /proc/loadavg)"; sleep 15; done' > "$OUT/monitor.txt" 2>&1 &
+
+      - name: Get stable-diffusion.cpp (release CPU build)
+        run: |
+          rel=$(curl -s https://api.github.com/repos/leejet/stable-diffusion.cpp/releases/latest)
+          url=$(echo "$rel" | python3 -c "
           import json,sys
           a=[x['browser_download_url'] for x in json.load(sys.stdin)['assets'] if 'Linux-Ubuntu' in x['name'] and x['name'].endswith('x86_64.zip')]
           print(a[0])")
+          tag=$(echo "$rel" | python3 -c "import json,sys; print(json.load(sys.stdin)['tag_name'])")
+          echo "TAG=$tag" >> "$GITHUB_ENV"
           echo "sd.cpp: $url" | tee -a "$OUT/runner.txt"
           mkdir -p sdbin && curl -sL "$url" -o sd.zip && unzip -q sd.zip -d sdbin
           SD=$(find sdbin -type f \( -name sd -o -name sd-cli \) | head -1); chmod +x "$SD"
-          echo "SD=$PWD/$SD" >> "$GITHUB_ENV"; echo "LD_LIBRARY_PATH=$PWD/$(dirname "$SD")" >> "$GITHUB_ENV"
-          ls -la "$(dirname "$SD")"
+          echo "SD_REL=$PWD/$SD" >> "$GITHUB_ENV"; echo "LD_LIBRARY_PATH=$PWD/$(dirname "$SD")" >> "$GITHUB_ENV"
+          ls -la "$(dirname "$SD")" | tee -a "$OUT/runner.txt"
 
       - name: Get FLUX.1-schnell (GGUF) from Hugging Face
         run: |
           set -e
           mkdir -p models
           curl -s https://huggingface.co/api/models/second-state/FLUX.1-schnell-GGUF | python3 -c "
-          import json,sys; print('\n'.join(s['rfilename'] for s in json.load(sys.stdin)['siblings']))" | tee -a "$OUT/runner.txt"
+          import json,sys; print('\n'.join(s['rfilename'] for s in json.load(sys.stdin)['siblings']))" > files.txt
+          cat files.txt | tr '\n' ' ' | tee -a "$OUT/runner.txt"; echo | tee -a "$OUT/runner.txt"
+          T5=$(for q in Q4_0 Q4_K Q5_0 Q8_0; do grep -m1 -i "^t5xxl.*$q.*gguf$" files.txt; done | head -1)
+          echo "T5=$T5" >> "$GITHUB_ENV"
           base=https://huggingface.co/second-state/FLUX.1-schnell-GGUF/resolve/main
           start=$(date +%s)
-          for f in flux1-schnell-Q4_0.gguf ae.safetensors clip_l.safetensors t5xxl-Q8_0.gguf; do
+          for f in flux1-schnell-Q4_0.gguf ae.safetensors clip_l.safetensors "$T5"; do
             curl -sSL --retry 5 --retry-delay 5 -o "models/$f" "$base/$f"
           done
           ls -la models | tee -a "$OUT/runner.txt"
           echo "download seconds: $(( $(date +%s) - start ))" | tee -a "$OUT/runner.txt"
-
-      - name: Render test art
-        run: |
           node tools/cover-studio/engine/probe-prompts.mjs prompts $KEYS
+
+      - name: "Test A: release binary, 1 step, 512x768"
+        run: |
+          start=$(date +%s)
+          timeout 900 "$SD_REL" --diffusion-model models/flux1-schnell-Q4_0.gguf --vae models/ae.safetensors \
+            --clip_l models/clip_l.safetensors --t5xxl "models/$T5" -p "$(cat prompts/vps-khalifa.txt)" \
+            --cfg-scale 1.0 --sampling-method euler --steps 1 -W 512 -H 768 -s 7 -t $(nproc) -v \
+            -o "$OUT/testA.png" > "$OUT/sdA.log" 2>&1 || echo "exit $?" >> "$OUT/sdA.log"
+          echo "test A: $(( $(date +%s) - start ))s" | tee -a "$OUT/runner.txt"
+          echo "::notice::test A $(( $(date +%s) - start ))s"
+
+      - name: Build stable-diffusion.cpp for this CPU
+        run: |
+          start=$(date +%s)
+          git clone -q --depth 1 --branch "$TAG" --recurse-submodules --shallow-submodules https://github.com/leejet/stable-diffusion.cpp sdsrc \
+            || git clone -q --depth 1 --recurse-submodules --shallow-submodules https://github.com/leejet/stable-diffusion.cpp sdsrc
+          cmake -S sdsrc -B sdsrc/build -DCMAKE_BUILD_TYPE=Release -DGGML_NATIVE=ON -DSD_BUILD_SHARED_LIBS=OFF > /dev/null
+          cmake --build sdsrc/build -j $(nproc) --config Release > build.log 2>&1 || tail -30 build.log
+          SD=$(find sdsrc/build -type f -perm -u+x \( -name sd -o -name sd-cli \) | head -1)
+          echo "SD_NAT=$PWD/$SD" >> "$GITHUB_ENV"
+          echo "native build: $(( $(date +%s) - start ))s -> $SD" | tee -a "$OUT/runner.txt"
+
+      - name: "Test B: native build, 1 step, 512x768, flash attention"
+        run: |
+          start=$(date +%s)
+          LD_LIBRARY_PATH= timeout 900 "$SD_NAT" --diffusion-model models/flux1-schnell-Q4_0.gguf --vae models/ae.safetensors \
+            --clip_l models/clip_l.safetensors --t5xxl "models/$T5" -p "$(cat prompts/vps-khalifa.txt)" \
+            --cfg-scale 1.0 --sampling-method euler --steps 1 -W 512 -H 768 -s 7 -t $(nproc) -v --diffusion-fa \
+            -o "$OUT/testB.png" > "$OUT/sdB.log" 2>&1 || echo "exit $?" >> "$OUT/sdB.log"
+          echo "test B: $(( $(date +%s) - start ))s" | tee -a "$OUT/runner.txt"
+          echo "::notice::test B $(( $(date +%s) - start ))s"
+
+      - name: "Test C: full quality art (4 steps, 640x960)"
+        run: |
+          BIN="$SD_NAT"; [ -x "$BIN" ] || BIN="$SD_REL"
           for k in $KEYS; do
             start=$(date +%s)
-            /usr/bin/time -v "$SD" --diffusion-model models/flux1-schnell-Q4_0.gguf --vae models/ae.safetensors \
-              --clip_l models/clip_l.safetensors --t5xxl models/t5xxl-Q8_0.gguf \
-              -p "$(cat prompts/$k.txt)" --cfg-scale 1.0 --sampling-method euler --steps $STEPS \
-              -W $W -H $H -s 7 -t $(nproc) --vae-tiling -o "$OUT/$k-flux.png" > "sd-$k.log" 2>&1 || true
-            secs=$(( $(date +%s) - start ))
-            rss=$(grep "Maximum resident" "sd-$k.log" | awk '{print $NF}')
-            echo "$k: ${secs}s, max RSS ${rss} KB, ${W}x${H}, ${STEPS} steps" | tee -a "$OUT/runner.txt"
-            grep -i -E "sampling completed|decode|error|fail|it/s|s/it" "sd-$k.log" | tail -8 | tee -a "$OUT/runner.txt"
-            echo "::notice::$k ${secs}s"
+            LD_LIBRARY_PATH= timeout 1500 "$BIN" --diffusion-model models/flux1-schnell-Q4_0.gguf --vae models/ae.safetensors \
+              --clip_l models/clip_l.safetensors --t5xxl "models/$T5" -p "$(cat prompts/$k.txt)" \
+              --cfg-scale 1.0 --sampling-method euler --steps $STEPS -W $W -H $H -s 7 -t $(nproc) -v --diffusion-fa --vae-tiling \
+              -o "$OUT/$k-flux.png" > "$OUT/sdC-$k.log" 2>&1 || echo "exit $?" >> "$OUT/sdC-$k.log"
+            echo "test C $k: $(( $(date +%s) - start ))s" | tee -a "$OUT/runner.txt"
+            echo "::notice::test C $k $(( $(date +%s) - start ))s"
           done
 
       - name: Commit results
