@@ -50,6 +50,7 @@ const Copyright = lazy(() => import("./pages/Legal.tsx").then(m => ({ default: m
 const NotFound = lazy(() => import("./pages/NotFound.tsx"));
 const BestHindiBookSummaries = lazy(() => import("./pages/BestHindiBookSummaries.tsx"));
 const English = lazy(() => import("./pages/English.tsx"));
+const MindmapDemo = lazy(() => import("./pages/MindmapDemo.tsx"));
 const Referrals = lazy(() => import("./pages/Referrals.tsx"));
 const Paths = lazy(() => import("./pages/Paths.tsx"));
 const PathDetail = lazy(() => import("./pages/PathDetail.tsx"));
@@ -153,6 +154,7 @@ const App = () => (
                 <Route path="/dmca" element={<Copyright />} />
                 <Route path="/best-hindi-book-summaries" element={<BestHindiBookSummaries />} />
                 <Route path="/english" element={<English />} />
+                <Route path="/mindmap-demo" element={<MindmapDemo />} />
                 <Route path="/referrals" element={<Referrals />} />
                 <Route path="/paths" element={<Paths />} />
                 <Route path="/paths/:slug" element={<PathDetail />} />

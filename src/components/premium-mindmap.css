@@ -1,0 +1,90 @@
+/* PremiumMindmap — scoped styles (pmm- prefix). Mobile-first. */
+
+.pmm-pills {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  scroll-snap-type: x proximity;
+  -webkit-mask-image: linear-gradient(to right, transparent 0, #000 20px, #000 calc(100% - 20px), transparent 100%);
+  mask-image: linear-gradient(to right, transparent 0, #000 20px, #000 calc(100% - 20px), transparent 100%);
+}
+.pmm-pills::-webkit-scrollbar {
+  display: none;
+}
+.pmm-pills > * {
+  scroll-snap-align: start;
+}
+
+.pmm-pattern-grid {
+  background-image:
+    linear-gradient(var(--pmm-veil) 1px, transparent 1px),
+    linear-gradient(90deg, var(--pmm-veil) 1px, transparent 1px);
+  background-size: 28px 28px;
+}
+.pmm-pattern-dots {
+  background-image: radial-gradient(var(--pmm-veil) 1.5px, transparent 1.5px);
+  background-size: 22px 22px;
+}
+.pmm-pattern-lines {
+  background-image: repeating-linear-gradient(
+    -45deg,
+    transparent 0 14px,
+    var(--pmm-veil) 14px 15px
+  );
+}
+.pmm-pattern-arcs {
+  background-image: radial-gradient(circle at 50% 120%, transparent 55%, var(--pmm-veil) 56%, transparent 58%),
+    radial-gradient(circle at 50% 120%, transparent 70%, var(--pmm-veil) 71%, transparent 73%),
+    radial-gradient(circle at 50% 120%, transparent 85%, var(--pmm-veil) 86%, transparent 88%);
+  background-size: 100% 220px;
+  background-repeat: no-repeat;
+  background-position: bottom center;
+}
+.pmm-pattern-waves {
+  background-image: radial-gradient(ellipse 80% 60% at 20% 0%, var(--pmm-veil) 0%, transparent 60%),
+    radial-gradient(ellipse 80% 60% at 80% 100%, var(--pmm-veil) 0%, transparent 60%);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .pmm-card {
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+  }
+  .pmm-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 16px 40px -18px rgba(20, 16, 8, 0.35);
+  }
+}
+
+@keyframes pmm-rise {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.pmm-rise {
+  animation: pmm-rise 0.5s ease both;
+}
+@media (prefers-reduced-motion: reduce) {
+  .pmm-rise {
+    animation: none;
+  }
+  .pmm-card:hover {
+    transform: none;
+  }
+}
+
+@media print {
+  .pmm-no-print {
+    display: none !important;
+  }
+  .pmm-card {
+    break-inside: avoid;
+    box-shadow: none !important;
+  }
+  .pmm-rise {
+    animation: none;
+  }
+}
