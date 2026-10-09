@@ -1,9 +1,14 @@
 # Cover studio
 
-Makes 800×1200 Booknomics covers in the house style of
-`content-drafts/covers/raktakarabi-cover.jpg` and `chitra-cover.jpg`: a painterly,
-story-specific illustration, a cream title in the top third, the author in gold
-below it, and a letter-spaced BOOKNOMICS wordmark at the foot.
+Makes 800×1200 Booknomics covers. The default **`summary` layout** matches the covers already
+on the site (`public/book-covers/`, Supabase `book-covers`):
+- a cinematic character scene from the story
+- a small `— BOOKNOMICS SUMMARY —` label
+- a big heavy title: metallic gold on dark art, a deep ink colour on light art
+- the author underneath
+
+The older `classic` layout is still available per entry (`layout: "classic"`). It uses a
+symbolic painting, a cream title and a BOOKNOMICS wordmark at the foot.
 
 **The artwork is generated without any text, and the typography is set here in code.** Image
 models regularly garble Devanagari conjuncts (क्त, श्र, ह्य, र्ब). Setting the text with
@@ -39,8 +44,12 @@ Nothing here touches the site build. ESLint only checks `*.ts/tsx`, and the app'
 | Upload (dry run) | `node upload.mjs` |
 | Upload for real | `SUPABASE_SERVICE_ROLE_KEY=… node upload.mjs --apply` |
 
-Artwork is read from `~/.cache/cover-art/<key>.png` (override with `--art-dir`). Raw art
-is kept out of git on purpose, because only the composed WebP files are committed.
+Artwork is read from `~/cover-art-raw/<key>.png|webp|jpg` (override with `--art-dir` or
+`COVER_ART_DIR`). Raw art is kept out of git on purpose, because only the composed WebP files are
+committed. Keep it outside `~/.cache`, since that folder does not survive a sandbox restore.
+
+Art that is wider than 2:3 (e.g. a square 1024² generation) is not cropped hard. It is scaled to
+`H − extendTop` (170 px by default), and the sky is continued upward with a feathered blend.
 
 ## Manifest fields
 
@@ -50,12 +59,16 @@ is kept out of git on purpose, because only the composed WebP files are committe
 | `id`, `slug` | `books.id` / `books.slug`; the output file is `<slug>.webp` |
 | `title`, `author` | exactly as in the database |
 | `authorDisplay`, `titleDisplay` | optional text shown on the cover instead (e.g. Devanagari for a Latin DB author) |
-| `font` | `mukta muktaxb tiro rozha yatra khand eczar laila notoserif kalam amita martel` (Devanagari + Latin), `cinzel playfair cormorant oswald teko` (Latin only) |
-| `mode` | `light` for pale artwork with dark type; default is auto (luminance of the top band) |
+| `font` | `martel eczar notoserif mukta laila rozha yatra khand kalam amita tiro` (Devanagari + Latin; the first five use their heaviest cut in the summary layout), `cinzel playfair cormorant oswald teko` (Latin only) |
+| `layout` | `summary` (default, site style) or `classic` |
+| `mode` | `light` for pale artwork with ink-coloured type, `dark` for gold type. Default is auto (luminance of the top band) |
+| `theme` | the cover's colour family, e.g. `yellow · light`, `blue · dark`, `red · dark`. Kept different from book to book |
+| `ink` | title colour on light art (default: a deep shade of the sky's hue) |
+| `extendTop` | px of sky to add above wide art (0 = plain cover crop) |
 | `style` | `pulp` adds the noir pulp-thriller framing to the prompt |
 | `palette`, `concept` | the theme colour and the story motif. Each book gets its own |
 | `seam` | optional fraction of the height where the art has a hard horizontal edge, hidden under a soft gradient |
-| `status` | `done` once composed; `uploadedUrl` / `uploadedAt` are written by `upload.mjs` |
+| `status` | `done` once composed, `redo` if it must be remade. `uploadedUrl` / `uploadedAt` are written by `upload.mjs` |
 
 ## Upload safety
 

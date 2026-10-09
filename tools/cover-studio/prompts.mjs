@@ -10,31 +10,48 @@ import { fileURLToPath } from "node:url";
 
 const HERE = path.dirname(fileURLToPath(import.meta.url));
 export const DEFAULT_MANIFEST = path.join(HERE, "../../content-drafts/covers/hindi/manifest.json");
-export const ART_DIR = path.join(process.env.HOME || "/tmp", ".cache/cover-art");
+export const ART_DIR = process.env.COVER_ART_DIR || path.join(process.env.HOME || "/tmp", "cover-art-raw");
 
-/** @param {{concept:string, palette:string, mode?:string, style?:string}} b */
+/**
+ * Prompt for text-free artwork in the style of the covers already on the site: a cinematic,
+ * photorealistic painting of the story's characters in a key moment, with room for the title.
+ * @param {{concept:string, palette:string, mode?:string, style?:string, layout?:string}} b
+ */
 export function buildPrompt(b) {
+  if (b.layout === "classic") return classicPrompt(b);
   const light = b.mode === "light";
-  const opening =
-    b.style === "pulp"
-      ? "Vertical 2:3 portrait painting, artwork only, no typography. Classic Indian pulp-thriller cover painting with moody noir lighting; danger is implied, never gory."
-      : "Vertical 2:3 portrait painting, artwork only, no typography.";
-  const finish =
-    b.style === "pulp"
-      ? "Painterly, cinematic and richly textured, high contrast."
-      : "Painterly, cinematic and richly textured, emotionally resonant light.";
-  const top = light
-    ? "Keep the top third pale, calm and uncluttered — soft light sky or plain light background — for a title added later."
-    : "Keep the top third calm, dark and uncluttered — soft sky or shadowed background — for a title added later.";
   return [
-    opening,
+    "Vertical 2:3 book cover illustration — cinematic, photorealistic digital painting, artwork only, no typography.",
+    b.style === "pulp" ? "Classic Indian pulp-thriller mood with noir lighting; danger is implied, never gory." : null,
+    b.concept,
+    `Colour theme: ${b.palette}.`,
+    "Rich detail, expressive faces, authentic costumes and setting, emotionally strong lighting.",
+    light
+      ? "Place the figures in the lower two-thirds; keep the top third bright, airy and uncluttered — soft pale sky or light background — for a title added later."
+      : "Place the figures in the lower two-thirds; keep the top third calm, dark and uncluttered — night sky or shadowed background — for a title added later.",
+    "The background must continue naturally to the top edge: no flat colour block, frame or border.",
+    "No text, letters, numbers, logos, signature or watermark.",
+  ]
+    .filter(Boolean)
+    .join(" ");
+}
+
+/** The first (symbolic, painterly) recipe, kept for entries marked layout: "classic". */
+function classicPrompt(b) {
+  const light = b.mode === "light";
+  return [
+    "Vertical 2:3 portrait painting, artwork only, no typography.",
+    b.style === "pulp" ? "Classic Indian pulp-thriller cover painting with moody noir lighting; danger is implied, never gory." : null,
     b.concept,
     `Palette: ${b.palette}${light ? " — a light, airy painting" : ""}.`,
-    finish,
-    top,
-    "The background must continue naturally to the top edge: no flat colour block, frame or hard horizontal edge.",
+    "Painterly, cinematic and richly textured.",
+    light
+      ? "Keep the top third pale, calm and uncluttered for a title added later."
+      : "Keep the top third calm, dark and uncluttered for a title added later.",
     "No text, letters, numbers, logos, signature or watermark.",
-  ].join(" ");
+  ]
+    .filter(Boolean)
+    .join(" ");
 }
 
 export async function loadManifest(p = DEFAULT_MANIFEST) {
@@ -51,7 +68,8 @@ async function main() {
   const m = await loadManifest(manifestPath);
   if (argv.includes("--stats")) {
     const done = m.books.filter((b) => b.status === "done").length;
-    console.log(`${done} done, ${m.books.length - done} pending, ${m.books.length} total`);
+    const redo = m.books.filter((b) => b.status === "redo").length;
+    console.log(`${done} done, ${redo} to redo, ${m.books.length - done - redo} pending, ${m.books.length} total`);
     return;
   }
   const key = get("--key");

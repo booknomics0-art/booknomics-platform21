@@ -16,11 +16,14 @@
       "slug": "godan-munshi-premchand-saransh",
       "title": "गोदान",
       "author": "मुंशी प्रेमचंद",
-      "font": "mukta",
-      "palette": "dusky indigo sky, dusty saffron, terracotta earth",
-      "concept": "Hori kneels by an empty tethering peg and frayed rope; a fallen cow-bell and a few coins lie in cracked earth while the dream-cow dissolves into the dusty sunset.",
-      "note": "Sample. This book already has a cover; replace it only if you prefer this one.",
-      "status": "done"
+      "font": "martel",
+      "palette": "bright mustard yellow, soft sky blue, warm cream",
+      "concept": "Hori, a lean weathered old farmer in dhoti, kurta and faded turban, gently touches the forehead of a white cow with a brass bell — the cow he always dreamed of; his wife Dhaniya in a red-bordered cotton sari smiles beside him; mud hut with thatched roof, vast field of blooming yellow mustard, pale morning sky.",
+      "status": "done",
+      "mode": "light",
+      "ink": "#5A1C12",
+      "theme": "yellow · light",
+      "file": "godan-munshi-premchand-saransh.webp"
     },
     {
       "key": "kohli-bandhan",
@@ -32,7 +35,9 @@
       "palette": "pearl mist, river teal, pale dawn gold",
       "concept": "Devavrata waist-deep in the Ganga at dawn raising his hand in his terrible vow; threads of golden light bind his wrist and dissolve into the river; a fisherwoman's boat in the mist.",
       "file": "बंधन-नरेनदर-कोहली-सारांश.webp",
-      "status": "done"
+      "status": "redo",
+      "layout": "classic",
+      "note": "Made in the earlier classic layout; to be redone in the site summary style."
     },
     {
       "key": "kohli-adhikar",
@@ -44,7 +49,9 @@
       "palette": "royal maroon, antique gold, deep shadow",
       "concept": "The empty throne of Hastinapur on a high dais with a crown on its seat; from opposite sides five long shadows and a crowd of a hundred shadows stretch toward it.",
       "file": "अधिकार-नरेनदर-कोहली-सारांश.webp",
-      "status": "done"
+      "status": "redo",
+      "layout": "classic",
+      "note": "Made in the earlier classic layout; to be redone in the site summary style."
     },
     {
       "key": "kohli-karm",
@@ -56,7 +63,9 @@
       "palette": "deep emerald, burnished gold",
       "concept": "Draupadi's swayamvar: a golden fish revolving on a high wheel, its trembling reflection in a bronze basin of oil, a great bow drawn and an arrow of light flying upward.",
       "file": "करम-नरेनदर-कोहली-सारांश.webp",
-      "status": "done"
+      "status": "redo",
+      "layout": "classic",
+      "note": "Made in the earlier classic layout; to be redone in the site summary style."
     },
     {
       "key": "kohli-dharm",
@@ -68,7 +77,9 @@
       "palette": "crimson silk, obsidian black, ivory",
       "concept": "Ivory dice tumbling across an inlaid dice board in a dark royal hall while an endless crimson sari rises from the board like a river of silk toward a soft divine light.",
       "file": "धरम-नरेनदर-कोहली-सारांश.webp",
-      "status": "done"
+      "status": "redo",
+      "layout": "classic",
+      "note": "Made in the earlier classic layout; to be redone in the site summary style."
     },
     {
       "key": "kohli-antraal",
@@ -80,7 +91,9 @@
       "palette": "moss green, smoky jade, shafts of pale gold",
       "concept": "Forest exile: five pairs of bare footprints and one smaller pair on a path of fallen sal leaves, a bow and quiver against an ancient tree, light shafts through mist.",
       "file": "अंतराल-नरेनदर-कोहली-सारांश.webp",
-      "status": "done"
+      "status": "redo",
+      "layout": "classic",
+      "note": "Made in the earlier classic layout; to be redone in the site summary style."
     },
     {
       "key": "kohli-prachchhann",
@@ -92,9 +105,11 @@
       "palette": "violet dusk, muted silver",
       "concept": "The year in disguise: divine weapons wrapped in cloth hidden high in a gnarled shami tree at dusk, a silver bow glinting through the wrappings, palace lamps far away.",
       "file": "परचछनन-नरेनदर-कोहली-सारांश.webp",
-      "status": "done",
+      "status": "redo",
       "seam": 0.2383,
-      "qa": "AI art had a flat title band with a hard edge at y=286; softened with seam."
+      "qa": "AI art had a flat title band with a hard edge at y=286; softened with seam.",
+      "layout": "classic",
+      "note": "Made in the earlier classic layout; to be redone in the site summary style."
     },
     {
       "key": "kohli-pratyaksh",
@@ -106,7 +121,9 @@
       "palette": "cosmic cobalt, radiant white-gold",
       "concept": "In the Kuru assembly hall a towering silhouette of pure light filled with stars and galaxies rises above tiny dazzled courtiers — the cosmic form revealed.",
       "file": "परतयकष-नरेनदर-कोहली-सारांश.webp",
-      "status": "done"
+      "status": "redo",
+      "layout": "classic",
+      "note": "Made in the earlier classic layout; to be redone in the site summary style."
     },
     {
       "key": "kohli-nirbandh",
@@ -118,7 +135,9 @@
       "palette": "blood-orange sky, ash grey",
       "concept": "Kurukshetra at dawn: a war chariot with four white horses between two endless armies of dark silhouettes, a conch raised, a peacock feather catching first light.",
       "file": "निरबनध-नरेनदर-कोहली-सारांश.webp",
-      "status": "done"
+      "status": "redo",
+      "layout": "classic",
+      "note": "Made in the earlier classic layout; to be redone in the site summary style."
     },
     {
       "key": "kohli-anushangik",
@@ -130,7 +149,9 @@
       "palette": "ash grey, smoky lavender, ember red",
       "concept": "After the war: the old patriarch lying on a bed of arrows on a silent, smoke-veiled battlefield at twilight, broken chariot wheels, fallen banners, a few flickering lamps.",
       "file": "आनुषंगिक-नरेनदर-कोहली-सारांश.webp",
-      "status": "done"
+      "status": "redo",
+      "layout": "classic",
+      "note": "Made in the earlier classic layout; to be redone in the site summary style."
     },
     {
       "key": "kohli-diksha",
@@ -142,7 +163,9 @@
       "palette": "saffron fire, deep forest green",
       "concept": "A sage's staff and a young prince's bow crossed before a sacred fire in a forest hermitage at dawn, sparks rising like stars, two pairs of small footprints beside an old pair.",
       "file": "दीकषा-नरेनदर-कोहली-सारांश.webp",
-      "status": "done"
+      "status": "redo",
+      "layout": "classic",
+      "note": "Made in the earlier classic layout; to be redone in the site summary style."
     },
     {
       "key": "kohli-avsar",
@@ -184,10 +207,13 @@
       "slug": "काबुलीवाला-रवींद्रनाथ-ठाकुर-saransh",
       "title": "काबुलीवाला",
       "author": "रवींद्रनाथ ठाकुर",
-      "font": "tiro",
-      "palette": "almond brown, dusty teal, warm sunlight",
-      "concept": "An Afghan peddler's weathered hand holding a crumpled paper with a small child's soot handprint, a bag of almonds and raisins spilling, a little girl's silhouette in a sunlit Kolkata doorway.",
-      "file": "काबुलीवाला-रवींद्रनाथ-ठाकुर-saransh.webp"
+      "font": "eczar",
+      "palette": "deep twilight blue, indigo, warm lamp gold",
+      "concept": "Rahmat, a tall bearded Afghan dry-fruit seller in turban, kurta and embroidered waistcoat with a big cloth bag, kneels on the doorstep of an old Calcutta house offering raisins and almonds to Mini, a tiny Bengali girl in a frock who smiles shyly; carved wooden door, glowing gas lamp, quiet lane at twilight.",
+      "mode": "dark",
+      "theme": "blue · dark",
+      "file": "काबुलीवाला-रवींद्रनाथ-ठाकुर-saransh.webp",
+      "status": "done"
     },
     {
       "key": "tagore-kshudhit-pashan",
@@ -206,10 +232,13 @@
       "slug": "घरे-बाइरे-रवींद्रनाथ-ठाकुर-saransh",
       "title": "घरे-बाइरे",
       "author": "रवींद्रनाथ ठाकुर",
-      "font": "rozha",
-      "palette": "vermilion, lamp gold, smoky night blue",
-      "concept": "A woman's hand with red and white conch bangles on carved window bars; inside a warm lamp-lit room, outside a bonfire of foreign cloth and swirling swadeshi smoke.",
-      "file": "घरे-बाइरे-रवींद्रनाथ-ठाकुर-saransh.webp"
+      "font": "notoserif",
+      "palette": "vermilion red, crimson, ember orange, deep night",
+      "concept": "Bimala in a red-bordered silk sari with conch-shell bangles stands at a tall carved window of a zamindar mansion at night, torn between worlds: behind her, her gentle husband Nikhilesh reads by lamplight; below in the courtyard the fiery Sandip addresses a crowd around a bonfire of foreign cloth.",
+      "mode": "dark",
+      "theme": "red · dark",
+      "file": "घरे-बाइरे-रवींद्रनाथ-ठाकुर-saransh.webp",
+      "status": "done"
     },
     {
       "key": "pather-panchali",
@@ -1264,5 +1293,6 @@
       "file": "विषकनया-om-prakash-sharma-summary.webp",
       "style": "pulp"
     }
-  ]
+  ],
+  "style": "Matches the covers already on the site (public/book-covers, Supabase book-covers): cinematic character scene from the story, small BOOKNOMICS SUMMARY label, big heavy Devanagari title (metallic gold on dark art, deep ink colour on light art), author below. Every book gets its own theme colour (light, dark, blue, yellow, red, green, purple, ...)."
 }

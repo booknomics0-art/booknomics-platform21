@@ -72,6 +72,21 @@ const AUTHOR_FONTS = {
 
 const BRAND_FONT = font("mukta/500Medium/Mukta_500Medium.ttf", "Mukta Medium");
 
+/**
+ * "summary" layout = the look of the covers already on the site (public/book-covers, Supabase
+ * book-covers): a small "— BOOKNOMICS SUMMARY —" label, a big heavy title (metallic gold on dark
+ * art, deep ink colour on light art), the author underneath. These heavier cuts are used there.
+ */
+export const SUMMARY_FONTS = {
+  martel: font("martel/900Black/Martel_900Black.ttf", "Martel Heavy"),
+  eczar: font("eczar/800ExtraBold/Eczar_800ExtraBold.ttf", "Eczar Ultra-Bold"),
+  notoserif: font("noto-serif-devanagari/900Black/NotoSerifDevanagari_900Black.ttf", "Noto Serif Devanagari Heavy"),
+  mukta: font("mukta/800ExtraBold/Mukta_800ExtraBold.ttf", "Mukta Ultra-Bold"),
+  muktaxb: font("mukta/800ExtraBold/Mukta_800ExtraBold.ttf", "Mukta Ultra-Bold"),
+  laila: font("laila/700Bold/Laila_700Bold.ttf", "Laila Bold"),
+};
+const LABEL_FONT = font("cinzel/600SemiBold/Cinzel_600SemiBold.ttf", "Cinzel Semi-Bold");
+
 const DEVANAGARI = /[\u0900-\u097F]/;
 const escapeXml = (s) =>
   String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
@@ -214,10 +229,206 @@ async function softenSeam(art, seam, above = 90, below = 170) {
   return sharp(art).composite([{ input: Buffer.from(svg) }]).png().toBuffer();
 }
 
+const rgbToHsl = ([r, g, b]) => {
+  (r /= 255), (g /= 255), (b /= 255);
+  const max = Math.max(r, g, b), min = Math.min(r, g, b), l = (max + min) / 2;
+  if (max === min) return [0, 0, l];
+  const d = max - min, s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+  const h = max === r ? (g - b) / d + (g < b ? 6 : 0) : max === g ? (b - r) / d + 2 : (r - g) / d + 4;
+  return [h / 6, s, l];
+};
+const hslToRgb = ([h, s, l]) => {
+  if (!s) return [l * 255, l * 255, l * 255];
+  const q = l < 0.5 ? l * (1 + s) : l + s - l * s, p = 2 * l - q;
+  const f = (t) => {
+    t = (t + 1) % 1;
+    return t < 1 / 6 ? p + (q - p) * 6 * t : t < 1 / 2 ? q : t < 2 / 3 ? p + (q - p) * (2 / 3 - t) * 6 : p;
+  };
+  return [f(h + 1 / 3) * 255, f(h) * 255, f(h - 1 / 3) * 255];
+};
+/** Deep "ink" colour for type on light artwork, in the hue of the artwork's sky. */
+const inkFrom = (rgb) => {
+  const [h, s] = rgbToHsl(rgb);
+  return s < 0.12 ? "#3B2414" : rgbToHex(hslToRgb([h, Math.min(0.8, Math.max(0.5, s * 1.3)), 0.21]));
+};
+
+/** Renders each line separately, trims it to its ink, and stacks the lines with an even gap. */
+async function stackLines(lines, face, size, gapRatio = 0.16) {
+  const parts = [];
+  for (const line of lines) {
+    const r = await renderText({ text: line, face, size, color: "#FFFFFF" });
+    const { data, info } = await sharp(r.buf).trim({ threshold: 1 }).png().toBuffer({ resolveWithObject: true });
+    parts.push({ buf: data, width: info.width, height: info.height });
+  }
+  const gap = Math.round(size * gapRatio);
+  const width = Math.max(...parts.map((p) => p.width));
+  const height = parts.reduce((s, p) => s + p.height, 0) + gap * (parts.length - 1);
+  const boxes = [];
+  let y = 0;
+  const comps = parts.map((p) => {
+    const c = { input: p.buf, left: Math.round((width - p.width) / 2), top: y };
+    boxes.push({ top: y, height: p.height });
+    y += p.height + gap;
+    return c;
+  });
+  const buf = await sharp({ create: { width, height, channels: 4, background: { r: 0, g: 0, b: 0, alpha: 0 } } })
+    .composite(comps)
+    .png()
+    .toBuffer();
+  return { buf, width, height, boxes };
+}
+
+/** Solid-colour copy of a mask. */
+async function tint(mask, color, alpha = 1) {
+  const [r, g, b] = hexToRgb(color);
+  return sharp({ create: { width: mask.width, height: mask.height, channels: 4, background: { r, g, b, alpha } } })
+    .composite([{ input: mask.buf, blend: "dest-in" }])
+    .png()
+    .toBuffer();
+}
+
+/** Fills the mask with a vertical gradient that restarts on every line. */
+async function gradientFill(mask, stops) {
+  const all = [];
+  for (const box of mask.boxes) for (const [off, c] of stops) all.push([(box.top + off * box.height) / mask.height, c]);
+  const svg = `<svg width="${mask.width}" height="${mask.height}" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="g" gradientUnits="objectBoundingBox" x1="0" y1="0" x2="0" y2="1">${all
+    .map(([off, c]) => `<stop offset="${Math.min(1, Math.max(0, off)).toFixed(4)}" stop-color="${c}"/>`)
+    .join("")}</linearGradient></defs><rect width="${mask.width}" height="${mask.height}" fill="url(#g)"/></svg>`;
+  return sharp(Buffer.from(svg)).composite([{ input: mask.buf, blend: "dest-in" }]).png().toBuffer();
+}
+
+const blurPad = async (b, s) =>
+  sharp(b).extend({ top: 30, bottom: 30, left: 30, right: 30, background: { r: 0, g: 0, b: 0, alpha: 0 } }).blur(s).png().toBuffer();
+
+/** The site's existing cover look (see SUMMARY_FONTS). */
+async function composeSummary(o, art) {
+  const isDeva = DEVANAGARI.test(o.title);
+  const fontKey = o.font && (SUMMARY_FONTS[o.font] || TITLE_FONTS[o.font]) ? o.font : isDeva ? "martel" : "playfair";
+  const titleFace = SUMMARY_FONTS[fontKey] || TITLE_FONTS[fontKey];
+  const authorFace = AUTHOR_FONTS[fontKey] || AUTHOR_FONTS.martel;
+
+  const top = await sampleTopColor(art);
+  const mode = o.mode || (luminance(top) > 0.6 ? "light" : "dark");
+  const dark = mode === "dark";
+  const ink = o.ink || inkFrom(top);
+  const cx = (w) => Math.round((W - w) / 2);
+
+  const latinScale = isDeva ? 1 : fontKey === "cinzel" ? 0.8 : fontKey === "teko" || fontKey === "oswald" ? 1.05 : 0.9;
+  const title = await fitBlock(o.title, titleFace, {
+    maxWidth: o.titleMaxWidth || 700,
+    sizes: [196, 132, 104].map((s) => Math.round(s * latinScale)),
+    minSizes: [124, 90, 70].map((s) => Math.round(s * latinScale)),
+    maxLines: 3,
+  });
+  const mask = await stackLines(title.text.split("\n"), titleFace, title.size, o.lineGap ?? 0.17);
+  const T = (color, alpha = 1) => tint(mask, color, alpha);
+  const fill = await gradientFill(
+    mask,
+    o.titleGradient ||
+      (dark
+        ? [[0, "#FFF4D2"], [0.36, "#F7D990"], [0.68, "#E2B05A"], [1, "#B47C2C"]]
+        : [[0, rgbToHex(mix(hexToRgb(ink), [255, 255, 255], 0.22))], [1, ink]]),
+  );
+
+  const author = await fitBlock(o.author, authorFace, {
+    maxWidth: 640,
+    sizes: [DEVANAGARI.test(o.author) ? 48 : 40, 36],
+    minSizes: [32, 28],
+    maxLines: 2,
+  });
+  const authorMask = await stackLines(author.text.split("\n"), authorFace, author.size, 0.3);
+  const authorColor = o.authorColor || (dark ? "#F4E3BA" : rgbToHex(mix(hexToRgb(ink), [0, 0, 0], 0.2)));
+  const A = (color, alpha = 1) => tint(authorMask, color, alpha);
+
+  const labelColor = dark ? "#E9D7A9" : ink;
+  const label = await renderText({ text: "BOOKNOMICS SUMMARY", face: LABEL_FONT, size: 17, color: labelColor, alpha: dark ? 0.9 : 0.85, tracking: 4.2 });
+
+  // Vertical rhythm (all positions are ink edges, so every font spaces the same).
+  const labelTop = 30;
+  const titleTop = o.titleTop ?? 84;
+  const titleBottom = titleTop + mask.height;
+  const dividerY = titleBottom + 26;
+  const authorTop = dark ? titleBottom + 24 : dividerY + 22;
+  const blockBottom = authorTop + authorMask.height;
+  const topEnd = Math.min(0.6, (blockBottom + 170) / H);
+
+  const shade = o.shade || (dark ? rgbToHex(mix(top, [0, 0, 0], 0.6)) : "#FFFBF2");
+  const topAlpha = o.topAlpha ?? (dark ? 0.66 : 0.62);
+  const ruleY = labelTop + Math.round(label.height * 0.5);
+  const lx = cx(label.width);
+  const overlay = Buffer.from(`<svg width="${W}" height="${H}" xmlns="http://www.w3.org/2000/svg">
+  <defs><linearGradient id="t" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0" stop-color="${shade}" stop-opacity="${topAlpha}"/>
+    <stop offset="${(topEnd * 0.55).toFixed(3)}" stop-color="${shade}" stop-opacity="${(topAlpha * 0.6).toFixed(3)}"/>
+    <stop offset="${topEnd.toFixed(3)}" stop-color="${shade}" stop-opacity="0"/>
+  </linearGradient></defs>
+  <rect width="${W}" height="${H}" fill="url(#t)"/>
+  <g stroke="${labelColor}" stroke-opacity="${dark ? 0.6 : 0.55}" stroke-width="1.4">
+    <line x1="${lx - 86}" y1="${ruleY}" x2="${lx - 16}" y2="${ruleY}"/>
+    <line x1="${lx + label.width + 16}" y1="${ruleY}" x2="${lx + label.width + 86}" y2="${ruleY}"/>
+  </g>
+  ${
+    dark
+      ? ""
+      : `<g stroke="${ink}" stroke-opacity="0.75" stroke-width="1.6" fill="${ink}" fill-opacity="0.8">
+    <line x1="${W / 2 - 78}" y1="${dividerY}" x2="${W / 2 - 12}" y2="${dividerY}"/>
+    <line x1="${W / 2 + 12}" y1="${dividerY}" x2="${W / 2 + 78}" y2="${dividerY}"/>
+    <rect x="${W / 2 - 4.5}" y="${dividerY - 4.5}" width="9" height="9" transform="rotate(45 ${W / 2} ${dividerY})"/>
+  </g>`
+  }
+</svg>`);
+
+  const tx = cx(mask.width);
+  const ax = cx(authorMask.width);
+  const layers = [{ input: overlay, left: 0, top: 0 }];
+  if (dark) {
+    // Metallic gold: soft drop shadow, thin dark rim, light top edge, gradient face.
+    layers.push({ input: await blurPad(await T("#000000", 0.8), 8), left: tx - 30, top: titleTop - 30 + 6 });
+    const rim = await T("#2A1705", 0.85);
+    for (const [dx, dy] of [[-2, 0], [2, 0], [0, -2], [0, 2], [-1.4, -1.4], [1.4, -1.4], [-1.4, 1.4], [1.4, 1.4], [0, 3]])
+      layers.push({ input: rim, left: Math.round(tx + dx), top: Math.round(titleTop + dy) });
+    layers.push({ input: await T("#FFF9E6"), left: tx, top: titleTop - 1 });
+  } else {
+    layers.push({ input: await blurPad(await T("#FFFFFF", 0.9), 10), left: tx - 30, top: titleTop - 30 });
+  }
+  layers.push({ input: fill, left: tx, top: titleTop });
+  layers.push({ input: await blurPad(await A(dark ? "#000000" : "#FFFFFF", dark ? 0.75 : 0.9), 6), left: ax - 30, top: authorTop - 30 + (dark ? 2 : 0) });
+  layers.push({ input: await A(authorColor), left: ax, top: authorTop });
+  layers.push({ input: label.buf, left: lx, top: labelTop });
+  return sharp(art).composite(layers).png().toBuffer();
+}
+
+/**
+ * Fits art that is wider than 2:3 (e.g. a square 1024² generation) without cropping the figures
+ * away: the art is scaled to H - extendTop, centre-cropped to W, and the sky is continued upward
+ * by stretching + blurring its top rows, feathered into the picture.
+ */
+async function fitArt(input, o) {
+  const img = sharp(input).rotate();
+  const { width, height } = await img.metadata();
+  const aspect = width / height;
+  const ext = Math.round(o.extendTop ?? (aspect > 0.8 ? 170 : 0));
+  if (!ext) return img.resize(W, H, { fit: "cover", position: o.artPosition || "centre" }).toBuffer();
+  const artH = H - ext;
+  const body = await sharp(input).rotate().resize(W, artH, { fit: "cover", position: o.artPosition || "centre" }).toBuffer();
+  const strip = await sharp(body).extract({ left: 0, top: 0, width: W, height: 6 }).toBuffer();
+  const sky = await sharp(strip).resize(W, ext + 80, { fit: "fill" }).blur(18).toBuffer();
+  const feather = Buffer.from(`<svg width="${W}" height="${artH}" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="f" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff" stop-opacity="0"/><stop offset="${(70 / artH).toFixed(4)}" stop-color="#fff" stop-opacity="1"/></linearGradient></defs><rect width="${W}" height="${artH}" fill="url(#f)"/></svg>`);
+  const bodyFeathered = await sharp(body).ensureAlpha().composite([{ input: feather, blend: "dest-in" }]).png().toBuffer();
+  return sharp({ create: { width: W, height: H, channels: 3, background: { r: 0, g: 0, b: 0 } } })
+    .composite([
+      { input: sky, left: 0, top: 0 },
+      { input: bodyFeathered, left: 0, top: ext },
+    ])
+    .png()
+    .toBuffer();
+}
+
 export async function composeCover(o) {
-  let art = await sharp(o.art).rotate().resize(W, H, { fit: "cover", position: o.artPosition || "centre" }).toBuffer();
+  let art = await fitArt(o.art, o);
   if (o.seam) art = await softenSeam(art, Number(o.seam));
   o = { ...o, title: o.titleDisplay || o.title, author: o.authorDisplay || o.author };
+  if ((o.layout || "summary") === "summary") return composeSummary(o, art);
   const isDeva = DEVANAGARI.test(o.title);
   const fontKey = o.font && TITLE_FONTS[o.font] ? o.font : isDeva ? "mukta" : "playfair";
   const titleFace = TITLE_FONTS[fontKey];
@@ -304,20 +515,25 @@ async function main() {
   if (args.batch) {
     const manifestPath = path.resolve(typeof args.batch === "string" ? args.batch : path.join(REPO, "content-drafts/covers/hindi/manifest.json"));
     const manifest = JSON.parse(await fs.readFile(manifestPath, "utf8"));
-    const artDir = path.resolve(args.artDir || path.join(process.env.HOME || "/tmp", ".cache/cover-art"));
+    const artDir = path.resolve(args.artDir || process.env.COVER_ART_DIR || path.join(process.env.HOME || "/tmp", "cover-art-raw"));
     const only = args.only ? new Set(String(args.only).split(",")) : null;
     const outDir = path.dirname(manifestPath);
     let n = 0;
     for (const b of manifest.books) {
-      if (only && !only.has(b.slug)) continue;
+      if (only && !only.has(b.slug) && !only.has(b.key)) continue;
       if (!only && b.status === "done" && !args.force) continue;
       b.file = b.file || `${b.slug}.webp`;
-      const artPath = path.join(artDir, `${b.key}.png`);
-      try {
-        await fs.access(artPath);
-      } catch {
-        continue;
+      let artPath = null;
+      for (const ext of ["png", "webp", "jpg"]) {
+        try {
+          await fs.access(path.join(artDir, `${b.key}.${ext}`));
+          artPath = path.join(artDir, `${b.key}.${ext}`);
+          break;
+        } catch {
+          /* try next extension */
+        }
       }
+      if (!artPath) continue;
       const png = await composeCover({ ...b, art: artPath });
       const out = path.join(outDir, b.file);
       const bytes = await writeCover(png, out);
