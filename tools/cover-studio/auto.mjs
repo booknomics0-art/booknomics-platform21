@@ -9,18 +9,33 @@
 //           foil layout via compose.mjs → <slug>.jpg next to the manifest. The manifest is saved after
 //           every cover, so a run that stops halfway simply continues next time.
 //   all     plan, then render.
+//   merge   Fold the per-cover result files of a sharded run (--results DIR) into the manifest, refresh the
+//           README progress rows and the preview sheet, and remove DIR.
+//
+// KEYLESS ENGINE (workflow .github/workflows/cover-engine.yml, started by editing engine/run.json):
+//   scenes come from GitHub Models with the built-in GITHUB_TOKEN, the art from FLUX.1-schnell run on the
+//   Actions runners' own CPUs with stable-diffusion.cpp (IMAGE_PROVIDER=local). The plan step freezes the
+//   work list (--queue FILE); many runners then render it in parallel (--shard i/n), each pushing its covers
+//   plus one small result file per cover as it goes, and a final merge step updates the manifest.
 //
 // USAGE
 //   OPENAI_API_KEY=… node auto.mjs all
 //   node auto.mjs render --limit 50 --concurrency 4 --minutes 300 --commit-every 20
 //   node auto.mjs plan --dry                 # print what would be planned, write nothing
 //   node auto.mjs render --only key1,slug2   # just these books
+//   node auto.mjs plan --plan-per 6 --queue q.json             # plan, then freeze the render list
+//   node auto.mjs render --queue q.json --shard 3/40 --results DIR --commit-every 1   # one engine runner
+//   node auto.mjs merge --results DIR --commit-every 1
 //
 // ENV (shell or the repo-root .env)
 //   Images need ONE key:  OPENAI_API_KEY (gpt-image-1)  or  GEMINI_API_KEY (Google AI Studio, gemini-2.5-flash-image)
 //   Scenes use OpenAI when OPENAI_API_KEY is set, otherwise GitHub Models with GH_MODELS_TOKEN
 //   (in Actions: the built-in GITHUB_TOKEN with `permissions: models: read`, no secret needed).
-//   IMAGE_PROVIDER        openai | gemini (default: whichever key is present, OpenAI first)
+//   IMAGE_PROVIDER        openai | gemini | local (default: whichever key is present, OpenAI first; local when
+//                         only SD_BIN is set)
+//   SD_BIN, SD_MODELS     local: the stable-diffusion.cpp binary and the folder with the FLUX files
+//   SD_FLUX, SD_T5, SD_CLIP, SD_VAE   file names (default flux1-schnell-Q4_0.gguf, t5xxl-Q8_0.gguf, clip_l.safetensors, ae.safetensors)
+//   SD_W, SD_H, SD_STEPS, SD_THREADS, SD_FLAGS, SD_TIMEOUT_MIN   size (640x960), steps (4), threads, extra flags, timeout
 //   IMAGE_MODEL           default gpt-image-1 / gemini-2.5-flash-image   IMAGE_QUALITY default medium (OpenAI only)
 //   TEXT_MODEL            default gpt-4.1-mini (OpenAI) / openai/gpt-4.1-mini (GitHub Models)
 //   OPENAI_BASE_URL, GEMINI_BASE_URL, GH_MODELS_URL   endpoint overrides (tests)
@@ -28,7 +43,9 @@
 //   COVER_ART_DIR         where the raw artwork is kept (default ~/cover-art-raw)
 import fs from "node:fs/promises";
 import path from "node:path";
-import { execFileSync } from "node:child_process";
+import { execFileSync, execFile } from "node:child_process";
+import { existsSync } from "node:fs";
+import { promisify } from "node:util";
 import { fileURLToPath } from "node:url";
 
 const HERE = path.dirname(fileURLToPath(import.meta.url));
@@ -63,8 +80,8 @@ async function loadDotEnv(file) {
 
 const args = parseArgs(process.argv.slice(2));
 const STEP = args._[0] || "all";
-if (!["plan", "render", "all"].includes(STEP)) {
-  console.error("Usage: node auto.mjs plan|render|all [--limit N] [--concurrency N] [--minutes N] [--commit-every N] [--only keys] [--dry]");
+if (!["plan", "render", "all", "merge"].includes(STEP)) {
+  console.error("Usage: node auto.mjs plan|render|all|merge [--limit N] [--concurrency N] [--minutes N] [--commit-every N] [--only keys] [--dry] [--plan-per N] [--queue FILE] [--shard i/n] [--results DIR]");
   process.exit(2);
 }
 await loadDotEnv(path.join(REPO, ".env"));
@@ -78,8 +95,9 @@ const GEMINI = (process.env.GEMINI_BASE_URL || "https://generativelanguage.googl
 const GEMINI_KEY = process.env.GEMINI_API_KEY || process.env.GOOGLE_API_KEY || "";
 const GH_MODELS_URL = process.env.GH_MODELS_URL || "https://models.github.ai/inference/chat/completions";
 const GH_MODELS_TOKEN = process.env.GH_MODELS_TOKEN || "";
-const IMAGE_PROVIDER = (process.env.IMAGE_PROVIDER || (OPENAI_KEY ? "openai" : GEMINI_KEY ? "gemini" : "openai")).toLowerCase();
-const IMAGE_MODEL = process.env.IMAGE_MODEL || (IMAGE_PROVIDER === "gemini" ? "gemini-2.5-flash-image" : "gpt-image-1");
+const SD_BIN = process.env.SD_BIN || "";
+const IMAGE_PROVIDER = (process.env.IMAGE_PROVIDER || (OPENAI_KEY ? "openai" : GEMINI_KEY ? "gemini" : SD_BIN ? "local" : "openai")).toLowerCase();
+const IMAGE_MODEL = process.env.IMAGE_MODEL || (IMAGE_PROVIDER === "gemini" ? "gemini-2.5-flash-image" : IMAGE_PROVIDER === "local" ? "flux.1-schnell" : "gpt-image-1");
 const IMAGE_QUALITY = process.env.IMAGE_QUALITY || "medium";
 const TEXT_PROVIDER = OPENAI_KEY ? "openai" : GH_MODELS_TOKEN ? "github" : "openai";
 const TEXT_MODEL = process.env.TEXT_MODEL || (TEXT_PROVIDER === "github" ? "openai/gpt-4.1-mini" : "gpt-4.1-mini");
@@ -94,6 +112,12 @@ const MINUTES = Number(args.minutes) > 0 ? Number(args.minutes) : Infinity;
 const COMMIT_EVERY = Number(args["commit-every"]) || 0;
 const DRY = Boolean(args.dry);
 const only = args.only ? new Set(String(args.only).split(",").map((s) => s.trim())) : null;
+// Engine: a frozen render list, this runner's share of it, and where per-cover results go.
+const QUEUE = typeof args.queue === "string" ? path.resolve(args.queue) : "";
+const SHARD = /^\d+\/\d+$/.test(String(args.shard || "")) ? String(args.shard).split("/").map(Number) : null; // [i, n]
+const RESULTS = typeof args.results === "string" ? path.resolve(args.results) : "";
+const SHARDED = STEP === "render" && Boolean(RESULTS); // render runners never write the manifest
+const PLAN_PER = Number(args["plan-per"]) || 0;
 const started = Date.now();
 const inTime = () => (Date.now() - started) / 60000 < MINUTES;
 const DEVA = /[\u0900-\u097F]/;
@@ -101,6 +125,7 @@ const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 const picked = (b) => !only || only.has(b.key) || only.has(b.slug);
 // Entries without a status are pending (older manifest entries never got one).
 const isOpen = (b) => !b.status || b.status === "pending" || b.status === "redo";
+const renderable = (b) => isOpen(b) && b.theme && b.concept && DEVA.test(b.titleDisplay || b.title) && picked(b);
 
 // Colour themes. Dark themes get the gold-foil title, light themes a deep ink title (ink = its colour).
 export const THEMES = [
@@ -226,31 +251,37 @@ const FONT_ROTATION = ["vesper", "sahitya", "kadwa", "vesper", "sura", "martel",
 const SYSTEM = `You plan photorealistic book-cover scenes for Booknomics, a site of Hindi book summaries.
 For every book you get (title, author, category, and "about" = the site's own overview), return one plan.
 
-concept: ONE specific, vivid moment from THIS book's story with its real characters — names, rough ages,
-  period-accurate clothing, what they are doing, their expressions — and the setting with its light.
-  Format: "<place, era>, from <author>'s <work>: <the scene>". 60–110 words, plain English.
-  Non-fiction, poetry or criticism: show a real-life scene that embodies the book's subject (real people,
-  place, era) — never abstract symbols. Crime thrillers: a tense noir moment with the story's own people
-  (detective, reporter, suspect…) in 1970s–90s Indian cities; danger implied, never shown.
+STORY ACCURACY (most important): use a book's real plot and characters ONLY when you truly know them. The "about"
+text is often a generic study-guide template with no plot; never treat it as the story. If you do not reliably know
+the story, build the scene from the title's meaning plus the book's language region, period and genre, with
+unnamed, ordinary people. Never invent character names or plot events, and never mention a name you are unsure of.
+
+concept: ONE specific, vivid moment — the people (rough ages, period-accurate clothing, what they are doing, their
+  expressions) and the setting with its light. Format: "<place, era>, from <author>'s <work>: <the scene>".
+  45–80 words, plain English. Non-fiction, poetry, spirituality, history or criticism: a real-life scene that
+  embodies the book's subject (real people, place, era), never abstract symbols. Crime thrillers: a tense noir
+  moment in 1970s–90s Indian cities; danger implied, never shown.
 Hard rules for the concept:
   - It must work as a real photograph from a film: no fantasy glow, no CGI creatures, no floating objects.
   - Gods and epic heroes in their traditional look (e.g. Krishna youthful, dark-skinned and clean-shaven,
     with a peacock feather).
-  - Period-accurate costume, arms and architecture for the place and era (no Roman or Greek armour in ancient
-    India; nothing modern in old stories).
+  - Period-accurate costume, arms and architecture for the place and era (Kerala, Bengal, Odisha, Tamil Nadu,
+    Karnataka, Andhra, Gujarat and Maharashtra each look different; nothing modern in old stories).
   - No gore, blood, corpses, nudity or weapons aimed at the viewer.
   - No readable text anywhere: no signs, newspapers, inscriptions, letters or posters.
-  - People in the lower two-thirds; the top third stays open (sky, ceiling, dark background).
-theme: one name from THEMES that fits the story's mood and place; never one of RECENT; mix light and dark.
-  Thrillers too should vary their colour (neon red, sodium-yellow streetlight, teal rain, purple club light,
-  harsh noon sun…), not always black.
+  - People in the lower two-thirds; the top third stays open (sky, ceiling, wall, dark background).
+theme: INVENT a short, evocative English name (1–3 words) for this cover's own colour theme, taken from the
+  scene's light and colours (e.g. "monsoon jade", "sodium noir", "chalk noon", "lantern ochre"). It must be NEW:
+  not in RECENT and not shared with another book in this request. Vary the hue from book to book — red, blue,
+  green, yellow, violet, teal, ochre, white, black — and mix light and dark across the request.
+mode: "light" when the top third is bright (day sky, pale wall), "dark" when it is night, shadow or low-key.
 palette: 3–5 colour words that match the theme and the scene.
 title_hi: the title in Devanagari. If the given title is already Devanagari, copy it exactly. If it is in
   Latin script, give the established Hindi/Devanagari form of the work's title (transliterate the original
   title, e.g. "Aranyak" → "आरण्यक"); do not translate into English.
 author_hi: the author's name in standard Hindi Devanagari spelling.
 
-Answer with JSON only: {"books":[{"id","title_hi","author_hi","concept","theme","palette"}]}`;
+Answer with JSON only: {"books":[{"id","title_hi","author_hi","concept","theme","mode","palette"}]}`;
 
 // ---------------------------------------------------------------- helpers
 
@@ -324,6 +355,50 @@ async function geminiImage(prompt) {
   }
 }
 
+const execFileP = promisify(execFile);
+const SD = {
+  models: process.env.SD_MODELS || path.join(REPO, "models"),
+  flux: process.env.SD_FLUX || "flux1-schnell-Q4_0.gguf",
+  t5: process.env.SD_T5 || "t5xxl-Q8_0.gguf",
+  clip: process.env.SD_CLIP || "clip_l.safetensors",
+  vae: process.env.SD_VAE || "ae.safetensors",
+  w: Number(process.env.SD_W) || 640,
+  h: Number(process.env.SD_H) || 960,
+  steps: Number(process.env.SD_STEPS) || 4,
+  threads: Number(process.env.SD_THREADS) || 0,
+  flags: String(process.env.SD_FLAGS || "").split(/\s+/).filter(Boolean),
+  timeoutMin: Number(process.env.SD_TIMEOUT_MIN) || 45,
+};
+/** Stable per-book seed, so a re-run of the same book gives the same picture. */
+function seedOf(key) {
+  let h = 2166136261;
+  for (const ch of String(key)) h = Math.imul(h ^ ch.charCodeAt(0), 16777619) >>> 0;
+  return h % 2147483647;
+}
+/** One picture from FLUX.1-schnell on this machine's CPU (stable-diffusion.cpp). No key, no network. */
+async function localImage(b) {
+  if (!SD_BIN) throw Object.assign(new Error("SD_BIN is not set"), { fatal: true });
+  const { fluxPrompt } = await import("./engine/flux-prompt.mjs");
+  await fs.mkdir(ART_DIR, { recursive: true });
+  const out = path.join(ART_DIR, `${b.key}.flux.png`);
+  const m = (f) => (path.isAbsolute(f) ? f : path.join(SD.models, f));
+  const argv = [
+    "--diffusion-model", m(SD.flux), "--vae", m(SD.vae), "--clip_l", m(SD.clip), "--t5xxl", m(SD.t5),
+    "-p", fluxPrompt(b), "--cfg-scale", "1.0", "--sampling-method", "euler", "--steps", String(SD.steps),
+    "-W", String(SD.w), "-H", String(SD.h), "-s", String(seedOf(b.key) + (Number(b.seedBump) || 0)), "-o", out, ...SD.flags,
+  ];
+  if (SD.threads) argv.push("-t", String(SD.threads));
+  const t0 = Date.now();
+  try {
+    await execFileP(SD_BIN, argv, { maxBuffer: 256 * 1024 * 1024, timeout: SD.timeoutMin * 60000, killSignal: "SIGKILL" });
+  } catch (e) {
+    const tail = String(e.stderr || e.stdout || e.message).trim().split("\n").slice(-4).join(" | ");
+    throw new Error(`stable-diffusion.cpp failed${e.killed ? " (timeout)" : ""}: ${tail.slice(0, 300)}`);
+  }
+  console.log(`  art ${b.key}: ${Math.round((Date.now() - t0) / 1000)}s`);
+  return fs.readFile(out);
+}
+
 async function fetchCoverless() {
   if (!SB || !SB_KEY) throw new Error("Set SUPABASE_URL (or VITE_SUPABASE_URL) and VITE_SUPABASE_PUBLISHABLE_KEY to read the book list.");
   const headers = SB_KEY.startsWith("sb_") ? { apikey: SB_KEY } : { apikey: SB_KEY, Authorization: `Bearer ${SB_KEY}` };
@@ -341,7 +416,7 @@ async function fetchCoverless() {
 
 let saving = Promise.resolve();
 function saveManifest(m) {
-  if (DRY) return Promise.resolve();
+  if (DRY || SHARDED) return Promise.resolve();
   saving = saving.then(() => fs.writeFile(manifestPath, JSON.stringify(m, null, 2) + "\n"));
   return saving;
 }
@@ -353,14 +428,14 @@ function commit(files, message) {
   committing = committing.then(async () => {
     await saving;
     try {
-      git("add", "--", path.relative(REPO, manifestPath), ...files.map((f) => path.relative(REPO, f)));
+      git("add", "-A", "--", ...(SHARDED ? [] : [path.relative(REPO, manifestPath)]), ...files.map((f) => path.relative(REPO, f)));
       git("commit", "-q", "-m", message);
     } catch (e) {
       console.warn(`! commit skipped: ${String(e.stderr || e.message).trim().slice(0, 200)}`);
       return;
     }
     const branch = git("rev-parse", "--abbrev-ref", "HEAD").trim();
-    for (let i = 1; i <= 4; i++) {
+    for (let i = 1; i <= 10; i++) {
       try {
         git("pull", "-q", "--rebase", "--autostash", "origin", branch);
         git("push", "-q", "origin", `HEAD:${branch}`);
@@ -368,7 +443,7 @@ function commit(files, message) {
         return;
       } catch (e) {
         console.warn(`! push attempt ${i} failed: ${String(e.stderr || e.message).trim().slice(0, 200)}`);
-        await sleep(5000 * i);
+        await sleep(3000 * i + Math.random() * 4000);
       }
     }
   });
@@ -382,14 +457,21 @@ async function summary(lines) {
 
 // ---------------------------------------------------------------- plan
 
-function chooseTheme(name, recent, usage) {
-  const wanted = THEMES.find((t) => t.name === String(name || "").toLowerCase().trim());
-  if (wanted && !recent.slice(-6).includes(wanted.name)) return wanted;
-  // Fallback: the least-used theme of the wanted mode (or the other mode than the last one) not used recently.
-  const lastMode = THEMES.find((t) => t.name === recent.at(-1))?.mode;
-  const mode = wanted?.mode || (lastMode === "dark" ? "light" : "dark");
-  const pool = THEMES.filter((t) => t.mode === mode && !recent.slice(-10).includes(t.name));
-  return (pool.length ? pool : THEMES).slice().sort((a, b) => (usage[a.name] || 0) - (usage[b.name] || 0))[0];
+/** The planner invents the theme name; make sure no other cover has used it. */
+function uniqueTheme(p, used) {
+  const clean = (x) => String(x || "").toLowerCase().replace(/[^a-z' -]+/g, " ").replace(/\s+/g, " ").trim().split(" ").slice(0, 3).join(" ");
+  const words = String(p.palette || "").toLowerCase().match(/[a-z]+/g) || [];
+  let name = clean(p.theme) || words.slice(0, 2).join(" ") || "untitled";
+  const known = THEMES.find((t) => t.name === name);
+  let mode = p.mode === "light" || p.mode === "dark" ? p.mode : known?.mode;
+  if (!mode) mode = /night|dark|noir|shadow|dusk|midnight|lamp|lantern|ember|smoke|ink|coal|storm/.test(`${name} ${words.join(" ")}`) ? "dark" : "light";
+  if (used.has(name)) {
+    const alt = words.map((w) => `${name} ${w}`).find((c) => !used.has(c) && c.split(" ").length <= 4 && !name.split(" ").includes(c.split(" ").pop()));
+    if (alt) name = alt;
+    else for (let i = 2; used.has(name); i++) name = `${clean(p.theme) || "untitled"} ${["ii", "iii", "iv", "v", "vi", "vii", "viii", "ix", "x"][i - 2] || i}`;
+  }
+  used.add(name);
+  return { name, mode };
 }
 
 async function plan(manifest) {
@@ -420,26 +502,26 @@ async function plan(manifest) {
     added++;
   }
 
-  const usage = {};
+  const used = new Set();
   const recent = [];
   for (const b of manifest.books) {
     const name = b.theme ? b.theme.split(" · ")[0] : null;
-    if (name) (usage[name] = (usage[name] || 0) + 1), recent.push(name);
+    if (name) used.add(name), recent.push(b.theme);
   }
   const todo = manifest.books.filter((b) => isOpen(b) && !b.theme && live.has(b.id) && picked(b)).slice(0, LIMIT);
   console.log(`${added} new book(s) added, ${gone} skipped, ${todo.length} to plan.`);
 
   let planned = 0;
   const problems = [];
-  const PER = TEXT_PROVIDER === "github" ? 4 : 6; // GitHub Models free tier: ~8k input tokens per request
+  const PER = PLAN_PER || (TEXT_PROVIDER === "github" ? 4 : 6); // GitHub Models free tier: ~8k input tokens per request
+  let rateLimited = 0;
   for (let i = 0; i < todo.length && inTime(); i += PER) {
     const chunk = todo.slice(i, i + PER);
     const payload = {
-      THEMES: THEMES.map((t) => `${t.name} (${t.mode})`),
-      RECENT: recent.slice(-6),
+      RECENT: recent.slice(-24),
       books: chunk.map((b) => {
         const r = live.get(b.id);
-        return { id: b.id, title: r.title, author: r.author, category: r.category, about: String(r.overview || "").replace(/\s+/g, " ").slice(0, TEXT_PROVIDER === "github" ? 1000 : 1400) };
+        return { id: b.id, title: r.title, author: r.author, category: r.category, about: String(r.overview || "").replace(/\s+/g, " ").slice(0, TEXT_PROVIDER === "github" ? 600 : 1400) };
       }),
     };
     let plans = [];
@@ -453,9 +535,19 @@ async function plan(manifest) {
         ],
       });
       plans = JSON.parse(res.choices?.[0]?.message?.content || "{}").books || [];
+      rateLimited = 0;
     } catch (e) {
+      if (/^429\b/.test(e.message)) {
+        problems.push(`rate limit reached after ${planned} plan(s); the rest is planned on the next run`);
+        break;
+      }
       if (e.fatal) throw e;
       problems.push(`${chunk.map((b) => b.title).join(", ")}: ${e.message}`);
+      // The free tier has a daily request cap: stop planning after repeated 429s, render what is planned.
+      if (/^429\b/.test(e.message) && ++rateLimited >= 3) {
+        problems.push("rate limit reached; the rest is planned on the next run");
+        break;
+      }
       continue;
     }
     for (const b of chunk) {
@@ -464,13 +556,12 @@ async function plan(manifest) {
         problems.push(`${b.title}: no plan returned`);
         continue;
       }
-      const t = chooseTheme(p.theme, recent, usage);
+      const t = uniqueTheme(p, used);
       b.concept = String(p.concept).trim();
-      b.palette = String(p.palette || t.palette).trim();
+      b.palette = String(p.palette || t.name).trim();
       b.theme = `${t.name} · ${t.mode}`;
       b.mode = t.mode;
-      if (t.ink) b.ink = t.ink;
-      else delete b.ink;
+      delete b.ink; // compose takes the title ink from the art itself
       if (!DEVA.test(b.title)) {
         if (p.title_hi && DEVA.test(p.title_hi)) b.titleDisplay = String(p.title_hi).trim();
         else problems.push(`${b.title}: no Devanagari title`);
@@ -478,8 +569,7 @@ async function plan(manifest) {
       if (!DEVA.test(b.authorDisplay || b.author) && p.author_hi && DEVA.test(p.author_hi)) b.authorDisplay = String(p.author_hi).trim();
       b.font = b.font || FONT_ROTATION[manifest.books.indexOf(b) % FONT_ROTATION.length];
       b.plannedBy = TEXT_MODEL;
-      usage[t.name] = (usage[t.name] || 0) + 1;
-      recent.push(t.name);
+      recent.push(b.theme);
       planned++;
       if (DRY) console.log(`• ${b.titleDisplay || b.title} — ${b.theme}\n  ${b.concept}`);
     }
@@ -487,6 +577,12 @@ async function plan(manifest) {
     console.log(`planned ${planned}/${todo.length}`);
   }
   await saveManifest(manifest);
+  if (QUEUE && !DRY) {
+    const keys = manifest.books.filter(renderable).map((b) => b.key);
+    await fs.mkdir(path.dirname(QUEUE), { recursive: true });
+    await fs.writeFile(QUEUE, JSON.stringify(keys, null, 0) + "\n");
+    console.log(`queue: ${keys.length} cover(s) ready to render → ${path.relative(REPO, QUEUE)}`);
+  }
   await summary([`### Plan: ${planned} scene(s) written, ${added} new book(s), ${gone} skipped`, ...problems.map((p) => `- ${p}`)]);
 }
 
@@ -495,7 +591,9 @@ async function plan(manifest) {
 async function renderOne(b) {
   const prompt = buildPrompt(b);
   let bytes;
-  if (IMAGE_PROVIDER === "gemini") {
+  if (IMAGE_PROVIDER === "local") {
+    bytes = await localImage(b);
+  } else if (IMAGE_PROVIDER === "gemini") {
     bytes = await geminiImage(prompt);
   } else {
     const dalle = IMAGE_MODEL.startsWith("dall-e");
@@ -526,9 +624,16 @@ async function renderOne(b) {
 }
 
 async function render(manifest) {
-  const queue = manifest.books
-    .filter((b) => isOpen(b) && b.theme && b.concept && DEVA.test(b.titleDisplay || b.title) && picked(b))
-    .slice(0, LIMIT);
+  // Engine runners share a frozen list: runner i of n takes every n-th entry, so the split never shifts.
+  let list;
+  if (QUEUE) {
+    const byKey = new Map(manifest.books.map((b) => [b.key, b]));
+    list = JSON.parse(await fs.readFile(QUEUE, "utf8")).map((k, i) => ({ b: byKey.get(k), i })).filter((x) => x.b);
+  } else list = manifest.books.filter(renderable).map((b, i) => ({ b, i }));
+  if (SHARD) list = list.filter((x) => x.i % SHARD[1] === SHARD[0]);
+  let queue = list.map((x) => x.b).filter(renderable);
+  if (RESULTS) queue = queue.filter((b) => !existsSync(path.join(RESULTS, `${b.key}.json`)));
+  queue = queue.slice(0, LIMIT);
   console.log(`${queue.length} cover(s) to render with ${IMAGE_PROVIDER}/${IMAGE_MODEL}${IMAGE_PROVIDER === "openai" ? ` (${IMAGE_QUALITY})` : ""}, ${CONCURRENCY} at a time; scenes by ${TEXT_PROVIDER}/${TEXT_MODEL}.`);
   if (DRY) {
     for (const b of queue) console.log(`• ${b.titleDisplay || b.title} — ${b.theme}`);
@@ -548,6 +653,12 @@ async function render(manifest) {
         const out = await renderOne(b);
         made.push(out);
         pendingFiles.push(out);
+        if (RESULTS) {
+          const j = path.join(RESULTS, `${b.key}.json`);
+          await fs.mkdir(RESULTS, { recursive: true });
+          await fs.writeFile(j, JSON.stringify(b, null, 2) + "\n");
+          pendingFiles.push(j);
+        }
         console.log(`✓ ${made.length}/${queue.length}  ${b.titleDisplay || b.title} — ${b.authorDisplay || b.author}  (${b.theme})`);
       } catch (e) {
         if (e.fatal) {
@@ -568,7 +679,7 @@ async function render(manifest) {
       if (COMMIT_EVERY && pendingFiles.length >= COMMIT_EVERY) {
         const files = pendingFiles;
         pendingFiles = [];
-        await commit(files, `Hindi covers (auto): ${made.length} of ${queue.length}`);
+        await commit(files, `Hindi covers (${SHARD ? `engine ${SHARD.join("/")}` : "auto"}): ${made.length} of ${queue.length}`);
       }
     }
   }
@@ -576,7 +687,7 @@ async function render(manifest) {
   await saveManifest(manifest);
 
   // A contact sheet of this run's newest covers, for a quick look.
-  const sheetFiles = made.slice(-40);
+  const sheetFiles = SHARDED ? [] : made.slice(-40);
   if (sheetFiles.length) {
     try {
       execFileSync("node", [path.join(HERE, "sheet.mjs"), path.join(outDir, "_preview-latest.jpg"), ...sheetFiles, "--cols", "8", "--w", "240"], { stdio: "ignore" });
@@ -585,7 +696,7 @@ async function render(manifest) {
       /* the sheet is optional */
     }
   }
-  await commit(pendingFiles, `Hindi covers (auto): ${made.length} made this run`);
+  await commit(pendingFiles, `Hindi covers (${SHARD ? `engine ${SHARD.join("/")}` : "auto"}): ${made.length} made this run`);
   await committing;
 
   const left = manifest.books.filter((b) => isOpen(b) && picked(b)).length;
@@ -598,10 +709,111 @@ async function render(manifest) {
   if (fatal) process.exitCode = 1;
 }
 
+// ---------------------------------------------------------------- merge
+
+/** Rewrites the README progress rows of every batch that is not finished yet (finished rows stay as they are). */
+async function updateReadme(manifest) {
+  const P = path.join(outDir, "README.md");
+  let s;
+  try {
+    s = await fs.readFile(P, "utf8");
+  } catch {
+    return null;
+  }
+  const lines = s.split("\n");
+  const isRow = (l) => l.startsWith("| **50-book batch ") || /^\| Batches \d+–\d+ /.test(l);
+  const first = lines.findIndex(isRow);
+  if (first < 0) return null;
+  const rowOf = (n) => lines.find((l) => l.startsWith(`| **50-book batch ${n}** `));
+  const restLabel = (lines.find((l) => /^\| Batches \d+–\d+ /.test(l)) || "").match(/^\| Batches \d+–\d+ \((.*)\) \| \d+ \| pending \|$/)?.[1] || "pending";
+  const batches = [...new Set(manifest.books.map((b) => b.batch).filter(Boolean))].sort((a, b) => a - b);
+  const rows = [];
+  const untouched = [];
+  for (const n of batches) {
+    const bs = manifest.books.filter((b) => b.batch === n);
+    const done = bs.filter((b) => b.status === "done");
+    const open = bs.filter(isOpen).length;
+    const old = rowOf(n);
+    if (!done.length) {
+      untouched.push(n);
+      continue;
+    }
+    if (old && !open && new RegExp(`\\| ${done.length} done: `).test(old)) {
+      rows.push(old);
+      continue;
+    }
+    const label = old?.match(/^\| \*\*50-book batch \d+\*\* \(([^|]*)\) \|/)?.[1] || `\`"batch": ${n}\``;
+    const list = done.map((b) => `${b.titleDisplay || b.title} (${b.theme})`).join(", ");
+    rows.push(`| **50-book batch ${n}** (${label}) | ${bs.length} | ${done.length} done: ${list}.${open ? ` ${open} pending` : ""} |`);
+  }
+  if (untouched.length) {
+    const count = manifest.books.filter((b) => untouched.includes(b.batch)).length;
+    const span = untouched.length > 1 ? `Batches ${untouched[0]}–${untouched.at(-1)}` : `Batches ${untouched[0]}–${untouched[0]}`;
+    rows.push(`| ${span} (${restLabel}) | ${count} | pending |`);
+  }
+  const kept = lines.filter((l) => !isRow(l));
+  kept.splice(first, 0, ...rows);
+  await fs.writeFile(P, kept.join("\n"));
+  return P;
+}
+
+async function merge(manifest) {
+  const dir = RESULTS || path.join(outDir, "_engine");
+  let files = [];
+  try {
+    files = (await fs.readdir(dir)).filter((f) => f.endsWith(".json") && f !== "queue.json");
+  } catch {
+    /* nothing to merge */
+  }
+  const merged = [];
+  for (const f of files) {
+    let r;
+    try {
+      r = JSON.parse(await fs.readFile(path.join(dir, f), "utf8"));
+    } catch {
+      continue;
+    }
+    const b = manifest.books.find((x) => x.key === r.key);
+    if (!b || r.status !== "done" || b.status === "done") continue; // a cover made by hand in the meantime wins
+    Object.assign(b, r);
+    merged.push(b);
+  }
+  await saveManifest(manifest);
+  const readme = await updateReadme(manifest);
+  let tracked = false;
+  try {
+    tracked = git("ls-files", "--", path.relative(REPO, dir)).trim().length > 0;
+  } catch {
+    /* not a git checkout */
+  }
+  const touched = [manifestPath];
+  if (tracked) touched.push(dir);
+  if (readme) touched.push(readme);
+  const newest = merged.slice().sort((a, b) => String(b.renderedAt).localeCompare(String(a.renderedAt))).slice(0, 40);
+  if (newest.length) {
+    try {
+      execFileSync("node", [path.join(HERE, "sheet.mjs"), path.join(outDir, "_preview-latest.png"), ...newest.map((b) => path.join(outDir, b.file)), "--cols", "8", "--w", "240"], { stdio: "ignore" });
+      const sharp = (await import("sharp")).default;
+      await sharp(path.join(outDir, "_preview-latest.png")).jpeg({ quality: 84 }).toFile(path.join(outDir, "_preview-latest.jpg"));
+      await fs.unlink(path.join(outDir, "_preview-latest.png"));
+      touched.push(path.join(outDir, "_preview-latest.jpg"));
+    } catch {
+      /* the sheet is optional */
+    }
+  }
+  if (!DRY) await fs.rm(dir, { recursive: true, force: true });
+  const done = manifest.books.filter((b) => b.status === "done").length;
+  const left = manifest.books.filter(isOpen).length;
+  await commit(touched, `Hindi covers (engine): ${merged.length} merged, ${done} done in total, ${left} to go`);
+  await committing;
+  await summary([`### Merge: ${merged.length} engine cover(s) added to the manifest — ${done} done, ${left} still to do`]);
+}
+
 // ---------------------------------------------------------------- main
 
 const manifest = JSON.parse(await fs.readFile(manifestPath, "utf8"));
 try {
+  if (STEP === "merge") await merge(manifest);
   if (STEP === "plan" || STEP === "all") await plan(manifest);
   if ((STEP === "render" || STEP === "all") && inTime()) await render(manifest);
 } catch (e) {

@@ -1,0 +1,151 @@
+name: Cover engine (keyless)
+
+# Makes every remaining Hindi cover with NO API key.
+#   plan    scenes + a unique colour theme per book from GitHub Models (the built-in GITHUB_TOKEN)
+#   render  40 runners (20 at a time) draw the art with FLUX.1-schnell on their own CPU (stable-diffusion.cpp),
+#           compose the approved foil cover and push every cover as soon as it is made
+#   merge   folds the results into manifest.json, the README progress rows and the preview sheet
+# Start or restart: change tools/cover-studio/engine/run.json and push. {"stop": true} ends a running engine.
+
+on:
+  push:
+    branches:
+      - arena/bcb5e5c1-booknomics-platform21
+    paths:
+      - tools/cover-studio/engine/run.json
+
+permissions:
+  contents: write
+  models: read
+
+concurrency:
+  group: cover-engine
+  cancel-in-progress: true
+
+env:
+  SUPABASE_URL: https://pbkfewrtdgiagytmcigb.supabase.co
+  VITE_SUPABASE_PUBLISHABLE_KEY: sb_publishable_0xHTLlIf-4yj0yxVcnEWfQ_C02UtgVO
+  QUEUE: content-drafts/covers/hindi/_engine/queue.json
+  RESULTS: content-drafts/covers/hindi/_engine
+  SHARDS: 40
+
+jobs:
+  plan:
+    runs-on: ubuntu-latest
+    timeout-minutes: 240
+    outputs:
+      stop: ${{ steps.cfg.outputs.stop }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref_name }}
+      - id: cfg
+        run: echo "stop=$(node -p 'Boolean(require("./tools/cover-studio/engine/run.json").stop)')" >> "$GITHUB_OUTPUT"
+      - uses: actions/setup-node@v4
+        if: steps.cfg.outputs.stop != 'true'
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: tools/cover-studio/package-lock.json
+      - name: Install
+        if: steps.cfg.outputs.stop != 'true'
+        working-directory: tools/cover-studio
+        run: npm ci --no-audit --no-fund
+      - name: Plan scenes (GitHub Models, no key)
+        if: steps.cfg.outputs.stop != 'true'
+        continue-on-error: true
+        env:
+          GH_MODELS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: node tools/cover-studio/auto.mjs plan --plan-per 8 --queue "$QUEUE" --minutes 200
+      - name: Commit the plan
+        if: steps.cfg.outputs.stop != 'true'
+        run: |
+          git config user.name "booknomics-cover-bot"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add content-drafts/covers/hindi/manifest.json
+          [ -f "$QUEUE" ] && git add "$QUEUE"
+          git commit -q -m "Cover engine: scenes planned" || exit 0
+          for i in 1 2 3 4 5 6; do git pull -q --rebase origin "$GITHUB_REF_NAME" && git push -q origin "HEAD:$GITHUB_REF_NAME" && exit 0; sleep $((i*5)); done
+          exit 1
+
+  render:
+    needs: plan
+    if: needs.plan.outputs.stop != 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 355
+    strategy:
+      fail-fast: false
+      max-parallel: 20
+      matrix:
+        shard: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39]
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref_name }}
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: tools/cover-studio/package-lock.json
+      - name: Install
+        working-directory: tools/cover-studio
+        run: npm ci --no-audit --no-fund
+      - name: Get stable-diffusion.cpp and FLUX.1-schnell
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -e
+          cd "$RUNNER_TEMP"
+          url=https://github.com/leejet/stable-diffusion.cpp/releases/download/master-948-228c707/sd-master-228c707-bin-Linux-Ubuntu-24.04-x86_64.zip
+          if ! curl -sSfL --retry 5 -o sd.zip "$url"; then
+            url=$(curl -s -H "Authorization: Bearer $GH_TOKEN" https://api.github.com/repos/leejet/stable-diffusion.cpp/releases/latest | python3 -c "import json,sys; print([x['browser_download_url'] for x in json.load(sys.stdin)['assets'] if 'Linux-Ubuntu' in x['name'] and x['name'].endswith('x86_64.zip')][0])")
+            curl -sSfL --retry 5 -o sd.zip "$url"
+          fi
+          mkdir -p sdbin models && unzip -q -o sd.zip -d sdbin
+          SD=$(find "$PWD/sdbin" -type f \( -name sd -o -name sd-cli \) | head -1); chmod +x "$SD"
+          curl -s https://huggingface.co/api/models/second-state/FLUX.1-schnell-GGUF | python3 -c "
+          import json,sys; print('\n'.join(s['rfilename'] for s in json.load(sys.stdin)['siblings']))" > files.txt
+          T5=$(for q in Q4_0 Q4_K Q5_0 Q8_0; do grep -m1 -i "^t5xxl.*$q.*gguf$" files.txt; done | head -1)
+          base=https://huggingface.co/second-state/FLUX.1-schnell-GGUF/resolve/main
+          for f in flux1-schnell-Q4_0.gguf ae.safetensors clip_l.safetensors "$T5"; do
+            curl -sSfL --retry 8 --retry-delay 10 --retry-all-errors -o "models/$f" "$base/$f"
+          done
+          ls -la models
+          { echo "SD_BIN=$SD"; echo "SD_MODELS=$PWD/models"; echo "SD_T5=$T5"; echo "LD_LIBRARY_PATH=$(dirname "$SD")"; echo "COVER_ART_DIR=$PWD/art"; } >> "$GITHUB_ENV"
+      - name: Render this runner's covers
+        env:
+          IMAGE_PROVIDER: local
+          SD_W: 640
+          SD_H: 960
+          SD_STEPS: 4
+          SD_FLAGS: --diffusion-fa
+          SD_TIMEOUT_MIN: 40
+        run: |
+          git config user.name "booknomics-cover-bot"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          export SD_THREADS=$(nproc)
+          Q=""; [ -f "$QUEUE" ] && Q="--queue $QUEUE"
+          node tools/cover-studio/auto.mjs render $Q --shard ${{ matrix.shard }}/$SHARDS --results "$RESULTS" --concurrency 1 --commit-every 1 --minutes 300
+
+  merge:
+    needs: [plan, render]
+    if: always() && needs.plan.outputs.stop != 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref_name }}
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: tools/cover-studio/package-lock.json
+      - name: Install
+        working-directory: tools/cover-studio
+        run: npm ci --no-audit --no-fund
+      - name: Merge the results
+        run: |
+          git config user.name "booknomics-cover-bot"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          node tools/cover-studio/auto.mjs merge --results "$RESULTS" --commit-every 1

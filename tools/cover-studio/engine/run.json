@@ -1,0 +1,5 @@
+{
+  "run": 1,
+  "stop": false,
+  "note": "Change \"run\" and push to (re)start the keyless cover engine; set \"stop\": true to end a running one."
+}
