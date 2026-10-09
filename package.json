@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "predev": "node --import tsx scripts/check-env.ts",
-    "prebuild": "node --import tsx scripts/check-env.ts && node --import tsx scripts/generate-sitemap.ts",
+    "prebuild": "node --import tsx scripts/check-env.ts && node --import tsx scripts/generate-sitemap-v2.ts",
     "dev": "vite",
     "build": "vite build",
     "postbuild": "node scripts/prerender-en-crawl.mjs && node scripts/prerender-all-books.mjs && node scripts/prerender-aeo-geo.mjs && node scripts/finalize-hindi-hub.mjs && node scripts/finalize-hindi-guide.mjs && node scripts/guard-aeo-prerender.mjs && node scripts/guard-public-prerender.mjs",
