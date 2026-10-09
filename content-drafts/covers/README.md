@@ -70,6 +70,7 @@ covers above.
 | `the-e-myth-cover.jpg` | The E-Myth Revisited | Michael E. Gerber | Cobalt blueprint |
 | `the-one-thing-cover.jpg` | The ONE Thing | Gary Keller & Jay Papasan | Sunflower yellow and black |
 | `the-tipping-point-cover.jpg` | The Tipping Point | Malcolm Gladwell | Steel grey and ember |
+| `thinking-fast-and-slow-cover.jpg` | Thinking, Fast and Slow | Daniel Kahneman | Split teal-blue and tangerine |
 
 Not yet uploaded to the `book-covers` bucket. Upload through the Admin book row
 (cloud button), as described above.
