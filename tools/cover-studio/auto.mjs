@@ -170,6 +170,16 @@ export const THEMES = [
   { name: "eucalyptus", mode: "light", palette: "eucalyptus grey-green, misty white morning", ink: "#23382F" },
   { name: "jade", mode: "light", palette: "jade-green harbour water, hazy morning sky", ink: "#0F3A2E" },
   { name: "champagne", mode: "light", palette: "champagne gold, cream marble, morning light", ink: "#4A3A1A" },
+  { name: "cobalt", mode: "dark", palette: "cobalt-blue night, wet reflections, one red neon glow" },
+  { name: "walnut", mode: "dark", palette: "polished walnut wood, brass lamp, deep brown shadow" },
+  { name: "rani pink", mode: "dark", palette: "rani-pink and magenta festival lights, black night" },
+  { name: "violet dusk", mode: "dark", palette: "violet dusk sky, sodium lamps, smoke" },
+  { name: "tobacco", mode: "dark", palette: "tobacco brown, gold rings, tungsten light" },
+  { name: "dawn mauve", mode: "light", palette: "pale mauve dawn, soft grey, washed walls", ink: "#3E2A40" },
+  { name: "buttercream", mode: "light", palette: "buttercream walls, warm morning sun, khaki", ink: "#4A3B12" },
+  { name: "parchment", mode: "light", palette: "parchment cream, warm wood, daylight", ink: "#3D2B16" },
+  { name: "pewter", mode: "light", palette: "pewter grey, hazy daylight, steam", ink: "#2E3540" },
+  { name: "tangerine", mode: "light", palette: "tangerine and lemon street colours, bright noon", ink: "#5A2A08" },
 ];
 const FONT_ROTATION = ["vesper", "sahitya", "kadwa", "vesper", "sura", "martel", "vesper", "rozha"];
 

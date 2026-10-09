@@ -1269,12 +1269,16 @@
       "title": "अपने कत्ल की सुपारी",
       "author": "Ved Prakash Sharma",
       "authorDisplay": "वेद प्रकाश शर्मा",
-      "font": "vesper",
-      "palette": "noir red, black-teal",
-      "concept": "A bundle of cash and a man's photograph with a red crosshair over the face on a table under a lamp, a pistol beside it; the same man watches through window blinds.",
+      "font": "kadwa",
+      "palette": "cobalt-blue night, wet reflections, one red neon glow",
+      "concept": "A dim Irani café booth in Bombay on a rainy night, 1980s, from Ved Prakash Sharma's crime thriller Apne Katl ki Supari: a calm, well-dressed man in his thirties slides a thick envelope of cash across the marble table to a scarred contract killer in a leather jacket; between them lies a small black-and-white photograph showing the client's own face, and the killer stares from the photo to the man in disbelief; rain on the window, cobalt night outside, one red neon glow.",
       "file": "अपने-कतल-की-सुपारी-ved-prakash-sharma-summary.jpg",
       "style": "pulp",
-      "batch": 2
+      "batch": 2,
+      "theme": "cobalt · dark",
+      "mode": "dark",
+      "status": "done",
+      "note": "Retouched: the café window neon read IRANI CAFÉ; softened to an out-of-focus red glow with an elliptical feathered blur (original kept in cover-art-raw/_orig)."
     },
     {
       "key": "vps-asli-khiladi",
@@ -1283,12 +1287,15 @@
       "title": "असली खिलाड़ी",
       "author": "Ved Prakash Sharma",
       "authorDisplay": "वेद प्रकाश शर्मा",
-      "font": "sura",
-      "palette": "casino green, gold",
-      "concept": "Hands fanning playing cards that show only suit symbols over a green baize table, poker chips stacked, a pistol half hidden under a hat, cigar smoke.",
+      "font": "vesperxb",
+      "palette": "polished walnut wood, brass lamp, deep brown shadow",
+      "concept": "The study of a Bombay underworld mansion at night, 1980s, from Ved Prakash Sharma's crime thriller Asli Khiladi: a cool young man in a leather jacket moves a knight on a wooden chessboard against a silver-haired don with a walking cane, who leans back with a thin smile; two henchmen stand behind the don and a nervous woman in a silk sari watches from the door; polished walnut panelling, a brass lamp over the board.",
       "file": "असली-खिलाडी-ved-prakash-sharma-summary.jpg",
       "style": "pulp",
-      "batch": 2
+      "batch": 2,
+      "theme": "walnut · dark",
+      "mode": "dark",
+      "status": "done"
     },
     {
       "key": "vps-ek-mutthi",
@@ -1297,12 +1304,16 @@
       "title": "एक मुट्ठी दर्द",
       "author": "Ved Prakash Sharma",
       "authorDisplay": "वेद प्रकाश शर्मा",
-      "font": "martel",
-      "palette": "deep blue, ember orange",
-      "concept": "A rain-wet clenched fist holding a broken glass bangle and a crumpled photograph, a funeral pyre glowing in the night behind.",
+      "font": "tiro",
+      "palette": "pale mauve dawn, soft grey, washed walls",
+      "concept": "Dawn in a Bombay chawl, 1980s, from Ved Prakash Sharma's crime thriller Ek Mutthi Dard: a grief-stricken young man sits on worn stone steps with a broken red glass bangle clenched in his tight fist, his eyes red and jaw set, while his old mother weeps in the doorway behind him and a neighbour lowers his head; at the far end of the lane a police jeep waits in the pale mauve light, washing hanging from balconies.",
       "file": "एक-मुटठी-दरद-ved-prakash-sharma-summary.jpg",
       "style": "pulp",
-      "batch": 2
+      "batch": 2,
+      "theme": "dawn mauve · light",
+      "mode": "light",
+      "ink": "#3E2A40",
+      "status": "done"
     },
     {
       "key": "vps-kalyug-ramayan",
@@ -1311,12 +1322,15 @@
       "title": "कलयुग की रामायण",
       "author": "Ved Prakash Sharma",
       "authorDisplay": "वेद प्रकाश शर्मा",
-      "font": "vesper",
-      "palette": "fire orange, night purple",
-      "concept": "A giant ten-headed effigy burning on a modern city's Dussehra ground at night, fireworks overhead, a man with a pistol silhouetted against the flames.",
+      "font": "tillana",
+      "palette": "rani-pink and magenta festival lights, black night",
+      "concept": "A neighbourhood Ramlila in Delhi at night, 1980s, from Ved Prakash Sharma's crime thriller Kalyug ki Ramayan: on the bright stage, actors costumed as Ram and Ravan face each other with bows; in the front row a garlanded local don in a white kurta sits as chief guest, smiling, flanked by henchmen with guns under their shawls, while an honest young police inspector in plain clothes watches him from the standing crowd; strings of pink and magenta festival bulbs.",
       "file": "कलयुग-की-रामायण-ved-prakash-sharma-summary.jpg",
       "style": "pulp",
-      "batch": 2
+      "batch": 2,
+      "theme": "rani pink · dark",
+      "mode": "dark",
+      "status": "done"
     },
     {
       "key": "vps-kanoon-beta",
@@ -1325,12 +1339,16 @@
       "title": "कानून का बेटा",
       "author": "Ved Prakash Sharma",
       "authorDisplay": "वेद प्रकाश शर्मा",
-      "font": "rozha",
-      "palette": "khaki, navy",
-      "concept": "A young man in police uniform holding his late father's old police cap and revolver, standing in the rain before a courthouse with the scales of justice above the gate.",
+      "font": "martel",
+      "palette": "buttercream walls, warm morning sun, khaki",
+      "concept": "A modest Delhi home at sunrise, 1980s, from Ved Prakash Sharma's crime thriller Kanoon ka Beta: a young police officer in a crisp new khaki uniform stands before a garlanded framed portrait of his late father, a police inspector, while his widowed mother in a white sari puts a red tilak on his forehead with her thumb and his little sister holds his peaked cap; warm morning sun on buttercream walls.",
       "file": "कानून-का-बेटा-ved-prakash-sharma-summary.jpg",
       "style": "pulp",
-      "batch": 2
+      "batch": 2,
+      "theme": "buttercream · light",
+      "mode": "light",
+      "ink": "#4A3B12",
+      "status": "done"
     },
     {
       "key": "vps-kanoon-badal",
@@ -1340,11 +1358,14 @@
       "author": "Ved Prakash Sharma",
       "authorDisplay": "वेद प्रकाश शर्मा",
       "font": "vesper",
-      "palette": "steel blue, fiery red",
-      "concept": "A wooden gavel smashing through a thick law book, pages bursting into the air, silhouettes of raised fists outside a courthouse.",
+      "palette": "violet dusk sky, sodium lamps, smoke",
+      "concept": "Outside a Delhi district court at dusk, 1980s, from Ved Prakash Sharma's crime thriller Kanoon Badal Daalo: an angry crowd of common people — mill workers, students, a widow holding a child — surrounds a young lawyer in a black coat standing on a parked jeep with his fist raised, while a line of riot police with cane shields and lathis holds them back; plain cloth banners without any writing, smoke drifting under sodium lamps, violet sky.",
       "file": "कानून-बदल-डालो-ved-prakash-sharma-summary.jpg",
       "style": "pulp",
-      "batch": 2
+      "batch": 2,
+      "theme": "violet dusk · dark",
+      "mode": "dark",
+      "status": "done"
     },
     {
       "key": "vps-keshav-pandit",
@@ -1354,11 +1375,15 @@
       "author": "Ved Prakash Sharma",
       "authorDisplay": "वेद प्रकाश शर्मा",
       "font": "sahitya",
-      "palette": "courtroom mahogany, black",
-      "concept": "A man in a black lawyer's coat in a dark courtroom, a thick law book in one hand and a smoking pistol hidden behind his back, a spotlight on the empty judge's chair.",
+      "palette": "parchment cream, warm wood, daylight",
+      "concept": "A crowded Indian courtroom by day, 1980s, from Ved Prakash Sharma's novel Keshav Pandit: Keshav Pandit — a sharp-eyed young man in a crisp white kurta and shawl, with a calm half-smile — stands in the aisle holding a thick law book under his arm, while behind him a powerful gangster in a safari suit and a corrupt police officer glare at him and the lawyers turn to look; warm wooden benches, parchment-coloured daylight from tall windows.",
       "file": "केशव-पंडित-ved-prakash-sharma-summary.jpg",
       "style": "pulp",
-      "batch": 2
+      "batch": 2,
+      "theme": "parchment · light",
+      "mode": "light",
+      "ink": "#3D2B16",
+      "status": "done"
     },
     {
       "key": "vps-khalifa",
@@ -1367,12 +1392,15 @@
       "title": "खलीफा",
       "author": "Ved Prakash Sharma",
       "authorDisplay": "वेद प्रकाश शर्मा",
-      "font": "kadwa",
-      "palette": "smoky gold, black",
-      "concept": "A gangster boss's throne-like armchair in a smoky den, a heavy gold ring and a pistol on the armrest, shadows of men bowing before it.",
+      "font": "rozha",
+      "palette": "tobacco brown, gold rings, tungsten light",
+      "concept": "A dim Bombay dockside warehouse at night, 1980s, from Ved Prakash Sharma's crime thriller Khalifa: the underworld boss called Khalifa — a heavy-set silver-haired man in a black silk shirt with gold rings — sits on a carved wooden chair among crates while gang members bow to touch his feet and a frightened shopkeeper waits with folded hands; a single tungsten lamp, cigarette smoke, tobacco-brown shadows.",
       "file": "खलीफा-ved-prakash-sharma-summary.jpg",
       "style": "pulp",
-      "batch": 2
+      "batch": 2,
+      "theme": "tobacco · dark",
+      "mode": "dark",
+      "status": "done"
     },
     {
       "key": "vps-chakma",
@@ -1381,12 +1409,17 @@
       "title": "चकमा",
       "author": "Ved Prakash Sharma",
       "authorDisplay": "वेद प्रकाश शर्मा",
-      "font": "vesper",
-      "palette": "street-market orange, teal",
-      "concept": "A street con game: three brass cups on a small table, one lifted to reveal a bullet instead of a ball, quick sly hands blurred in motion.",
+      "font": "sura",
+      "palette": "pewter grey, hazy daylight, steam",
+      "concept": "A crowded Bombay railway terminus platform at rush hour, 1980s, from Ved Prakash Sharma's crime thriller Chakma: in the pushing crowd beside a steaming train, a quick-handed con man in a disguise of spectacles and a false moustache swaps an identical leather briefcase with a gangster's courier who is looking the other way, while a plain-clothes police informer notices from behind a pillar; hazy daylight through the station roof, porters in red shirts.",
       "file": "चकमा-ved-prakash-sharma-summary.jpg",
       "style": "pulp",
-      "batch": 2
+      "batch": 2,
+      "theme": "pewter · light",
+      "mode": "light",
+      "ink": "#2E3540",
+      "status": "done",
+      "note": "Retouched: the locomotive buffer beam carried two small WDM-2 markings; softened with small elliptical feathered blurs (original kept in cover-art-raw/_orig)."
     },
     {
       "key": "vps-teen-tilange",
@@ -1395,12 +1428,16 @@
       "title": "तीन तिलंगे",
       "author": "Ved Prakash Sharma",
       "authorDisplay": "वेद प्रकाश शर्मा",
-      "font": "sura",
-      "palette": "dusty orange, brown",
-      "concept": "Three men in silhouette walking abreast down a dusty street at sunset, coats flapping, one with a pistol, one with a chain, one with a hockey stick.",
+      "font": "tillana",
+      "palette": "tangerine and lemon street colours, bright noon",
+      "concept": "A busy Bombay market street at bright noon, 1980s, from Ved Prakash Sharma's crime thriller Teen Tilange: three mischievous young friends — one tall in a leather jacket, one chubby in a loud printed shirt, one skinny with big glasses — run laughing toward the camera with a stolen suitcase, while three angry goons chase them and a fruit cart overturns, oranges rolling across the road; colourful shop awnings without any writing.",
       "file": "तीन-तिलंगे-ved-prakash-sharma-summary.jpg",
       "style": "pulp",
-      "batch": 2
+      "batch": 2,
+      "theme": "tangerine · light",
+      "mode": "light",
+      "ink": "#5A2A08",
+      "status": "done"
     },
     {
       "key": "vps-faansi",
