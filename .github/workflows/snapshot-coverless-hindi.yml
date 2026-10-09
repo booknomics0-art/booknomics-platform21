@@ -50,8 +50,7 @@ jobs:
           out = {"fetchedAt": datetime.datetime.now(datetime.timezone.utc).isoformat(timespec="seconds"),
                  "query": "language=hi, is_draft=false, status=published, cover_url is null",
                  "count": len(rows), "books": rows}
-          os.makedirs("tools/cover-studio/data", exist_ok=True)
-          with open("tools/cover-studio/data/coverless-hindi.json", "w", encoding="utf8") as f:
+          with open(os.path.join(os.environ["RUNNER_TEMP"], "coverless-hindi.json"), "w", encoding="utf8") as f:
               json.dump(out, f, ensure_ascii=False, indent=1)
           print(len(rows), "cover-less books")
           with open(os.environ["GITHUB_STEP_SUMMARY"], "a") as s:
@@ -59,9 +58,13 @@ jobs:
           PY
       - name: Commit the snapshot
         run: |
+          # start from the newest branch tip so overlapping runs never conflict
+          git fetch -q origin "${GITHUB_REF_NAME}"
+          git reset -q --hard "origin/${GITHUB_REF_NAME}"
+          mkdir -p tools/cover-studio/data
+          cp "${RUNNER_TEMP}/coverless-hindi.json" tools/cover-studio/data/coverless-hindi.json
           git config user.name "booknomics-cover-bot"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add tools/cover-studio/data/coverless-hindi.json
-          git commit -m "Snapshot: cover-less Hindi books" || exit 0
-          git pull --rebase origin "${GITHUB_REF_NAME}"
+          git commit -q -m "Snapshot: cover-less Hindi books" || { echo "no change"; exit 0; }
           git push origin "HEAD:${GITHUB_REF_NAME}"

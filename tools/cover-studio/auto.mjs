@@ -190,6 +190,16 @@ export const THEMES = [
   { name: "sulphur", mode: "dark", palette: "sulphur-yellow torchlight, black rock" },
   { name: "verdigris", mode: "dark", palette: "verdigris green-blue, white projector beam" },
   { name: "fog white", mode: "light", palette: "white fog lit by a headlight, cold blue edges", ink: "#22303A" },
+  { name: "tempest", mode: "dark", palette: "tempest grey-green, lightning white, lantern amber" },
+  { name: "rose gold", mode: "dark", palette: "rose-gold spotlight, smoky black club" },
+  { name: "moss", mode: "dark", palette: "moss-green stone, lantern gold, midnight" },
+  { name: "kesari night", mode: "dark", palette: "saffron sandstone, black moonless sky, torch fire" },
+  { name: "nightshade", mode: "dark", palette: "nightshade purple, emerald silk, candlelight" },
+  { name: "frost", mode: "light", palette: "frosted window white, pale lilac, cold daylight", ink: "#2E2A48" },
+  { name: "monsoon", mode: "light", palette: "wet monsoon green, soft grey sky", ink: "#1F3A2A" },
+  { name: "phosphor", mode: "dark", palette: "green-blue monitor glow, dark room" },
+  { name: "flamingo", mode: "light", palette: "flamingo-pink dusk sky, sea grey", ink: "#5A2236" },
+  { name: "honey", mode: "light", palette: "honey-gold dawn, whitewashed verandah", ink: "#4A3410" },
 ];
 const FONT_ROTATION = ["vesper", "sahitya", "kadwa", "vesper", "sura", "martel", "vesper", "rozha"];
 
