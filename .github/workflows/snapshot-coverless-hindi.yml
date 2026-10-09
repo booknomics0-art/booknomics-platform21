@@ -1,0 +1,67 @@
+name: Snapshot cover-less Hindi books
+
+# Saves the live list of published Hindi books that still have no cover (id, title, author, slug,
+# category, overview excerpt) to tools/cover-studio/data/coverless-hindi.json, so covers can be
+# planned from an environment that cannot reach Supabase directly. Read-only on Supabase
+# (publishable key, same query the site uses).
+# Run: change tools/cover-studio/data/snapshot-request.txt on this branch and push, or Run workflow.
+
+on:
+  push:
+    branches:
+      - arena/bcb5e5c1-booknomics-platform21
+    paths:
+      - tools/cover-studio/data/snapshot-request.txt
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+
+concurrency:
+  group: snapshot-coverless-hindi
+  cancel-in-progress: false
+
+jobs:
+  snapshot:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Fetch from Supabase
+        env:
+          SUPABASE_URL: https://pbkfewrtdgiagytmcigb.supabase.co
+          SUPABASE_KEY: sb_publishable_0xHTLlIf-4yj0yxVcnEWfQ_C02UtgVO
+        run: |
+          python3 - <<'PY'
+          import datetime, json, os, urllib.request
+          base = os.environ["SUPABASE_URL"] + "/rest/v1/books"
+          q = ("select=id,title,author,slug,category,overview"
+               "&language=eq.hi&is_draft=eq.false&status=eq.published&cover_url=is.null&order=title.asc,id.asc")
+          rows, off = [], 0
+          while True:
+              req = urllib.request.Request(f"{base}?{q}&limit=500&offset={off}", headers={"apikey": os.environ["SUPABASE_KEY"]})
+              page = json.load(urllib.request.urlopen(req, timeout=60))
+              rows += page
+              if len(page) < 500:
+                  break
+              off += 500
+          for r in rows:
+              r["overview"] = " ".join(str(r.get("overview") or "").split())[:800]
+          out = {"fetchedAt": datetime.datetime.now(datetime.timezone.utc).isoformat(timespec="seconds"),
+                 "query": "language=hi, is_draft=false, status=published, cover_url is null",
+                 "count": len(rows), "books": rows}
+          os.makedirs("tools/cover-studio/data", exist_ok=True)
+          with open("tools/cover-studio/data/coverless-hindi.json", "w", encoding="utf8") as f:
+              json.dump(out, f, ensure_ascii=False, indent=1)
+          print(len(rows), "cover-less books")
+          with open(os.environ["GITHUB_STEP_SUMMARY"], "a") as s:
+              s.write(f"### {len(rows)} published Hindi books without a cover\n")
+          PY
+      - name: Commit the snapshot
+        run: |
+          git config user.name "booknomics-cover-bot"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add tools/cover-studio/data/coverless-hindi.json
+          git commit -m "Snapshot: cover-less Hindi books" || exit 0
+          git pull --rebase origin "${GITHUB_REF_NAME}"
+          git push origin "HEAD:${GITHUB_REF_NAME}"
