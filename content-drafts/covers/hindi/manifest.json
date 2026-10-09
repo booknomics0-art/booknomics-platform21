@@ -787,12 +787,13 @@
       "author": "सिडनी लेनियर",
       "font": "sura",
       "palette": "ivory, warm beige, soft daylight",
-      "concept": "A daylight rehearsal of the Peabody Orchestra in Baltimore, 1878, from Sidney Lanier's The Science of English Verse: the poet and flautist Sidney Lanier — a frail, thin man in his mid-thirties with a long dark beard, in a black frock coat — stands among the seated musicians playing a solo on his silver flute with his eyes closed, while the white-haired conductor lowers his baton and the violinists and cellists pause to listen; tall windows pour soft daylight and dust motes over the wooden stage; music stands are seen only from behind.",
+      "concept": "A daylight orchestra rehearsal in Baltimore, 1878, from Sidney Lanier's The Science of English Verse: the poet and flautist Sidney Lanier — a frail, thin man in his mid-thirties with a long dark beard, in a black frock coat — stands among seated musicians playing a silver flute with his eyes closed, while an old conductor lowers his baton and the violinists pause to listen; soft daylight from tall windows, dust in the air, a wooden stage.",
       "file": "अंग्रेज़ी-छंद-का-विज्ञान-hindi-summary.jpg",
       "batch": 1,
       "theme": "ivory · light",
       "mode": "light",
-      "ink": "#3B2A1A"
+      "ink": "#3B2A1A",
+      "status": "done"
     },
     {
       "key": "eng-lit-history",
@@ -938,12 +939,15 @@
       "title": "खतरनाक ब्लैकमेलर",
       "author": "Surender Mohan Pathak",
       "authorDisplay": "सुरेन्द्र मोहन पाठक",
-      "font": "vesper",
-      "palette": "sepia, blood red",
-      "concept": "Compromising photographs and film negatives spread on a desk, a gloved hand sealing an envelope with red wax, a telephone off the hook.",
+      "font": "vesperxb",
+      "palette": "slate grey dusk, deep teal, one warm lamp",
+      "concept": "Lodhi Garden in Delhi at dusk, 1970s, from Surender Mohan Pathak's crime thriller Khatarnak Blackmailer: a smug blackmailer in his forties in a cream safari suit and tinted glasses lounges on a park bench, holding up a few photographs with their backs to the camera, while a respectable, sweating businessman in a grey suit hands him a fat brown envelope with trembling fingers; old domed tombs and dark trees behind them, a single park lamp just switching on.",
       "file": "खतरनाक-बलैकमेलर-surender-mohan-pathak-summary.jpg",
       "style": "pulp",
-      "batch": 1
+      "batch": 1,
+      "theme": "slate teal · dark",
+      "mode": "dark",
+      "status": "done"
     },
     {
       "key": "smp-daulat-khoon",
@@ -952,12 +956,15 @@
       "title": "दौलत और खून",
       "author": "Surender Mohan Pathak",
       "authorDisplay": "सुरेन्द्र मोहन पाठक",
-      "font": "sahitya",
-      "palette": "gold, crimson",
-      "concept": "Gold coins spilling from an overturned chest across a marble floor, dark red drops mingling with the gold, a fallen crystal chandelier.",
+      "font": "rozha",
+      "palette": "royal crimson, deep shadow, warm gold lamplight",
+      "concept": "The panelled study of a Bombay mansion at night, 1970s, from Surender Mohan Pathak's crime thriller Daulat aur Khoon: a powerful grey-haired industrialist in a silk kurta sits behind a heavy desk with open steel cash boxes, watching coldly as a slick politician in a white Nehru jacket and a scarred gangster in a leather jacket shake hands across the desk; heavy crimson curtains, a brass desk lamp, cigar smoke.",
       "file": "दौलत-और-खून-surender-mohan-pathak-summary.jpg",
       "style": "pulp",
-      "batch": 1
+      "batch": 1,
+      "theme": "crimson · dark",
+      "mode": "dark",
+      "status": "done"
     },
     {
       "key": "smp-purane-gunah",
@@ -966,12 +973,15 @@
       "title": "पुराने गुनाह नये गुनाहगार",
       "author": "Surender Mohan Pathak",
       "authorDisplay": "सुरेन्द्र मोहन पाठक",
-      "font": "kadwa",
-      "palette": "sepia, electric blue",
-      "concept": "An old sepia group photograph pinned to a dusty desk by a dagger, beside it a glowing modern mobile phone, cobwebs and a desk lamp.",
+      "font": "tiro",
+      "palette": "charcoal, smoky grey, rain, lantern amber",
+      "concept": "A rainy night in an old Delhi bungalow, 1970s, from Surender Mohan Pathak's crime thriller Purane Gunah Naye Gunahgar: a respectable retired gentleman in his sixties, in a cardigan and spectacles, stands frozen in his dim study holding an old black-and-white photograph (seen from behind) that has just arrived in a torn envelope; through the rain-streaked window behind him a young stranger in a leather jacket watches from beneath a streetlamp.",
       "file": "पुराने-गुनाह-नये-गुनाहगार-surender-mohan-pathak-summary.jpg",
       "style": "pulp",
-      "batch": 1
+      "batch": 1,
+      "theme": "charcoal · dark",
+      "mode": "dark",
+      "status": "done"
     },
     {
       "key": "smp-painsath-lakh",
@@ -980,12 +990,15 @@
       "title": "पैंसठ लाख की डकैती",
       "author": "Surender Mohan Pathak",
       "authorDisplay": "सुरेन्द्र मोहन पाठक",
-      "font": "vesper",
-      "palette": "gunmetal teal, sickly yellow light",
-      "concept": "A massive steel bank-vault door half open, bundles of banknotes spilling from canvas bags, a crowbar and gloved hands, a single swinging bulb.",
+      "font": "kadwa",
+      "palette": "storm steel blue, black rain, gold lantern light",
+      "concept": "A hideout in an abandoned textile mill on a stormy night, 1970s, from Surender Mohan Pathak's crime thriller Painsath Lakh ki Dakaiti: four tense robbers in 1970s shirts and bell-bottoms crouch around a hurricane lantern and three battered steel trunks; while two of them stare at the open loot, a lean, moustached man at the edge quietly slides his hand toward a revolver tucked in his belt, and the gang leader notices; rain lashing through broken windows.",
       "file": "पैंसठ-लाख-की-डकैती-surender-mohan-pathak-summary.jpg",
       "style": "pulp",
-      "batch": 1
+      "batch": 1,
+      "theme": "storm blue · dark",
+      "mode": "dark",
+      "status": "done"
     },
     {
       "key": "smp-badsurat",
@@ -994,12 +1007,15 @@
       "title": "बदसूरत चेहरे",
       "author": "Surender Mohan Pathak",
       "authorDisplay": "सुरेन्द्र मोहन पाठक",
-      "font": "sura",
-      "palette": "sickly green, purple",
-      "concept": "A cracked mirror reflecting several distorted shadowy faces, grotesque carnival masks hanging on the wall, a single bare bulb.",
+      "font": "tillana",
+      "palette": "burnished copper bulbs, deep shadow",
+      "concept": "A backstage make-up room of an old Bombay theatre at night, 1970s, from Surender Mohan Pathak's crime thriller Badsurat Chehre: a man sits before a bulb-lit mirror peeling a grotesque latex disguise from his face, half of it still on, revealing a handsome face beneath; in the mirror, a woman in a dark sari watches him from the doorway with suspicion; wigs, greasepaint pots and costumes hang around him in warm copper light.",
       "file": "बदसूरत-चेहरे-surender-mohan-pathak-summary.jpg",
       "style": "pulp",
-      "batch": 1
+      "batch": 1,
+      "theme": "copper · dark",
+      "mode": "dark",
+      "status": "done"
     },
     {
       "key": "smp-bank-van",
@@ -1009,11 +1025,15 @@
       "author": "Surender Mohan Pathak",
       "authorDisplay": "सुरेन्द्र मोहन पाठक",
       "font": "martel",
-      "palette": "rain-soaked blue-black, red tail-lights",
-      "concept": "An armoured cash van on a rainy night highway with its rear doors blown open, smoke and banknotes swirling, headlights of a getaway car.",
+      "palette": "desert sand, dust, pale hazy sky",
+      "concept": "A dusty highway outside a north Indian town in hard noon light, 1970s, from Surender Mohan Pathak's crime thriller Bank Van Robbery: an armoured bank van is blocked by a truck parked across the road; four robbers in bell-bottoms with cloth masks over their faces haul out steel cash boxes while the uniformed guard stands with raised hands; one robber pauses to glance suspiciously at his partners; dust swirling in the air.",
       "file": "बैंक-वैन-रॉबरी-surender-mohan-pathak-summary.jpg",
       "style": "pulp",
-      "batch": 1
+      "batch": 1,
+      "theme": "sand · light",
+      "mode": "light",
+      "ink": "#4A3315",
+      "status": "done"
     },
     {
       "key": "smp-blackmailer-hatya",
@@ -1022,12 +1042,15 @@
       "title": "ब्लैकमेलर की हत्या",
       "author": "Surender Mohan Pathak",
       "authorDisplay": "सुरेन्द्र मोहन पाठक",
-      "font": "vesper",
-      "palette": "cold teal, orange",
-      "concept": "A chalk outline on a parquet floor, photographs and negatives scattered around it, an empty safe hanging open, the shadow of a slowly turning ceiling fan.",
+      "font": "sahitya",
+      "palette": "ink-black night, ember orange glow",
+      "concept": "A ransacked 1970s Bombay apartment at night, from Surender Mohan Pathak's crime thriller Blackmailer ki Hatya: a police inspector in khaki holds up a strip of photo negatives against his torch beam, studying it, while a nervous young woman in a sari and an older man in a cardigan stand pressed against the wall; an overturned chair, a smashed camera and an open, emptied wall safe; no body is visible.",
       "file": "बलैकमेलर-की-हतया-surender-mohan-pathak-summary.jpg",
       "style": "pulp",
-      "batch": 1
+      "batch": 1,
+      "theme": "ink black · dark",
+      "mode": "dark",
+      "status": "done"
     },
     {
       "key": "smp-meena",
@@ -1036,12 +1059,16 @@
       "title": "मीना मर्डर केस",
       "author": "Surender Mohan Pathak",
       "authorDisplay": "सुरेन्द्र मोहन पाठक",
-      "font": "rozha",
-      "palette": "police blue light, red",
-      "concept": "A woman's portrait photograph in a broken frame on a rain-wet street, caught in a police flashlight beam, blue and red lights reflecting in puddles.",
+      "font": "vesper",
+      "palette": "pearl-white daylight, pale gold, whitewashed walls",
+      "concept": "A crowded 1970s Delhi sessions courtroom on a bright day, from Surender Mohan Pathak's crime thriller Meena Murder Case: a sharp defence lawyer in a black coat and white bands points at a sweating witness in the box, while the young accused man stands tense in the dock and the grey-haired judge leans forward on the high bench; ceiling fans, tall windows with pale daylight, spectators on wooden benches.",
       "file": "मीना-मरडर-केस-surender-mohan-pathak-summary.jpg",
       "style": "pulp",
-      "batch": 1
+      "batch": 1,
+      "theme": "pearl white · light",
+      "mode": "light",
+      "ink": "#1F3448",
+      "status": "done"
     },
     {
       "key": "smp-murti-chori",
@@ -1050,12 +1077,16 @@
       "title": "मूर्ति की चोरी",
       "author": "Surender Mohan Pathak",
       "authorDisplay": "सुरेन्द्र मोहन पाठक",
-      "font": "vesper",
-      "palette": "bronze, temple red, moonlight",
-      "concept": "An empty stone pedestal in an ancient temple sanctum where a bronze idol once stood, a dust outline where it rested, a thief's rope dangling from a broken skylight.",
+      "font": "sura",
+      "palette": "warm cream stone, marigold orange, morning light",
+      "concept": "An ancient stone temple in a south Indian village at morning, from Surender Mohan Pathak's crime thriller Murti ki Chori: in the sanctum doorway an elderly priest kneels in shock beside an empty stone pedestal strewn with fallen marigold garlands, where a bronze idol once stood; a police inspector in khaki examines a broken iron lock, villagers crowd behind, and at the edge of the scene a suspicious antique dealer in a linen suit watches quietly.",
       "file": "मूरति-की-चोरी-surender-mohan-pathak-summary.jpg",
       "style": "pulp",
-      "batch": 1
+      "batch": 1,
+      "theme": "marigold · light",
+      "mode": "light",
+      "ink": "#6A2E0A",
+      "status": "done"
     },
     {
       "key": "smp-maut-ka-khel",
