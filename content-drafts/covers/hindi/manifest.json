@@ -338,8 +338,8 @@
       "batch": 1,
       "theme": "amethyst · dark",
       "mode": "dark",
-      "status": "redo",
-      "note": "First render had pseudo-Devanagari carved on the door (an AI tell); redo with ornamental carving only."
+      "status": "done",
+      "note": "Second render: ornamental carving only, no script. The model left a hard-edged black band at the top of the art; it was feathered into the shadows before composing."
     },
     {
       "key": "bhootnath",
@@ -432,8 +432,8 @@
       "theme": "terracotta · light",
       "mode": "light",
       "ink": "#4A1F12",
-      "status": "redo",
-      "note": "First render dressed Simha in Roman-style armour; redo in ancient Indian battle dress."
+      "status": "done",
+      "note": "Second render: ancient Indian battle dress (quilted cotton vest, dhoti, headband), no Roman armour."
     },
     {
       "key": "vismrit-yatri",
@@ -488,10 +488,14 @@
       "title": "चीवर",
       "author": "रांगेय राघव",
       "font": "sura",
-      "palette": "ochre saffron, muted sage",
-      "concept": "An ochre monk's robe hanging from a peepal branch beside a crumbling stupa, a begging bowl beneath, temple spires and smoke rising in the hazy distance.",
+      "palette": "desert sand, pale gold haze, ochre robe, unbleached white",
+      "concept": "A small Buddhist monastery in the Vindhya forest, early 7th century CE, from Rangeya Raghav's Cheevar: the young widowed princess Rajyashri — in her early twenties, pale and grief-worn, in a plain unbleached white widow's garment, no jewellery, hair loose — stands on the worn brick steps of the vihara, holding out both hands to receive a folded ochre monk's robe from an elderly shaven-headed Buddhist monk in ochre; beside her, her brother King Harshavardhana — youthful, clean-shaven, in white silk with a pearl necklace and a gold armlet — gently touches her wrist, pleading with her to stay; sal trees, a small whitewashed stupa and hazy golden dust in late-morning light.",
       "file": "चीवर-रांगेय-राघव-सारांश.jpg",
-      "batch": 1
+      "batch": 1,
+      "theme": "sand · light",
+      "mode": "light",
+      "ink": "#4A3315",
+      "status": "done"
     },
     {
       "key": "pakshi-aur-akash",
@@ -501,10 +505,13 @@
       "author": "रांगेय राघव",
       "font": "martel",
       "mode": "light",
-      "palette": "cerulean sky, soft peach",
-      "concept": "A small bird perched on the open door of a cage on a windowsill, facing a vast bright dawn sky with distant flocks — the pull between nest and sky.",
+      "palette": "clear sky blue, white clouds, whitewashed walls, white pigeons",
+      "concept": "An old crowded family haveli in a north Indian town, 1950s, from Rangeya Raghav's Pakshi aur Akash: Dhankumar — a quiet, thoughtful man in his early thirties in a crumpled white kurta-pyjama — stands alone at the parapet of the sunlit rooftop terrace, looking up as a flock of white pigeons bursts into a vast clear sky; a few steps behind him, at the head of the stairs, his two elder brothers in dhoti and kurta glare at him, one clutching a ring of iron keys, the other pointing at him accusingly; washing lines, clay pots and neighbouring rooftops around them in bright morning light.",
       "file": "पकषी-और-आकाश-रांगेय-राघव-सारांश.jpg",
-      "batch": 1
+      "batch": 1,
+      "theme": "sky blue · light",
+      "ink": "#123A5A",
+      "status": "done"
     },
     {
       "key": "pratidan",
@@ -512,11 +519,14 @@
       "slug": "परतिदान-रांगेय-राघव-सारांश",
       "title": "प्रतिदान",
       "author": "रांगेय राघव",
-      "font": "vesper",
-      "palette": "indigo night, warm flame",
-      "concept": "Two cupped hands passing a small clay lamp over dark water, its flame reflected among floating petals — a gift returned.",
+      "font": "tiro",
+      "palette": "rust red dust, dusty brown, low red sun",
+      "concept": "The dusty courtyard of Drona's ashram near Hastinapur, Mahabharata era, from Rangeya Raghav's Pratidan: Dronacharya — a lean, grey-bearded Brahmin teacher in his fifties, in a coarse white dhoti and shawl with a sacred thread, a longbow in his hand, his face stern and unsmiling — stands over King Drupada of Panchala, a proud bearded king in torn royal silks and gold ornaments, kneeling in the dust with his wrists tied by a rope; the young prince Arjuna — youthful, clean-shaven, in a warrior's dhoti with a bow and quiver — stands guard beside them; other young princes and a wooden chariot wait behind in drifting dust under a low red sun.",
       "file": "परतिदान-रांगेय-राघव-सारांश.jpg",
-      "batch": 1
+      "batch": 1,
+      "theme": "rust · dark",
+      "mode": "dark",
+      "status": "done"
     },
     {
       "key": "toote-kaante",
@@ -525,10 +535,13 @@
       "title": "टूटे काँटे",
       "author": "वृंदावनलाल वर्मा",
       "font": "rozha",
-      "palette": "dusky rose, weathered stone grey",
-      "concept": "A thorny rose branch with broken thorns on the worn steps of an old Bundelkhand fort, a dancer's ankle bells beside it, evening light through an arch.",
+      "palette": "plum shadows, rose gold, candlelight, amber smoke",
+      "concept": "A lamp-lit Mughal haveli in Delhi, 1739, from Vrindavanlal Verma's Toote Kaante: Nurbai — a celebrated dancer in her twenties, in a flowing plum-and-rose silk anarkali with gold borders, a sheer dupatta and ghungroo bells at her ankles — pauses mid-turn beneath a cusped marble arch, looking back over her shoulder; beside a pillar stands Mohanlal, a sturdy young Jat villager in a plain white pagri and coarse kurta with a bamboo lathi, watching her with quiet longing; through the arches behind them, smoke from the burning city drifts across an amber evening sky.",
       "file": "टूटे-काँटे-वृंदावनलाल-वरमा-सारांश.jpg",
-      "batch": 1
+      "batch": 1,
+      "theme": "plum · dark",
+      "mode": "dark",
+      "status": "done"
     },
     {
       "key": "bhuvan-vikram",
@@ -536,11 +549,15 @@
       "slug": "भुवन-विकरम-वृंदावनलाल-वरमा-सारांश",
       "title": "भुवन विक्रम",
       "author": "वृंदावनलाल वर्मा",
-      "font": "vesper",
-      "palette": "sunlit gold, river blue",
-      "concept": "A young Vedic-age prince with a bow beside a fire altar on a riverbank at dawn, cattle herds and early thatched settlements in the distance.",
+      "font": "vesperxb",
+      "palette": "mint green riverbank, white garments, soft morning daylight",
+      "concept": "A hermitage on the banks of the Sarayu near Ayodhya in the later Vedic age, from Vrindavanlal Verma's Bhuvan Vikram: Prince Bhuvan — youthful, clean-shaven, in his early twenties, in an unstitched white garment with a saffron sash, a plain gold armband and a bow over his shoulder — sits humbly on a reed mat beside a small brick fire altar, learning restraint; Gauri — a graceful young woman in a simple pale cotton garment with jasmine in her braid — stands nearby holding a brass water pot, watching him with a gentle, steady gaze; thatched huts, grazing white cows and the misty river behind them in soft morning light.",
       "file": "भुवन-विकरम-वृंदावनलाल-वरमा-सारांश.jpg",
-      "batch": 1
+      "batch": 1,
+      "theme": "mint · light",
+      "mode": "light",
+      "ink": "#14403A",
+      "status": "done"
     },
     {
       "key": "goli",
@@ -549,10 +566,13 @@
       "title": "गोली",
       "author": "आचार्य चतुरसेन शास्त्री",
       "font": "sahitya",
-      "palette": "Rajasthani pink-red, gold, deep shadow",
-      "concept": "A young woman in a Rajasthani ghagra seen from behind at a latticed palace window, a heavy golden anklet on her foot that looks like a chain, the lamp-lit palace behind her.",
+      "palette": "deep maroon, old gold, lamplight",
+      "concept": "A Rajput palace in Rajasthan, early 20th century, from Acharya Chatursen's Goli: Champa — a beautiful palace maid in her early twenties, in a deep maroon-and-gold bandhani ghagra-choli with a veil drawn over her hair and heavy silver anklets — stands by a carved sandstone jharokha window in a lamp-lit palace hall, glancing back over her shoulder with sad, resigned eyes; across the hall, half in shadow by a pillar, Kisun — a young palace servant in a white angarkha and a red safa turban — waits with lowered eyes; behind them a richly cushioned royal gaddi with bolsters and a silver hookah glows in the lamplight.",
       "file": "गोली-आचारय-चतुरसेन-शासतरी-सारांश.jpg",
-      "batch": 1
+      "batch": 1,
+      "theme": "maroon · dark",
+      "mode": "dark",
+      "status": "done"
     },
     {
       "key": "sahyadri",
@@ -561,10 +581,13 @@
       "title": "सह्याद्रि की चट्टानें",
       "author": "आचार्य चतुरसेन शास्त्री",
       "font": "kadwa",
-      "palette": "monsoon slate green, saffron",
-      "concept": "A Maratha hill fort on jagged Sahyadri cliffs in the monsoon, a saffron pennant flying, a lone horseman on a winding mountain path, clouds rolling over the peaks.",
+      "palette": "midnight blue, silver moonlight, black basalt",
+      "concept": "The night assault on Kondhana fort in the Sahyadri hills, February 1670, from Acharya Chatursen's Sahyadri ki Chattanen: Tanaji Malusare — a powerfully built Maratha commander in his forties with a thick curled moustache, in a saffron pheta turban and a white angarkha with a waist sash, a sword at his hip and a round leather shield on his back — climbs a sheer black basalt cliff on a rope, looking up with fierce resolve, while a line of barefoot Mavla soldiers in dhotis and turbans follows him up the rock; the dark ramparts of the hill fort are faint high above under a moonlit sky, and mist fills the valley below.",
       "file": "सहयादरि-की-चटटानें-आचारय-चतुरसेन-शासतरी-सारांश.jpg",
-      "batch": 1
+      "batch": 1,
+      "theme": "midnight blue · dark",
+      "mode": "dark",
+      "status": "done"
     },
     {
       "key": "chanakya",
@@ -572,11 +595,14 @@
       "slug": "चाणकय-भगवतीचरण-वरमा-सारांश",
       "title": "चाणक्य",
       "author": "भगवतीचरण वर्मा",
-      "font": "vesper",
-      "palette": "dark slate, oil-lamp amber",
-      "concept": "A stern Brahmin scholar seen from behind with an untied tuft of hair, studying a chessboard laid over a map of an ancient empire by an oil lamp; a palace burns faintly in the distance.",
+      "font": "tillana",
+      "palette": "bottle green, brass, oil-lamp light",
+      "concept": "The royal court of Pataliputra, Magadha, 4th century BCE, from Bhagwati Charan Verma's Chanakya: Acharya Vishnugupta — a lean, dark-complexioned Brahmin scholar in his forties, clean-shaven, with a shaven head and a single long tuft of hair that he has just untied, in a plain white dhoti and shawl with a sacred thread — stands defiant in the middle of the hall, eyes blazing, as two palace guards in ancient Indian dress (bare-chested, white dhotis, turbans, spears) seize his arms; behind him, on a raised gilded throne, King Dhana Nanda — a heavy, bejewelled king in silks — laughs scornfully among his courtiers; polished stone pillars, brass oil lamps and bottle-green silk hangings.",
       "file": "चाणकय-भगवतीचरण-वरमा-सारांश.jpg",
-      "batch": 1
+      "batch": 1,
+      "theme": "bottle green · dark",
+      "mode": "dark",
+      "status": "done"
     },
     {
       "key": "andher-nagari",
