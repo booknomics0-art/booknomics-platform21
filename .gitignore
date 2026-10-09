@@ -40,3 +40,8 @@ secrets/
 backups/
 reports/
 supabase/.temp/
+
+# Cover worker: local virtualenv, downloaded fonts, Python bytecode
+tools/cover-worker/.venv/
+tools/cover-worker/fonts/
+tools/cover-worker/__pycache__/

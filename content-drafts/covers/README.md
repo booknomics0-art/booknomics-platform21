@@ -74,3 +74,7 @@ covers above.
 
 Not yet uploaded to the `book-covers` bucket. Upload through the Admin book row
 (cloud button), as described above.
+
+## Batch 2 (2026-10-09): English books, drawn in code
+
+`batch-en/` holds covers for English books that have no cover file in the repo. They are made by `tools/cover-worker`, which needs no API key. Each file is 800x1200 JPEG, like the rest. The style is graphic, not painted. The 10 AI covers above and the classics that already have cover files are not included. `batch-en/manifest.csv` lists every slug, title, author, motif and file size. Details are in `tools/cover-worker/README.md`.

@@ -1,0 +1,669 @@
+{
+  "batch": "en-2026-10-09",
+  "note": "English books on the English section that have no cover file in the repo. Excluded: the 10 AI covers in content-drafts/covers/ and the classics that already have cover files. Titles and authors come from the repo catalogue; verify against the database before upload.",
+  "books": [
+    {
+      "slug": "1984-orwell-en",
+      "title": "1984",
+      "author": "George Orwell",
+      "motif": "eye",
+      "layout": "center",
+      "font": "serif",
+      "mode": "dark",
+      "note": "Telescreen eye and surveillance lines."
+    },
+    {
+      "slug": "animal-farm-orwell-en",
+      "title": "Animal Farm",
+      "author": "George Orwell",
+      "motif": "windmill",
+      "layout": "bottom",
+      "font": "serif",
+      "mode": "light",
+      "params": {
+        "blades": 4
+      },
+      "note": "Napoleon's windmill over the farm."
+    },
+    {
+      "slug": "antifragile",
+      "title": "Antifragile",
+      "author": "Nassim Nicholas Taleb",
+      "motif": "shards",
+      "layout": "top",
+      "font": "sans",
+      "mode": "dark",
+      "params": {
+        "n": 9
+      },
+      "note": "Shattered pieces that come back stronger."
+    },
+    {
+      "slug": "atomic-habits",
+      "title": "Atomic Habits",
+      "author": "James Clear",
+      "motif": "grid",
+      "layout": "top",
+      "font": "sans",
+      "mode": "light",
+      "params": {
+        "n": 6,
+        "pattern": "stairs"
+      },
+      "note": "Tiny blocks compounding into a staircase."
+    },
+    {
+      "slug": "black-swan",
+      "title": "The Black Swan",
+      "author": "Nassim Nicholas Taleb",
+      "motif": "eclipse",
+      "layout": "center",
+      "font": "serif",
+      "mode": "dark",
+      "note": "A rare event as a sudden eclipse."
+    },
+    {
+      "slug": "blink",
+      "title": "Blink",
+      "author": "Malcolm Gladwell",
+      "motif": "rays",
+      "layout": "top",
+      "font": "sans",
+      "mode": "dark",
+      "params": {
+        "n": 36
+      },
+      "note": "A single flash of snap judgement."
+    },
+    {
+      "slug": "can-t-hurt-me",
+      "title": "Can't Hurt Me",
+      "author": "David Goggins",
+      "motif": "flame",
+      "layout": "bottom",
+      "font": "sans",
+      "mode": "dark",
+      "note": "Mental toughness as inner fire."
+    },
+    {
+      "slug": "ego-is-the-enemy",
+      "title": "Ego Is the Enemy",
+      "author": "Ryan Holiday",
+      "motif": "ring",
+      "layout": "left",
+      "font": "serif",
+      "mode": "light",
+      "note": "Ego as a distorting mirror."
+    },
+    {
+      "slug": "essentialism",
+      "title": "Essentialism",
+      "author": "Greg McKeown",
+      "motif": "dots",
+      "layout": "center",
+      "font": "sans",
+      "mode": "light",
+      "params": {
+        "n": 48,
+        "focus": true
+      },
+      "note": "One essential point among many."
+    },
+    {
+      "slug": "flow",
+      "title": "Flow",
+      "author": "Mihaly Csikszentmihalyi",
+      "motif": "waves",
+      "layout": "bottom",
+      "font": "sans",
+      "mode": "dark",
+      "params": {
+        "layers": 7,
+        "amp": 0.05
+      },
+      "note": "Continuous, effortless waves."
+    },
+    {
+      "slug": "freakonomics",
+      "title": "Freakonomics",
+      "author": "Steven D. Levitt & Stephen J. Dubner",
+      "motif": "bars",
+      "layout": "top",
+      "font": "sans",
+      "mode": "light",
+      "params": {
+        "n": 11,
+        "hi": 8
+      },
+      "note": "Hidden data patterns, one bar standing out."
+    },
+    {
+      "slug": "getting-things-done",
+      "title": "Getting Things Done",
+      "author": "David Allen",
+      "motif": "grid",
+      "layout": "top",
+      "font": "sans",
+      "mode": "light",
+      "params": {
+        "n": 5,
+        "pattern": "checklist"
+      },
+      "note": "A checklist with ticks."
+    },
+    {
+      "slug": "good-to-great",
+      "title": "Good to Great",
+      "author": "Jim Collins",
+      "motif": "stairs",
+      "layout": "bottom",
+      "font": "sans",
+      "mode": "dark",
+      "params": {
+        "steps": 6
+      },
+      "note": "Climbing a staircase of progress."
+    },
+    {
+      "slug": "grit",
+      "title": "Grit",
+      "author": "Angela Duckworth",
+      "motif": "peaks",
+      "layout": "left",
+      "font": "serif",
+      "mode": "dark",
+      "params": {
+        "layers": 3,
+        "peaks": 5
+      },
+      "note": "Climbing mountain ranges with persistence."
+    },
+    {
+      "slug": "hamlet-shakespeare-en",
+      "title": "Hamlet",
+      "author": "William Shakespeare",
+      "motif": "moon",
+      "layout": "center",
+      "font": "serif",
+      "mode": "dark",
+      "params": {
+        "stars": 30
+      },
+      "note": "A brooding night at Elsinore."
+    },
+    {
+      "slug": "how-to-win-friends",
+      "title": "How to Win Friends and Influence People",
+      "author": "Dale Carnegie",
+      "motif": "dots",
+      "layout": "top",
+      "font": "serif",
+      "mode": "light",
+      "params": {
+        "n": 70,
+        "link": 140
+      },
+      "note": "A network of connected people."
+    },
+    {
+      "slug": "macbeth-shakespeare-en",
+      "title": "Macbeth",
+      "author": "William Shakespeare",
+      "motif": "crown",
+      "layout": "center",
+      "font": "serif",
+      "mode": "dark",
+      "note": "Ambition as a cursed crown."
+    },
+    {
+      "slug": "man-search-meaning",
+      "title": "Man's Search for Meaning",
+      "author": "Viktor E. Frankl",
+      "motif": "path",
+      "layout": "bottom",
+      "font": "serif",
+      "mode": "dark",
+      "params": {
+        "nodes": 8
+      },
+      "note": "A path leading toward a light."
+    },
+    {
+      "slug": "meditations",
+      "title": "Meditations",
+      "author": "Marcus Aurelius",
+      "motif": "columns",
+      "layout": "center",
+      "font": "serif",
+      "mode": "light",
+      "params": {
+        "n": 5
+      },
+      "note": "Stoic pillars of discipline."
+    },
+    {
+      "slug": "mindset",
+      "title": "Mindset",
+      "author": "Carol S. Dweck",
+      "motif": "tree",
+      "layout": "bottom",
+      "font": "sans",
+      "mode": "light",
+      "params": {
+        "depth": 7
+      },
+      "note": "A growth tree that keeps branching."
+    },
+    {
+      "slug": "never-split-the-difference",
+      "title": "Never Split the Difference",
+      "author": "Chris Voss",
+      "motif": "split",
+      "layout": "center",
+      "font": "sans",
+      "mode": "light",
+      "note": "Negotiation as a circle split in two."
+    },
+    {
+      "slug": "outliers",
+      "title": "Outliers",
+      "author": "Malcolm Gladwell",
+      "motif": "dots",
+      "layout": "top",
+      "font": "sans",
+      "mode": "dark",
+      "params": {
+        "n": 60,
+        "cluster": true,
+        "outlier": true
+      },
+      "note": "A cluster with one far-off outlier."
+    },
+    {
+      "slug": "predictably-irrational",
+      "title": "Predictably Irrational",
+      "author": "Dan Ariely",
+      "motif": "path",
+      "layout": "top",
+      "font": "sans",
+      "mode": "dark",
+      "params": {
+        "nodes": 9,
+        "zigzag": true
+      },
+      "note": "A zigzag that repeats predictably."
+    },
+    {
+      "slug": "principles",
+      "title": "Principles",
+      "author": "Ray Dalio",
+      "motif": "stairs",
+      "layout": "center",
+      "font": "serif",
+      "mode": "light",
+      "params": {
+        "steps": 5,
+        "pyramid": true
+      },
+      "note": "A pyramid of principles."
+    },
+    {
+      "slug": "range",
+      "title": "Range",
+      "author": "David Epstein",
+      "motif": "tree",
+      "layout": "left",
+      "font": "sans",
+      "mode": "light",
+      "params": {
+        "depth": 6,
+        "spread": 0.8
+      },
+      "note": "Wide, branching paths."
+    },
+    {
+      "slug": "rich-dad-poor-dad",
+      "title": "Rich Dad Poor Dad",
+      "author": "Robert T. Kiyosaki",
+      "motif": "coins",
+      "layout": "bottom",
+      "font": "serif",
+      "mode": "dark",
+      "params": {
+        "cols": 3
+      },
+      "note": "Stacks of coins and assets."
+    },
+    {
+      "slug": "sapiens",
+      "title": "Sapiens",
+      "author": "Yuval Noah Harari",
+      "motif": "spiral",
+      "layout": "center",
+      "font": "serif",
+      "mode": "light",
+      "params": {
+        "turns": 5
+      },
+      "note": "The long spiral of human history."
+    },
+    {
+      "slug": "shoe-dog",
+      "title": "Shoe Dog",
+      "author": "Phil Knight",
+      "motif": "path",
+      "layout": "bottom",
+      "font": "sans",
+      "mode": "light",
+      "params": {
+        "nodes": 6
+      },
+      "note": "A long road of running and building."
+    },
+    {
+      "slug": "start-with-why",
+      "title": "Start With Why",
+      "author": "Simon Sinek",
+      "motif": "rings",
+      "layout": "center",
+      "font": "sans",
+      "mode": "light",
+      "params": {
+        "n": 5,
+        "dots": 2
+      },
+      "note": "Golden circle with why at the centre."
+    },
+    {
+      "slug": "the-7-habits",
+      "title": "The 7 Habits of Highly Effective People",
+      "author": "Stephen R. Covey",
+      "motif": "petals",
+      "layout": "top",
+      "font": "serif",
+      "mode": "light",
+      "params": {
+        "n": 7
+      },
+      "note": "Seven petals, seven habits."
+    },
+    {
+      "slug": "the-alchemist",
+      "title": "The Alchemist",
+      "author": "Paulo Coelho",
+      "motif": "waves",
+      "layout": "bottom",
+      "font": "serif",
+      "mode": "dark",
+      "params": {
+        "layers": 4,
+        "amp": 0.1,
+        "freq": 1.2,
+        "sun": true
+      },
+      "note": "Desert dunes under a rising sun."
+    },
+    {
+      "slug": "the-body-keeps-score",
+      "title": "The Body Keeps the Score",
+      "author": "Bessel van der Kolk",
+      "motif": "heartbeat",
+      "layout": "top",
+      "font": "sans",
+      "mode": "dark",
+      "note": "A heartbeat line."
+    },
+    {
+      "slug": "the-courage-to-be-disliked",
+      "title": "The Courage to Be Disliked",
+      "author": "Ichiro Kishimi & Fumitake Koga",
+      "motif": "beam",
+      "layout": "center",
+      "font": "serif",
+      "mode": "dark",
+      "note": "A single beam of courage."
+    },
+    {
+      "slug": "the-four-agreements",
+      "title": "The Four Agreements",
+      "author": "Don Miguel Ruiz",
+      "motif": "grid",
+      "layout": "center",
+      "font": "sans",
+      "mode": "light",
+      "params": {
+        "n": 2,
+        "pattern": "quad"
+      },
+      "note": "Four tiles, four agreements."
+    },
+    {
+      "slug": "the-hard-thing",
+      "title": "The Hard Thing About Hard Things",
+      "author": "Ben Horowitz",
+      "motif": "peaks",
+      "layout": "bottom",
+      "font": "sans",
+      "mode": "dark",
+      "params": {
+        "layers": 1,
+        "peaks": 1,
+        "sun": false
+      },
+      "note": "One steep summit."
+    },
+    {
+      "slug": "the-lean-startup",
+      "title": "The Lean Startup",
+      "author": "Eric Ries",
+      "motif": "loop",
+      "layout": "top",
+      "font": "sans",
+      "mode": "light",
+      "params": {
+        "n": 3
+      },
+      "note": "Build, measure, learn in a loop."
+    },
+    {
+      "slug": "the-lord-of-the-rings-en",
+      "title": "The Lord of the Rings",
+      "author": "J. R. R. Tolkien",
+      "motif": "ring",
+      "layout": "center",
+      "font": "serif",
+      "mode": "dark",
+      "note": "One ring."
+    },
+    {
+      "slug": "the-mountain-is-you",
+      "title": "The Mountain Is You",
+      "author": "Brianna Wiest",
+      "motif": "peaks",
+      "layout": "top",
+      "font": "sans",
+      "mode": "dark",
+      "params": {
+        "layers": 3,
+        "peaks": 4
+      },
+      "note": "The mountain inside you."
+    },
+    {
+      "slug": "the-obstacle-is-the-way",
+      "title": "The Obstacle Is the Way",
+      "author": "Ryan Holiday",
+      "motif": "path",
+      "layout": "bottom",
+      "font": "sans",
+      "mode": "light",
+      "params": {
+        "nodes": 7,
+        "obstacles": 3
+      },
+      "note": "Obstacles set across the path."
+    },
+    {
+      "slug": "the-power-of-now",
+      "title": "The Power of Now",
+      "author": "Eckhart Tolle",
+      "motif": "rings",
+      "layout": "bottom",
+      "font": "sans",
+      "mode": "dark",
+      "params": {
+        "n": 7,
+        "dots": 0
+      },
+      "note": "Ripples from the present moment."
+    },
+    {
+      "slug": "the-power-of-positive-thinking-en",
+      "title": "The Power of Positive Thinking",
+      "author": "Norman Vincent Peale",
+      "motif": "rays",
+      "layout": "top",
+      "font": "serif",
+      "mode": "light",
+      "params": {
+        "n": 30
+      },
+      "note": "A sunrise of optimism."
+    },
+    {
+      "slug": "the-power-of-your-subconscious-mind",
+      "title": "The Power of Your Subconscious Mind",
+      "author": "Joseph Murphy",
+      "motif": "iceberg",
+      "layout": "top",
+      "font": "serif",
+      "mode": "dark",
+      "note": "What lies below the surface."
+    },
+    {
+      "slug": "the-richest-man-in-babylon-en",
+      "title": "The Richest Man in Babylon",
+      "author": "George S. Clason",
+      "motif": "arch",
+      "layout": "center",
+      "font": "serif",
+      "mode": "dark",
+      "note": "The gate of an ancient city."
+    },
+    {
+      "slug": "the-science-of-getting-rich-en",
+      "title": "The Science of Getting Rich",
+      "author": "Wallace D. Wattles",
+      "motif": "rays",
+      "layout": "left",
+      "font": "serif",
+      "mode": "dark",
+      "params": {
+        "n": 24
+      },
+      "note": "Growth radiating outward."
+    },
+    {
+      "slug": "the-subtle-art",
+      "title": "The Subtle Art of Not Giving a F*ck",
+      "author": "Mark Manson",
+      "motif": "fade",
+      "layout": "top",
+      "font": "sans",
+      "mode": "light",
+      "params": {
+        "n": 12
+      },
+      "note": "Letting go of what does not matter."
+    },
+    {
+      "slug": "the-war-of-art",
+      "title": "The War of Art",
+      "author": "Steven Pressfield",
+      "motif": "strokes",
+      "layout": "left",
+      "font": "serif",
+      "mode": "dark",
+      "params": {
+        "n": 9
+      },
+      "note": "Bold strokes on a blank canvas."
+    },
+    {
+      "slug": "think-and-grow-rich-en",
+      "title": "Think and Grow Rich",
+      "author": "Napoleon Hill",
+      "motif": "stairs",
+      "layout": "bottom",
+      "font": "serif",
+      "mode": "light",
+      "params": {
+        "steps": 6,
+        "ladder": true
+      },
+      "note": "A ladder of ideas."
+    },
+    {
+      "slug": "when-breath-becomes-air",
+      "title": "When Breath Becomes Air",
+      "author": "Paul Kalanithi",
+      "motif": "waves",
+      "layout": "center",
+      "font": "serif",
+      "mode": "light",
+      "params": {
+        "layers": 8,
+        "amp": 0.035,
+        "freq": 2.2,
+        "fill": false
+      },
+      "note": "Fine lines of breath."
+    },
+    {
+      "slug": "why-we-sleep",
+      "title": "Why We Sleep",
+      "author": "Matthew Walker",
+      "motif": "moon",
+      "layout": "center",
+      "font": "sans",
+      "mode": "dark",
+      "params": {
+        "stars": 40
+      },
+      "note": "Night, moon and stars."
+    },
+    {
+      "slug": "wings-of-fire",
+      "title": "Wings of Fire",
+      "author": "A. P. J. Abdul Kalam",
+      "motif": "wings",
+      "layout": "bottom",
+      "font": "serif",
+      "mode": "dark",
+      "note": "Wings rising from fire."
+    },
+    {
+      "slug": "zero-to-one",
+      "title": "Zero to One",
+      "author": "Peter Thiel",
+      "motif": "glyph_zero_one",
+      "layout": "center",
+      "font": "sans",
+      "mode": "light",
+      "note": "A zero, an arrow, a one."
+    },
+    {
+      "slug": "bhagavad-gita",
+      "title": "Bhagavad Gita",
+      "author": "Vyasa",
+      "motif": "petals",
+      "layout": "top",
+      "font": "serif",
+      "mode": "dark",
+      "params": {
+        "n": 8
+      },
+      "note": "Lotus of dharma. Author is the traditional attribution; verify in the database."
+    }
+  ]
+}
