@@ -1,0 +1,137 @@
+/*
+ * Booknomics homepage desktop contrast pass.
+ * Keeps the established warm-paper identity while removing the washed-out look
+ * on large screens. Scoped to the homepage only so reading/detail pages retain
+ * their existing typography and colour system.
+ */
+
+@media (min-width: 1024px) {
+  .booknomics-site:has(.bn-home-hero) {
+    --background: 39 42% 93%;
+    --foreground: 25 30% 11%;
+
+    --card: 40 48% 98%;
+    --card-foreground: 25 30% 11%;
+
+    --primary: 32 72% 41%;
+    --primary-foreground: 40 50% 98%;
+    --primary-glow: 38 88% 61%;
+
+    --secondary: 36 29% 87%;
+    --secondary-foreground: 25 26% 16%;
+
+    --muted: 37 23% 88%;
+    --muted-foreground: 26 16% 32%;
+
+    --accent: 32 78% 48%;
+    --accent-foreground: 25 30% 11%;
+
+    --border: 33 22% 77%;
+    --input: 33 22% 77%;
+    --ring: 32 72% 41%;
+  }
+
+  .booknomics-site:has(.bn-home-hero) .bn-home-hero {
+    background:
+      radial-gradient(circle at 82% 14%, hsl(var(--primary) / .17), transparent 31rem),
+      linear-gradient(180deg, hsl(40 48% 96%), hsl(var(--background)) 84%);
+    border-bottom-color: hsl(var(--border) / .96);
+  }
+
+  .booknomics-site:has(.bn-home-hero) .bn-home-hero-glow {
+    background: radial-gradient(circle, hsl(var(--primary) / .2), hsl(var(--primary) / .07) 43%, transparent 70%);
+  }
+
+  .booknomics-site:has(.bn-home-hero) .bn-home-lede,
+  .booknomics-site:has(.bn-home-hero) .bn-search-copy p,
+  .booknomics-site:has(.bn-home-hero) .bn-section-heading p,
+  .booknomics-site:has(.bn-home-hero) .bn-outcome-card p,
+  .booknomics-site:has(.bn-home-hero) .bn-language-card p,
+  .booknomics-site:has(.bn-home-hero) .bn-category-card p,
+  .booknomics-site:has(.bn-home-hero) .bn-resource-card p,
+  .booknomics-site:has(.bn-home-hero) .bn-about-panel > p {
+    color: hsl(var(--muted-foreground));
+  }
+
+  .booknomics-site:has(.bn-home-hero) .bn-hero-proof,
+  .booknomics-site:has(.bn-home-hero) .bn-stage-note {
+    color: hsl(var(--foreground) / .74);
+  }
+
+  .booknomics-site:has(.bn-home-hero) .bn-stage-word {
+    color: hsl(var(--foreground) / .055);
+  }
+
+  .booknomics-site:has(.bn-home-hero) .bn-search-box {
+    border-color: hsl(var(--border));
+    background: hsl(var(--card) / .96);
+    box-shadow: 0 18px 48px -34px hsl(var(--foreground) / .3);
+  }
+
+  .booknomics-site:has(.bn-home-hero) .bn-outcome-grid {
+    border-top-color: hsl(var(--border));
+    border-left-color: hsl(var(--border));
+  }
+
+  .booknomics-site:has(.bn-home-hero) .bn-outcome-card {
+    background: hsl(var(--card) / .78);
+    border-right-color: hsl(var(--border));
+    border-bottom-color: hsl(var(--border));
+  }
+
+  .booknomics-site:has(.bn-home-hero) .bn-outcome-card:hover {
+    background: hsl(var(--card));
+    box-shadow: 0 24px 50px -34px hsl(var(--foreground) / .34);
+  }
+
+  .booknomics-site:has(.bn-home-hero) .bn-language-band {
+    background:
+      radial-gradient(circle at 85% 20%, hsl(var(--primary) / .08), transparent 30rem),
+      linear-gradient(135deg, hsl(var(--secondary) / .9), hsl(var(--background)) 70%);
+    border-color: hsl(var(--border));
+  }
+
+  .booknomics-site:has(.bn-home-hero) .bn-language-card,
+  .booknomics-site:has(.bn-home-hero) .bn-category-card,
+  .booknomics-site:has(.bn-home-hero) .bn-resource-card,
+  .booknomics-site:has(.bn-home-hero) .bn-about-panel,
+  .booknomics-site:has(.bn-home-hero) .bn-book-card {
+    background: hsl(var(--card) / .94) !important;
+    border-color: hsl(var(--border));
+  }
+
+  .booknomics-site:has(.bn-home-hero) .bn-category-card:hover,
+  .booknomics-site:has(.bn-home-hero) .bn-resource-card:hover,
+  .booknomics-site:has(.bn-home-hero) .bn-language-card:hover,
+  .booknomics-site:has(.bn-home-hero) .bn-book-card:hover {
+    border-color: hsl(var(--primary) / .58) !important;
+  }
+
+  .booknomics-site:has(.bn-home-hero) .bn-section-label,
+  .booknomics-site:has(.bn-home-hero) .bn-eyebrow {
+    color: hsl(var(--primary));
+  }
+
+  .booknomics-site:has(.bn-home-hero) .bn-text-link {
+    color: hsl(var(--foreground) / .82);
+  }
+
+  .booknomics-site:has(.bn-home-hero) .bn-navbar {
+    background: hsl(var(--background) / .94) !important;
+    border-color: hsl(var(--border) / .9) !important;
+  }
+
+  /* Keep the intentionally cinematic areas genuinely dark and crisp. */
+  .booknomics-site:has(.bn-home-hero) .bn-readable-section,
+  .booknomics-site:has(.bn-home-hero) .bn-final-cta-inner,
+  .booknomics-site:has(.bn-home-hero) .bn-scroll-story {
+    --foreground: 25 28% 10%;
+  }
+
+  .booknomics-site:has(.bn-home-hero) .bn-readable-heading p,
+  .booknomics-site:has(.bn-home-hero) .bn-readable-copy > p,
+  .booknomics-site:has(.bn-home-hero) .bn-final-cta p,
+  .booknomics-site:has(.bn-home-hero) .bn-story-detail {
+    color: hsl(var(--background) / .74);
+  }
+}
