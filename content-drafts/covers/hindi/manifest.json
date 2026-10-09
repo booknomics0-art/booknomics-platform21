@@ -2001,7 +2001,16 @@
       "slug": "abachurina-post-office-poornachandra-tejaswi-hindi-summary",
       "file": "abachurina-post-office-poornachandra-tejaswi-hindi-summary.jpg",
       "category": "भारतीय क्षेत्रीय साहित्य · Kannada",
-      "batch": 3
+      "batch": 3,
+      "theme": "malnad green · light",
+      "mode": "light",
+      "palette": "wet areca-palm green, whitewashed verandah, pale monsoon sky",
+      "font": "martel",
+      "concept": "A remote Malnad village in the Western Ghats of Karnataka, early 1970s, from Poornachandra Tejaswi's Kannada story Abachurina Post Office: the village's only educated man, the thin young temporary postmaster in a white shirt, dhoti and spectacles, sits cross-legged on the verandah of a tiled house that serves as the post office, reading a letter aloud to a crowd of curious villagers — farmers with towels on their heads, women holding brass pots, wide-eyed children — who lean in eagerly; a plain wooden letterbox on a pillar, areca palms and monsoon clouds beyond.",
+      "titleDisplay": "अबचूरिना पोस्ट ऑफ़िस",
+      "authorDisplay": "पूर्णचंद्र तेजस्वी",
+      "ink": "#1E3A24",
+      "status": "done"
     },
     {
       "key": "b-d7cbbd87",
@@ -2011,7 +2020,15 @@
       "slug": "abhayarthikal-anand-hindi-summary",
       "file": "abhayarthikal-anand-hindi-summary.jpg",
       "category": "भारतीय क्षेत्रीय साहित्य · Malayalam",
-      "batch": 3
+      "batch": 3,
+      "theme": "camp smoke · dark",
+      "mode": "dark",
+      "palette": "slate monsoon sky, cooking-fire smoke, mud brown, faded tarpaulin blue",
+      "font": "vesperxb",
+      "concept": "A refugee camp on the edge of Calcutta during the 1971 war, from Anand's Malayalam novel Abhayarthikal (Refugees): rows of concrete-pipe shelters and patched tarpaulin tents stand in monsoon mud; an exhausted Bengali family with cloth bundles and a tin trunk has just arrived — an old woman in a white sari, a young mother with a child on her hip — while a thin Malayali man in spectacles and a white shirt stands among them, helpless and moved; smoke from cooking fires drifting under a heavy slate sky.",
+      "titleDisplay": "अभयार्थिकल",
+      "authorDisplay": "आनंद",
+      "status": "done"
     },
     {
       "key": "b-c162ff03",
@@ -2021,7 +2038,17 @@
       "slug": "abhijata-yaddanapudi-sulochana-rani-hindi-summary",
       "file": "abhijata-yaddanapudi-sulochana-rani-hindi-summary.jpg",
       "category": "भारतीय क्षेत्रीय साहित्य · Telugu",
-      "batch": 3
+      "batch": 3,
+      "theme": "after-rain silver · light",
+      "mode": "light",
+      "palette": "rain-washed silver grey, white cotton, wet leaf green",
+      "font": "tillana",
+      "concept": "A quiet middle-class street in 1970s Hyderabad just after the drizzle has stopped, from Yaddanapudi Sulochana Rani's Telugu novel Abhijata: a dignified young woman in a starched cotton sari, a closed umbrella in one hand and an opened envelope in the other, stands at the iron gate of a traditional tiled house, her face composed but deeply hurt; the wet road shines with silver light, raindrops fall from a neem tree, and an elderly neighbour watches from a verandah.",
+      "titleDisplay": "अभिजात",
+      "authorDisplay": "यद्दनपूडि सुलोचना रानी",
+      "ink": "#24323C",
+      "status": "done",
+      "topAlpha": 0.8
     },
     {
       "key": "b-5da8cafe",
@@ -2031,7 +2058,15 @@
       "slug": "abhilasha-yandamuri-veerendranath-hindi-summary",
       "file": "abhilasha-yandamuri-veerendranath-hindi-summary.jpg",
       "category": "भारतीय क्षेत्रीय साहित्य · Telugu",
-      "batch": 3
+      "batch": 3,
+      "theme": "courtroom teak · dark",
+      "mode": "dark",
+      "palette": "dark teak benches, black gowns, white shafts of noon light",
+      "font": "rozha",
+      "concept": "A packed district courtroom in Andhra Pradesh, early 1980s, from Yandamuri Veerendranath's Telugu thriller Abhilasha: an idealistic young lawyer with thick black hair, in a plain white shirt, stands accused in the wooden dock with a calm, defiant look — he has arranged the evidence against himself to prove how the death penalty can hang an innocent man — while the grey-haired public prosecutor in a black gown points at him, the judge watches from the high bench, and a worried young woman in a cotton sari grips the railing of the public benches; ceiling fans, tall shuttered windows letting in white shafts of noon light.",
+      "titleDisplay": "अभिलाषा",
+      "authorDisplay": "यंडमूरी वीरेंद्रनाथ",
+      "status": "done"
     },
     {
       "key": "b-7164af7e",
@@ -2041,7 +2076,15 @@
       "slug": "abhinetri-kanhucharan-mohanty-hindi-summary",
       "file": "abhinetri-kanhucharan-mohanty-hindi-summary.jpg",
       "category": "भारतीय क्षेत्रीय साहित्य · Odia",
-      "batch": 3
+      "batch": 3,
+      "theme": "footlight gold · dark",
+      "mode": "dark",
+      "palette": "warm mirror-bulb gold, crimson silk, deep backstage shadow",
+      "font": "sahitya",
+      "concept": "The dressing room of an old theatre in Cuttack, 1940s, from Kanhucharan Mohanty's Odia novel Abhinetri (The Actress): a glamorous young stage actress in a crimson silk sari with gold temple jewellery sits before a mirror framed by glowing bulbs, and behind her stands her identical twin sister in a plain cotton sari; their two faces meet in the mirror — one bright with fame, the other quiet and sorrowful; costume racks and painted backdrops in deep shadow.",
+      "titleDisplay": "अभिनेत्री",
+      "authorDisplay": "कान्हुचरण महांति",
+      "status": "done"
     },
     {
       "key": "b-81cd06f2",
@@ -2051,7 +2094,16 @@
       "slug": "abhisapta-gandharba-mohapatra-nilamani-sahoo-hindi-summary",
       "file": "abhisapta-gandharba-mohapatra-nilamani-sahoo-hindi-summary.jpg",
       "category": "भारतीय क्षेत्रीय साहित्य · Odia",
-      "batch": 3
+      "batch": 3,
+      "theme": "lantern ochre · dark",
+      "mode": "dark",
+      "palette": "hurricane-lantern ochre, banyan-night green, white cotton",
+      "font": "sura",
+      "concept": "A village in coastal Odisha on a warm night, 1950s, from Mohapatra Nilamani Sahoo's Odia stories Abhisapta Gandharba (The Cursed Gandharva): a thin old village singer with white stubble, a sandal-paste mark on his forehead and a cotton shawl, sings with his eyes closed, one hand raised, while seated villagers listen enraptured on palm mats under a huge banyan tree — the bespectacled schoolmaster, the country physician with his cloth bag, women and children — lit by a hanging hurricane lantern; a gentle, warm, humorous mood.",
+      "titleDisplay": "अभिशप्त गंधर्व",
+      "authorDisplay": "महापात्र नीलमणि साहू",
+      "status": "done",
+      "topAlpha": 0.8
     },
     {
       "key": "b-99de5c14",
@@ -2061,7 +2113,16 @@
       "slug": "achalatana-surendra-mohanty-hindi-summary",
       "file": "achalatana-surendra-mohanty-hindi-summary.jpg",
       "category": "भारतीय क्षेत्रीय साहित्य · Odia",
-      "batch": 3
+      "batch": 3,
+      "theme": "limewash · light",
+      "mode": "light",
+      "palette": "lime-washed white walls, faded indigo doors, harsh noon glare",
+      "font": "kadwa",
+      "concept": "An old orthodox joint-family house in a temple town of Odisha, 1950s, from Surendra Mohanty's Odia novel Achalayatana: the stern old patriarch with a shaven head, a sacred thread and a white dhoti sits unmoving on a carved wooden chair on the stone verandah, while at the heavy iron-studded door a young man in a white shirt holding a small suitcase pauses on his way out, looking back at him; lime-washed walls, faded indigo doors, harsh white noon light.",
+      "titleDisplay": "अचलायतन",
+      "authorDisplay": "सुरेंद्र महांति",
+      "ink": "#262C48",
+      "status": "done"
     },
     {
       "key": "b-2329362b",
@@ -2071,7 +2132,15 @@
       "slug": "adityanum-radhayum-mattu-chilarum-m-mukundan-hindi-summary",
       "file": "adityanum-radhayum-mattu-chilarum-m-mukundan-hindi-summary.jpg",
       "category": "भारतीय क्षेत्रीय साहित्य · Malayalam",
-      "batch": 3
+      "batch": 3,
+      "theme": "monsoon violet · dark",
+      "mode": "dark",
+      "palette": "violet monsoon dusk, sodium-orange streetlight, wet asphalt",
+      "font": "tiro",
+      "concept": "A bus shelter on a rainy evening in a Kerala town, early 1990s, from M. Mukundan's Malayalam novel Adityanum Radhayum Mattu Chilarum: Adityan, a neat, obedient young man with spectacles and a leather bag, and Radha, a self-assured, independent young woman with short hair in a cotton kurta and a cloth bag, sit on the same bench, close yet apart, looking in different directions; behind them a few other people under umbrellas watch from a tea stall; violet dusk, sodium-orange streetlights reflected on wet asphalt.",
+      "titleDisplay": "आदित्यनुम राधयुम मट्टु चिलरुम",
+      "authorDisplay": "एम. मुकुंदन",
+      "status": "done"
     },
     {
       "key": "b-c4fd9549",
@@ -2081,7 +2150,16 @@
       "slug": "aerakkuraiya-sorkkam-sujatha-hindi-summary",
       "file": "aerakkuraiya-sorkkam-sujatha-hindi-summary.jpg",
       "category": "भारतीय क्षेत्रीय साहित्य · Tamil",
-      "batch": 3
+      "batch": 3,
+      "theme": "pastel flat · light",
+      "mode": "light",
+      "palette": "pastel-pink new walls, white mosaic floor, bright afternoon sun",
+      "font": "vesper",
+      "concept": "A brand-new flat in Madras, 1970s, from Sujatha's Tamil novel Erakkuraiya Sorgam (Almost Heaven): a young husband in a crisp shirt sits stiffly on a new sofa among gleaming new possessions — a refrigerator, a radiogram, potted crotons — looking small and uneasy, while his young wife in a bright nylon sari happily arranges flowers in a vase by the window; pastel-pink walls, white mosaic floor, bright afternoon sun.",
+      "titleDisplay": "एरक्कुरैया सोर्क्कम",
+      "authorDisplay": "सुजाता",
+      "ink": "#4A2438",
+      "status": "done"
     },
     {
       "key": "b-8962ca67",
@@ -2091,7 +2169,16 @@
       "slug": "agantuk-dhiruben-patel-hindi-summary",
       "file": "agantuk-dhiruben-patel-hindi-summary.jpg",
       "category": "भारतीय क्षेत्रीय साहित्य · Gujarati",
-      "batch": 3
+      "batch": 3,
+      "theme": "swing brass · light",
+      "mode": "light",
+      "palette": "ivory walls, polished brass swing, soft evening daylight, a touch of saffron",
+      "font": "rozha",
+      "concept": "The doorway of a Gujarati family flat in Bombay, 1990s, from Dhiruben Patel's Gujarati novel Aagantuk (The Visitor): a calm man of about forty-five with a freshly shaven head and serene eyes, who has just given up his saffron robes and left the ashram, stands at the threshold in a plain white kurta holding a small cloth bundle, while his family stares at him from the living room — his elderly mother with folded hands, his brother in a business shirt, the brother's wary wife and two teenagers; a polished brass swing, ivory walls, soft evening light.",
+      "titleDisplay": "आगंतुक",
+      "authorDisplay": "धीरूबेन पटेल",
+      "ink": "#3E2C10",
+      "status": "done"
     },
     {
       "key": "b-531586b7",

@@ -210,6 +210,16 @@ export const THEMES = [
   { name: "marble", mode: "light", palette: "white marble, gilt, soft daylight", ink: "#3A3226" },
   { name: "haldi", mode: "light", palette: "turmeric yellow, marigold, white rangoli, morning", ink: "#4A3608" },
   { name: "first light", mode: "light", palette: "peach-gold first light, misty valley grey", ink: "#4A2A1C" },
+  { name: "malnad green", mode: "light", palette: "wet areca-palm green, whitewashed verandah, pale monsoon sky", ink: "#1E3A24" },
+  { name: "camp smoke", mode: "dark", palette: "slate monsoon sky, cooking-fire smoke, mud brown, faded tarpaulin blue" },
+  { name: "after-rain silver", mode: "light", palette: "rain-washed silver grey, white cotton, wet leaf green", ink: "#24323C" },
+  { name: "courtroom teak", mode: "dark", palette: "dark teak benches, black gowns, white shafts of noon light" },
+  { name: "footlight gold", mode: "dark", palette: "warm mirror-bulb gold, crimson silk, deep backstage shadow" },
+  { name: "lantern ochre", mode: "dark", palette: "hurricane-lantern ochre, banyan-night green, white cotton" },
+  { name: "limewash", mode: "light", palette: "lime-washed white walls, faded indigo doors, harsh noon glare", ink: "#262C48" },
+  { name: "monsoon violet", mode: "dark", palette: "violet monsoon dusk, sodium-orange streetlight, wet asphalt" },
+  { name: "pastel flat", mode: "light", palette: "pastel-pink new walls, white mosaic floor, bright afternoon sun", ink: "#4A2438" },
+  { name: "swing brass", mode: "light", palette: "ivory walls, polished brass swing, soft evening daylight, a touch of saffron", ink: "#3E2C10" },
 ];
 const FONT_ROTATION = ["vesper", "sahitya", "kadwa", "vesper", "sura", "martel", "vesper", "rozha"];
 
