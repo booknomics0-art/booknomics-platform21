@@ -7,11 +7,12 @@ import { Textarea } from "@/components/ui/textarea";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { BookAssetsEditor } from "@/components/admin/BookAssetsEditor";
-import { ChevronLeft, ChevronRight, FileText, Package, Search, Send } from "lucide-react";
+import { ChevronLeft, ChevronRight, FileText, Headphones, Package, Search, Send } from "lucide-react";
 import { toast } from "sonner";
 
 const SeoLab = lazy(() => import("@/components/admin/SeoLab"));
 const N8nDispatcher = lazy(() => import("@/components/admin/N8nDispatcher"));
+const AudioBatchManager = lazy(() => import("@/components/admin/AudioBatchManager"));
 
 export type EditState = {
   id: string; title: string; author: string; category: string; language: string;
@@ -24,6 +25,7 @@ const STEPS = [
   { id: 2, label: "Assets",  icon: Package },
   { id: 3, label: "SEO",     icon: Search },
   { id: 4, label: "Launch",  icon: Send },
+  { id: 5, label: "Audio Batch", icon: Headphones },
 ];
 
 export function PublishingWizard({
@@ -121,6 +123,10 @@ export function PublishingWizard({
 
       {step === 4 && (
         <Suspense fallback={fallback}><N8nDispatcher bookId={edit.id} /></Suspense>
+      )}
+
+      {step === 5 && (
+        <Suspense fallback={fallback}><AudioBatchManager /></Suspense>
       )}
 
       {/* Footer nav */}
