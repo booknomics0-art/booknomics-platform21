@@ -1,0 +1,111 @@
+name: Cover engine probe (local FLUX)
+
+# One-off check for the keyless cover engine: runner size, whether GitHub Models offers an image
+# model, and how fast / how good FLUX.1-schnell is when run on the runner's CPU with
+# stable-diffusion.cpp. Results are committed to content-drafts/covers/_probe/.
+
+on:
+  push:
+    branches:
+      - arena/bcb5e5c1-booknomics-platform21
+    paths:
+      - tools/cover-studio/engine/probe-request.txt
+
+permissions:
+  contents: write
+  models: read
+
+concurrency:
+  group: engine-probe
+  cancel-in-progress: true
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    env:
+      W: 640
+      H: 960
+      STEPS: 4
+      KEYS: b-013cca14 vps-khalifa
+      OUT: content-drafts/covers/_probe
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Runner
+        run: |
+          mkdir -p "$OUT"
+          { echo "nproc=$(nproc)"; free -g | sed -n 2p; df -h / | tail -1; lscpu | grep -m1 "Model name"; \
+            lscpu | grep -o -E "avx512f|avx2|fma" | sort -u | tr '\n' ' '; echo; } | tee "$OUT/runner.txt"
+
+      - name: GitHub Models catalog (any image model?)
+        env:
+          TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          curl -s -H "Authorization: Bearer $TOKEN" -H "Accept: application/vnd.github+json" \
+            https://models.github.ai/catalog/models -o catalog.json || true
+          python3 - <<'PY' | tee -a "$OUT/runner.txt"
+          import json
+          try:
+              d = json.load(open("catalog.json"))
+          except Exception as e:
+              print("catalog: unreadable", e); raise SystemExit(0)
+          img = [m.get("id") for m in d if "image" in [str(x).lower() for x in (m.get("supported_output_modalities") or [])]]
+          print(f"catalog: {len(d)} models; image-output models: {img or 'none'}")
+          PY
+
+      - name: Get stable-diffusion.cpp (CPU build)
+        run: |
+          url=$(curl -s https://api.github.com/repos/leejet/stable-diffusion.cpp/releases/latest | python3 -c "
+          import json,sys
+          a=[x['browser_download_url'] for x in json.load(sys.stdin)['assets'] if 'Linux-Ubuntu' in x['name'] and x['name'].endswith('x86_64.zip')]
+          print(a[0])")
+          echo "sd.cpp: $url" | tee -a "$OUT/runner.txt"
+          mkdir -p sdbin && curl -sL "$url" -o sd.zip && unzip -q sd.zip -d sdbin
+          SD=$(find sdbin -type f \( -name sd -o -name sd-cli \) | head -1); chmod +x "$SD"
+          echo "SD=$PWD/$SD" >> "$GITHUB_ENV"; echo "LD_LIBRARY_PATH=$PWD/$(dirname "$SD")" >> "$GITHUB_ENV"
+          ls -la "$(dirname "$SD")"
+
+      - name: Get FLUX.1-schnell (GGUF) from Hugging Face
+        run: |
+          set -e
+          mkdir -p models
+          curl -s https://huggingface.co/api/models/second-state/FLUX.1-schnell-GGUF | python3 -c "
+          import json,sys; print('\n'.join(s['rfilename'] for s in json.load(sys.stdin)['siblings']))" | tee -a "$OUT/runner.txt"
+          base=https://huggingface.co/second-state/FLUX.1-schnell-GGUF/resolve/main
+          start=$(date +%s)
+          for f in flux1-schnell-Q4_0.gguf ae.safetensors clip_l.safetensors t5xxl-Q8_0.gguf; do
+            curl -sSL --retry 5 --retry-delay 5 -o "models/$f" "$base/$f"
+          done
+          ls -la models | tee -a "$OUT/runner.txt"
+          echo "download seconds: $(( $(date +%s) - start ))" | tee -a "$OUT/runner.txt"
+
+      - name: Render test art
+        run: |
+          node tools/cover-studio/engine/probe-prompts.mjs prompts $KEYS
+          for k in $KEYS; do
+            start=$(date +%s)
+            /usr/bin/time -v "$SD" --diffusion-model models/flux1-schnell-Q4_0.gguf --vae models/ae.safetensors \
+              --clip_l models/clip_l.safetensors --t5xxl models/t5xxl-Q8_0.gguf \
+              -p "$(cat prompts/$k.txt)" --cfg-scale 1.0 --sampling-method euler --steps $STEPS \
+              -W $W -H $H -s 7 -t $(nproc) --vae-tiling -o "$OUT/$k-flux.png" > "sd-$k.log" 2>&1 || true
+            secs=$(( $(date +%s) - start ))
+            rss=$(grep "Maximum resident" "sd-$k.log" | awk '{print $NF}')
+            echo "$k: ${secs}s, max RSS ${rss} KB, ${W}x${H}, ${STEPS} steps" | tee -a "$OUT/runner.txt"
+            grep -i -E "sampling completed|decode|error|fail|it/s|s/it" "sd-$k.log" | tail -8 | tee -a "$OUT/runner.txt"
+            echo "::notice::$k ${secs}s"
+          done
+
+      - name: Commit results
+        if: always()
+        run: |
+          git config user.name "booknomics-cover-bot"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          cp runner.txt "$OUT/" 2>/dev/null || true
+          git fetch -q origin "${GITHUB_REF_NAME}"
+          git stash -u -q || true
+          git reset -q --hard "origin/${GITHUB_REF_NAME}"
+          git stash pop -q || true
+          git add "$OUT"
+          git commit -q -m "Engine probe results" || exit 0
+          git push origin "HEAD:${GITHUB_REF_NAME}"
