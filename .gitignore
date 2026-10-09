@@ -40,3 +40,12 @@ secrets/
 backups/
 reports/
 supabase/.temp/
+
+# Cover Forge: generated output, never committed.
+# Regenerate with: cd tools/cover-forge && npm install && node fetch-fonts.mjs && node generate.mjs --from-db --all
+tools/cover-forge/covers/
+tools/cover-forge/out/
+tools/cover-forge/preview/
+tools/cover-forge/art/
+tools/cover-forge/art-prompts.json
+tools/cover-forge/covers-10/
