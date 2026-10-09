@@ -32,11 +32,14 @@
       "title": "बंधन",
       "author": "नरेन्द्र कोहली",
       "font": "vesper",
-      "palette": "pearl mist, river teal, pale dawn gold",
-      "concept": "Devavrata waist-deep in the Ganga at dawn raising his hand in his terrible vow; threads of golden light bind his wrist and dissolve into the river; a fisherwoman's boat in the mist.",
+      "palette": "pearl-white river mist, pale dawn gold, soft slate blue",
+      "concept": "Ancient India, from Narendra Kohli's Mahasamar (the Mahabharata retold), part one: at dawn the young prince Devavrat — tall, broad-shouldered, clean-shaven, long black hair tied back, bare-chested in a white dhoti with gold armlets — stands waist-deep in the misty Ganga and raises his right hand in his lifelong vow, his face resolute; on the bank the grey-bearded fisherman chief Dashraj watches, and the young fisher-maiden Satyavati sits in a wooden boat in the mist.",
       "file": "बंधन-नरेनदर-कोहली-सारांश.webp",
-      "status": "redo",
-      "note": "Made in the earlier classic layout; to be redone in the site summary style."
+      "status": "done",
+      "note": "Made in the earlier classic layout; to be redone in the site summary style.",
+      "theme": "pearl white · light",
+      "mode": "light",
+      "ink": "#1F3448"
     },
     {
       "key": "kohli-adhikar",
@@ -45,11 +48,14 @@
       "title": "अधिकार",
       "author": "नरेन्द्र कोहली",
       "font": "sahitya",
-      "palette": "royal maroon, antique gold, deep shadow",
-      "concept": "The empty throne of Hastinapur on a high dais with a crown on its seat; from opposite sides five long shadows and a crowd of a hundred shadows stretch toward it.",
+      "palette": "fresh leaf green, morning sunlight gold, soft forest haze",
+      "concept": "Ancient Hastinapur, from Narendra Kohli's Mahasamar, part two: in a sunlit forest training ground Guru Drona, a stern grey-bearded Brahmin teacher in white with a sacred thread, stands behind the young prince Arjuna, who draws his bow and aims at a small wooden bird high in a tree, utterly focused; the other young princes in simple dhotis watch, and Duryodhana, proud and heavy-browed, glares with jealousy.",
       "file": "अधिकार-नरेनदर-कोहली-सारांश.webp",
-      "status": "redo",
-      "note": "Made in the earlier classic layout; to be redone in the site summary style."
+      "status": "done",
+      "note": "Made in the earlier classic layout; to be redone in the site summary style.",
+      "theme": "green · light",
+      "mode": "light",
+      "ink": "#173D22"
     },
     {
       "key": "kohli-karm",
@@ -58,11 +64,13 @@
       "title": "कर्म",
       "author": "नरेन्द्र कोहली",
       "font": "kadwa",
-      "palette": "deep emerald, burnished gold",
-      "concept": "Draupadi's swayamvar: a golden fish revolving on a high wheel, its trembling reflection in a bronze basin of oil, a great bow drawn and an arrow of light flying upward.",
+      "palette": "royal crimson, marigold, torchlight gold, deep shadow",
+      "concept": "Ancient Panchal, from Narendra Kohli's Mahasamar, part three: Draupadi's swayamvar in a vast torch-lit pillared hall — Arjuna, disguised as a poor young Brahmin with a sacred thread and tied-up hair, draws the giant bow, aiming upward while looking down at the reflection of a revolving target in a bronze basin of oil; behind him the dusky, striking princess Draupadi, in a crimson and gold silk sari, holds a marigold garland; rows of astonished kings in the shadows.",
       "file": "करम-नरेनदर-कोहली-सारांश.webp",
-      "status": "redo",
-      "note": "Made in the earlier classic layout; to be redone in the site summary style."
+      "status": "done",
+      "note": "Made in the earlier classic layout; to be redone in the site summary style.",
+      "theme": "crimson · dark",
+      "mode": "dark"
     },
     {
       "key": "kohli-dharm",
@@ -71,11 +79,13 @@
       "title": "धर्म",
       "author": "नरेन्द्र कोहली",
       "font": "vesper",
-      "palette": "crimson silk, obsidian black, ivory",
-      "concept": "Ivory dice tumbling across an inlaid dice board in a dark royal hall while an endless crimson sari rises from the board like a river of silk toward a soft divine light.",
+      "palette": "deep royal purple, tarnished bronze, flickering lamp amber",
+      "concept": "The royal hall of Hastinapur, from Narendra Kohli's Mahasamar, part four: the game of dice — Yudhishthira, a dignified bearded king in a white and gold uttariya, stares in anguish at ivory dice on an embroidered board; across from him Shakuni, a lean, sharp-featured older man with a thin grey beard and a sly smile, rolls the dice; Duryodhana lounges on a carved throne behind, smirking; Bhima's clenched fist in the foreground; flickering oil lamps and heavy purple drapes.",
       "file": "धरम-नरेनदर-कोहली-सारांश.webp",
-      "status": "redo",
-      "note": "Made in the earlier classic layout; to be redone in the site summary style."
+      "status": "done",
+      "note": "Made in the earlier classic layout; to be redone in the site summary style.",
+      "theme": "purple · dark",
+      "mode": "dark"
     },
     {
       "key": "kohli-antraal",
@@ -84,11 +94,13 @@
       "title": "अंतराल",
       "author": "नरेन्द्र कोहली",
       "font": "sura",
-      "palette": "moss green, smoky jade, shafts of pale gold",
-      "concept": "Forest exile: five pairs of bare footprints and one smaller pair on a path of fallen sal leaves, a bow and quiver against an ancient tree, light shafts through mist.",
+      "palette": "monsoon slate grey, deep teal green, small warm firelight",
+      "concept": "Forest exile, from Narendra Kohli's Mahasamar, part five: the five Pandava brothers and Draupadi, in coarse bark-cloth and faded cotton, outside a thatched hut deep in a rain-soaked forest during the monsoon; Draupadi, her hair loose and unbound, tends a small fire under the eaves with a resolute face; the burly Bhima and the calm Yudhishthira stand at the edge of the veranda looking out into the misty forest; streaks of rain, wet leaves.",
       "file": "अंतराल-नरेनदर-कोहली-सारांश.webp",
-      "status": "redo",
-      "note": "Made in the earlier classic layout; to be redone in the site summary style."
+      "status": "done",
+      "note": "Made in the earlier classic layout; to be redone in the site summary style.",
+      "theme": "slate teal · dark",
+      "mode": "dark"
     },
     {
       "key": "kohli-prachchhann",
@@ -97,13 +109,16 @@
       "title": "प्रच्छन्न",
       "author": "नरेन्द्र कोहली",
       "font": "martel",
-      "palette": "violet dusk, muted silver",
-      "concept": "The year in disguise: divine weapons wrapped in cloth hidden high in a gnarled shami tree at dusk, a silver bow glinting through the wrappings, palace lamps far away.",
+      "palette": "rose-pink sandstone, ivory sunlight, soft indigo",
+      "concept": "King Virata's palace, from Narendra Kohli's Mahasamar, part six: the year in disguise — Draupadi, living as the maid Sairandhri in a plain indigo cotton sari with no jewellery, braids the long hair of Queen Sudeshna in a sunlit courtyard of rose-pink sandstone arches; in the background Arjuna, disguised as Brihannala, a dance teacher with long braided hair and bangles, teaches a young princess.",
       "file": "परचछनन-नरेनदर-कोहली-सारांश.webp",
-      "status": "redo",
+      "status": "done",
       "seam": 0.2383,
       "qa": "AI art had a flat title band with a hard edge at y=286; softened with seam.",
-      "note": "Made in the earlier classic layout; to be redone in the site summary style."
+      "note": "Made in the earlier classic layout; to be redone in the site summary style.",
+      "theme": "rose pink · light",
+      "mode": "light",
+      "ink": "#5E1B2E"
     },
     {
       "key": "kohli-pratyaksh",
@@ -112,11 +127,14 @@
       "title": "प्रत्यक्ष",
       "author": "नरेन्द्र कोहली",
       "font": "vesper",
-      "palette": "cosmic cobalt, radiant white-gold",
-      "concept": "In the Kuru assembly hall a towering silhouette of pure light filled with stars and galaxies rises above tiny dazzled courtiers — the cosmic form revealed.",
+      "palette": "sapphire blue, white marble, morning gold light",
+      "concept": "The assembly hall of Hastinapur, from Narendra Kohli's Mahasamar, part seven: Krishna's peace mission — Krishna, a dark-skinned man with a calm face, a peacock feather in his hair and yellow silk garments, stands in the centre of a white marble court and speaks with quiet authority; the blind old king Dhritarashtra listens from his throne, the white-bearded Bhishma and Guru Drona sit gravely, and Duryodhana rises in anger; shafts of morning light fall from high windows.",
       "file": "परतयकष-नरेनदर-कोहली-सारांश.webp",
-      "status": "redo",
-      "note": "Made in the earlier classic layout; to be redone in the site summary style."
+      "status": "done",
+      "note": "Made in the earlier classic layout; to be redone in the site summary style.",
+      "theme": "sapphire · light",
+      "mode": "light",
+      "ink": "#132C5C"
     },
     {
       "key": "kohli-nirbandh",
@@ -125,11 +143,13 @@
       "title": "निर्बन्ध",
       "author": "नरेन्द्र कोहली",
       "font": "rozha",
-      "palette": "blood-orange sky, ash grey",
-      "concept": "Kurukshetra at dawn: a war chariot with four white horses between two endless armies of dark silhouettes, a conch raised, a peacock feather catching first light.",
+      "palette": "fiery orange sun, black smoke, dusty ochre",
+      "concept": "Kurukshetra, from Narendra Kohli's Mahasamar, part eight: the war begins — on a war chariot drawn by four white horses, Krishna, the charioteer, youthful and clean-shaven with no beard or moustache, dark-skinned, with a peacock feather in his hair and yellow silk garments, turns from the reins to speak gently to Arjuna, who has sunk down with his great bow lowered, overcome with grief; two vast armies with banners and spears stretch across the dusty plain under a fiery orange sun and drifting black smoke.",
       "file": "निरबनध-नरेनदर-कोहली-सारांश.webp",
       "status": "redo",
-      "note": "Made in the earlier classic layout; to be redone in the site summary style."
+      "note": "First render showed Krishna with a beard; redo with a youthful, clean-shaven Krishna.",
+      "theme": "fiery orange · dark",
+      "mode": "dark"
     },
     {
       "key": "kohli-anushangik",
@@ -138,11 +158,13 @@
       "title": "आनुषंगिक",
       "author": "नरेन्द्र कोहली",
       "font": "vesper",
-      "palette": "ash grey, smoky lavender, ember red",
-      "concept": "After the war: the old patriarch lying on a bed of arrows on a silent, smoke-veiled battlefield at twilight, broken chariot wheels, fallen banners, a few flickering lamps.",
+      "palette": "smoky lavender dusk, ash grey, faint ember red",
+      "concept": "After the great war, from Narendra Kohli's Mahasamar, part nine: at dusk the blindfolded queen Gandhari, an elderly woman in a plain white sari with a strip of cloth over her eyes, is gently guided by Kunti, also in white, across the silent, smoke-veiled plain of Kurukshetra; behind them women in white carry small clay oil lamps; a broken chariot wheel and torn banners lie in the dust; Krishna, youthful and clean-shaven, stands quietly at a distance with his head bowed. Calm, grieving and dignified.",
       "file": "आनुषंगिक-नरेनदर-कोहली-सारांश.webp",
       "status": "redo",
-      "note": "Made in the earlier classic layout; to be redone in the site summary style."
+      "note": "Bed-of-arrows scene was blocked by the image moderation; use the mourning scene instead.",
+      "theme": "lavender · dark",
+      "mode": "dark"
     },
     {
       "key": "kohli-diksha",
@@ -151,11 +173,13 @@
       "title": "दीक्षा",
       "author": "नरेन्द्र कोहली",
       "font": "sahitya",
-      "palette": "saffron fire, deep forest green",
-      "concept": "A sage's staff and a young prince's bow crossed before a sacred fire in a forest hermitage at dawn, sparks rising like stars, two pairs of small footprints beside an old pair.",
+      "palette": "sacred-fire saffron, indigo pre-dawn blue, forest shadow",
+      "concept": "A forest hermitage, from Narendra Kohli's Ram-katha Abhyuday, part one (Deeksha): before dawn the sage Vishwamitra — lean and ascetic, with long grey matted hair and beard, in saffron robes — initiates the teenage princes Ram and Lakshman, who kneel before a sacred fire with bows across their laps, eyes closed in concentration; sparks rise into the dark; tall sal trees all around.",
       "file": "दीकषा-नरेनदर-कोहली-सारांश.webp",
-      "status": "redo",
-      "note": "Made in the earlier classic layout; to be redone in the site summary style."
+      "status": "done",
+      "note": "Made in the earlier classic layout; to be redone in the site summary style.",
+      "theme": "saffron · dark",
+      "mode": "dark"
     },
     {
       "key": "kohli-avsar",

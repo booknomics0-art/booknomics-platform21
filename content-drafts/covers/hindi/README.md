@@ -32,8 +32,9 @@ Format: 800×1200 WebP (2:3, what `BookCard` renders). `<slug>.webp` matches `bo
 | | Books | Status |
 |---|---|---|
 | Samples in the approved look | 3 | done: गोदान (yellow · light), काबुलीवाला (blue · dark), घरे-बाइरे (red · dark) |
-| Narendra Kohli (10) | 10 | first made in an earlier symbolic style; **to be redone** in the approved look (old versions are in commit `b979135`) |
-| Other Devanagari titles: classics, Tagore, Khatri, Rahul, pulp, … | 90 | pending |
+| Narendra Kohli, batch 1 | 8 | done: बंधन (pearl white · light), अधिकार (green · light), कर्म (crimson · dark), धर्म (purple · dark), अंतराल (slate teal · dark), प्रच्छन्न (rose pink · light), प्रत्यक्ष (sapphire · light), दीक्षा (saffron · dark) |
+| Narendra Kohli, still to make | 2 + 3 | निर्बन्ध (redo: first render gave Krishna a beard), आनुषंगिक (redo: the bed-of-arrows scene was blocked by image moderation), then अवसर, युद्ध, अभ्युदय |
+| Other Devanagari titles: classics, Tagore, Khatri, Rahul, pulp, … | 87 | pending |
 | Regional-literature summaries with Latin titles in the DB (`भारतीय क्षेत्रीय साहित्य · …`) | ~589 | not in the manifest yet. **The title will be written in Devanagari on the cover** |
 
 `node tools/cover-studio/prompts.mjs --stats` gives the live count. The image tool makes up to 10
@@ -45,6 +46,17 @@ Skipped on purpose:
   गोदान already has a cover too, so the one here is a sample and optional.
 
 ## Uploading
+
+**Automatic (GitHub Actions):** `.github/workflows/upload-hindi-covers.yml` runs on every push that
+changes this folder. It uploads every finished cover (`status: "done"`) to the Supabase
+`book-covers` bucket under `hindi-story-covers/<book-id>/<timestamp>.webp` and sets
+`books.cover_url`, but only for books that still have no cover. The public URLs are listed in
+the run summary and in the `hindi-cover-urls` artifact.
+
+It needs one repository secret, added once: **`SUPABASE_SERVICE_ROLE_KEY`** (GitHub → Settings →
+Secrets and variables → Actions → New repository secret; the value is in Supabase → Project
+Settings → API Keys). Without it the workflow only prints a reminder. Re-run the latest run after
+adding the secret.
 
 **One at a time:** Admin → find the book → **HD Cover** (cloud icon) → pick `<slug>.webp`.
 
