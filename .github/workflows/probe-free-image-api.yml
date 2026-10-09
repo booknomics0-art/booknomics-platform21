@@ -1,0 +1,51 @@
+name: Probe free image API
+# One-off check: can covers be made with no secrets at all?
+#  - images: Pollinations (Flux), no key
+#  - scene text: GitHub Models with the built-in GITHUB_TOKEN
+on:
+  push:
+    branches: [arena/bcb5e5c1-booknomics-platform21]
+    paths: [.github/workflows/probe-free-image-api.yml]
+permissions:
+  contents: read
+  models: read
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Pollinations
+        run: |
+          set +e
+          mkdir -p out
+          TAIL="Shot on 35mm film with a 50mm lens, natural light, true-to-life colours, real skin texture with pores and wrinkles, unretouched faces, natural hands, real fabric weave, dust and wear, shallow depth of field, subtle film grain. A real photograph from a film, not a painting or CGI. The people are in the lower two-thirds; the top third is empty background for a title."
+          P1="Photorealistic cinematic film still, vertical 2:3 book cover photograph. A ghat on the Yamuna in Braj, early 16th century: the blind poet Surdas, a lean singer in his forties with closed sightless eyes, a short greying beard and a sandalwood tilak, in a white dhoti and shawl, sits on wet stone steps at dawn singing as he plays a tanpura; village women in Braj ghagras with brass pots and young cowherd boys listen; two small wagtail birds hop beside him; mist over the river, distant temple spires. Colour theme: apricot dawn, cream mist, river silver. $TAIL"
+          P2="Photorealistic cinematic film still, vertical 2:3 book cover photograph. Gritty Indian crime-thriller film look with low-key noir lighting. A dim corridor of a 1970s Delhi hotel late at night: a sardonic investigative journalist in his thirties in a tweed jacket with a cigarette, and a tired police inspector in khaki, crouch beside an open door that spills yellow light onto a wine-red carpet, studying a single red high-heeled sandal and a scattered string of broken beads; a frightened young bellboy watches from down the hall. Colour theme: wine-red carpet, dim gold light, deep shadow. $TAIL"
+          enc() { python3 -c 'import urllib.parse,sys;print(urllib.parse.quote(sys.argv[1], safe=""))' "$1"; }
+          i=0
+          for P in "$P1" "$P2"; do
+            i=$((i+1)); E=$(enc "$P")
+            for host in "https://image.pollinations.ai/prompt" "https://gen.pollinations.ai/image"; do
+              tag=$(echo "$host" | cut -d/ -f3 | cut -d. -f1)
+              start=$(date +%s)
+              code=$(curl -sS -m 240 -o "out/p$i-$tag.jpg" -D "out/p$i-$tag.headers" -w "%{http_code} %{content_type} %{size_download}" "$host/$E?width=848&height=1264&model=flux&nologo=true&enhance=false&private=true&seed=$((40+i))")
+              echo "p$i $tag -> $code in $(( $(date +%s) - start ))s" | tee -a out/log.txt
+              sleep 16
+            done
+          done
+          file out/*.jpg | tee -a out/log.txt
+      - name: GitHub Models
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set +e
+          code=$(curl -sS -m 60 -o out/models.json -w "%{http_code}" https://models.github.ai/inference/chat/completions \
+            -H "Authorization: Bearer $GH_TOKEN" -H "Content-Type: application/json" \
+            -d '{"model":"openai/gpt-4.1-mini","messages":[{"role":"user","content":"Reply with exactly: OK"}],"max_tokens":5}')
+          echo "github-models -> $code" | tee -a out/log.txt
+          head -c 600 out/models.json | tee -a out/log.txt; echo
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: probe
+          path: out
