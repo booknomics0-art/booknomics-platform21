@@ -50,3 +50,26 @@ OpenLibrary and can break without warning.
 - **चित्रा** — a mirror split between moonlight and gold. The left reflection
   shows a bow (her warrior self, कुरूपा), the right a jasmine garland (the
   borrowed beauty, सुरूपा).
+
+## Batch 1 (2026-10-09): Godan and English library
+
+Same spec: 800x1200 JPEG, 2:3. Each cover has its own colour theme and a motif
+taken from the book's story, so no two covers share a palette or artwork. Title,
+author and the BOOKNOMICS wordmark are set on the artwork. Layout follows the two
+covers above.
+
+| File | Book | Author | Colour theme |
+|---|---|---|---|
+| `godan-cover.jpg` | गोदान | मुंशी प्रेमचंद | Ochre gold on dusk brown |
+| `deep-work-cover.jpg` | Deep Work | Cal Newport | Charcoal and cyan |
+| `educated-cover.jpg` | Educated | Tara Westover | Ivory and amber (light) |
+| `hooked-cover.jpg` | Hooked | Nir Eyal | Black and magenta |
+| `influence-cover.jpg` | Influence | Robert B. Cialdini | Violet and silver |
+| `nudge-cover.jpg` | Nudge | Richard H. Thaler & Cass R. Sunstein | Peach and teal (light) |
+| `the-100-startup-cover.jpg` | The $100 Startup | Chris Guillebeau | Emerald and copper |
+| `the-e-myth-cover.jpg` | The E-Myth Revisited | Michael E. Gerber | Cobalt blueprint |
+| `the-one-thing-cover.jpg` | The ONE Thing | Gary Keller & Jay Papasan | Sunflower yellow and black |
+| `the-tipping-point-cover.jpg` | The Tipping Point | Malcolm Gladwell | Steel grey and ember |
+
+Not yet uploaded to the `book-covers` bucket. Upload through the Admin book row
+(cloud button), as described above.
