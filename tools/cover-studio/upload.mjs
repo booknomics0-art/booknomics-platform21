@@ -18,6 +18,10 @@
 //   node upload.mjs --only slug1,slug2       # only these books
 //   node upload.mjs --force --only <slug>    # replace an existing cover (e.g. the Godan sample)
 //   node upload.mjs --manifest path/to/manifest.json --folder hindi-story-covers
+//   node upload.mjs --apply --report uploaded.json   # also write the resulting URLs as JSON
+//
+// In GitHub Actions (.github/workflows/upload-hindi-covers.yml) the list of uploaded covers
+// and their public URLs is also written to the job summary.
 import fs from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
@@ -69,7 +73,9 @@ if (APPLY && !SERVICE) {
   process.exit(2);
 }
 
-const headers = (extra = {}) => ({ apikey: KEY, Authorization: `Bearer ${KEY}`, ...extra });
+// New-style keys (sb_publishable_…, sb_secret_…) are not JWTs: send them only as `apikey` and the
+// gateway substitutes the matching role. Legacy JWT keys also go in Authorization.
+const headers = (extra = {}) => (KEY.startsWith("sb_") ? { apikey: KEY, ...extra } : { apikey: KEY, Authorization: `Bearer ${KEY}`, ...extra });
 
 async function api(method, url, { body, headers: h } = {}) {
   const res = await fetch(url, { method, body, headers: headers(h) });
@@ -104,16 +110,41 @@ for (let i = 0; i < ready.length; i += 40) {
 }
 
 const plan = [];
+const skipped = [];
 for (const r of ready) {
   const row = rows.get(r.b.id);
-  if (!row) console.log(`- skip  ${r.b.title}: book id not found (${r.b.id})`);
-  else if (row.cover_url && !args.force) console.log(`- skip  ${r.b.title}: already has a cover`);
-  else plan.push({ ...r, row });
+  if (!row) {
+    console.log(`- skip  ${r.b.title}: book id not found (${r.b.id})`);
+    skipped.push({ key: r.b.key, title: r.b.title, reason: "book id not found" });
+  } else if (row.cover_url && !args.force) {
+    console.log(`- skip  ${r.b.title}: already has a cover`);
+    skipped.push({ key: r.b.key, title: r.b.title, reason: "already has a cover", cover_url: row.cover_url });
+  } else plan.push({ ...r, row });
+}
+const uploaded = [];
+let failed = 0;
+
+async function writeReport() {
+  if (typeof args.report === "string")
+    await fs.writeFile(path.resolve(args.report), JSON.stringify({ generatedAt: new Date().toISOString(), apply: APPLY, uploaded, skipped, failed }, null, 2) + "\n");
+  const summary = process.env.GITHUB_STEP_SUMMARY;
+  if (!summary) return;
+  const lines = [`### Hindi covers: ${uploaded.length} uploaded${failed ? `, ${failed} failed` : ""}, ${skipped.length} skipped`, ""];
+  if (uploaded.length) {
+    lines.push("| Book | Author | Cover URL |", "|---|---|---|");
+    for (const u of uploaded) lines.push(`| ${u.title} | ${u.author} | ${u.url} |`);
+    lines.push("");
+  }
+  if (!APPLY) lines.push(`Dry run: ${plan.length} cover(s) would be uploaded.`, "");
+  await fs.appendFile(summary, lines.join("\n") + "\n");
 }
 
 console.log(`\n${plan.length} cover(s) to upload${APPLY ? "" : " (dry run — add --apply to upload)"}:`);
 for (const p of plan) console.log(`  ${p.b.title} — ${p.b.authorDisplay || p.b.author}  ←  ${path.basename(p.file)}${p.row.cover_url ? "  (replaces existing)" : ""}`);
-if (!APPLY || plan.length === 0) process.exit(0);
+if (!APPLY || plan.length === 0) {
+  await writeReport();
+  process.exit(0);
+}
 
 let ok = 0;
 for (const p of plan) {
@@ -138,11 +169,16 @@ for (const p of plan) {
     });
     p.b.uploadedUrl = publicUrl;
     p.b.uploadedAt = new Date().toISOString();
+    uploaded.push({ key: p.b.key, slug: p.b.slug, id: p.b.id, title: p.b.title, author: p.b.authorDisplay || p.b.author, url: publicUrl });
     ok++;
     console.log(`✓ ${p.b.title}  →  ${objectPath}`);
   } catch (e) {
     console.error(`✗ ${p.b.title}: ${e.message}`);
+    failed++;
   }
 }
 await fs.writeFile(manifestPath, JSON.stringify(manifest, null, 2) + "\n");
 console.log(`\n${ok}/${plan.length} uploaded. Manifest updated with uploadedUrl.`);
+for (const u of uploaded) console.log(`URL  ${u.title}  ${u.url}`);
+await writeReport();
+if (failed) process.exitCode = 1;

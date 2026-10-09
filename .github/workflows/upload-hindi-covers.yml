@@ -1,0 +1,102 @@
+name: Upload Hindi covers to Supabase
+
+# Uploads every finished cover in content-drafts/covers/hindi (manifest status "done") to the
+# Supabase "book-covers" bucket and sets books.cover_url, but only for books that still have no
+# cover. Safe to re-run: books that already have a cover are skipped (see tools/cover-studio/upload.mjs).
+# The public URLs appear in the run summary and in the "hindi-cover-urls" artifact.
+
+on:
+  push:
+    branches:
+      - arena/bcb5e5c1-booknomics-platform21
+      - main
+    paths:
+      - content-drafts/covers/hindi/**
+      - tools/cover-studio/upload.mjs
+      - .github/workflows/upload-hindi-covers.yml
+  workflow_dispatch:
+    inputs:
+      only:
+        description: Only these slugs or manifest keys, comma separated (empty = every finished cover)
+        required: false
+        type: string
+      force:
+        description: Replace covers that already exist (only together with "only")
+        required: false
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+concurrency:
+  group: upload-hindi-covers
+  cancel-in-progress: false
+
+jobs:
+  upload:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      SUPABASE_URL: https://pbkfewrtdgiagytmcigb.supabase.co
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Find a Supabase key in the repository secrets
+        id: key
+        env:
+          K1: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          K2: ${{ secrets.SUPABASE_SECRET_KEY }}
+          K3: ${{ secrets.SUPABASE_SERVICE_KEY }}
+          K4: ${{ secrets.SERVICE_ROLE_KEY }}
+          ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+        run: |
+          KEY="${K1:-${K2:-${K3:-$K4}}}"
+          SRC="a repository secret"
+          if [ -z "$KEY" ] && [ -n "$ACCESS_TOKEN" ]; then
+            SRC="SUPABASE_ACCESS_TOKEN via the Supabase Management API"
+            KEY=$(curl -fsS -H "Authorization: Bearer $ACCESS_TOKEN" \
+              "https://api.supabase.com/v1/projects/pbkfewrtdgiagytmcigb/api-keys?reveal=true" \
+              | node -e 'let s="";process.stdin.on("data",(d)=>(s+=d)).on("end",()=>{const a=JSON.parse(s);const k=a.find((x)=>x.name==="service_role")||a.find((x)=>x.type==="secret");process.stdout.write((k&&k.api_key)||"")})') || KEY=""
+          fi
+          if [ -z "$KEY" ]; then
+            echo "::warning title=No Supabase key::Add SUPABASE_SERVICE_ROLE_KEY under Settings > Secrets and variables > Actions, then re-run this workflow."
+            {
+              echo "### Covers not uploaded yet"
+              echo ""
+              echo "No Supabase service-role key was found in the repository secrets."
+              echo "Add **SUPABASE_SERVICE_ROLE_KEY** (Settings > Secrets and variables > Actions > New repository secret; value from Supabase > Project Settings > API Keys) and re-run this workflow."
+            } >> "$GITHUB_STEP_SUMMARY"
+            echo "ready=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          echo "::add-mask::$KEY"
+          echo "SUPABASE_SERVICE_ROLE_KEY=$KEY" >> "$GITHUB_ENV"
+          echo "ready=true" >> "$GITHUB_OUTPUT"
+          echo "Using a key from $SRC."
+
+      - name: Upload covers and set cover_url
+        if: steps.key.outputs.ready == 'true'
+        env:
+          ONLY: ${{ inputs.only }}
+          FORCE: ${{ inputs.force }}
+        run: |
+          args=(--apply --report uploaded.json)
+          if [ -n "$ONLY" ]; then
+            args+=(--only "$ONLY")
+            if [ "$FORCE" = "true" ]; then args+=(--force); fi
+          fi
+          node tools/cover-studio/upload.mjs "${args[@]}"
+
+      - name: Keep the URL list
+        if: always() && steps.key.outputs.ready == 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: hindi-cover-urls
+          path: uploaded.json
+          if-no-files-found: warn
+          retention-days: 90
