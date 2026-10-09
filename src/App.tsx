@@ -6,6 +6,8 @@ import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
 import { PageLoader } from "@/components/LoadingSpinner";
+import { ReaderInspiration } from "@/components/ReaderInspiration";
+import "./reader-inspiration.css";
 import Index from "./pages/Index.tsx";
 import { PricingModalProvider } from "@/components/PricingModal";
 import { capturePendingReferral } from "@/lib/referrals";
@@ -111,6 +113,7 @@ const App = () => (
         <BrowserRouter>
           <PricingModalProvider>
           <PageTracker />
+          <ReaderInspiration />
           <ErrorBoundary>
             <Suspense fallback={<PageLoader />}>
               <Routes>
