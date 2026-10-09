@@ -200,6 +200,16 @@ export const THEMES = [
   { name: "phosphor", mode: "dark", palette: "green-blue monitor glow, dark room" },
   { name: "flamingo", mode: "light", palette: "flamingo-pink dusk sky, sea grey", ink: "#5A2236" },
   { name: "honey", mode: "light", palette: "honey-gold dawn, whitewashed verandah", ink: "#4A3410" },
+  { name: "vermilion", mode: "dark", palette: "vermilion silk, sacred-fire glow, night" },
+  { name: "cerulean", mode: "light", palette: "wide cerulean sky, white cotton, morning", ink: "#133A5C" },
+  { name: "comet blue", mode: "dark", palette: "deep twilight blue, pale comet trail, lamp gold" },
+  { name: "laterite", mode: "light", palette: "laterite red earth, white mundu, overcast monsoon light", ink: "#5A2414" },
+  { name: "concrete", mode: "light", palette: "concrete grey, white shirts, flat daylight", ink: "#2B2F33" },
+  { name: "amber", mode: "dark", palette: "amber lamplight, dark teak, evening" },
+  { name: "areca", mode: "dark", palette: "areca-palm green, blue moonlight" },
+  { name: "marble", mode: "light", palette: "white marble, gilt, soft daylight", ink: "#3A3226" },
+  { name: "haldi", mode: "light", palette: "turmeric yellow, marigold, white rangoli, morning", ink: "#4A3608" },
+  { name: "first light", mode: "light", palette: "peach-gold first light, misty valley grey", ink: "#4A2A1C" },
 ];
 const FONT_ROTATION = ["vesper", "sahitya", "kadwa", "vesper", "sura", "martel", "vesper", "rozha"];
 

@@ -1808,7 +1808,15 @@
       "slug": "aahuti-yaddanapudi-sulochana-rani-hindi-summary",
       "file": "aahuti-yaddanapudi-sulochana-rani-hindi-summary.jpg",
       "category": "भारतीय क्षेत्रीय साहित्य · Telugu",
-      "batch": 3
+      "batch": 3,
+      "theme": "vermilion · dark",
+      "mode": "dark",
+      "palette": "vermilion silk, sacred-fire glow, night",
+      "font": "rozha",
+      "concept": "A traditional Telugu wedding at night, 1970s, from Yaddanapudi Sulochana Rani's Telugu novel Aahuti: a young bride in a vermilion silk sari, gold jewellery and a jasmine-wound braid sits before the sacred fire with a stoic, tear-bright face, pouring ghee into the flames as the priest chants, while among the seated guests a young man in a white shirt watches her, heartbroken; the fire lights their faces, brass lamps and banana-leaf decorations around the mandap.",
+      "titleDisplay": "आहुति",
+      "authorDisplay": "यद्दनपूडि सुलोचना रानी",
+      "status": "done"
     },
     {
       "key": "b-40891a24",
@@ -1818,7 +1826,16 @@
       "slug": "aakasamlo-sagam-volga-hindi-summary",
       "file": "aakasamlo-sagam-volga-hindi-summary.jpg",
       "category": "भारतीय क्षेत्रीय साहित्य · Telugu",
-      "batch": 3
+      "batch": 3,
+      "theme": "cerulean · light",
+      "mode": "light",
+      "palette": "wide cerulean sky, white cotton, morning",
+      "font": "sura",
+      "concept": "A rooftop in Hyderabad on a bright morning, 1980s, from Volga's Telugu novel Aakasamlo Sagam (Half the Sky): a young woman in a starched cotton sari, a cloth bag of books on her shoulder, stands at the parapet looking up at a wide cerulean sky crossed by a flock of birds, calm and determined, while down in the courtyard behind her an older woman and a man in a vest call after her disapprovingly; washing lines, water tanks, morning sun.",
+      "titleDisplay": "आकाशंलो सगं",
+      "authorDisplay": "वोल्गा",
+      "ink": "#133A5C",
+      "status": "done"
     },
     {
       "key": "b-d55259ab",
@@ -1828,7 +1845,17 @@
       "slug": "aakashra-isara-manoj-das-hindi-summary",
       "file": "aakashra-isara-manoj-das-hindi-summary.jpg",
       "category": "भारतीय क्षेत्रीय साहित्य · Odia",
-      "batch": 3
+      "batch": 3,
+      "theme": "comet blue · dark",
+      "mode": "dark",
+      "palette": "deep twilight blue, pale comet trail, lamp gold",
+      "font": "vesperxb",
+      "concept": "A coastal Odisha village at dusk, 1960s, from Manoj Das's Odia novel Aakashra Isara (A Sign from the Sky): villagers gather on a mud embankment above the paddy fields staring up at a pale comet streaking across the deep twilight sky; an old village priest in a white dhoti raises one hand toward it, a small boy clutches his mother's sari, and a young man holds up a hurricane lantern; thatched huts and palm trees in silhouette.",
+      "titleDisplay": "आकाशर इसारा",
+      "authorDisplay": "मनोज दास",
+      "status": "done",
+      "extendTop": 200,
+      "note": "extendTop 200: the comet sat behind the title block; the art is moved down so the comet shows in open sky below the author line."
     },
     {
       "key": "b-1ab0113e",
@@ -1838,7 +1865,19 @@
       "slug": "aalahayude-penmakkal-sarah-joseph-hindi-summary",
       "file": "aalahayude-penmakkal-sarah-joseph-hindi-summary.jpg",
       "category": "भारतीय क्षेत्रीय साहित्य · Malayalam",
-      "batch": 3
+      "batch": 3,
+      "theme": "laterite · light",
+      "mode": "light",
+      "palette": "laterite red earth, white mundu, overcast monsoon light",
+      "font": "tiro",
+      "concept": "The poor edge of a growing Kerala town, 1970s, from Sarah Joseph's Malayalam novel Aalahayude Penmakkal: a thin little girl in a faded frock holds the hand of her old grandmother, who wears the white chatta and mundu of Kerala Christian women, as they stand on a red-earth lane among palm-thatched huts, looking toward new concrete buildings and a church spire rising beyond a freshly cleared field; overcast monsoon light, puddles in the red earth.",
+      "titleDisplay": "आलाहयुडे पेण्मक्कल",
+      "authorDisplay": "सारा जोसेफ",
+      "ink": "#5A2414",
+      "status": "done",
+      "topAlpha": 0.8,
+      "note": "extendTop 170 + topAlpha 0.8: the author sat on the grey half-built building; the art is moved down so it reads on open sky.",
+      "extendTop": 170
     },
     {
       "key": "b-7b4b8581",
@@ -1848,7 +1887,16 @@
       "slug": "aalkkoottam-anand-hindi-summary",
       "file": "aalkkoottam-anand-hindi-summary.jpg",
       "category": "भारतीय क्षेत्रीय साहित्य · Malayalam",
-      "batch": 3
+      "batch": 3,
+      "theme": "concrete · light",
+      "mode": "light",
+      "palette": "concrete grey, white shirts, flat daylight",
+      "font": "kadwa",
+      "concept": "A railway footbridge in Bombay at rush hour, late 1960s, from Anand's Malayalam novel Aalkkoottam (The Crowd): a lonely young Malayali man in a white shirt and grey trousers stands still at the railing while a dense sea of office-goers streams past him on both sides, his face blank and searching; crowded suburban trains below, flat grey daylight on concrete and steel.",
+      "titleDisplay": "आल्क्कूट्टम",
+      "authorDisplay": "आनंद",
+      "ink": "#2B2F33",
+      "status": "done"
     },
     {
       "key": "b-1b1e3fce",
@@ -1858,7 +1906,15 @@
       "slug": "aalohari-anandam-sarah-joseph-hindi-summary",
       "file": "aalohari-anandam-sarah-joseph-hindi-summary.jpg",
       "category": "भारतीय क्षेत्रीय साहित्य · Malayalam",
-      "batch": 3
+      "batch": 3,
+      "theme": "amber · dark",
+      "mode": "dark",
+      "palette": "amber lamplight, dark teak, evening",
+      "font": "sahitya",
+      "concept": "A middle-class Kerala Christian home in the evening, present day, from Sarah Joseph's Malayalam novel Aalohari Anandam: a woman in her fifties in a simple house dress stands in the kitchen doorway holding a dish towel, quietly watching her husband and grown children laugh together at the dining table without her, her face searching and tired; warm amber lamplight, dark teak furniture, plain painted walls.",
+      "titleDisplay": "आलोहरी आनंदम",
+      "authorDisplay": "सारा जोसेफ",
+      "status": "done"
     },
     {
       "key": "b-22bdfbf8",
@@ -1868,7 +1924,15 @@
       "slug": "aanavariyum-ponkurishum-vaikom-muhammad-basheer-hindi-summary",
       "file": "aanavariyum-ponkurishum-vaikom-muhammad-basheer-hindi-summary.jpg",
       "category": "भारतीय क्षेत्रीय साहित्य · Malayalam",
-      "batch": 3
+      "batch": 3,
+      "theme": "areca · dark",
+      "mode": "dark",
+      "palette": "areca-palm green, blue moonlight",
+      "font": "tillana",
+      "concept": "A Kerala village lane on a moonlit night, 1950s, from Vaikom Muhammad Basheer's comic Malayalam novel Aanavariyum Ponkurishum: the two lovable rogues of the title — a burly, moustached man in a mundu with a towel over his shoulder, and a wiry fellow with a big golden cross on a chain around his neck — tiptoe away from a closed village tea shop with a stolen brass pot, grinning at each other, while a sleepy dog lifts its head; areca palms, blue moonlight, a warm, gently comic mood.",
+      "titleDisplay": "आनवारियुम पोन्कुरिशुम",
+      "authorDisplay": "वैकम मुहम्मद बशीर",
+      "status": "done"
     },
     {
       "key": "b-64e705ec",
@@ -1878,7 +1942,16 @@
       "slug": "aatma-gowravam-yaddanapudi-sulochana-rani-hindi-summary",
       "file": "aatma-gowravam-yaddanapudi-sulochana-rani-hindi-summary.jpg",
       "category": "भारतीय क्षेत्रीय साहित्य · Telugu",
-      "batch": 3
+      "batch": 3,
+      "theme": "marble · light",
+      "mode": "light",
+      "palette": "white marble, gilt, soft daylight",
+      "font": "martel",
+      "concept": "The marble drawing room of a rich family's mansion in 1960s Andhra, from Yaddanapudi Sulochana Rani's Telugu novel Aatma Gowravam (Self-Respect): a proud young woman in a simple cotton sari places an open velvet box of gold jewellery back on the table, refusing it, her chin raised, while a wealthy young man in a silk shirt and his haughty mother in a heavy silk sari stare at her in surprise; gilt mirrors, soft daylight from tall windows.",
+      "titleDisplay": "आत्मगौरवम",
+      "authorDisplay": "यद्दनपूडि सुलोचना रानी",
+      "ink": "#3A3226",
+      "status": "done"
     },
     {
       "key": "b-013cca14",
@@ -1888,7 +1961,18 @@
       "slug": "aatmiyulu-yaddanapudi-sulochana-rani-hindi-summary",
       "file": "aatmiyulu-yaddanapudi-sulochana-rani-hindi-summary.jpg",
       "category": "भारतीय क्षेत्रीय साहित्य · Telugu",
-      "batch": 3
+      "batch": 3,
+      "theme": "haldi · light",
+      "mode": "light",
+      "palette": "turmeric yellow, marigold, white rangoli, morning",
+      "font": "vesper",
+      "concept": "The courtyard of a village house in Andhra on a Sankranti festival morning, 1960s, from Yaddanapudi Sulochana Rani's Telugu novel Aatmiyulu (Dear Ones): an elder brother just home from the city, a tin trunk at his feet, is embraced by his tearful mother while his younger sisters in half-saris laugh and the old father smiles from the verandah; a white rangoli pattern on the swept ground, marigold garlands, turmeric-yellow morning light.",
+      "titleDisplay": "आत्मीयुलु",
+      "authorDisplay": "यद्दनपूडि सुलोचना रानी",
+      "ink": "#4A3608",
+      "status": "done",
+      "topAlpha": 0.8,
+      "note": "topAlpha 0.8 so the author reads over the garlanded house front."
     },
     {
       "key": "b-b01d2a22",
@@ -1898,7 +1982,16 @@
       "slug": "aavilayile-sooryodayam-m-mukundan-hindi-summary",
       "file": "aavilayile-sooryodayam-m-mukundan-hindi-summary.jpg",
       "category": "भारतीय क्षेत्रीय साहित्य · Malayalam",
-      "batch": 3
+      "batch": 3,
+      "theme": "first light · light",
+      "mode": "light",
+      "palette": "peach-gold first light, misty valley grey",
+      "font": "kadwa",
+      "concept": "A stony hilltop at first light, 1970s, from M. Mukundan's Malayalam novel Aavilayile Sooryodayam (Sunrise at Aavila): a thin young man with a short beard, in a crumpled white shirt with a cloth bag on his shoulder, stands alone watching the sun rise over a sleeping old town of tiled roofs and a church bell tower, after a sleepless night; mist lying in the valley, two birds crossing the peach-gold light.",
+      "titleDisplay": "आविलायिले सूर्योदयम",
+      "authorDisplay": "एम. मुकुंदन",
+      "ink": "#4A2A1C",
+      "status": "done"
     },
     {
       "key": "b-2a04ede6",
