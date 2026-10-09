@@ -1,0 +1,59 @@
+nproc=4
+Mem:              15           1          12           0           2          14
+/dev/root       145G   59G   86G  41% /
+Model name:                              AMD EPYC 9V74 80-Core Processor
+avx2 avx512f fma 
+catalog: unreadable Expecting value: line 1 column 1 (char 0)
+sd.cpp: https://github.com/leejet/stable-diffusion.cpp/releases/download/master-948-228c707/sd-master-228c707-bin-Linux-Ubuntu-24.04-x86_64.zip
+total 64700
+drwxr-xr-x  2 runner runner     4096 Oct  9 12:12 .
+drwxr-xr-x 16 runner runner     4096 Oct  9 12:12 ..
+-rw-r--r--  1 runner runner     1078 Oct  8 20:48 ggml.txt
+-rwxr-xr-x  1 runner runner   953376 Oct  8 20:33 libggml-base.so
+-rwxr-xr-x  1 runner runner   953376 Oct  8 20:33 libggml-base.so.0
+-rwxr-xr-x  1 runner runner   953376 Oct  8 20:33 libggml-base.so.0.25.3
+-rwxr-xr-x  1 runner runner  1148824 Oct  8 20:41 libggml-cpu-alderlake.so
+-rwxr-xr-x  1 runner runner  1296384 Oct  8 20:36 libggml-cpu-cannonlake.so
+-rwxr-xr-x  1 runner runner  1292288 Oct  8 20:38 libggml-cpu-cascadelake.so
+-rwxr-xr-x  1 runner runner  1292288 Oct  8 20:40 libggml-cpu-cooperlake.so
+-rwxr-xr-x  1 runner runner  1152920 Oct  8 20:35 libggml-cpu-haswell.so
+-rwxr-xr-x  1 runner runner  1292288 Oct  8 20:39 libggml-cpu-icelake.so
+-rwxr-xr-x  1 runner runner  1091296 Oct  8 20:37 libggml-cpu-ivybridge.so
+-rwxr-xr-x  1 runner runner  1091296 Oct  8 20:34 libggml-cpu-piledriver.so
+-rwxr-xr-x  1 runner runner  1099488 Oct  8 20:37 libggml-cpu-sandybridge.so
+-rwxr-xr-x  1 runner runner  1538152 Oct  8 20:34 libggml-cpu-sapphirerapids.so
+-rwxr-xr-x  1 runner runner  1296384 Oct  8 20:35 libggml-cpu-skylakex.so
+-rwxr-xr-x  1 runner runner  1021536 Oct  8 20:36 libggml-cpu-sse42.so
+-rwxr-xr-x  1 runner runner  1017560 Oct  8 20:38 libggml-cpu-x64.so
+-rwxr-xr-x  1 runner runner  1292288 Oct  8 20:40 libggml-cpu-zen4.so
+-rwxr-xr-x  1 runner runner    60112 Oct  8 20:41 libggml.so
+-rwxr-xr-x  1 runner runner    60112 Oct  8 20:41 libggml.so.0
+-rwxr-xr-x  1 runner runner    60112 Oct  8 20:41 libggml.so.0.25.3
+-rwxr-xr-x  1 runner runner    50608 Oct  8 20:46 libsharpyuv.so
+-rwxr-xr-x  1 runner runner    50608 Oct  8 20:46 libsharpyuv.so.0
+-rwxr-xr-x  1 runner runner    50608 Oct  8 20:46 libsharpyuv.so.0.1.2
+-rwxr-xr-x  1 runner runner 39605944 Oct  8 20:45 libstable-diffusion.so
+-rwxr-xr-x  1 runner runner   311864 Oct  8 20:46 libwebm.so
+-rwxr-xr-x  1 runner runner   796912 Oct  8 20:46 libwebp.so
+-rwxr-xr-x  1 runner runner   796912 Oct  8 20:46 libwebp.so.7
+-rwxr-xr-x  1 runner runner   796912 Oct  8 20:46 libwebp.so.7.2.0
+-rwxr-xr-x  1 runner runner    57336 Oct  8 20:46 libwebpmux.so
+-rwxr-xr-x  1 runner runner    57336 Oct  8 20:46 libwebpmux.so.3
+-rwxr-xr-x  1 runner runner    57336 Oct  8 20:46 libwebpmux.so.3.1.2
+-rwxr-xr-x  1 runner runner  1400600 Oct  8 20:47 sd-cli
+-rwxr-xr-x  1 runner runner  2181224 Oct  8 20:48 sd-server
+-rw-r--r--  1 runner runner     1062 Oct  8 20:48 stable-diffusion.cpp.txt
+.gitattributes README.md ae-f16.gguf ae.safetensors clip_l-Q8_0.gguf clip_l-f16.gguf clip_l.safetensors flux1-schnell-Q4_0.gguf flux1-schnell-Q4_1.gguf flux1-schnell-Q5_0.gguf flux1-schnell-Q5_1.gguf flux1-schnell-Q8_0.gguf flux1-schnell-f16.gguf flux1-schnell.safetensors t5xxl-Q2_K.gguf t5xxl-Q3_K.gguf t5xxl-Q4_0.gguf t5xxl-Q4_K.gguf t5xxl-Q5_0.gguf t5xxl-Q5_1.gguf t5xxl-Q8_0.gguf t5xxl-f16.gguf t5xxl_fp16.safetensors 
+total 9788240
+drwxr-xr-x  2 runner runner       4096 Oct  9 12:16 .
+drwxr-xr-x 17 runner runner       4096 Oct  9 12:12 ..
+-rw-r--r--  1 runner runner  335304388 Oct  9 12:15 ae.safetensors
+-rw-r--r--  1 runner runner  246144152 Oct  9 12:15 clip_l.safetensors
+-rw-r--r--  1 runner runner 6688845536 Oct  9 12:15 flux1-schnell-Q4_0.gguf
+-rw-r--r--  1 runner runner 2752841312 Oct  9 12:17 t5xxl-Q4_0.gguf
+download seconds: 278
+test A: 462s
+native build: 202s -> sdsrc/build/bin/sd-cli
+test B: 460s
+test C b-013cca14: 1500s
+test C vps-khalifa: 1500s
