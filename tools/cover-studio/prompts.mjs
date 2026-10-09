@@ -22,7 +22,11 @@ export function buildPrompt(b) {
   const light = b.mode === "light";
   return [
     "Photorealistic cinematic film still, vertical 2:3 book cover photograph.",
-    b.style === "pulp" ? "Gritty Indian crime-thriller film look with low-key noir lighting; danger is implied, never gory." : null,
+    b.style === "pulp"
+      ? light
+        ? "Gritty Indian crime-thriller film look in hard, hazy daylight; danger is implied, never gory."
+        : "Gritty Indian crime-thriller film look with low-key noir lighting; danger is implied, never gory."
+      : null,
     b.concept,
     `Colour theme: ${b.palette}.`,
     "Shot on 35mm film with a 50mm lens, natural light only, true-to-life colours, real skin texture with pores and wrinkles, unretouched faces, natural hands, real fabric weave, dust and wear, shallow depth of field, subtle film grain.",

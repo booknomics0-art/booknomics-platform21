@@ -769,12 +769,15 @@
       "slug": "अंग्रेज़ी-उपन्यास-का-विकास-hindi-summary",
       "title": "अंग्रेज़ी उपन्यास का विकास",
       "author": "विलबर एल. क्रॉस",
-      "font": "vesper",
+      "font": "tiro",
       "mode": "light",
-      "palette": "parchment cream, olive green, sepia",
-      "concept": "A tree growing out of an open antique book, its branches bearing tiny books like leaves and fruit, on parchment — the evolution of the novel.",
+      "palette": "seafoam green panelled walls, pale sand, soft daylight",
+      "concept": "A Georgian circulating library in Bath, about 1800, from Wilbur L. Cross's The Development of the English Novel: a young woman in a white muslin Regency gown and a straw bonnet stands by a tall sash window, utterly absorbed in a small leather-bound novel, while behind her two gentlemen in tailcoats and an elderly lady in a lace cap browse long mahogany shelves of leather-bound books with plain spines, and a young clerk carries a stack of volumes; pale seafoam-green panelled walls, soft daylight through the window.",
       "file": "अंग्रेज़ी-उपन्यास-का-विकास-hindi-summary.jpg",
-      "batch": 1
+      "batch": 1,
+      "theme": "seafoam · light",
+      "ink": "#1D3F3A",
+      "status": "done"
     },
     {
       "key": "eng-verse-science",
@@ -782,11 +785,14 @@
       "slug": "अंग्रेज़ी-छंद-का-विज्ञान-hindi-summary",
       "title": "अंग्रेज़ी छंद का विज्ञान",
       "author": "सिडनी लेनियर",
-      "font": "rozha",
-      "palette": "midnight navy, silver, violet",
-      "concept": "A violin and a quill crossing above flowing ribbons of abstract rhythm marks, a brass metronome and a lyre glowing softly — music and poetry meeting.",
+      "font": "sura",
+      "palette": "ivory, warm beige, soft daylight",
+      "concept": "A daylight rehearsal of the Peabody Orchestra in Baltimore, 1878, from Sidney Lanier's The Science of English Verse: the poet and flautist Sidney Lanier — a frail, thin man in his mid-thirties with a long dark beard, in a black frock coat — stands among the seated musicians playing a solo on his silver flute with his eyes closed, while the white-haired conductor lowers his baton and the violinists and cellists pause to listen; tall windows pour soft daylight and dust motes over the wooden stage; music stands are seen only from behind.",
       "file": "अंग्रेज़ी-छंद-का-विज्ञान-hindi-summary.jpg",
-      "batch": 1
+      "batch": 1,
+      "theme": "ivory · light",
+      "mode": "light",
+      "ink": "#3B2A1A"
     },
     {
       "key": "eng-lit-history",
@@ -794,11 +800,15 @@
       "slug": "अंग्रेज़ी-साहित्य-का-इतिहास-hindi-summary",
       "title": "अंग्रेज़ी साहित्य का इतिहास",
       "author": "हिप्पोलाइट टेन",
-      "font": "vesper",
-      "palette": "deep burgundy, antique gold",
-      "concept": "A grand Gothic library hall with towering shelves receding into the past — manuscripts, folios, Victorian volumes — a beam of light from an arched window onto an open folio.",
+      "font": "martel",
+      "palette": "pale lilac dawn, lavender mist, soft white, grey-green sea",
+      "concept": "The English Channel at dawn in the 1860s, from Hippolyte Taine's History of English Literature: the French critic Hippolyte Taine — a man in his thirties with a full dark beard and small round spectacles, in a dark wool overcoat — stands at the rail of a paddle steamer holding a closed notebook, gazing at the white cliffs of Dover rising out of the sea mist; a few Victorian passengers in top hats, bonnets and shawls stand along the deck behind him; gulls overhead, soft pale-lilac dawn light over grey-green water.",
       "file": "अंग्रेज़ी-साहित्य-का-इतिहास-hindi-summary.jpg",
-      "batch": 1
+      "batch": 1,
+      "theme": "lilac · light",
+      "mode": "light",
+      "ink": "#3D2350",
+      "status": "done"
     },
     {
       "key": "crime-custom",
@@ -807,10 +817,14 @@
       "title": "अपराध और प्रथा आदिम समाज में",
       "author": "ब्रोनिस्लाव मालिनोव्स्की",
       "font": "sahitya",
-      "palette": "lagoon turquoise, sand, coral",
-      "concept": "A Trobriand outrigger canoe with a carved prow on a turquoise lagoon; shell necklaces and armbands on a woven mat in front; a palm-thatched village behind.",
+      "palette": "aqua lagoon, white coral sand, bright midday light",
+      "concept": "The Trobriand Islands, about 1916, from Bronisław Malinowski's study of law, custom and reciprocity there: on a white coral beach beside an aqua lagoon, men of a Trobriand village in traditional fibre waistcloths, with shell armbands and red shell-disc necklaces, ceremonially present a decorated shell necklace to visitors who have just landed in a large outrigger canoe with a carved, painted prow; a dignified elder looks on; at the edge of the scene the young anthropologist Malinowski — balding, in round spectacles and white tropical clothes — watches respectfully with a notebook in hand; palm trees and bright midday light.",
       "file": "अपराध-और-प्रथा-आदिम-समाज-में-hindi-summary.jpg",
-      "batch": 1
+      "batch": 1,
+      "theme": "aqua · light",
+      "mode": "light",
+      "ink": "#0F3D44",
+      "status": "done"
     },
     {
       "key": "smp-aaj-katl",
@@ -819,12 +833,15 @@
       "title": "आज कत्ल हो के रहेगा",
       "author": "Surender Mohan Pathak",
       "authorDisplay": "सुरेन्द्र मोहन पाठक",
-      "font": "kadwa",
-      "palette": "deep red, black",
-      "concept": "A wall clock without numerals, hands nearing midnight, a revolver on a table under a lamp, a long ominous shadow on the door.",
+      "font": "vesperxb",
+      "palette": "petrol blue night, amber lamplight",
+      "concept": "A 1970s Delhi bungalow at night, from Surender Mohan Pathak's crime thriller Aaj Katl Ho Ke Rahega: a frightened, wealthy businessman in his fifties in a silk dressing gown stands rigid by a heavy curtained window, staring at a tall pendulum clock with a plain dial whose hands are nearing midnight; across the room a hard-eyed private detective in his thirties with a thick moustache, in a brown leather jacket, checks his wristwatch, a revolver holstered at his side; a black rotary telephone lies off its hook on the table; deep blue night beyond the window, amber lamplight.",
       "file": "आज-कतल-हो-के-रहेगा-surender-mohan-pathak-summary.jpg",
       "style": "pulp",
-      "batch": 1
+      "batch": 1,
+      "theme": "petrol blue · dark",
+      "mode": "dark",
+      "status": "done"
     },
     {
       "key": "smp-aasteen",
@@ -833,12 +850,15 @@
       "title": "आस्तीन के सांप",
       "author": "Surender Mohan Pathak",
       "authorDisplay": "सुरेन्द्र मोहन पाठक",
-      "font": "vesper",
-      "palette": "venom green, black",
-      "concept": "A cobra sliding out of the sleeve of a man in a crisp suit as he offers a friendly handshake.",
+      "font": "rozha",
+      "palette": "red nightclub light, black shadows, cigarette smoke, cyan glints",
+      "concept": "A crowded 1970s Bombay nightclub, from Surender Mohan Pathak's crime thriller Aasteen ke Saanp: two old friends in their forties embrace warmly beside a table of whisky glasses — one in a white safari suit beaming trustingly, the other in a dark suit smiling over his friend's shoulder with cold eyes while his free hand, hidden behind his friend's back, holds a small revolver; a cabaret singer in a sequinned sari is blurred in the background; red light and drifting cigarette smoke.",
       "file": "आसतीन-के-सांप-surender-mohan-pathak-summary.jpg",
       "style": "pulp",
-      "batch": 1
+      "batch": 1,
+      "theme": "neon red · dark",
+      "mode": "dark",
+      "status": "done"
     },
     {
       "key": "smp-ishtihari",
@@ -847,12 +867,18 @@
       "title": "इश्तिहारी मुजरिम",
       "author": "Surender Mohan Pathak",
       "authorDisplay": "सुरेन्द्र मोहन पाठक",
-      "font": "sura",
-      "palette": "sodium-orange streetlight, wet blue",
-      "concept": "A peeling poster with only a pencil-sketched face on a rain-soaked brick wall at night, a man in a raincoat walking away under a flickering street lamp.",
+      "font": "kadwa",
+      "palette": "khaki dust, faded cotton, pale hazy sky",
+      "concept": "A crowded north Indian railway platform on a hazy summer morning in the 1970s, from Surender Mohan Pathak's crime thriller Ishtihari Mujrim: a hunted man in his thirties with a few days' stubble, in a crumpled shirt with a cloth bag and a cap pulled low, stands among jostling passengers and red-shirted porters, glancing over his shoulder at two policemen in khaki uniforms who are comparing a small photograph with faces in the crowd; a steam locomotive breathes white clouds behind them; dust in the air.",
       "file": "इशतिहारी-मुजरिम-surender-mohan-pathak-summary.jpg",
       "style": "pulp",
-      "batch": 1
+      "batch": 1,
+      "theme": "khaki · light",
+      "mode": "light",
+      "ink": "#3F3418",
+      "status": "done",
+      "topAlpha": 0.84,
+      "note": "topAlpha 0.84: stronger light wash so the author line reads over the dark locomotive."
     },
     {
       "key": "smp-callgirl",
@@ -861,12 +887,15 @@
       "title": "कालगर्ल की हत्या",
       "author": "Surender Mohan Pathak",
       "authorDisplay": "सुरेन्द्र मोहन पाठक",
-      "font": "martel",
-      "palette": "magenta neon, black",
-      "concept": "A broken pearl necklace and a single red stiletto on the carpet of a dim hotel corridor, a door ajar with light spilling out, neon glow through blinds.",
+      "font": "tillana",
+      "palette": "wine-red carpet, dim gold light, deep shadow",
+      "concept": "A dim corridor of a 1970s Delhi hotel late at night, from Surender Mohan Pathak's crime thriller Callgirl ki Hatya: a sharp, sardonic investigative journalist in his thirties in a tweed jacket, a cigarette in his fingers, and a tired police inspector in khaki crouch beside an open door that spills yellow light onto the wine-red carpet, studying a single red high-heeled sandal and a scattered string of broken beads; a frightened young bellboy in uniform watches from down the hall; no body is visible.",
       "file": "कालगरल-की-हतया-surender-mohan-pathak-summary.jpg",
       "style": "pulp",
-      "batch": 1
+      "batch": 1,
+      "theme": "wine · dark",
+      "mode": "dark",
+      "status": "done"
     },
     {
       "key": "smp-kala-moti",
@@ -876,11 +905,14 @@
       "author": "Surender Mohan Pathak",
       "authorDisplay": "सुरेन्द्र मोहन पाठक",
       "font": "vesper",
-      "palette": "black, deep violet, silver",
-      "concept": "A single lustrous black pearl in an open velvet jewellery box, reflected in a pool of spilled red wine, a gloved hand reaching from the shadows.",
+      "palette": "aubergine purple shadows, dull gold lamplight",
+      "concept": "A private card room in a 1970s Bombay hotel suite, from Surender Mohan Pathak's crime thriller Kala Moti: a coolly glamorous woman in a black chiffon sari, a single large black pearl on a fine chain at her throat, sits at a baize card table watching through cigarette smoke as an elderly jeweller with a loupe examines another black pearl under a lamp; a sweating man in a white dinner jacket leans in greedily, and in the shadows behind them a gloved hand rests on the back of a chair; deep purple shadows, dull gold lamplight.",
       "file": "काला-मोती-surender-mohan-pathak-summary.jpg",
       "style": "pulp",
-      "batch": 1
+      "batch": 1,
+      "theme": "aubergine · dark",
+      "mode": "dark",
+      "status": "done"
     },
     {
       "key": "smp-khatarnak-apradhi",
@@ -890,11 +922,14 @@
       "author": "Surender Mohan Pathak",
       "authorDisplay": "सुरेन्द्र मोहन पाठक",
       "font": "rozha",
-      "palette": "cold steel blue, white searchlights",
-      "concept": "A man in a trench coat silhouetted against prison searchlights, broken handcuffs dangling from one wrist, barbed wire on a high jail wall at night.",
+      "palette": "oxblood red, black, tarnished brass lamplight",
+      "concept": "A dim godown office by the Bombay docks at night in the 1970s, from Surender Mohan Pathak's crime thriller Khatarnak Apradhi: a calm, sharply dressed criminal mastermind in his forties with a salt-and-pepper beard and a thin scar on his cheek, in a dark suit, sits at a desk moving a piece on a chessboard, his cold eyes on the viewer, while two nervous henchmen stand behind him; through a grimy window the red beacon of a police jeep flickers across stacked wooden crates; a tarnished brass lamp.",
       "file": "खतरनाक-अपराधी-surender-mohan-pathak-summary.jpg",
       "style": "pulp",
-      "batch": 1
+      "batch": 1,
+      "theme": "oxblood · dark",
+      "mode": "dark",
+      "status": "done"
     },
     {
       "key": "smp-khatarnak-blackmailer",
