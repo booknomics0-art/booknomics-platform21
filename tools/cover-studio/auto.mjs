@@ -180,6 +180,16 @@ export const THEMES = [
   { name: "parchment", mode: "light", palette: "parchment cream, warm wood, daylight", ink: "#3D2B16" },
   { name: "pewter", mode: "light", palette: "pewter grey, hazy daylight, steam", ink: "#2E3540" },
   { name: "tangerine", mode: "light", palette: "tangerine and lemon street colours, bright noon", ink: "#5A2A08" },
+  { name: "graphite", mode: "dark", palette: "graphite grey, cold moonlight, rope brown" },
+  { name: "mustard", mode: "light", palette: "mustard yellow, khaki, hot white noon", ink: "#4A3A08" },
+  { name: "electric blue", mode: "dark", palette: "electric-blue night, city lights below" },
+  { name: "mahogany", mode: "dark", palette: "mahogany wood, crystal sparkle, flashbulb white" },
+  { name: "alpenglow", mode: "light", palette: "pink-gold dawn on snow, deep blue shadows", ink: "#3A2A3E" },
+  { name: "ash", mode: "light", palette: "ash grey dust, white cloth, overcast light", ink: "#2F2F33" },
+  { name: "quicksilver", mode: "dark", palette: "quicksilver mirror reflections, cold cyan light" },
+  { name: "sulphur", mode: "dark", palette: "sulphur-yellow torchlight, black rock" },
+  { name: "verdigris", mode: "dark", palette: "verdigris green-blue, white projector beam" },
+  { name: "fog white", mode: "light", palette: "white fog lit by a headlight, cold blue edges", ink: "#22303A" },
 ];
 const FONT_ROTATION = ["vesper", "sahitya", "kadwa", "vesper", "sura", "martel", "vesper", "rozha"];
 

@@ -1446,12 +1446,15 @@
       "title": "फांसी दो कानून को",
       "author": "Ved Prakash Sharma",
       "authorDisplay": "वेद प्रकाश शर्मा",
-      "font": "martel",
-      "palette": "stormy grey, blood red",
-      "concept": "A hangman's noose swinging from a gallows with the scales of justice caught inside its loop, under a stormy sky.",
+      "font": "tiro",
+      "palette": "graphite grey, cold moonlight, rope brown",
+      "concept": "An empty Indian courtroom at night, 1980s, from Ved Prakash Sharma's crime thriller Faansi Do Kanoon Ko: a hangman's rope noose hangs from a ceiling beam right in front of a tall blindfolded statue of Justice holding scales, while a grim young man in a dark shawl, disillusioned and furious, stands beside it with his fists clenched and an elderly judge in black robes stares in shock from the doorway; cold moonlight through high windows across empty wooden benches.",
       "file": "फांसी-दो-कानून-को-ved-prakash-sharma-summary.jpg",
       "style": "pulp",
-      "batch": 2
+      "batch": 2,
+      "theme": "graphite · dark",
+      "mode": "dark",
+      "status": "done"
     },
     {
       "key": "vps-vardi",
@@ -1460,12 +1463,18 @@
       "title": "वर्दी वाला गुंडा",
       "author": "Ved Prakash Sharma",
       "authorDisplay": "वेद प्रकाश शर्मा",
-      "font": "vesper",
-      "palette": "khaki, red neon",
-      "concept": "A police cap tilted on a table beside brass knuckles and a pistol, the shadow of a menacing policeman behind a frosted glass door.",
+      "font": "kadwa",
+      "palette": "mustard yellow, khaki, hot white noon",
+      "concept": "A crowded Delhi vegetable market at hot noon, 1980s, from Ved Prakash Sharma's crime thriller Vardi Wala Gunda: a swaggering corrupt police inspector in khaki with aviator sunglasses and a swagger stick pockets a fold of cash from a frightened old vendor, while a gangster in a printed shirt leans on a police jeep laughing and onlookers look away; baskets of tomatoes and chillies, harsh white sunlight.",
       "file": "वरदी-वाला-गुंडा-ved-prakash-sharma-summary.jpg",
       "style": "pulp",
-      "batch": 2
+      "batch": 2,
+      "theme": "mustard · light",
+      "mode": "light",
+      "ink": "#4A3A08",
+      "status": "done",
+      "topAlpha": 0.8,
+      "note": "Retouched: the police jeep carried DELHI POLICE lettering and a DL 1C 4532 number plate; both softened with elliptical feathered blurs (original in cover-art-raw/_orig). topAlpha 0.8 so the author reads over the busy market."
     },
     {
       "key": "vps-vijay-vikas",
@@ -1475,11 +1484,14 @@
       "author": "Ved Prakash Sharma",
       "authorDisplay": "वेद प्रकाश शर्मा",
       "font": "rozha",
-      "palette": "electric blue, orange",
-      "concept": "Two young detectives back to back with pistols drawn in a dark warehouse, flashlight beams crossing through smoke between stacked crates.",
+      "palette": "electric-blue night, city lights below",
+      "concept": "A rooftop water tank above a Delhi neighbourhood at night, 1980s, from Ved Prakash Sharma's crime thriller Vijay aur Vikas: Vijay — a witty secret agent in his thirties in a sports jacket, grinning, pistol in hand — and Vikas — a fearless, athletic teenage boy with sharp eyes — crouch back to back, the boy pointing down at a smugglers' van in the lane below; city lights spread out under an electric-blue night sky.",
       "file": "विजय-और-विकास-ved-prakash-sharma-summary.jpg",
       "style": "pulp",
-      "batch": 2
+      "batch": 2,
+      "theme": "electric blue · dark",
+      "mode": "dark",
+      "status": "done"
     },
     {
       "key": "vps-sabse-badi",
@@ -1488,12 +1500,15 @@
       "title": "सबसे बड़ी मर्डर मिस्ट्री",
       "author": "Ved Prakash Sharma",
       "authorDisplay": "वेद प्रकाश शर्मा",
-      "font": "vesper",
-      "palette": "corkboard brown, red string",
-      "concept": "A huge magnifying glass over a city map on a corkboard, red strings connecting pinned blank photographs, a fedora and a cup of tea on the desk.",
+      "font": "vesperxb",
+      "palette": "mahogany wood, crystal sparkle, flashbulb white",
+      "concept": "The grand staircase hall of a maharaja's palace at night, 1980s, from Ved Prakash Sharma's crime thriller Sabse Badi Murder Mystery: a famous detective in a white suit stands halfway up the stairs addressing a crowd of suspects — a prince in a sherwani, a film actress, an army general, a butler and maids — while a huge crystal chandelier lies shattered on the marble floor in the centre and press photographers' flashbulbs pop at the doorway; mahogany panelling, crystal sparkle.",
       "file": "सबसे-बडी-मरडर-मिसटरी-ved-prakash-sharma-summary.jpg",
       "style": "pulp",
-      "batch": 2
+      "batch": 2,
+      "theme": "mahogany · dark",
+      "mode": "dark",
+      "status": "done"
     },
     {
       "key": "vps-hind-ka-beta",
@@ -1503,11 +1518,15 @@
       "author": "Ved Prakash Sharma",
       "authorDisplay": "वेद प्रकाश शर्मा",
       "font": "sahitya",
-      "palette": "icy white, saffron sunrise",
-      "concept": "A lone soldier with a rifle on a snowy Himalayan ridge at sunrise, wind whipping snow, mountains glowing saffron.",
+      "palette": "pink-gold dawn on snow, deep blue shadows",
+      "concept": "A snowy Himalayan border pass at dawn, 1980s, from Ved Prakash Sharma's thriller Hind ka Beta: a young Indian army commando in snow camouflage, rifle slung, marches three captured smugglers with their hands raised across the snow, their mule loaded with contraband crates behind them, while his comrades cover him from the rocks; the peaks glow pink and gold, deep blue shadows on the snow.",
       "file": "हिंद-का-बेटा-ved-prakash-sharma-summary.jpg",
       "style": "pulp",
-      "batch": 2
+      "batch": 2,
+      "theme": "alpenglow · light",
+      "mode": "light",
+      "ink": "#3A2A3E",
+      "status": "done"
     },
     {
       "key": "vpk-insaaf",
@@ -1516,12 +1535,18 @@
       "title": "इंसाफ का जनाजा",
       "author": "Ved Prakash Kamboj",
       "authorDisplay": "वेद प्रकाश काम्बोज",
-      "font": "kadwa",
-      "palette": "funeral white, marigold, black",
-      "concept": "Shadowy men carrying a funeral bier through a night street; on it lie the scales of justice draped in white cloth, marigolds strewn on the road, torches flickering.",
+      "font": "martel",
+      "palette": "ash grey dust, white cloth, overcast light",
+      "concept": "A dusty north Indian town street under an overcast sky, from Ved Prakash Kamboj's crime thriller Insaaf ka Janaza: a silent protest procession carries a bamboo bier draped in white cloth on which lie a pair of brass scales of justice and a closed black law book, as if in a funeral; a defiant old schoolteacher with a white beard leads the mourners, villagers follow with bowed heads, and a line of police watches uneasily from beside a jeep.",
       "file": "इंसाफ-का-जनाजा-ved-prakash-kamboj-summary.jpg",
       "style": "pulp",
-      "batch": 2
+      "batch": 2,
+      "theme": "ash · light",
+      "mode": "light",
+      "ink": "#2F2F33",
+      "status": "done",
+      "topAlpha": 0.8,
+      "note": "topAlpha 0.8 so the author reads over the crowded street."
     },
     {
       "key": "vpk-kadam",
@@ -1530,12 +1555,15 @@
       "title": "कदम कदम पर धोखा",
       "author": "Ved Prakash Kamboj",
       "authorDisplay": "वेद प्रकाश काम्बोज",
-      "font": "vesper",
-      "palette": "black and white tiles, crimson",
-      "concept": "A man in a hat walking across a chessboard-tiled floor whose tiles crack and fall away into darkness behind him, masks watching from the walls.",
+      "font": "tillana",
+      "palette": "quicksilver mirror reflections, cold cyan light",
+      "concept": "The hall of mirrors at a deserted funfair at night, 1970s, from Ved Prakash Kamboj's spy thriller Kadam Kadam par Dhokha: a sharp Indian secret agent in a dark suit and a beautiful double agent in a black sari face each other among dozens of their own reflections, both aiming revolvers at the wrong reflection, neither sure which figure is real; cold cyan light glinting off endless mirrors.",
       "file": "कदम-कदम-पर-धोखा-ved-prakash-kamboj-summary.jpg",
       "style": "pulp",
-      "batch": 2
+      "batch": 2,
+      "theme": "quicksilver · dark",
+      "mode": "dark",
+      "status": "done"
     },
     {
       "key": "vpk-khopdi",
@@ -1545,11 +1573,14 @@
       "author": "Ved Prakash Kamboj",
       "authorDisplay": "वेद प्रकाश काम्बोज",
       "font": "sura",
-      "palette": "jungle green, toxic glow",
-      "concept": "A crystal skull glowing eerie green on an ancient altar in an overgrown jungle temple, explorers' flashlight beams cutting through mist.",
+      "palette": "sulphur-yellow torchlight, black rock",
+      "concept": "A hidden cave hideout in the hills at night, 1970s, from Ved Prakash Kamboj's thriller Khatre ki Khopdi: a detective in a safari suit and his young assistant creep in with a flaming torch through an entrance carved into a gigantic stone skull, its eye sockets dark, while masked gang members with rifles stand guard deeper inside around crates; bats overhead, sulphur-yellow torchlight on black rock.",
       "file": "खतरे-की-खोपडी-ved-prakash-kamboj-summary.jpg",
       "style": "pulp",
-      "batch": 2
+      "batch": 2,
+      "theme": "sulphur · dark",
+      "mode": "dark",
+      "status": "done"
     },
     {
       "key": "vpk-preton",
@@ -1558,12 +1589,15 @@
       "title": "प्रेतों का निर्माता",
       "author": "Ved Prakash Kamboj",
       "authorDisplay": "वेद प्रकाश काम्बोज",
-      "font": "martel",
-      "palette": "spectral cyan, violet",
-      "concept": "A mad scientist's laboratory with tall glass tubes holding ghostly figures, electric sparks arcing, a hunched man at a control panel.",
+      "font": "vesper",
+      "palette": "verdigris green-blue, white projector beam",
+      "concept": "A secret cellar laboratory beneath a haunted haveli at night, 1970s, from Ved Prakash Kamboj's mystery Preton ka Nirmata: a wild-haired scientist in a stained lab coat operates an old film projector and a smoke machine that throw ghostly white human shapes onto hanging muslin sheets, while a detective peers in through a gap in a broken wall, discovering the trick; glass jars, coils of wire, verdigris-green walls.",
       "file": "परेतों-का-निरमाता-ved-prakash-kamboj-summary.jpg",
       "style": "pulp",
-      "batch": 2
+      "batch": 2,
+      "theme": "verdigris · dark",
+      "mode": "dark",
+      "status": "done"
     },
     {
       "key": "vpk-railgadi",
@@ -1572,12 +1606,16 @@
       "title": "रेलगाड़ी का भूत",
       "author": "Ved Prakash Kamboj",
       "authorDisplay": "वेद प्रकाश काम्बोज",
-      "font": "vesper",
-      "palette": "moonlit silver-blue, steam white",
-      "concept": "A vintage steam train crossing an iron bridge at midnight, a ghostly translucent figure standing on a carriage roof, moonlight and fog.",
+      "font": "tiro",
+      "palette": "white fog lit by a headlight, cold blue edges",
+      "concept": "A lonely railway halt in north India on a foggy winter night, 1970s, from Ved Prakash Kamboj's mystery Railgadi ka Bhoot: the headlight of an approaching steam locomotive glows through thick fog, and on the empty track ahead stands a pale figure wrapped in a white shawl, while a sceptical detective with a torch and a terrified old station master holding a lantern watch from the low platform; frosted rails, no signboards.",
       "file": "रेलगाडी-का-भूत-ved-prakash-kamboj-summary.jpg",
       "style": "pulp",
-      "batch": 2
+      "batch": 2,
+      "theme": "fog white · light",
+      "mode": "light",
+      "ink": "#22303A",
+      "status": "done"
     },
     {
       "key": "ops-ek-raat",
