@@ -1,14 +1,22 @@
 # Cover studio
 
-Makes 800×1200 Booknomics covers. The default **`summary` layout** matches the covers already
-on the site (`public/book-covers/`, Supabase `book-covers`):
-- a cinematic character scene from the story
-- a small `— BOOKNOMICS SUMMARY —` label
-- a big heavy title: metallic gold on dark art, a deep ink colour on light art
-- the author underneath
+Makes 800×1200 Booknomics covers. The default **`foil` layout** is the approved reference look
+(the यशोधरा cover the user shared):
+- a photorealistic film-still scene from the story. Every cover gets a film finish so it does not
+  read as a glossy AI render: saturation ×0.93, fine monochrome grain (soft-light) and a gentle
+  vignette. Set `grain: 0` per entry to switch the grain off.
+- a big gold-foil title (deep ink colour on light art) in a high-contrast calligraphic face
+- a thin rule with a lotus, then the author in ivory
+- an open-book icon with BOOKNOMICS at the foot. It turns gold or ink depending on how dark the
+  bottom of the art is.
 
-The older `classic` layout is still available per entry (`layout: "classic"`). It uses a
-symbolic painting, a cream title and a BOOKNOMICS wordmark at the foot.
+Two other layouts are available per entry:
+- `layout: "summary"`: the older site style, with a small `— BOOKNOMICS SUMMARY —` label at the top
+  and no brand at the foot.
+- `layout: "classic"`: a symbolic painting, a cream title and a wordmark.
+
+Art that comes back as a 2:3 picture inside a square canvas with black pillarbox bars is trimmed
+automatically.
 
 **The artwork is generated without any text, and the typography is set here in code.** Image
 models regularly garble Devanagari conjuncts (क्त, श्र, ह्य, र्ब). Setting the text with
@@ -17,7 +25,7 @@ is in the `books` table.
 
 ```
 manifest.json ──► prompts.mjs ──► AI artwork (text-free) ──► compose.mjs ──► qa.mjs / sheet.mjs ──► upload.mjs
- (one entry       (same prompt     ~/.cache/cover-art/        <slug>.webp      duplicates +         Supabase
+ (one entry       (same prompt     ~/cover-art-raw/           <slug>.webp      duplicates +         Supabase
   per book)        recipe)         <key>.png                  800×1200         contact sheet        book-covers
 ```
 
@@ -59,8 +67,8 @@ Art that is wider than 2:3 (e.g. a square 1024² generation) is not cropped hard
 | `id`, `slug` | `books.id` / `books.slug`; the output file is `<slug>.webp` |
 | `title`, `author` | exactly as in the database |
 | `authorDisplay`, `titleDisplay` | optional text shown on the cover instead (e.g. Devanagari for a Latin DB author) |
-| `font` | `martel eczar notoserif mukta laila rozha yatra khand kalam amita tiro` (Devanagari + Latin; the first five use their heaviest cut in the summary layout), `cinzel playfair cormorant oswald teko` (Latin only) |
-| `layout` | `summary` (default, site style) or `classic` |
+| `font` | foil layout: `vesper` (default), `vesperxb sahitya kadwa sura martel rozha tillana tiro`. `rozha` is swapped for `vesper` when the title has इ, because its इ reads like ड़. Other layouts: `martel eczar notoserif mukta laila rozha yatra khand kalam amita tiro` (Devanagari + Latin), `cinzel playfair cormorant oswald teko` (Latin only) |
+| `layout` | `foil` (default, approved look), `summary` or `classic` |
 | `mode` | `light` for pale artwork with ink-coloured type, `dark` for gold type. Default is auto (luminance of the top band) |
 | `theme` | the cover's colour family, e.g. `yellow · light`, `blue · dark`, `red · dark`. Kept different from book to book |
 | `ink` | title colour on light art (default: a deep shade of the sky's hue) |

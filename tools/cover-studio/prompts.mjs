@@ -21,15 +21,15 @@ export function buildPrompt(b) {
   if (b.layout === "classic") return classicPrompt(b);
   const light = b.mode === "light";
   return [
-    "Vertical 2:3 book cover illustration — cinematic, photorealistic digital painting, artwork only, no typography.",
-    b.style === "pulp" ? "Classic Indian pulp-thriller mood with noir lighting; danger is implied, never gory." : null,
+    "Photorealistic cinematic film still, vertical 2:3 book cover photograph.",
+    b.style === "pulp" ? "Gritty Indian crime-thriller film look with low-key noir lighting; danger is implied, never gory." : null,
     b.concept,
     `Colour theme: ${b.palette}.`,
-    "Rich detail, expressive faces, authentic costumes and setting, emotionally strong lighting.",
+    "Shot on 35mm film with a 50mm lens, natural light only, true-to-life colours, real skin texture with pores and wrinkles, unretouched faces, natural hands, real fabric weave, dust and wear, shallow depth of field, subtle film grain.",
+    "It must look like a real photograph from a film — not a painting, not an illustration, not CGI; no glossy skin, no glow, no fantasy effects.",
     light
-      ? "Place the figures in the lower two-thirds; keep the top third bright, airy and uncluttered — soft pale sky or light background — for a title added later."
-      : "Place the figures in the lower two-thirds; keep the top third calm, dark and uncluttered — night sky or shadowed background — for a title added later.",
-    "The background must continue naturally to the top edge: no flat colour block, frame or border.",
+      ? "Keep the people in the lower two-thirds; the top third is soft, bright sky or plain light background with nothing in it, for a title added later."
+      : "Keep the people in the lower two-thirds; the top third is calm, dark sky or shadowed background with nothing in it, for a title added later.",
     "No text, letters, numbers, logos, signature or watermark.",
   ]
     .filter(Boolean)

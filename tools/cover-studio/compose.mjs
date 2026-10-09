@@ -87,6 +87,24 @@ export const SUMMARY_FONTS = {
 };
 const LABEL_FONT = font("cinzel/600SemiBold/Cinzel_600SemiBold.ttf", "Cinzel Semi-Bold");
 
+/**
+ * "foil" layout = the look of the reference cover the user approved (यशोधरा): a big gold-foil
+ * calligraphic title, a thin rule with a lotus, the author in ivory, and an open-book icon with
+ * BOOKNOMICS at the foot. High-contrast faces that match that lettering:
+ */
+export const FOIL_FONTS = {
+  vesper: font("vesper-libre/700Bold/VesperLibre_700Bold.ttf", "Vesper Libre Bold"),
+  vesperxb: font("vesper-libre/900Black/VesperLibre_900Black.ttf", "Vesper Libre Heavy"),
+  rozha: font("rozha-one/400Regular/RozhaOne_400Regular.ttf", "Rozha One"),
+  sahitya: font("sahitya/700Bold/Sahitya_700Bold.ttf", "Sahitya Bold"),
+  kadwa: font("kadwa/700Bold/Kadwa_700Bold.ttf", "Kadwa Bold"),
+  sura: font("sura/700Bold/Sura_700Bold.ttf", "Sura Bold"),
+  tillana: font("tillana/700Bold/Tillana_700Bold.ttf", "Tillana Bold"),
+  martel: font("martel/900Black/Martel_900Black.ttf", "Martel Heavy"),
+  tiro: font("tiro-devanagari-hindi/400Regular/TiroDevanagariHindi_400Regular.ttf", "Tiro Devanagari Hindi"),
+};
+const FOIL_AUTHOR = font("noto-serif-devanagari/500Medium/NotoSerifDevanagari_500Medium.ttf", "Noto Serif Devanagari Medium");
+
 const DEVANAGARI = /[\u0900-\u097F]/;
 const escapeXml = (s) =>
   String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
@@ -403,8 +421,35 @@ async function composeSummary(o, art) {
  * away: the art is scaled to H - extendTop, centre-cropped to W, and the sky is continued upward
  * by stretching + blurring its top rows, feathered into the picture.
  */
+/**
+ * Some generations come back as a 2:3 picture inside a square canvas with black pillarbox bars.
+ * Cut away edge bands that are pure black over their full length (≥2% of the side).
+ */
+async function trimBars(input) {
+  const base = await sharp(input).rotate().toBuffer();
+  const { data, info } = await sharp(base).greyscale().raw().toBuffer({ resolveWithObject: true });
+  const { width: w, height: h } = info;
+  const colMax = new Uint8Array(w), rowMax = new Uint8Array(h);
+  for (let y = 0; y < h; y++)
+    for (let x = 0; x < w; x++) {
+      const v = data[y * w + x];
+      if (v > colMax[x]) colMax[x] = v;
+      if (v > rowMax[y]) rowMax[y] = v;
+    }
+  let l = 0, r = w - 1, t = 0, b = h - 1;
+  while (l < w - 1 && colMax[l] < 14) l++;
+  while (r > l && colMax[r] < 14) r--;
+  while (t < h - 1 && rowMax[t] < 14) t++;
+  while (b > t && rowMax[b] < 14) b--;
+  const L = l >= w * 0.02 ? l + 2 : 0, R = w - 1 - r >= w * 0.02 ? r - 2 : w - 1;
+  const T = t >= h * 0.02 ? t + 2 : 0, B = h - 1 - b >= h * 0.02 ? b - 2 : h - 1;
+  if (!L && !T && R === w - 1 && B === h - 1) return base;
+  return sharp(base).extract({ left: L, top: T, width: R - L + 1, height: B - T + 1 }).toBuffer();
+}
+
 async function fitArt(input, o) {
-  const img = sharp(input).rotate();
+  input = await trimBars(input);
+  const img = sharp(input);
   const { width, height } = await img.metadata();
   const aspect = width / height;
   const ext = Math.round(o.extendTop ?? (aspect > 0.8 ? 170 : 0));
@@ -424,10 +469,163 @@ async function fitArt(input, o) {
     .toBuffer();
 }
 
+/** Mean colour of a horizontal band of the art (fractions of the height). */
+async function sampleBand(artBuf, from, to) {
+  const top = Math.round(H * from), height = Math.max(1, Math.round(H * (to - from)));
+  const { data } = await sharp(artBuf).extract({ left: 0, top, width: W, height }).resize(1, 1, { kernel: "cubic" }).raw().toBuffer({ resolveWithObject: true });
+  return [data[0], data[1], data[2]];
+}
+
+let grainCache = null;
+/**
+ * Film finish so the artwork reads as a photograph rather than a glossy render: a touch less
+ * saturation, fine monochrome grain (soft-light) and a gentle vignette.
+ */
+async function filmFinish(art, { grain = 1, saturation = 0.93, vignette = 0.24 } = {}) {
+  let img = await sharp(art).modulate({ saturation }).toBuffer();
+  const layers = [];
+  if (grain > 0) {
+    grainCache ||= await sharp({ create: { width: W, height: H, channels: 3, background: { r: 128, g: 128, b: 128 }, noise: { type: "gaussian", mean: 128, sigma: 22 } } })
+      .greyscale()
+      .toColourspace("srgb")
+      .png()
+      .toBuffer();
+    const g = grain === 1 ? grainCache : await sharp(grainCache).linear(grain, 128 * (1 - grain)).png().toBuffer();
+    layers.push({ input: g, blend: "soft-light" });
+  }
+  if (vignette > 0)
+    layers.push({
+      input: Buffer.from(`<svg width="${W}" height="${H}" xmlns="http://www.w3.org/2000/svg"><defs><radialGradient id="v" cx="50%" cy="50%" r="75%"><stop offset="0.55" stop-color="#000" stop-opacity="0"/><stop offset="1" stop-color="#000" stop-opacity="${vignette}"/></radialGradient></defs><rect width="${W}" height="${H}" fill="url(#v)"/></svg>`),
+    });
+  return layers.length ? sharp(img).composite(layers).png().toBuffer() : img;
+}
+
+/** Outline lotus centred on (x, y), about 46×26 px. */
+const lotusSvg = (x, y, color, opacity = 0.95) => `<g transform="translate(${x} ${y})" fill="none" stroke="${color}" stroke-opacity="${opacity}" stroke-width="1.5" stroke-linejoin="round" stroke-linecap="round">
+  <path d="M0,-13 C7,-6 7,4 0,11 C-7,4 -7,-6 0,-13 Z"/>
+  <path d="M-2,11 C-10,7 -14,-1 -12,-8 C-6,-4 -2,3 -2,11 Z"/><path d="M2,11 C10,7 14,-1 12,-8 C6,-4 2,3 2,11 Z"/>
+  <path d="M-4,11 C-16,11 -23,3 -23,-2 C-15,-2 -8,4 -4,11 Z"/><path d="M4,11 C16,11 23,3 23,-2 C15,-2 8,4 4,11 Z"/>
+  <path d="M-15,13.5 Q0,17 15,13.5"/>
+</g>`;
+
+/** Outline open book centred on (x, y), about 48×32 px. */
+const bookSvg = (x, y, color, opacity = 0.95) => `<g transform="translate(${x} ${y})" fill="none" stroke="${color}" stroke-opacity="${opacity}" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round">
+  <path d="M0,-10 C-6,-14 -14,-15 -21,-13 L-21,8 C-14,6 -6,7 0,11 Z"/>
+  <path d="M0,-10 C6,-14 14,-15 21,-13 L21,8 C14,6 6,7 0,11 Z"/>
+  <path d="M-24,-10 L-24,11 C-15,9 -6,10 0,14 C6,10 15,9 24,11 L24,-10"/>
+  <path d="M-16,-7 C-11,-8 -6,-7 -3,-5 M-16,-2 C-11,-3 -6,-2 -3,0 M16,-7 C11,-8 6,-7 3,-5 M16,-2 C11,-3 6,-2 3,0" stroke-width="1.1" stroke-opacity="${opacity * 0.8}"/>
+</g>`;
+
+/** The approved reference look (see FOIL_FONTS). */
+async function composeFoil(o, art) {
+  const isDeva = DEVANAGARI.test(o.title);
+  let fontKey = o.font && (FOIL_FONTS[o.font] || TITLE_FONTS[o.font]) ? o.font : "vesper";
+  // Rozha One draws इ with a dot-like tail, so "बाइरे" reads as "बाड़रे". Never use it for इ.
+  if (fontKey === "rozha" && /इ/.test(o.title)) fontKey = "vesper";
+  const titleFace = FOIL_FONTS[fontKey] || TITLE_FONTS[fontKey];
+  const cx = (w) => Math.round((W - w) / 2);
+
+  const topC = await sampleBand(art, 0, 0.3);
+  const botC = await sampleBand(art, 0.86, 1);
+  const mode = o.mode || (luminance(topC) > 0.6 ? "light" : "dark");
+  const dark = mode === "dark";
+  const ink = o.ink || inkFrom(topC);
+  const gold = "#E7C67E";
+
+  const latinScale = isDeva ? 1 : 0.88;
+  const title = await fitBlock(o.title, titleFace, {
+    maxWidth: o.titleMaxWidth || 650,
+    sizes: [204, 138, 106].map((s) => Math.round(s * latinScale)),
+    minSizes: [130, 92, 72].map((s) => Math.round(s * latinScale)),
+    maxLines: 3,
+  });
+  const mask = await stackLines(title.text.split("\n"), titleFace, title.size, o.lineGap ?? 0.15);
+  const T = (color, alpha = 1) => tint(mask, color, alpha);
+  const fill = await gradientFill(
+    mask,
+    o.titleGradient ||
+      (dark
+        ? [[0, "#FFF2CC"], [0.28, "#F4D793"], [0.52, "#D8AC5A"], [0.7, "#EFCF88"], [1, "#B4812D"]]
+        : [[0, rgbToHex(mix(hexToRgb(ink), [255, 255, 255], 0.25))], [0.55, ink], [1, rgbToHex(mix(hexToRgb(ink), [0, 0, 0], 0.25))]]),
+  );
+
+  const author = await fitBlock(o.author, FOIL_AUTHOR, {
+    maxWidth: 620,
+    sizes: [DEVANAGARI.test(o.author) ? 44 : 38, 34],
+    minSizes: [30, 26],
+    maxLines: 2,
+  });
+  const authorMask = await stackLines(author.text.split("\n"), FOIL_AUTHOR, author.size, 0.3);
+  const authorColor = o.authorColor || (dark ? "#F7F0E2" : rgbToHex(mix(hexToRgb(ink), [0, 0, 0], 0.15)));
+  const A = (color, alpha = 1) => tint(authorMask, color, alpha);
+
+  // Foot: open book + BOOKNOMICS, coloured for whatever the bottom of the art is.
+  const footDark = luminance(botC) < 0.55;
+  const footColor = footDark ? gold : rgbToHex(mix(hexToRgb(ink), [0, 0, 0], 0.1));
+  const brand = await renderText({ text: "BOOKNOMICS", face: LABEL_FONT, size: 21, color: footDark ? "#EAD7A6" : footColor, tracking: 3.2 });
+
+  const titleTop = o.titleTop ?? 62;
+  const titleBottom = titleTop + mask.height;
+  const dividerY = titleBottom + 26;
+  const authorTop = dividerY + 26;
+  const blockBottom = authorTop + authorMask.height;
+  const topEnd = Math.min(0.58, (blockBottom + 160) / H);
+  const bookY = H - 108;
+  const brandTop = H - 74;
+
+  const shadeTop = o.shade || (dark ? rgbToHex(mix(topC, [0, 0, 0], 0.62)) : "#FFFBF2");
+  const shadeBot = footDark ? rgbToHex(mix(botC, [0, 0, 0], 0.6)) : "#FFFBF2";
+  const topAlpha = o.topAlpha ?? (dark ? 0.6 : 0.58);
+  const ruleColor = dark ? gold : ink;
+  const overlay = Buffer.from(`<svg width="${W}" height="${H}" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="t" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="${shadeTop}" stop-opacity="${topAlpha}"/>
+      <stop offset="${(topEnd * 0.55).toFixed(3)}" stop-color="${shadeTop}" stop-opacity="${(topAlpha * 0.6).toFixed(3)}"/>
+      <stop offset="${topEnd.toFixed(3)}" stop-color="${shadeTop}" stop-opacity="0"/>
+    </linearGradient>
+    <linearGradient id="b" x1="0" y1="1" x2="0" y2="0">
+      <stop offset="0" stop-color="${shadeBot}" stop-opacity="${footDark ? 0.62 : 0.5}"/>
+      <stop offset="0.2" stop-color="${shadeBot}" stop-opacity="0"/>
+    </linearGradient>
+  </defs>
+  <rect width="${W}" height="${H}" fill="url(#t)"/>
+  <rect width="${W}" height="${H}" fill="url(#b)"/>
+  <g stroke="${ruleColor}" stroke-opacity="0.85" stroke-width="1.4">
+    <line x1="${W / 2 - 190}" y1="${dividerY}" x2="${W / 2 - 34}" y2="${dividerY}"/>
+    <line x1="${W / 2 + 34}" y1="${dividerY}" x2="${W / 2 + 190}" y2="${dividerY}"/>
+  </g>
+  ${lotusSvg(W / 2, dividerY - 1, ruleColor)}
+  <g stroke="${footColor}" stroke-opacity="0.8" stroke-width="1.3">
+    <line x1="${W / 2 - 170}" y1="${bookY + 4}" x2="${W / 2 - 40}" y2="${bookY + 4}"/>
+    <line x1="${W / 2 + 40}" y1="${bookY + 4}" x2="${W / 2 + 170}" y2="${bookY + 4}"/>
+  </g>
+  ${bookSvg(W / 2, bookY, footColor)}
+</svg>`);
+
+  const tx = cx(mask.width);
+  const ax = cx(authorMask.width);
+  const layers = [{ input: overlay, left: 0, top: 0 }];
+  if (dark) {
+    layers.push({ input: await blurPad(await T("#000000", 0.6), 7), left: tx - 30, top: titleTop - 30 + 4 });
+    const rim = await T("#3A2208", 0.55);
+    for (const [dx, dy] of [[-1, 0], [1, 0], [0, -1], [0, 1.6]]) layers.push({ input: rim, left: Math.round(tx + dx), top: Math.round(titleTop + dy) });
+  } else {
+    layers.push({ input: await blurPad(await T("#FFFFFF", 0.85), 10), left: tx - 30, top: titleTop - 30 });
+  }
+  layers.push({ input: fill, left: tx, top: titleTop });
+  layers.push({ input: await blurPad(await A(dark ? "#000000" : "#FFFFFF", dark ? 0.7 : 0.9), 6), left: ax - 30, top: authorTop - 30 + (dark ? 2 : 0) });
+  layers.push({ input: await A(authorColor), left: ax, top: authorTop });
+  if (footDark) layers.push({ input: await blurPad((await renderText({ text: "BOOKNOMICS", face: LABEL_FONT, size: 21, color: "#000000", alpha: 0.6, tracking: 3.2 })).buf, 4), left: cx(brand.width) - 30, top: brandTop - 30 + 1 });
+  layers.push({ input: brand.buf, left: cx(brand.width), top: brandTop });
+  return sharp(art).composite(layers).png().toBuffer();
+}
+
 export async function composeCover(o) {
   let art = await fitArt(o.art, o);
   if (o.seam) art = await softenSeam(art, Number(o.seam));
   o = { ...o, title: o.titleDisplay || o.title, author: o.authorDisplay || o.author };
+  if ((o.layout || "foil") === "foil") return composeFoil(o, await filmFinish(art, { grain: o.grain ?? 1 }));
   if ((o.layout || "summary") === "summary") return composeSummary(o, art);
   const isDeva = DEVANAGARI.test(o.title);
   const fontKey = o.font && TITLE_FONTS[o.font] ? o.font : isDeva ? "mukta" : "playfair";

@@ -4,21 +4,24 @@ Covers for the books on booknomics.com/hindi (`language = hi`, published, not dr
 had **no cover** when the catalogue was checked on 2026-10-09. Books that already have a
 cover are left alone.
 
-## Style: same as the covers already on the site
+## Style: the approved reference look, photorealistic
 
-Built to match the existing covers in `public/book-covers/` and the Supabase `book-covers`
-bucket (गबन, देवदास, परिणीता, …):
+Modelled on the यशोधरा cover the user shared as the target:
 
-- a cinematic, photorealistic scene with the story's characters at a key moment
-- a small `— BOOKNOMICS SUMMARY —` label at the top
-- a big, heavy Devanagari title: metallic gold on dark art, a deep ink colour on light art
-- the author's name underneath
+- a **photorealistic film-still scene** with the story's characters at a key moment: real skin,
+  fabric and natural light, so it does not look AI-generated. The composer adds a light film
+  grain, a gentle vignette and slightly lower saturation.
+- a big **gold-foil calligraphic Devanagari title** (Vesper Libre Bold by default), or a deep ink
+  colour when the art is light
+- a thin rule with a **lotus** in the middle
+- the **author** in ivory
+- an **open-book icon with BOOKNOMICS** at the foot
 
 **Every book gets its own theme colour**, such as light, dark, blue, yellow, red or green, and
 its own scene from its story. Both are recorded per book in `manifest.json` (`theme`,
 `palette`, `concept`).
 
-The artwork is AI-generated without text. The title, author and label are set by
+The artwork is AI-generated without text. The title, author and brand are set by
 `tools/cover-studio/compose.mjs`, so the Devanagari matches the database exactly.
 
 Format: 800×1200 WebP (2:3, what `BookCard` renders). `<slug>.webp` matches `books.slug`.
@@ -28,8 +31,8 @@ Format: 800×1200 WebP (2:3, what `BookCard` renders). `<slug>.webp` matches `bo
 
 | | Books | Status |
 |---|---|---|
-| Samples in the site style | 3 | done: गोदान (yellow · light), काबुलीवाला (blue · dark), घरे-बाइरे (red · dark) |
-| Narendra Kohli (10) | 10 | first made in an earlier symbolic style; **to be redone** in the site style (old versions are in commit `b979135`) |
+| Samples in the approved look | 3 | done: गोदान (yellow · light), काबुलीवाला (blue · dark), घरे-बाइरे (red · dark) |
+| Narendra Kohli (10) | 10 | first made in an earlier symbolic style; **to be redone** in the approved look (old versions are in commit `b979135`) |
 | Other Devanagari titles: classics, Tagore, Khatri, Rahul, pulp, … | 90 | pending |
 | Regional-literature summaries with Latin titles in the DB (`भारतीय क्षेत्रीय साहित्य · …`) | ~589 | not in the manifest yet. **The title will be written in Devanagari on the cover** |
 
