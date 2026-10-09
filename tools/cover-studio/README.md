@@ -45,16 +45,30 @@ manifest.json ──► prompts.mjs ──► AI artwork (text-free) ──► c
 
 ```bash
 cd tools/cover-studio && npm ci
-OPENAI_API_KEY=… node auto.mjs all                  # plan + render everything that is left
+OPENAI_API_KEY=… node auto.mjs all                  # plan + render everything that is left (OpenAI)
+GEMINI_API_KEY=… GH_MODELS_TOKEN=… node auto.mjs all # same with Gemini images + GitHub Models scenes
 node auto.mjs plan --dry                            # preview the scenes without writing
 node auto.mjs render --limit 50 --concurrency 4     # 50 covers, 4 at a time
 ```
 
 **On GitHub, no computer needed:** `.github/workflows/generate-hindi-covers.yml` runs the same loop. Add
-the repository secret `OPENAI_API_KEY` once. Then either change `auto-run.json` on the branch and push
-it, or use Actions → *Generate Hindi covers (AI loop)* → Run workflow once the workflow is on `main`.
-The run commits the covers every 20 books and attaches all covers as a zip to the run.
-Optional repository variables: `IMAGE_MODEL`, `IMAGE_QUALITY` (`low` | `medium` | `high`) and `TEXT_MODEL`.
+ONE repository secret for the images, once:
+
+| Secret | Where to get it | Images | Rough cost for ~620 covers |
+|---|---|---|---|
+| `GEMINI_API_KEY` | aistudio.google.com → Get API key | `gemini-2.5-flash-image`, the same family as the covers made so far | ~$0.04 each, ≈ $25 |
+| `OPENAI_API_KEY` | platform.openai.com → API keys (billing on) | `gpt-image-1` | ~$0.06 each at medium, ≈ $40 |
+
+The scenes are written by OpenAI when that key exists, otherwise by **GitHub Models** through the built-in
+`GITHUB_TOKEN` (`permissions: models: read`), which needs no secret. Then either change `auto-run.json` on
+the branch and push it, or use Actions → *Generate Hindi covers (AI loop)* → Run workflow once the workflow
+is on `main`. The run commits the covers every 20 books and attaches all covers as a zip to the run.
+Optional repository variables: `IMAGE_PROVIDER` (`openai` | `gemini`), `IMAGE_MODEL`, `IMAGE_QUALITY`
+(OpenAI: `low` | `medium` | `high`) and `TEXT_MODEL`.
+
+A keyless image service was tested on 2026-10-09 (Pollinations from GitHub Actions): it answered with a
+small 629×937 picture from a weaker model, ignored most of the scene and stamped a watermark, so it is
+not used.
 
 ## Setup
 

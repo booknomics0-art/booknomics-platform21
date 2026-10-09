@@ -3,12 +3,14 @@ name: Generate Hindi covers (AI loop)
 # Makes every remaining Hindi cover in one unattended run. tools/cover-studio/auto.mjs:
 #   1. plan   — reads every published Hindi book without a cover from Supabase and writes a realistic
 #               scene from that book's own story plus a colour theme (never the themes just used);
-#   2. render — generates the artwork with the OpenAI Images API ("ChatGPT images") and composes the
+#   2. render — generates the artwork (OpenAI gpt-image-1 or Google Gemini image) and composes the
 #               approved foil-layout cover as content-drafts/covers/hindi/<slug>.jpg.
 # Progress is committed every 20 covers; a run that reaches the time limit continues on the next run.
 #
-# Needs one repository secret: OPENAI_API_KEY.
-# Optional repository variables: IMAGE_MODEL (default gpt-image-1), IMAGE_QUALITY (medium), TEXT_MODEL (gpt-4.1-mini).
+# Needs ONE repository secret for the images: OPENAI_API_KEY  or  GEMINI_API_KEY (Google AI Studio).
+# Scenes are written by OpenAI when that key exists, otherwise by GitHub Models through the built-in
+# GITHUB_TOKEN (no secret needed). Optional variables: IMAGE_PROVIDER (openai|gemini), IMAGE_MODEL,
+# IMAGE_QUALITY (OpenAI only), TEXT_MODEL.
 # Start: Actions > "Generate Hindi covers (AI loop)" > Run workflow (once this file is on main),
 #        or change tools/cover-studio/auto-run.json on this branch and push it.
 
@@ -32,6 +34,7 @@ on:
 
 permissions:
   contents: write
+  models: read
 
 concurrency:
   group: generate-hindi-covers
@@ -45,19 +48,23 @@ jobs:
       SUPABASE_URL: https://pbkfewrtdgiagytmcigb.supabase.co
       VITE_SUPABASE_PUBLISHABLE_KEY: sb_publishable_0xHTLlIf-4yj0yxVcnEWfQ_C02UtgVO
       OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+      GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+      GH_MODELS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      IMAGE_PROVIDER: ${{ vars.IMAGE_PROVIDER }}
       IMAGE_MODEL: ${{ vars.IMAGE_MODEL }}
       IMAGE_QUALITY: ${{ vars.IMAGE_QUALITY }}
       TEXT_MODEL: ${{ vars.TEXT_MODEL }}
     steps:
-      - name: Check the OpenAI key
+      - name: Check for an image key
         id: key
         run: |
-          if [ -z "$OPENAI_API_KEY" ]; then
-            echo "::warning title=No OpenAI key::Add OPENAI_API_KEY under Settings > Secrets and variables > Actions, then run this workflow again."
+          if [ -z "$OPENAI_API_KEY" ] && [ -z "$GEMINI_API_KEY" ]; then
+            echo "::warning title=No image key::Add OPENAI_API_KEY or GEMINI_API_KEY under Settings > Secrets and variables > Actions, then run this workflow again."
             {
               echo "### Cover loop not started"
               echo ""
-              echo "Add the repository secret **OPENAI_API_KEY** (Settings > Secrets and variables > Actions > New repository secret), then run again."
+              echo "Add ONE repository secret (Settings > Secrets and variables > Actions > New repository secret):"
+              echo "**OPENAI_API_KEY** (platform.openai.com) or **GEMINI_API_KEY** (aistudio.google.com > Get API key). Then run again."
             } >> "$GITHUB_STEP_SUMMARY"
             echo "ready=false" >> "$GITHUB_OUTPUT"
           else

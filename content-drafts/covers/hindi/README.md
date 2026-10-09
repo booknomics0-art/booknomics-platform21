@@ -46,7 +46,7 @@ Format: 800×1200 JPG (2:3, what `BookCard` renders), about 150 KB each. `<slug>
 
 **All remaining covers in one run:** `tools/cover-studio/auto.mjs`, also available as the GitHub Actions
 workflow *Generate Hindi covers (AI loop)*, plans a story-based scene and theme for every cover-less book and
-renders them all with the OpenAI Images API. It needs the `OPENAI_API_KEY` secret; see `tools/cover-studio/README.md`.
+renders them all with Gemini or OpenAI images. It needs ONE secret, `GEMINI_API_KEY` or `OPENAI_API_KEY`; see `tools/cover-studio/README.md`.
 
 `node tools/cover-studio/prompts.mjs --stats` gives the live count. Work is planned in batches of 50 books;
 the image tool makes at most 10 artworks per working session, so each 50-book batch takes five sessions.

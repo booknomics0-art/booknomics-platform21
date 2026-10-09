@@ -17,10 +17,13 @@
 //   node auto.mjs render --only key1,slug2   # just these books
 //
 // ENV (shell or the repo-root .env)
-//   OPENAI_API_KEY        required (scenes + images)
-//   OPENAI_BASE_URL       default https://api.openai.com/v1
-//   IMAGE_MODEL           default gpt-image-1        IMAGE_QUALITY   default medium (low | medium | high)
-//   TEXT_MODEL            default gpt-4.1-mini
+//   Images need ONE key:  OPENAI_API_KEY (gpt-image-1)  or  GEMINI_API_KEY (Google AI Studio, gemini-2.5-flash-image)
+//   Scenes use OpenAI when OPENAI_API_KEY is set, otherwise GitHub Models with GH_MODELS_TOKEN
+//   (in Actions: the built-in GITHUB_TOKEN with `permissions: models: read`, no secret needed).
+//   IMAGE_PROVIDER        openai | gemini (default: whichever key is present, OpenAI first)
+//   IMAGE_MODEL           default gpt-image-1 / gemini-2.5-flash-image   IMAGE_QUALITY default medium (OpenAI only)
+//   TEXT_MODEL            default gpt-4.1-mini (OpenAI) / openai/gpt-4.1-mini (GitHub Models)
+//   OPENAI_BASE_URL, GEMINI_BASE_URL, GH_MODELS_URL   endpoint overrides (tests)
 //   SUPABASE_URL or VITE_SUPABASE_URL, VITE_SUPABASE_PUBLISHABLE_KEY   (read-only list of books)
 //   COVER_ART_DIR         where the raw artwork is kept (default ~/cover-art-raw)
 import fs from "node:fs/promises";
@@ -71,9 +74,15 @@ const { composeCover, writeCover } = await import("./compose.mjs");
 
 const OPENAI = (process.env.OPENAI_BASE_URL || "https://api.openai.com/v1").replace(/\/+$/, "");
 const OPENAI_KEY = process.env.OPENAI_API_KEY || "";
-const IMAGE_MODEL = process.env.IMAGE_MODEL || "gpt-image-1";
+const GEMINI = (process.env.GEMINI_BASE_URL || "https://generativelanguage.googleapis.com/v1beta").replace(/\/+$/, "");
+const GEMINI_KEY = process.env.GEMINI_API_KEY || process.env.GOOGLE_API_KEY || "";
+const GH_MODELS_URL = process.env.GH_MODELS_URL || "https://models.github.ai/inference/chat/completions";
+const GH_MODELS_TOKEN = process.env.GH_MODELS_TOKEN || "";
+const IMAGE_PROVIDER = (process.env.IMAGE_PROVIDER || (OPENAI_KEY ? "openai" : GEMINI_KEY ? "gemini" : "openai")).toLowerCase();
+const IMAGE_MODEL = process.env.IMAGE_MODEL || (IMAGE_PROVIDER === "gemini" ? "gemini-2.5-flash-image" : "gpt-image-1");
 const IMAGE_QUALITY = process.env.IMAGE_QUALITY || "medium";
-const TEXT_MODEL = process.env.TEXT_MODEL || "gpt-4.1-mini";
+const TEXT_PROVIDER = OPENAI_KEY ? "openai" : GH_MODELS_TOKEN ? "github" : "openai";
+const TEXT_MODEL = process.env.TEXT_MODEL || (TEXT_PROVIDER === "github" ? "openai/gpt-4.1-mini" : "gpt-4.1-mini");
 const SB = (process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL || "").replace(/\/+$/, "");
 const SB_KEY = process.env.VITE_SUPABASE_PUBLISHABLE_KEY || process.env.SUPABASE_ANON_KEY || "";
 
@@ -185,17 +194,13 @@ Answer with JSON only: {"books":[{"id","title_hi","author_hi","concept","theme",
 
 // ---------------------------------------------------------------- helpers
 
-async function openai(pathname, body, { tries = 6 } = {}) {
-  if (!OPENAI_KEY) throw Object.assign(new Error("OPENAI_API_KEY is not set"), { fatal: true });
+/** POST JSON with retries; errors carry .blocked (moderation) and .fatal (stop the run). */
+async function postJSON(url, headers, body, { tries = 6 } = {}) {
   for (let attempt = 1; ; attempt++) {
     let res;
     let text;
     try {
-      res = await fetch(`${OPENAI}${pathname}`, {
-        method: "POST",
-        headers: { Authorization: `Bearer ${OPENAI_KEY}`, "Content-Type": "application/json" },
-        body: JSON.stringify(body),
-      });
+      res = await fetch(url, { method: "POST", headers: { "Content-Type": "application/json", ...headers }, body: JSON.stringify(body) });
       text = await res.text();
     } catch (e) {
       if (attempt >= tries) throw e;
@@ -209,9 +214,9 @@ async function openai(pathname, body, { tries = 6 } = {}) {
     } catch {
       /* not JSON */
     }
-    const code = String(err.code || err.type || "");
+    const code = String(err.code || err.status || err.type || "");
     const msg = String(err.message || text).slice(0, 400);
-    const quota = /insufficient_quota|billing/i.test(code);
+    const quota = /insufficient_quota|billing/i.test(code + " " + msg);
     if ((res.status === 429 || res.status >= 500) && !quota && attempt < tries) {
       const retryAfter = Number(res.headers.get("retry-after"));
       await sleep(retryAfter > 0 ? retryAfter * 1000 : Math.min(60000, 3000 * 2 ** (attempt - 1)));
@@ -219,8 +224,43 @@ async function openai(pathname, body, { tries = 6 } = {}) {
     }
     const e = new Error(`${res.status} ${code} ${msg}`.replace(/\s+/g, " ").trim());
     e.blocked = res.status === 400 && /moderation|safety|content.?policy|blocked/i.test(`${code} ${msg}`);
-    e.fatal = res.status === 401 || res.status === 403 || quota || /model.*(not found|does not exist)|must be verified/i.test(msg);
+    e.fatal =
+      res.status === 401 || res.status === 403 || res.status === 429 || quota ||
+      /api key not valid|model.*(not found|does not exist)|must be verified|not supported for generatecontent/i.test(msg);
     throw e;
+  }
+}
+
+async function openai(pathname, body, opts) {
+  if (!OPENAI_KEY) throw Object.assign(new Error("OPENAI_API_KEY is not set"), { fatal: true });
+  return postJSON(`${OPENAI}${pathname}`, { Authorization: `Bearer ${OPENAI_KEY}` }, body, opts);
+}
+
+/** Chat completion for scene planning: OpenAI if keyed, else GitHub Models (free with GITHUB_TOKEN). */
+async function textChat(body) {
+  if (TEXT_PROVIDER === "github") return postJSON(GH_MODELS_URL, { Authorization: `Bearer ${GH_MODELS_TOKEN}` }, { ...body, model: TEXT_MODEL });
+  return openai("/chat/completions", body);
+}
+
+/** One image from Gemini (2:3). Retries a reply that carries no image; safety stops become .blocked. */
+async function geminiImage(prompt) {
+  if (!GEMINI_KEY) throw Object.assign(new Error("GEMINI_API_KEY is not set"), { fatal: true });
+  for (let attempt = 1; attempt <= 3; attempt++) {
+    const res = await postJSON(
+      `${GEMINI}/models/${IMAGE_MODEL}:generateContent`,
+      { "x-goog-api-key": GEMINI_KEY },
+      { contents: [{ role: "user", parts: [{ text: prompt }] }], generationConfig: { responseModalities: ["IMAGE"], imageConfig: { aspectRatio: "2:3" } } },
+    );
+    const cand = res?.candidates?.[0];
+    const part = (cand?.content?.parts || []).find((x) => x.inlineData?.data || x.inline_data?.data);
+    if (part) return Buffer.from((part.inlineData || part.inline_data).data, "base64");
+    const blockReason = res?.promptFeedback?.blockReason;
+    const why = blockReason || cand?.finishReason || "no image";
+    if (blockReason || /SAFETY|PROHIBITED|BLOCKLIST|RECITATION|SPII/i.test(why)) {
+      throw Object.assign(new Error(`gemini: ${why}`), { blocked: true });
+    }
+    if (attempt === 3) throw new Error(`gemini returned no image (${why})`);
+    await sleep(3000 * attempt);
   }
 }
 
@@ -331,19 +371,20 @@ async function plan(manifest) {
 
   let planned = 0;
   const problems = [];
-  for (let i = 0; i < todo.length && inTime(); i += 6) {
-    const chunk = todo.slice(i, i + 6);
+  const PER = TEXT_PROVIDER === "github" ? 4 : 6; // GitHub Models free tier: ~8k input tokens per request
+  for (let i = 0; i < todo.length && inTime(); i += PER) {
+    const chunk = todo.slice(i, i + PER);
     const payload = {
       THEMES: THEMES.map((t) => `${t.name} (${t.mode})`),
       RECENT: recent.slice(-6),
       books: chunk.map((b) => {
         const r = live.get(b.id);
-        return { id: b.id, title: r.title, author: r.author, category: r.category, about: String(r.overview || "").replace(/\s+/g, " ").slice(0, 1400) };
+        return { id: b.id, title: r.title, author: r.author, category: r.category, about: String(r.overview || "").replace(/\s+/g, " ").slice(0, TEXT_PROVIDER === "github" ? 1000 : 1400) };
       }),
     };
     let plans = [];
     try {
-      const res = await openai("/chat/completions", {
+      const res = await textChat({
         model: TEXT_MODEL,
         response_format: { type: "json_object" },
         messages: [
@@ -393,18 +434,22 @@ async function plan(manifest) {
 
 async function renderOne(b) {
   const prompt = buildPrompt(b);
-  const dalle = IMAGE_MODEL.startsWith("dall-e");
-  const res = await openai(
-    "/images/generations",
-    dalle
-      ? { model: IMAGE_MODEL, prompt, n: 1, size: "1024x1792", quality: IMAGE_QUALITY === "high" ? "hd" : "standard", response_format: "b64_json" }
-      : { model: IMAGE_MODEL, prompt, n: 1, size: "1024x1536", quality: IMAGE_QUALITY },
-  );
-  const item = res?.data?.[0] || {};
   let bytes;
-  if (item.b64_json) bytes = Buffer.from(item.b64_json, "base64");
-  else if (item.url) bytes = Buffer.from(await (await fetch(item.url)).arrayBuffer());
-  else throw new Error("the image API returned no image");
+  if (IMAGE_PROVIDER === "gemini") {
+    bytes = await geminiImage(prompt);
+  } else {
+    const dalle = IMAGE_MODEL.startsWith("dall-e");
+    const res = await openai(
+      "/images/generations",
+      dalle
+        ? { model: IMAGE_MODEL, prompt, n: 1, size: "1024x1792", quality: IMAGE_QUALITY === "high" ? "hd" : "standard", response_format: "b64_json" }
+        : { model: IMAGE_MODEL, prompt, n: 1, size: "1024x1536", quality: IMAGE_QUALITY },
+    );
+    const item = res?.data?.[0] || {};
+    if (item.b64_json) bytes = Buffer.from(item.b64_json, "base64");
+    else if (item.url) bytes = Buffer.from(await (await fetch(item.url)).arrayBuffer());
+    else throw new Error("the image API returned no image");
+  }
   await fs.mkdir(ART_DIR, { recursive: true });
   const artPath = path.join(ART_DIR, `${b.key}.png`);
   await fs.writeFile(artPath, bytes);
@@ -413,7 +458,7 @@ async function renderOne(b) {
   const out = path.join(outDir, b.file);
   await writeCover(png, out);
   b.status = "done";
-  b.imageModel = IMAGE_MODEL;
+  b.imageModel = `${IMAGE_PROVIDER}/${IMAGE_MODEL}`;
   b.renderedAt = new Date().toISOString();
   delete b.renderError;
   delete b.note;
@@ -424,7 +469,7 @@ async function render(manifest) {
   const queue = manifest.books
     .filter((b) => isOpen(b) && b.theme && b.concept && DEVA.test(b.titleDisplay || b.title) && picked(b))
     .slice(0, LIMIT);
-  console.log(`${queue.length} cover(s) to render with ${IMAGE_MODEL} (${IMAGE_QUALITY}), ${CONCURRENCY} at a time.`);
+  console.log(`${queue.length} cover(s) to render with ${IMAGE_PROVIDER}/${IMAGE_MODEL}${IMAGE_PROVIDER === "openai" ? ` (${IMAGE_QUALITY})` : ""}, ${CONCURRENCY} at a time; scenes by ${TEXT_PROVIDER}/${TEXT_MODEL}.`);
   if (DRY) {
     for (const b of queue) console.log(`• ${b.titleDisplay || b.title} — ${b.theme}`);
     return;
