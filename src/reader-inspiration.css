@@ -1,4 +1,12 @@
 /* Editorial reading inspiration — intentionally isolated so existing page logic stays untouched. */
+
+/* These crawl-oriented link strips are no longer part of the visible experience.
+   Keep their underlying page/data logic untouched while removing the visual clutter. */
+section[aria-labelledby="popular-summaries-heading"],
+.bn-hindi-page > section.container > div[class*="bg-card/60"][class*="mb-8"] {
+  display: none !important;
+}
+
 .bn-reader-quote {
   position: relative;
   display: grid;
@@ -167,21 +175,74 @@
 }
 
 @media (max-width: 899px) {
-  .bn-reader-quote-host > .bn-reader-quote { margin-top: 26px; }
+  .bn-reader-quote-host > .bn-reader-quote { margin-top: 18px; }
 }
 
-@media (max-width: 520px) {
+/* Mobile gets its own compact composition rather than a scaled-down desktop card. */
+@media (max-width: 767px) {
   .bn-reader-quote {
-    grid-template-columns: 82px minmax(0, 1fr);
-    gap: 13px;
-    padding: 13px;
-    border-radius: 22px;
+    grid-template-columns: 72px minmax(0, 1fr);
+    gap: 12px;
+    padding: 12px;
+    border-radius: 20px;
+    align-items: center;
   }
-  .bn-reader-quote blockquote { font-size: 15px; line-height: 1.43; }
-  .bn-reader-quote[lang="hi"] blockquote { font-size: 16px; line-height: 1.55; }
-  .bn-reader-quote__author { font-size: 12px; }
-  .bn-reader-quote__role { display: none; }
-  .bn-reader-quote__mark { font-size: 132px; top: -36px; }
+
+  .bn-reader-quote__portrait-wrap { border-radius: 14px; }
+
+  .bn-reader-quote__mark {
+    top: -28px;
+    right: -2px;
+    font-size: 110px;
+  }
+
+  .bn-reader-quote__eyebrow {
+    gap: 6px;
+    margin-bottom: 5px;
+    font-size: 8.5px;
+    letter-spacing: .12em;
+  }
+
+  .bn-reader-quote__eyebrow > span { width: 14px; }
+
+  .bn-reader-quote blockquote {
+    font-size: 14px;
+    line-height: 1.42;
+    text-wrap: pretty;
+  }
+
+  .bn-reader-quote[lang="hi"] blockquote {
+    font-size: 14.5px;
+    line-height: 1.52;
+  }
+
+  .bn-reader-quote__author {
+    margin-top: 8px;
+    font-size: 11.5px;
+    line-height: 1.3;
+  }
+
+  .bn-reader-quote__role,
+  .bn-reader-quote__credit {
+    display: none;
+  }
+
+  .bn-reader-quote--home { margin-top: 14px; }
+}
+
+@media (max-width: 420px) {
+  .bn-reader-quote {
+    grid-template-columns: 64px minmax(0, 1fr);
+    gap: 10px;
+    padding: 10px;
+    border-radius: 18px;
+  }
+
+  .bn-reader-quote__portrait-wrap { border-radius: 12px; }
+  .bn-reader-quote__mark { font-size: 96px; top: -24px; }
+  .bn-reader-quote blockquote { font-size: 13.5px; line-height: 1.4; }
+  .bn-reader-quote[lang="hi"] blockquote { font-size: 14px; line-height: 1.5; }
+  .bn-reader-quote__author { font-size: 11px; }
 }
 
 @media (prefers-reduced-motion: reduce) {
