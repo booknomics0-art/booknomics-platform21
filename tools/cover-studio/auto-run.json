@@ -1,0 +1,8 @@
+{
+  "step": "all",
+  "limit": 0,
+  "concurrency": 3,
+  "quality": "medium",
+  "run": 1,
+  "how": "Change any value (for example bump \"run\") and push this file to start the cover loop on this branch (GitHub Actions: Generate Hindi covers). step: all | plan | render. limit: 0 = every remaining book. quality: low | medium | high."
+}

@@ -38,6 +38,10 @@ Format: 800×1200 JPG (2:3, what `BookCard` renders), about 150 KB each. `<slug>
 | **50-book batch 2** (`"batch": 2`) | 32 | pending (the rest of the pulp thrillers) |
 | Regional-literature summaries with Latin titles in the DB (`भारतीय क्षेत्रीय साहित्य · …`) | ~589 | not in the manifest yet. **The title will be written in Devanagari on the cover** |
 
+**All remaining covers in one run:** `tools/cover-studio/auto.mjs`, also available as the GitHub Actions
+workflow *Generate Hindi covers (AI loop)*, plans a story-based scene and theme for every cover-less book and
+renders them all with the OpenAI Images API. It needs the `OPENAI_API_KEY` secret; see `tools/cover-studio/README.md`.
+
 `node tools/cover-studio/prompts.mjs --stats` gives the live count. Work is planned in batches of 50 books;
 the image tool makes at most 10 artworks per working session, so each 50-book batch takes five sessions.
 

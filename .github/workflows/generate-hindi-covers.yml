@@ -1,0 +1,103 @@
+name: Generate Hindi covers (AI loop)
+
+# Makes every remaining Hindi cover in one unattended run. tools/cover-studio/auto.mjs:
+#   1. plan   — reads every published Hindi book without a cover from Supabase and writes a realistic
+#               scene from that book's own story plus a colour theme (never the themes just used);
+#   2. render — generates the artwork with the OpenAI Images API ("ChatGPT images") and composes the
+#               approved foil-layout cover as content-drafts/covers/hindi/<slug>.jpg.
+# Progress is committed every 20 covers; a run that reaches the time limit continues on the next run.
+#
+# Needs one repository secret: OPENAI_API_KEY.
+# Optional repository variables: IMAGE_MODEL (default gpt-image-1), IMAGE_QUALITY (medium), TEXT_MODEL (gpt-4.1-mini).
+# Start: Actions > "Generate Hindi covers (AI loop)" > Run workflow (once this file is on main),
+#        or change tools/cover-studio/auto-run.json on this branch and push it.
+
+on:
+  workflow_dispatch:
+    inputs:
+      step:
+        description: plan, render or all
+        type: choice
+        options: [all, plan, render]
+        default: all
+      limit:
+        description: Max books in this run (0 = all)
+        type: string
+        default: "0"
+  push:
+    branches:
+      - arena/bcb5e5c1-booknomics-platform21
+    paths:
+      - tools/cover-studio/auto-run.json
+
+permissions:
+  contents: write
+
+concurrency:
+  group: generate-hindi-covers
+  cancel-in-progress: false
+
+jobs:
+  covers:
+    runs-on: ubuntu-latest
+    timeout-minutes: 355
+    env:
+      SUPABASE_URL: https://pbkfewrtdgiagytmcigb.supabase.co
+      VITE_SUPABASE_PUBLISHABLE_KEY: sb_publishable_0xHTLlIf-4yj0yxVcnEWfQ_C02UtgVO
+      OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+      IMAGE_MODEL: ${{ vars.IMAGE_MODEL }}
+      IMAGE_QUALITY: ${{ vars.IMAGE_QUALITY }}
+      TEXT_MODEL: ${{ vars.TEXT_MODEL }}
+    steps:
+      - name: Check the OpenAI key
+        id: key
+        run: |
+          if [ -z "$OPENAI_API_KEY" ]; then
+            echo "::warning title=No OpenAI key::Add OPENAI_API_KEY under Settings > Secrets and variables > Actions, then run this workflow again."
+            {
+              echo "### Cover loop not started"
+              echo ""
+              echo "Add the repository secret **OPENAI_API_KEY** (Settings > Secrets and variables > Actions > New repository secret), then run again."
+            } >> "$GITHUB_STEP_SUMMARY"
+            echo "ready=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "ready=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - uses: actions/checkout@v4
+        if: steps.key.outputs.ready == 'true'
+
+      - uses: actions/setup-node@v4
+        if: steps.key.outputs.ready == 'true'
+        with:
+          node-version: 22
+
+      - name: Install the cover studio (sharp + fonts)
+        if: steps.key.outputs.ready == 'true'
+        working-directory: tools/cover-studio
+        run: npm ci --no-audit --no-fund
+
+      - name: Run the loop
+        if: steps.key.outputs.ready == 'true'
+        working-directory: tools/cover-studio
+        env:
+          STEP_INPUT: ${{ inputs.step }}
+          LIMIT_INPUT: ${{ inputs.limit }}
+          COVER_ART_DIR: ${{ runner.temp }}/cover-art-raw
+        run: |
+          git config user.name "booknomics-cover-bot"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          STEP="${STEP_INPUT:-$(node -p 'require("./auto-run.json").step || "all"')}"
+          LIMIT="${LIMIT_INPUT:-$(node -p 'require("./auto-run.json").limit || 0')}"
+          CONCURRENCY="$(node -p 'require("./auto-run.json").concurrency || 3')"
+          export IMAGE_QUALITY="${IMAGE_QUALITY:-$(node -p 'require("./auto-run.json").quality || "medium"')}"
+          node auto.mjs "$STEP" --limit "$LIMIT" --concurrency "$CONCURRENCY" --minutes 330 --commit-every 20
+
+      - name: All covers as one zip
+        if: always() && steps.key.outputs.ready == 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: hindi-covers-run-${{ github.run_number }}
+          path: content-drafts/covers/hindi/*.jpg
+          if-no-files-found: warn
+          retention-days: 30

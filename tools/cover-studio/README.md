@@ -29,6 +29,33 @@ manifest.json ──► prompts.mjs ──► AI artwork (text-free) ──► c
   per book)        recipe)         <key>.png                  800×1200         contact sheet        book-covers
 ```
 
+## The cover loop: every remaining cover in one run
+
+`auto.mjs` does the whole job unattended, so the set does not have to be built 10 artworks at a time:
+
+1. **plan**: reads every published Hindi book without a cover live from Supabase. For each one a text
+   model writes one realistic scene from that book's own story (its characters, place and era, taken
+   from the book's `overview`) and picks a colour theme from `THEMES` that suits the story. A theme used
+   by any of the last six books is never picked again, so neighbouring covers never share a theme. Latin-titled regional books also get their Devanagari
+   title and author (`titleDisplay`, `authorDisplay`).
+2. **render**: generates each artwork with the OpenAI Images API (`gpt-image-1`, i.e. ChatGPT images,
+   1024×1536) using the same prompt recipe as `prompts.mjs`, then composes the foil-layout cover with
+   `compose.mjs`. The manifest is saved after every cover, so a stopped run continues where it left off.
+   If moderation blocks a scene, the entry is marked `blocked` and the loop moves on.
+
+```bash
+cd tools/cover-studio && npm ci
+OPENAI_API_KEY=… node auto.mjs all                  # plan + render everything that is left
+node auto.mjs plan --dry                            # preview the scenes without writing
+node auto.mjs render --limit 50 --concurrency 4     # 50 covers, 4 at a time
+```
+
+**On GitHub, no computer needed:** `.github/workflows/generate-hindi-covers.yml` runs the same loop. Add
+the repository secret `OPENAI_API_KEY` once. Then either change `auto-run.json` on the branch and push
+it, or use Actions → *Generate Hindi covers (AI loop)* → Run workflow once the workflow is on `main`.
+The run commits the covers every 20 books and attaches all covers as a zip to the run.
+Optional repository variables: `IMAGE_MODEL`, `IMAGE_QUALITY` (`low` | `medium` | `high`) and `TEXT_MODEL`.
+
 ## Setup
 
 ```bash
