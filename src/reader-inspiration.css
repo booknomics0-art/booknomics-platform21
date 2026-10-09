@@ -1,0 +1,166 @@
+/* Editorial reading inspiration — intentionally isolated so existing page logic stays untouched. */
+.bn-reader-quote {
+  position: relative;
+  display: grid;
+  grid-template-columns: 88px minmax(0, 1fr);
+  gap: 16px;
+  overflow: hidden;
+  width: 100%;
+  padding: 14px;
+  border: 1px solid hsl(var(--border));
+  border-radius: 24px;
+  background: hsl(var(--card) / 0.72);
+  box-shadow: var(--shadow-paper);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+.bn-reader-quote__mark {
+  position: absolute;
+  top: -38px;
+  right: -4px;
+  color: hsl(var(--primary) / 0.08);
+  font-family: "Fraunces", Georgia, serif;
+  font-size: 136px;
+  line-height: 1;
+  pointer-events: none;
+  user-select: none;
+}
+
+.bn-reader-quote__portrait-wrap {
+  position: relative;
+  aspect-ratio: 4 / 5;
+  overflow: hidden;
+  align-self: center;
+  border-radius: 16px;
+  background: hsl(var(--muted));
+}
+
+.bn-reader-quote__portrait {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: top center;
+  filter: saturate(0.88) contrast(1.01);
+  transition: transform 650ms cubic-bezier(.2,.7,.2,1), filter 650ms ease;
+}
+
+.bn-reader-quote:hover .bn-reader-quote__portrait {
+  transform: scale(1.035);
+  filter: saturate(1) contrast(1.01);
+}
+
+.bn-reader-quote__copy {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.bn-reader-quote__eyebrow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 7px;
+  color: hsl(var(--primary));
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: .17em;
+  line-height: 1.35;
+  text-transform: uppercase;
+}
+
+.bn-reader-quote__eyebrow > span {
+  width: 18px;
+  height: 1px;
+  flex: none;
+  background: hsl(var(--primary) / .5);
+}
+
+.bn-reader-quote blockquote {
+  position: relative;
+  margin: 0;
+  color: hsl(var(--foreground));
+  font-family: "Fraunces", Georgia, serif;
+  font-size: clamp(15px, 1.25vw, 18px);
+  font-weight: 600;
+  line-height: 1.38;
+  text-wrap: balance;
+}
+
+.bn-reader-quote[lang="hi"] blockquote,
+.bn-reader-quote[lang="hi"] .bn-reader-quote__author,
+.bn-reader-quote[lang="hi"] .bn-reader-quote__role,
+.bn-reader-quote[lang="hi"] .bn-reader-quote__eyebrow {
+  font-family: "Noto Sans Devanagari", "Nirmala UI", system-ui, sans-serif;
+}
+
+.bn-reader-quote[lang="hi"] blockquote {
+  font-size: clamp(16px, 1.32vw, 19px);
+  font-weight: 700;
+  line-height: 1.55;
+}
+
+.bn-reader-quote__author {
+  margin-top: 10px;
+  color: hsl(var(--foreground));
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.bn-reader-quote__role {
+  margin-top: 1px;
+  color: hsl(var(--muted-foreground));
+  font-size: 10px;
+  line-height: 1.35;
+}
+
+.bn-reader-quote__credit {
+  width: fit-content;
+  margin-top: 6px;
+  color: hsl(var(--muted-foreground) / .65);
+  font-size: 8px;
+  line-height: 1.25;
+  text-decoration: none;
+}
+
+.bn-reader-quote__credit:hover { color: hsl(var(--primary)); }
+
+.bn-reader-quote--home { margin-top: 18px; }
+
+@media (min-width: 900px) {
+  .bn-reader-quote-host {
+    position: relative;
+    min-height: 230px;
+    padding-right: min(43%, 500px) !important;
+  }
+
+  .bn-reader-quote-host > .bn-reader-quote {
+    position: absolute;
+    top: 50%;
+    right: 0;
+    width: min(40%, 460px);
+    transform: translateY(-50%);
+  }
+}
+
+@media (max-width: 899px) {
+  .bn-reader-quote-host > .bn-reader-quote { margin-top: 24px; }
+}
+
+@media (max-width: 520px) {
+  .bn-reader-quote {
+    grid-template-columns: 72px minmax(0, 1fr);
+    gap: 12px;
+    padding: 11px;
+    border-radius: 20px;
+  }
+  .bn-reader-quote blockquote { font-size: 14px; }
+  .bn-reader-quote[lang="hi"] blockquote { font-size: 15px; }
+  .bn-reader-quote__role { display: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bn-reader-quote__portrait { transition: none; }
+  .bn-reader-quote:hover .bn-reader-quote__portrait { transform: none; }
+}
