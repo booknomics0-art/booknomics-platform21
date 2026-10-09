@@ -610,11 +610,15 @@
       "slug": "अंधेर-नगरी-भारतेंदु-हरिश्चंद्र-saransh",
       "title": "अंधेर नगरी",
       "author": "भारतेंदु हरिश्चंद्र",
-      "font": "sura",
-      "palette": "turmeric yellow, indigo, folk art",
-      "concept": "Satirical Indian folk-art scene of a topsy-turvy town: vegetables and sweets on one giant scale, a foolish king on a lopsided throne, an oversized noose on gallows, a plump disciple and his guru.",
+      "font": "tillana",
+      "palette": "lemon yellow, fresh white, bright midday sun",
+      "concept": "A bustling bazaar of a mythical north Indian town, from Bharatendu Harishchandra's farce Andher Nagari: the plump young disciple Gobardhandas — round-faced and grinning, with a shaven head and a small tuft, in a saffron dhoti — gorges on sweets from a heaped brass tray at a stall where vegetables and sweets are piled high at one same price; behind him his guru, a lean old Mahant with matted grey hair, rudraksha beads and a saffron robe, raises a warning finger; in the background the foolish king, pompous in an oversized jewelled crown and gaudy silks, is carried through the crowd on a palanquin; plain cloth awnings, no signboards, bright midday sun.",
       "file": "अंधेर-नगरी-भारतेंदु-हरिश्चंद्र-saransh.jpg",
-      "batch": 1
+      "batch": 1,
+      "theme": "lemon · light",
+      "mode": "light",
+      "ink": "#4A4210",
+      "status": "done"
     },
     {
       "key": "bharat-durdasha",
@@ -622,11 +626,14 @@
       "slug": "भारत-दुर्दशा-भारतेंदु-हरिश्चंद्र-saransh",
       "title": "भारत दुर्दशा",
       "author": "भारतेंदु हरिश्चंद्र",
-      "font": "martel",
-      "palette": "faded ash, sepia, dull red",
-      "concept": "Ruins of a grand ancient Indian palace overgrown with weeds, a grieving woman in a faded sari on its steps, colonial mill chimneys smoking on the horizon.",
+      "font": "tiro",
+      "palette": "smoky grey, cold blue, a single shaft of warm light",
+      "concept": "An allegorical scene staged like a period film, 1870s colonial India, from Bharatendu Harishchandra's play Bharat Durdasha: Bharat, a frail old man in torn, faded clothes with a broken half-crown on his head and a walking stick beside him, lies unconscious on the cracked stone steps of a ruined ancient temple; Bharat-Bhagya, a grave young man in saffron with a marigold garland, kneels beside him and shakes his shoulder to wake him; in the shadows of the broken pillars behind them a stern colonial official in a black Victorian frock coat walks away with a heavy sack of coins; weeds, dust and one shaft of warm light.",
       "file": "भारत-दुर्दशा-भारतेंदु-हरिश्चंद्र-saransh.jpg",
-      "batch": 1
+      "batch": 1,
+      "theme": "smoky grey · dark",
+      "mode": "dark",
+      "status": "done"
     },
     {
       "key": "chand-ka-munh",
@@ -634,11 +641,15 @@
       "slug": "chand-ka-muh-tedha-hai-muktibodh-saransh",
       "title": "चाँद का मुँह टेढ़ा है",
       "author": "गजानन माधव मुक्तिबोध",
-      "font": "vesper",
-      "palette": "sickly green moonlight, charcoal",
-      "concept": "A crooked, distorted moon over a surreal dark city of narrow lanes and factory chimneys at midnight, a shadowy procession passing, a lone figure with a lantern in an alley.",
+      "font": "rozha",
+      "palette": "sodium-yellow streetlight, black night, haze",
+      "concept": "A narrow lane in a sleeping Indian industrial town at midnight, 1950s, from Gajanan Madhav Muktibodh's poems Chand ka Munh Tedha Hai: a thin, intense poet in his forties with sunken cheeks, in a crumpled kurta and an old shawl, a beedi between his fingers, stands under a single flickering street lamp and looks up uneasily at a lopsided, crooked crescent moon hanging low over factory chimneys and crumbling tenements; long distorted shadows stretch along the wet cobblestones; a stray dog and a shuttered tea stall.",
       "file": "chand-ka-muh-tedha-hai-muktibodh-saransh.jpg",
-      "batch": 1
+      "batch": 1,
+      "theme": "sodium yellow · dark",
+      "mode": "dark",
+      "status": "done",
+      "note": "Retouched: the crescent moon sat hidden behind the title; it was moved into the free sky right of the first title line and tilted."
     },
     {
       "key": "kavita-ke-bahane",
@@ -646,12 +657,17 @@
       "slug": "kavita-ke-bahane-kunwar-narayan-saransh",
       "title": "कविता के बहाने",
       "author": "कुँवर नारायण",
-      "font": "rozha",
+      "font": "sura",
       "mode": "light",
-      "palette": "pastel sky blue, buttercup yellow",
-      "concept": "Paper birds folded from blank pages flying out of an open book into a sunny sky, a child chasing them, flowers blooming from the page edges.",
+      "palette": "blush pink, cream, soft morning sunlight",
+      "concept": "A sunlit old Lucknow neighbourhood of joined courtyard houses, from Kunwar Narayan's poem Kavita ke Bahane: a barefoot six-year-old girl in a faded pink cotton frock laughs as she runs across the shared courtyard between two old houses, arms out, chasing a sparrow that flits from one house's window to the other's; bougainvillea and jasmine spill over the low wall; on the veranda an elderly poet in a white kurta and round spectacles sits in a cane chair, smiling as he watches her; soft, warm morning sunlight.",
       "file": "kavita-ke-bahane-kunwar-narayan-saransh.jpg",
-      "batch": 1
+      "batch": 1,
+      "theme": "blush · light",
+      "ink": "#5A1F33",
+      "status": "done",
+      "topAlpha": 0.76,
+      "note": "topAlpha 0.76: stronger light wash so the author line reads over the busy facade."
     },
     {
       "key": "naye-ilake-mein",
@@ -659,11 +675,15 @@
       "slug": "naye-ilake-mein-kunwar-narayan-saransh",
       "title": "नए इलाके में",
       "author": "अरुण कमल",
-      "font": "vesper",
-      "palette": "concrete grey, evening blue, warm streetlight",
-      "concept": "A bewildered man at a crossroads in a fast-changing neighbourhood: half-built houses, scaffolding and cranes, while an old peepal tree and a remembered gate fade like smoke.",
+      "font": "martel",
+      "palette": "powder blue, white, raw brick, morning light",
+      "concept": "A half-built new neighbourhood on the edge of an Indian city, 1990s, from Arun Kamal's poem Naye Ilake Mein: a middle-aged man with a greying moustache, in a half-sleeve shirt and trousers with a cloth bag on his shoulder, stands lost at a dusty lane corner, looking around in bewilderment; rows of unfinished brick houses with steel rods sticking out of their roofs, bamboo scaffolding, heaps of sand and bricks, and a lone stump where an old peepal tree once stood; he raises his hand hesitantly to knock on a freshly painted iron gate; plain walls, no signboards, bright morning light.",
       "file": "naye-ilake-mein-kunwar-narayan-saransh.jpg",
-      "batch": 1
+      "batch": 1,
+      "theme": "powder blue · light",
+      "mode": "light",
+      "ink": "#1B3550",
+      "status": "done"
     },
     {
       "key": "kalam-ka-sipahi",
@@ -672,10 +692,14 @@
       "title": "कलम का सिपाही",
       "author": "अमृत राय",
       "font": "sahitya",
-      "palette": "mahogany brown, lantern gold, teal shadow",
-      "concept": "An old writing desk lit by a hurricane lantern: inkpot, dip pen, a stack of handwritten manuscripts and round wire spectacles; a village lane through the window.",
+      "palette": "deep teal, brass, lantern amber",
+      "concept": "Banaras, early 1930s, from Amrit Rai's Kalam ka Sipahi, the life of Munshi Premchand: Premchand — a slim man in his fifties with a thick bushy moustache, in a simple khadi kurta and dhoti — sits cross-legged on a floor mat at a low wooden writing desk late at night, writing with a dip pen by the light of a hurricane lantern, the page hidden under his hand; his wife Shivrani Devi, in a plain cotton sari with its end over her head, stands in the doorway holding a cup of tea, watching him with quiet concern; bare lime-washed walls and a small barred window with the night outside.",
       "file": "kalam-ka-sipahi-amrit-rai-saransh.jpg",
-      "batch": 1
+      "batch": 1,
+      "theme": "teal · dark",
+      "mode": "dark",
+      "status": "done",
+      "note": "Retouched: letter-like scribbles on the page softened."
     },
     {
       "key": "khanjan-nayan",
@@ -683,11 +707,15 @@
       "slug": "खंजन-नयन-अमृतलाल-नागर-सारांश",
       "title": "खंजन नयन",
       "author": "अमृतलाल नागर",
-      "font": "kadwa",
-      "palette": "Yamuna blue-violet, dawn gold",
-      "concept": "A blind old poet singing with a one-stringed instrument on the Yamuna ghats at dawn, a pair of wagtails beside him, a flute and a peacock feather on the stone step.",
+      "font": "vesperxb",
+      "palette": "apricot dawn, cream mist, river silver",
+      "concept": "A ghat on the Yamuna in Braj, early 16th century, from Amritlal Nagar's Khanjan Nayan, a novel of the poet Surdas: Surdas — a lean blind singer in his forties with closed, sightless eyes, a short greying beard and a sandalwood tilak, in a white dhoti and shawl — sits on the wet stone steps at dawn, singing with his head tilted up as he plays a tanpura; village women in Braj ghagras with brass pots and a few young cowherd boys stop to listen, enthralled; two small wagtail birds hop on the steps beside him; mist over the river and distant temple spires.",
       "file": "खंजन-नयन-अमृतलाल-नागर-सारांश.jpg",
-      "batch": 1
+      "batch": 1,
+      "theme": "apricot · light",
+      "mode": "light",
+      "ink": "#5A2A10",
+      "status": "done"
     },
     {
       "key": "deshdrohi",
@@ -695,11 +723,14 @@
       "slug": "देशदरोही-यशपाल-सारांश",
       "title": "देशद्रोही",
       "author": "यशपाल",
-      "font": "vesper",
-      "palette": "smoky blue-grey, red signal light",
-      "concept": "A lone man in a long coat on a 1940s railway platform at night, pamphlets under his arm, his shadow splitting in two directions, police lanterns approaching through steam.",
+      "font": "kadwa",
+      "palette": "deep indigo dusk, lamp amber",
+      "concept": "Lucknow, 1942, from Yashpal's Deshdrohi: Dr. Bhagwan Das Khanna — a gaunt man in his late thirties with a short beard and tired, burning eyes, in a worn overcoat — stands at the foot of a bungalow's veranda steps at dusk; on the lamp-lit veranda above him Badri Babu, a portly Congress leader in a khadi kurta and Gandhi cap, faces him with suspicion, while Raj, a dignified woman in her thirties in a white khadi sari, stands between them, torn; a bicycle leans against the gate and protesters' torches glow faintly in the street behind.",
       "file": "देशदरोही-यशपाल-सारांश.jpg",
-      "batch": 1
+      "batch": 1,
+      "theme": "indigo · dark",
+      "mode": "dark",
+      "status": "done"
     },
     {
       "key": "tramp-abroad",
@@ -707,12 +738,15 @@
       "slug": "अ-ट्रैम्प-अब्रॉड-hindi-summary",
       "title": "अ ट्रैम्प अब्रॉड",
       "author": "मार्क ट्वेन",
-      "font": "sura",
+      "font": "tillana",
       "mode": "light",
-      "palette": "alpine green, sky blue, red accents",
-      "concept": "A humorous traveller with a walking stick and carpet-bag hiking in the Swiss Alps, a raft drifting down a German river below a castle, edelweiss in front.",
+      "palette": "sage green meadows, linen white, pale alpine sky",
+      "concept": "The Swiss Alps below the Matterhorn, 1878, from Mark Twain's A Tramp Abroad: the author — a man in his early forties with bushy auburn hair and a thick drooping moustache, in a rumpled dark travelling suit and a broad felt hat, an alpenstock in hand — proudly leads an absurdly large expedition of roped-together mountain guides, porters and mules piled with luggage up a gentle grassy slope; beside him his companion Harris, a lanky man in a tweed suit, trudges along under an umbrella; cows graze nearby, unbothered, and snowy peaks rise beyond in clear daylight.",
       "file": "अ-ट्रैम्प-अब्रॉड-hindi-summary.jpg",
-      "batch": 1
+      "batch": 1,
+      "theme": "sage · light",
+      "ink": "#2F3F2A",
+      "status": "done"
     },
     {
       "key": "eng-novel-principle",
@@ -720,11 +754,14 @@
       "slug": "अंग्रेज़ी-उपन्यास-और-उसके-विकास-का-सिद्धांत-hindi-summary",
       "title": "अंग्रेज़ी उपन्यास और उसके विकास का सिद्धांत",
       "author": "सिडनी लेनियर",
-      "font": "martel",
-      "palette": "oxblood leather, brass, deep green",
-      "concept": "An antique library desk with a tall stack of Victorian novels, a quill and an hourglass; loose pages spiral upward like a staircase toward a stained-glass window.",
+      "font": "tiro",
+      "palette": "sepia brown, old gold, gaslight",
+      "concept": "A lecture room at Johns Hopkins University, Baltimore, 1881, from Sidney Lanier's The English Novel and the Principle of Its Development: the poet-critic Sidney Lanier — a frail, thin man in his late thirties with a long dark beard and gentle deep-set eyes, in a black frock coat — lectures from a wooden lectern with one hand raised; a silver flute rests on the table beside a stack of leather-bound books with plain spines; a small audience of men and women in 1880s dress listens intently in the warm gaslight; dark wood panelling and tall windows with winter dusk outside.",
       "file": "अंग्रेज़ी-उपन्यास-और-उसके-विकास-का-सिद्धांत-hindi-summary.jpg",
-      "batch": 1
+      "batch": 1,
+      "theme": "sepia · dark",
+      "mode": "dark",
+      "status": "done"
     },
     {
       "key": "eng-novel-development",

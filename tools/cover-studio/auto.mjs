@@ -138,6 +138,19 @@ export const THEMES = [
   { name: "lemon", mode: "light", palette: "lemon yellow, fresh white", ink: "#4A4210" },
   { name: "blush", mode: "light", palette: "blush pink, cream", ink: "#5A1F33" },
   { name: "powder blue", mode: "light", palette: "powder blue, white, morning light", ink: "#1B3550" },
+  { name: "indigo", mode: "dark", palette: "deep indigo night, lamp amber" },
+  { name: "teal", mode: "dark", palette: "deep teal, brass, lantern amber" },
+  { name: "sepia", mode: "dark", palette: "sepia brown, old gold, gaslight" },
+  { name: "wine", mode: "dark", palette: "wine red, candle gold, deep shadow" },
+  { name: "aubergine", mode: "dark", palette: "aubergine purple, dull gold, dusk" },
+  { name: "petrol blue", mode: "dark", palette: "petrol blue, amber window light" },
+  { name: "oxblood", mode: "dark", palette: "oxblood red, black, tarnished brass" },
+  { name: "ivory", mode: "light", palette: "ivory, warm beige, soft daylight", ink: "#3B2A1A" },
+  { name: "apricot", mode: "light", palette: "apricot dawn, cream, soft haze", ink: "#5A2A10" },
+  { name: "sage", mode: "light", palette: "sage green, linen white, pale sky", ink: "#2F3F2A" },
+  { name: "aqua", mode: "light", palette: "aqua, white, bright water light", ink: "#0F3D44" },
+  { name: "seafoam", mode: "light", palette: "seafoam green, pale sand", ink: "#1D3F3A" },
+  { name: "khaki", mode: "light", palette: "khaki, dust, pale sky", ink: "#3F3418" },
 ];
 const FONT_ROTATION = ["vesper", "sahitya", "kadwa", "vesper", "sura", "martel", "vesper", "rozha"];
 

@@ -28,8 +28,8 @@ export function buildPrompt(b) {
     "Shot on 35mm film with a 50mm lens, natural light only, true-to-life colours, real skin texture with pores and wrinkles, unretouched faces, natural hands, real fabric weave, dust and wear, shallow depth of field, subtle film grain.",
     "It must look like a real photograph from a film — not a painting, not an illustration, not CGI; no glossy skin, no glow, no fantasy effects.",
     light
-      ? "Keep the people in the lower two-thirds; the top third is soft, bright sky or plain light background with nothing in it, for a title added later."
-      : "Keep the people in the lower two-thirds; the top third is calm, dark sky or shadowed background with nothing in it, for a title added later.",
+      ? "Keep the people in the lower two-thirds; the top third is soft, bright sky or plain light background that continues the scene naturally (no white band or border), with nothing in it, for a title added later."
+      : "Keep the people in the lower two-thirds; the top third is calm, dark sky or shadowed background that continues the scene naturally (no black band or border), with nothing in it, for a title added later.",
     "No text, letters, numbers, logos, signature or watermark — and no script, inscriptions or symbols anywhere in the scene (walls, doors, signs, banners, books, paper): carvings are ornamental patterns only.",
   ]
     .filter(Boolean)

@@ -27,6 +27,12 @@ The artwork is AI-generated without text. The title, author and brand are set by
 Format: 800×1200 JPG (2:3, what `BookCard` renders), about 150 KB each. `<slug>.jpg` matches `books.slug`.
 `_preview-latest.jpg` is a contact sheet of the latest batch, for review only, and is never uploaded.
 
+## Standing rules
+
+- Only books whose `cover_url` is still empty get a cover; every batch is re-checked live in Supabase just before the art is made.
+- One cover per book id, never a reused or identical image (checked by file hash), and covers already made are never redone unless they fail review.
+- Each cover's scene comes from the book's own story and characters (DB `overview`); its colour theme is not reused by any of the previous covers while unused themes remain.
+
 ## Progress
 
 | | Books | Status |
@@ -34,7 +40,7 @@ Format: 800×1200 JPG (2:3, what `BookCard` renders), about 150 KB each. `<slug>
 | Samples in the approved look | 3 | done: गोदान (yellow · light), काबुलीवाला (blue · dark), घरे-बाइरे (red · dark) |
 | Narendra Kohli | 13 | done: बंधन (pearl white · light), अधिकार (green · light), कर्म (crimson · dark), धर्म (purple · dark), अंतराल (slate teal · dark), प्रच्छन्न (rose pink · light), प्रत्यक्ष (sapphire · light), निर्बन्ध (fiery orange · dark), आनुषंगिक (lavender · dark), दीक्षा (saffron · dark), अवसर (olive · light), युद्ध (storm blue · dark), अभ्युदय (coral · dark) |
 | Other Devanagari titles, first five | 5 | done: क्षुधित पाषाण (emerald · dark), पथेर पाँचाली (silver grey · light), श्रीकांत (ink black · dark), अपने-अपने अजनबी (icy white · light), ऐ लड़की (marigold · light) |
-| **50-book batch 1** (`"batch": 1` in the manifest) | 50 | 18 done: भूतनाथ (charcoal · dark), काजर की कोठरी (kohl black · dark), नरेंद्र-मोहिनी (peach · light), वीरेंद्र वीर (copper · dark), जय यौधेय (bronze · light), विस्मृत यात्री (glacier blue · light), मधुर स्वप्न (turquoise · dark), अँधेरे के जुगनू (firefly green · dark), चंद्रकांता संतति (amethyst · dark, redone), सिंह सेनापति (terracotta · light, redone), चीवर (sand · light), पक्षी और आकाश (sky blue · light), प्रतिदान (rust · dark), टूटे काँटे (plum · dark), भुवन विक्रम (mint · light), गोली (maroon · dark), सह्याद्रि की चट्टानें (midnight blue · dark), चाणक्य (bottle green · dark). 32 pending |
+| **50-book batch 1** (`"batch": 1` in the manifest) | 50 | 28 done: भूतनाथ (charcoal · dark), काजर की कोठरी (kohl black · dark), नरेंद्र-मोहिनी (peach · light), वीरेंद्र वीर (copper · dark), जय यौधेय (bronze · light), विस्मृत यात्री (glacier blue · light), मधुर स्वप्न (turquoise · dark), अँधेरे के जुगनू (firefly green · dark), चंद्रकांता संतति (amethyst · dark, redone), सिंह सेनापति (terracotta · light, redone), चीवर (sand · light), पक्षी और आकाश (sky blue · light), प्रतिदान (rust · dark), टूटे काँटे (plum · dark), भुवन विक्रम (mint · light), गोली (maroon · dark), सह्याद्रि की चट्टानें (midnight blue · dark), चाणक्य (bottle green · dark), अंधेर नगरी (lemon · light), भारत दुर्दशा (smoky grey · dark), चाँद का मुँह टेढ़ा है (sodium yellow · dark), कविता के बहाने (blush · light), नए इलाके में (powder blue · light), कलम का सिपाही (teal · dark), खंजन नयन (apricot · light), देशद्रोही (indigo · dark), अ ट्रैम्प अब्रॉड (sage · light), अंग्रेज़ी उपन्यास और उसके विकास का सिद्धांत (sepia · dark). 22 pending |
 | **50-book batch 2** (`"batch": 2`) | 32 | pending (the rest of the pulp thrillers) |
 | Regional-literature summaries with Latin titles in the DB (`भारतीय क्षेत्रीय साहित्य · …`) | ~589 | not in the manifest yet. **The title will be written in Devanagari on the cover** |
 
