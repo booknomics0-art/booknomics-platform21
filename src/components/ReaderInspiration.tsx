@@ -21,7 +21,7 @@ const QUOTES: Record<string, Quote> = {
     author: "Dr. A. P. J. Abdul Kalam",
     role: "Scientist · Former President of India",
     eyebrow: "A thought for readers",
-    imageSrc: "https://commons.wikimedia.org/wiki/Special:Redirect/file/A._P._J._Abdul_Kalam.jpg?width=420",
+    imageSrc: "https://commons.wikimedia.org/wiki/Special:Redirect/file/A._P._J._Abdul_Kalam.jpg?width=520",
     imageAlt: "Dr. A. P. J. Abdul Kalam",
     credit: "Government of India · Wikimedia Commons",
     creditHref: "https://commons.wikimedia.org/wiki/File:A._P._J._Abdul_Kalam.jpg",
@@ -32,7 +32,7 @@ const QUOTES: Record<string, Quote> = {
     author: "Albert Einstein",
     role: "Physicist · Nobel laureate",
     eyebrow: "Keep discovering",
-    imageSrc: "https://commons.wikimedia.org/wiki/Special:Redirect/file/Albert_Einstein_Head.jpg?width=420",
+    imageSrc: "https://commons.wikimedia.org/wiki/Special:Redirect/file/Albert_Einstein_Head.jpg?width=520",
     imageAlt: "Albert Einstein in 1947",
     credit: "Orren Jack Turner · Library of Congress",
     creditHref: "https://commons.wikimedia.org/wiki/File:Albert_Einstein_Head.jpg",
@@ -43,7 +43,7 @@ const QUOTES: Record<string, Quote> = {
     author: "Nelson Mandela",
     role: "Statesman · Nobel Peace Prize laureate",
     eyebrow: "Why learning matters",
-    imageSrc: "https://commons.wikimedia.org/wiki/Special:Redirect/file/Nelson_Mandela_1994.jpg?width=420",
+    imageSrc: "https://commons.wikimedia.org/wiki/Special:Redirect/file/Nelson_Mandela_1994.jpg?width=520",
     imageAlt: "Nelson Mandela in 1994",
     credit: "John Mathew Smith · CC BY-SA 2.0",
     creditHref: "https://commons.wikimedia.org/wiki/File:Nelson_Mandela_1994.jpg",
@@ -54,11 +54,44 @@ const QUOTES: Record<string, Quote> = {
     author: "स्वामी विवेकानंद",
     role: "चिंतक · संन्यासी · प्रेरक वक्ता",
     eyebrow: "पढ़ते रहिए · बढ़ते रहिए",
-    imageSrc: "https://commons.wikimedia.org/wiki/Special:Redirect/file/Vivekananda.png?width=420",
+    imageSrc: "https://commons.wikimedia.org/wiki/Special:Redirect/file/Vivekananda.png?width=520",
     imageAlt: "स्वामी विवेकानंद का 1896 का चित्र",
     credit: "सार्वजनिक डोमेन · Wikimedia Commons",
     creditHref: "https://commons.wikimedia.org/wiki/File:Vivekananda.png",
     lang: "hi",
+  },
+  library: {
+    quote: "I have always imagined Paradise as a kind of library.",
+    author: "Jorge Luis Borges",
+    role: "Writer · Essayist · Librarian",
+    eyebrow: "For the love of books",
+    imageSrc: "https://commons.wikimedia.org/wiki/Special:Redirect/file/Jorge_Luis_Borges_1951%2C_by_Grete_Stern.jpg?width=520",
+    imageAlt: "Jorge Luis Borges in 1951",
+    credit: "Grete Stern · Public domain",
+    creditHref: "https://commons.wikimedia.org/wiki/File:Jorge_Luis_Borges_1951,_by_Grete_Stern.jpg",
+    lang: "en",
+  },
+  community: {
+    quote: "Alone we can do so little; together we can do so much.",
+    author: "Helen Keller",
+    role: "Author · Activist · Advocate",
+    eyebrow: "Ideas grow together",
+    imageSrc: "https://commons.wikimedia.org/wiki/Special:Redirect/file/Helen_KellerA.jpg?width=520",
+    imageAlt: "Helen Keller circa 1904",
+    credit: "Library of Congress · Public domain",
+    creditHref: "https://commons.wikimedia.org/wiki/File:Helen_KellerA.jpg",
+    lang: "en",
+  },
+  dashboard: {
+    quote: "Nothing in life is to be feared, it is only to be understood.",
+    author: "Marie Curie",
+    role: "Physicist · Chemist · Nobel laureate",
+    eyebrow: "Keep understanding",
+    imageSrc: "https://commons.wikimedia.org/wiki/Special:Redirect/file/Portrait_of_Marie_Curie.jpg?width=520",
+    imageAlt: "Portrait of Marie Curie",
+    credit: "Library of Congress · Public domain",
+    creditHref: "https://commons.wikimedia.org/wiki/File:Portrait_of_Marie_Curie.jpg",
+    lang: "en",
   },
 };
 
@@ -74,8 +107,8 @@ function QuoteCard({ data, variant }: { data: Quote; variant: "home" | "hero" })
         <img
           src={data.imageSrc}
           alt={data.imageAlt}
-          width={420}
-          height={525}
+          width={520}
+          height={650}
           loading="lazy"
           decoding="async"
           className="bn-reader-quote__portrait"
@@ -110,6 +143,15 @@ function getTarget(pathname: string): { el: Element | null; key: keyof typeof QU
   if (pathname === "/hindi") {
     return { el: document.querySelector(".bn-hindi-page > section.bg-hero > .container"), key: "hindi", variant: "hero" };
   }
+  if (pathname === "/library") {
+    return { el: document.querySelector("main section.bg-hero.border-b > .container"), key: "library", variant: "hero" };
+  }
+  if (pathname === "/community") {
+    return { el: document.querySelector("main section.bg-hero.border-b > .container"), key: "community", variant: "hero" };
+  }
+  if (pathname === "/dashboard") {
+    return { el: document.querySelector("main section.bg-hero.border-b > .container"), key: "dashboard", variant: "hero" };
+  }
   return { el: null, key: null, variant: "hero" };
 }
 
@@ -122,13 +164,17 @@ export function ReaderInspiration() {
     let attempts = 0;
     let timer = 0;
     let activeHost: Element | null = null;
+    let activeHostKey: keyof typeof QUOTES | null = null;
 
     const find = () => {
       if (cancelled) return;
       const found = getTarget(pathname);
       if (found.el && found.key) {
         activeHost = found.el;
-        if (found.variant === "hero") activeHost.classList.add("bn-reader-quote-host");
+        activeHostKey = found.key;
+        if (found.variant === "hero") {
+          activeHost.classList.add("bn-reader-quote-host", `bn-reader-quote-host--${found.key}`);
+        }
         setMount({ el: found.el, key: found.key, variant: found.variant });
         return;
       }
@@ -142,7 +188,10 @@ export function ReaderInspiration() {
     return () => {
       cancelled = true;
       window.clearTimeout(timer);
-      if (activeHost) activeHost.classList.remove("bn-reader-quote-host");
+      if (activeHost) {
+        activeHost.classList.remove("bn-reader-quote-host");
+        if (activeHostKey) activeHost.classList.remove(`bn-reader-quote-host--${activeHostKey}`);
+      }
     };
   }, [pathname]);
 
