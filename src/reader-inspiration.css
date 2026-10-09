@@ -2,14 +2,14 @@
 .bn-reader-quote {
   position: relative;
   display: grid;
-  grid-template-columns: 88px minmax(0, 1fr);
-  gap: 16px;
+  grid-template-columns: 110px minmax(0, 1fr);
+  gap: 20px;
   overflow: hidden;
   width: 100%;
-  padding: 14px;
+  padding: 18px;
   border: 1px solid hsl(var(--border));
-  border-radius: 24px;
-  background: hsl(var(--card) / 0.72);
+  border-radius: 28px;
+  background: hsl(var(--card) / 0.76);
   box-shadow: var(--shadow-paper);
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
@@ -17,11 +17,11 @@
 
 .bn-reader-quote__mark {
   position: absolute;
-  top: -38px;
-  right: -4px;
+  top: -44px;
+  right: -6px;
   color: hsl(var(--primary) / 0.08);
   font-family: "Fraunces", Georgia, serif;
-  font-size: 136px;
+  font-size: 164px;
   line-height: 1;
   pointer-events: none;
   user-select: none;
@@ -32,7 +32,7 @@
   aspect-ratio: 4 / 5;
   overflow: hidden;
   align-self: center;
-  border-radius: 16px;
+  border-radius: 18px;
   background: hsl(var(--muted));
 }
 
@@ -60,10 +60,10 @@
 .bn-reader-quote__eyebrow {
   display: flex;
   align-items: center;
-  gap: 8px;
-  margin-bottom: 7px;
+  gap: 9px;
+  margin-bottom: 9px;
   color: hsl(var(--primary));
-  font-size: 9px;
+  font-size: 10px;
   font-weight: 700;
   letter-spacing: .17em;
   line-height: 1.35;
@@ -71,7 +71,7 @@
 }
 
 .bn-reader-quote__eyebrow > span {
-  width: 18px;
+  width: 22px;
   height: 1px;
   flex: none;
   background: hsl(var(--primary) / .5);
@@ -82,9 +82,9 @@
   margin: 0;
   color: hsl(var(--foreground));
   font-family: "Fraunces", Georgia, serif;
-  font-size: clamp(15px, 1.25vw, 18px);
+  font-size: clamp(17px, 1.45vw, 22px);
   font-weight: 600;
-  line-height: 1.38;
+  line-height: 1.4;
   text-wrap: balance;
 }
 
@@ -96,68 +96,92 @@
 }
 
 .bn-reader-quote[lang="hi"] blockquote {
-  font-size: clamp(16px, 1.32vw, 19px);
+  font-size: clamp(18px, 1.52vw, 23px);
   font-weight: 700;
-  line-height: 1.55;
+  line-height: 1.58;
 }
 
 .bn-reader-quote__author {
-  margin-top: 10px;
+  margin-top: 12px;
   color: hsl(var(--foreground));
-  font-size: 12px;
+  font-size: 13px;
   font-weight: 700;
 }
 
 .bn-reader-quote__role {
-  margin-top: 1px;
+  margin-top: 2px;
   color: hsl(var(--muted-foreground));
-  font-size: 10px;
-  line-height: 1.35;
+  font-size: 11px;
+  line-height: 1.4;
 }
 
 .bn-reader-quote__credit {
   width: fit-content;
-  margin-top: 6px;
+  margin-top: 7px;
   color: hsl(var(--muted-foreground) / .65);
-  font-size: 8px;
+  font-size: 8.5px;
   line-height: 1.25;
   text-decoration: none;
 }
 
 .bn-reader-quote__credit:hover { color: hsl(var(--primary)); }
 
-.bn-reader-quote--home { margin-top: 18px; }
+.bn-reader-quote--home { margin-top: 22px; }
 
 @media (min-width: 900px) {
   .bn-reader-quote-host {
     position: relative;
-    min-height: 230px;
-    padding-right: min(43%, 500px) !important;
+    min-height: 280px;
+    padding-right: min(48%, 590px) !important;
   }
 
   .bn-reader-quote-host > .bn-reader-quote {
     position: absolute;
     top: 50%;
     right: 0;
-    width: min(40%, 460px);
+    width: min(45%, 540px);
     transform: translateY(-50%);
+  }
+
+  /* Dashboard already has a membership CTA in its hero. Give both elements room
+     instead of changing or removing the existing dashboard controls. */
+  .bn-reader-quote-host--dashboard {
+    min-height: 300px;
+  }
+}
+
+@media (min-width: 900px) and (max-width: 1120px) {
+  .bn-reader-quote-host--dashboard {
+    padding-right: 0 !important;
+    padding-bottom: 24px !important;
+  }
+
+  .bn-reader-quote-host--dashboard > .bn-reader-quote {
+    position: relative;
+    top: auto;
+    right: auto;
+    width: 100%;
+    margin-top: 22px;
+    transform: none;
   }
 }
 
 @media (max-width: 899px) {
-  .bn-reader-quote-host > .bn-reader-quote { margin-top: 24px; }
+  .bn-reader-quote-host > .bn-reader-quote { margin-top: 26px; }
 }
 
 @media (max-width: 520px) {
   .bn-reader-quote {
-    grid-template-columns: 72px minmax(0, 1fr);
-    gap: 12px;
-    padding: 11px;
-    border-radius: 20px;
+    grid-template-columns: 82px minmax(0, 1fr);
+    gap: 13px;
+    padding: 13px;
+    border-radius: 22px;
   }
-  .bn-reader-quote blockquote { font-size: 14px; }
-  .bn-reader-quote[lang="hi"] blockquote { font-size: 15px; }
+  .bn-reader-quote blockquote { font-size: 15px; line-height: 1.43; }
+  .bn-reader-quote[lang="hi"] blockquote { font-size: 16px; line-height: 1.55; }
+  .bn-reader-quote__author { font-size: 12px; }
   .bn-reader-quote__role { display: none; }
+  .bn-reader-quote__mark { font-size: 132px; top: -36px; }
 }
 
 @media (prefers-reduced-motion: reduce) {
