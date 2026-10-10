@@ -10,6 +10,8 @@ export const config = {
     "/books/guitarmaking-tradition-and-technology-william-r-cumpiano-jonsthan-d-natelson-william-cumpiano-summary",
     "/books/atlas-shrugged-centennial-ed-hc-ayn-rand-sophie-bastide-foltz-adrian-rand-summary",
     "/books/mary-shelley-s-frankenstein-or-the-modern-prometheus-1818-text-mary-shelley-summary",
+    "/books/don-t-make-me-think-revisited-steve-krug-summary",
+    "/books/hospitals-facility-planning-and-management-g-d-kunders-summary",
   ],
 };
 
