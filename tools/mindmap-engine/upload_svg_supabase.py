@@ -1,13 +1,14 @@
 #!/usr/bin/env python3
 """Upload vector SVG mind maps and set book_assets.mindmap_url.
 
-Designed for the English catalog: compact SVG assets avoid exhausting Supabase
-Storage while remaining compatible with both the legacy image section and the
-new Interactive/Illustrated mind-map UI.
+Use --catalog-json when available so the upload stage does not query the books
+catalog again. Existing mindmap_url rows are skipped. Upload concurrency is
+kept deliberately low to protect the Supabase Free database/storage project.
 """
 from __future__ import annotations
 
 import argparse
+import json
 import time
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from pathlib import Path
@@ -30,38 +31,38 @@ def upload_svg(url: str, key: str, path: str, svg: Path) -> str:
     data = svg.read_bytes()
     extra = {"x-upsert": "true", "cache-control": "31536000"}
     code, raw, _ = rest(
-        url,
-        key,
-        "POST",
-        f"/storage/v1/object/{BUCKET}/{path}",
-        body=data,
-        content_type="image/svg+xml; charset=utf-8",
-        extra=extra,
-        timeout=180,
+        url, key, "POST", f"/storage/v1/object/{BUCKET}/{path}",
+        body=data, content_type="image/svg+xml; charset=utf-8", extra=extra, timeout=180,
     )
     if code >= 400:
         code, raw, _ = rest(
-            url,
-            key,
-            "PUT",
-            f"/storage/v1/object/{BUCKET}/{path}",
-            body=data,
-            content_type="image/svg+xml; charset=utf-8",
-            extra=extra,
-            timeout=180,
+            url, key, "PUT", f"/storage/v1/object/{BUCKET}/{path}",
+            body=data, content_type="image/svg+xml; charset=utf-8", extra=extra, timeout=180,
         )
     if code >= 400:
         raise RuntimeError(f"storage SVG upload {code}: {raw[:500]!r}")
     return public_url(url, path)
 
 
+def load_catalog(path: str, lang: str) -> list[dict]:
+    payload = json.loads(Path(path).read_text(encoding="utf-8"))
+    rows = payload if isinstance(payload, list) else payload.get("books", [])
+    return [
+        row for row in rows
+        if isinstance(row, dict)
+        and row.get("id") and row.get("slug")
+        and str(row.get("language") or lang).lower() == lang
+    ]
+
+
 def main() -> int:
     p = argparse.ArgumentParser()
     p.add_argument("--lang", choices=("en", "hi"), default="en")
     p.add_argument("--dir", required=True)
+    p.add_argument("--catalog-json", help="Authoritative local book catalog; avoids re-reading books from Supabase")
     p.add_argument("--force", action="store_true")
     p.add_argument("--limit", type=int, default=0)
-    p.add_argument("--workers", type=int, default=8, help="Bounded parallel upload workers (default 8)")
+    p.add_argument("--workers", type=int, default=2, help="Bounded upload workers (default 2; max 4)")
     p.add_argument("--dry-run", action="store_true")
     args = p.parse_args()
 
@@ -75,7 +76,7 @@ def main() -> int:
         raise SystemExit("Service-role/secret Supabase key required")
     ensure_bucket(url, key)
 
-    books = fetch_books(url, key, args.lang)
+    books = load_catalog(args.catalog_json, args.lang) if args.catalog_json else fetch_books(url, key, args.lang)
     by_slug, by_core = index_books(books)
     existing = {} if args.force else fetch_existing_maps(url, key)
     print(f"{len(svgs)} SVGs, {len(books)} catalog rows, {len(existing)} existing maps")
@@ -103,7 +104,7 @@ def main() -> int:
         print(f"done matched={matched} pending={len(jobs)} already={already} unmatched={unmatched}")
         return 0
 
-    workers = max(1, min(args.workers, 12))
+    workers = max(1, min(args.workers, 4))
     uploaded = failed = bytes_uploaded = 0
     t0 = time.time()
 
@@ -124,7 +125,7 @@ def main() -> int:
                 name, size = future.result()
                 uploaded += 1
                 bytes_uploaded += size
-                if uploaded <= 5 or uploaded % 250 == 0 or uploaded == len(jobs):
+                if uploaded <= 5 or uploaded % 100 == 0 or uploaded == len(jobs):
                     print(f"OK {uploaded}/{len(jobs)}: {name} -> {book.get('slug')}")
             except Exception as exc:  # noqa: BLE001
                 failed += 1
