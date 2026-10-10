@@ -1,6 +1,7 @@
 name: Upload mind maps to Supabase
 # Uses repository secret SUPABASE_SERVICE_ROLE_KEY.
-# Resume missing Hindi production mindmaps (2026-10-11).
+# Hindi production maps are rendered from exact live DB slugs/content so every
+# published Hindi book maps 1:1 to book_assets.mindmap_url.
 
 on:
   workflow_dispatch:
@@ -24,6 +25,7 @@ on:
       - arena/7ad1337e-booknomics-platform21
     paths:
       - .github/workflows/upload-mindmaps.yml
+      - tools/mindmap-engine/generate.py
       - tools/mindmap-engine/upload_supabase.py
 
 permissions:
@@ -41,12 +43,6 @@ jobs:
       SUPABASE_URL: https://pbkfewrtdgiagytmcigb.supabase.co
     steps:
       - uses: actions/checkout@v4
-
-      - uses: actions/cache@v4
-        with:
-          path: out/mindmaps-hi
-          key: mindmaps-hi-${{ hashFiles('tools/mindmap-engine/hindi_slugs.py', 'tools/mindmap-engine/render.py', 'tools/mindmap-engine/data/hindi*.txt') }}
-          restore-keys: mindmaps-hi-
 
       - uses: actions/setup-python@v5
         with:
@@ -81,9 +77,62 @@ jobs:
       - name: Install renderer
         run: pip install -r tools/mindmap-engine/requirements.txt
 
-      - name: Render Hindi maps
+      - name: Fetch exact published Hindi books from production
         if: ${{ github.event_name == 'push' || inputs.lang == 'hi' || inputs.lang == 'both' }}
-        run: python generate.py --lang hi --out ../../out/mindmaps-hi --skip-existing
+        shell: bash
+        run: |
+          mkdir -p out
+          python - <<'PY'
+          import json, os, urllib.parse, urllib.request
+          from pathlib import Path
+
+          base = os.environ["SUPABASE_URL"].rstrip("/")
+          key = os.environ["SUPABASE_SERVICE_ROLE_KEY"]
+          fields = ",".join([
+              "id", "slug", "title", "author", "category", "tagline", "overview",
+              "key_ideas", "deep_summary", "deep_analysis", "daily_application",
+              "action_system", "real_life_example", "language"
+          ])
+          rows = []
+          start = 0
+          page = 500
+          while True:
+              query = urllib.parse.urlencode({
+                  "select": fields,
+                  "language": "eq.hi",
+                  "status": "eq.published",
+                  "is_draft": "eq.false",
+                  "order": "slug.asc",
+              })
+              req = urllib.request.Request(
+                  f"{base}/rest/v1/books?{query}",
+                  headers={
+                      "apikey": key,
+                      "Authorization": f"Bearer {key}",
+                      "Range": f"{start}-{start + page - 1}",
+                      "Prefer": "count=exact",
+                  },
+              )
+              with urllib.request.urlopen(req, timeout=120) as resp:
+                  batch = json.loads(resp.read().decode("utf-8") or "[]")
+              rows.extend(batch)
+              if len(batch) < page:
+                  break
+              start += page
+
+          if not rows:
+              raise SystemExit("No published Hindi books returned from production")
+          for row in rows:
+              row["lang"] = "hi"
+          Path("out/live-hindi-books.json").write_text(
+              json.dumps(rows, ensure_ascii=False), encoding="utf-8"
+          )
+          print(f"Fetched {len(rows)} published Hindi books with exact production slugs")
+          PY
+
+      - name: Render Hindi maps from live content
+        if: ${{ github.event_name == 'push' || inputs.lang == 'hi' || inputs.lang == 'both' }}
+        run: python generate.py --lang hi --json ../../out/live-hindi-books.json --out ../../out/mindmaps-hi-live --manifest
         working-directory: tools/mindmap-engine
 
       - name: Render English maps
@@ -92,10 +141,18 @@ jobs:
         working-directory: tools/mindmap-engine
 
       - name: Upload to book_assets
+        shell: bash
         run: |
           lang="${{ inputs.lang }}"
           lang="${lang:-hi}"
           extra=""
           if [ "${{ inputs.force }}" = "true" ]; then extra="--force"; fi
-          python upload_supabase.py --lang "$lang" $extra
+          if [ "$lang" = "hi" ]; then
+            python upload_supabase.py --lang hi --dir ../../out/mindmaps-hi-live $extra
+          elif [ "$lang" = "en" ]; then
+            python upload_supabase.py --lang en --dir ../../out/mindmaps $extra
+          else
+            python upload_supabase.py --lang hi --dir ../../out/mindmaps-hi-live $extra
+            python upload_supabase.py --lang en --dir ../../out/mindmaps $extra
+          fi
         working-directory: tools/mindmap-engine
