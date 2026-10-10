@@ -1,0 +1,89 @@
+name: Upload mind maps to Supabase
+
+on:
+  workflow_dispatch:
+    inputs:
+      lang:
+        description: Which maps to generate and upload
+        required: true
+        default: hi
+        type: choice
+        options:
+          - hi
+          - en
+          - both
+      force:
+        description: Replace mindmap_url even when a map is already stored
+        required: false
+        default: false
+        type: boolean
+
+permissions:
+  contents: read
+
+concurrency:
+  group: upload-mindmaps
+  cancel-in-progress: false
+
+jobs:
+  upload:
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+    env:
+      SUPABASE_URL: https://pbkfewrtdgiagytmcigb.supabase.co
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Find a Supabase key in the repository secrets
+        id: key
+        env:
+          K1: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          K2: ${{ secrets.SUPABASE_SECRET_KEY }}
+          K3: ${{ secrets.SUPABASE_SERVICE_KEY }}
+          K4: ${{ secrets.SERVICE_ROLE_KEY }}
+          ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+        run: |
+          KEY="${K1:-${K2:-${K3:-$K4}}}"
+          SRC="a repository secret"
+          if [ -z "$KEY" ] && [ -n "$ACCESS_TOKEN" ]; then
+            SRC="SUPABASE_ACCESS_TOKEN via the Supabase Management API"
+            KEY=$(curl -fsS -H "Authorization: Bearer $ACCESS_TOKEN" \
+              "https://api.supabase.com/v1/projects/pbkfewrtdgiagytmcigb/api-keys?reveal=true" \
+              | python3 -c 'import json,sys; a=json.load(sys.stdin); k=next((x for x in a if x.get("name")=="service_role" or x.get("type")=="secret"), None); sys.stdout.write((k or {}).get("api_key") or "")') || KEY=""
+          fi
+          if [ -z "$KEY" ]; then
+            echo "::error::Add GitHub Actions secret SUPABASE_SERVICE_ROLE_KEY (Supabase → Project Settings → API Keys → service_role). Do not paste it in chat."
+            {
+              echo "### Mind maps not uploaded"
+              echo ""
+              echo "No Supabase service-role key was found. Add **SUPABASE_SERVICE_ROLE_KEY** under Settings → Secrets and variables → Actions, then re-run **Upload mind maps to Supabase** with lang=hi."
+            } >> "$GITHUB_STEP_SUMMARY"
+            exit 1
+          fi
+          echo "::add-mask::$KEY"
+          echo "SUPABASE_SERVICE_ROLE_KEY=$KEY" >> "$GITHUB_ENV"
+          echo "Using a key from $SRC."
+
+      - name: Install renderer
+        run: pip install -r tools/mindmap-engine/requirements.txt
+
+      - name: Render Hindi maps
+        if: ${{ inputs.lang == 'hi' || inputs.lang == 'both' }}
+        run: python generate.py --lang hi --out ../../out/mindmaps-hi --skip-existing
+        working-directory: tools/mindmap-engine
+
+      - name: Render English maps
+        if: ${{ inputs.lang == 'en' || inputs.lang == 'both' }}
+        run: python generate.py --lang en --out ../../out/mindmaps --skip-existing
+        working-directory: tools/mindmap-engine
+
+      - name: Upload to book_assets
+        run: |
+          extra=""
+          if [ "${{ inputs.force }}" = "true" ]; then extra="--force"; fi
+          python upload_supabase.py --lang ${{ inputs.lang }} $extra
+        working-directory: tools/mindmap-engine

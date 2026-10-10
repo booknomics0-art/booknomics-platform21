@@ -47,6 +47,19 @@ Useful flags:
 
 ## Output
 
+## Upload to Supabase (booknomics.com)
+
+PNGs are not in git. Production reads `book_assets.mindmap_url` (public `book-assets` bucket).
+
+```bash
+export SUPABASE_URL="https://YOUR_PROJECT.supabase.co"
+export SUPABASE_SERVICE_ROLE_KEY="…"   # service role only; never commit
+python tools/mindmap-engine/upload_supabase.py --lang hi --dir out/mindmaps-hi
+python tools/mindmap-engine/upload_supabase.py --lang hi --dir out/mindmaps-hi --dry-run
+```
+
+Or GitHub → Actions → **Upload mind maps to Supabase** (needs repo secrets `SUPABASE_URL` + `SUPABASE_SERVICE_ROLE_KEY`). Upsert touches only `mindmap_url`.
+
 Each PNG is **2560×1440** (16:9): hero, 8 genre-colored branches, quick recall, `booknomics` mark.
 
 Default English catalog is the seed plus extra ASCII `*-summary` slugs from the live Booknomics sitemap (`extra_slugs.py` + `data/batch*.txt`). Hindi (`--lang hi`) uses Devanagari Noto fonts, HarfBuzz shaping, and `hindi_slugs.py` + `data/hindi*.txt` (`*-saransh`, Devanagari titles). Thin rows use genre reading-lenses; overlay real notes via `--json` when you have them.
