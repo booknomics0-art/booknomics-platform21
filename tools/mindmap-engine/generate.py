@@ -1,11 +1,13 @@
 #!/usr/bin/env python3
-"""Booknomics English mind-map engine — render 300+ 16:9 PNGs in one run.
+"""Booknomics mind-map engine — render 16:9 PNGs in one run (English or Hindi).
 
 Usage:
   python generate.py --out ../../out/mindmaps
+  python generate.py --lang hi --out ../../out/mindmaps-hi
   python generate.py --out ../../out/mindmaps --limit 20
   python generate.py --json books.json --out ./pngs
   python generate.py --self-test
+  python generate.py --lang hi --self-test
 
 Does not invent plot facts. Thin catalog rows use genre reading-lenses,
 not fake chapter claims. Extra JSON can overlay real summary fields.
@@ -32,10 +34,16 @@ def slugify(title: str) -> str:
     return re.sub(r"[^a-z0-9]+", "-", title.lower()).strip("-")[:80]
 
 
-def self_test() -> int:
-    books = load_books()
-    assert len(books) >= 300, f"catalog too small: {len(books)}"
-    sample = next(b for b in books if b["title"] == "Atomic Habits")
+def self_test(lang: str = "en") -> int:
+    if lang == "hi":
+        from hindi_slugs import load_hindi_books
+        books = load_hindi_books()
+        assert len(books) >= 80, f"hindi catalog too small: {len(books)}"
+        sample = next(b for b in books if b["slug"] == "godan")
+    else:
+        books = load_books()
+        assert len(books) >= 300, f"catalog too small: {len(books)}"
+        sample = next(b for b in books if b["title"] == "Atomic Habits")
     m = build_mindmap(sample)
     assert len(m.branches) == 8, m.branches
     assert len(m.takeaways) == 5
@@ -43,15 +51,16 @@ def self_test() -> int:
     path = render_mindmap(m, tmp)
     assert path.exists() and path.stat().st_size > 20_000, path
     tmp.unlink(missing_ok=True)
-    print(f"self-test ok  catalog={len(books)}  branches={len(m.branches)}")
+    print(f"self-test ok  lang={lang}  catalog={len(books)}  branches={len(m.branches)}")
     return 0
 
 
 def main() -> int:
     p = argparse.ArgumentParser(description="Render Booknomics 16:9 mind-map PNGs in batch.")
-    p.add_argument("--out", default="../../out/mindmaps", help="Output folder for PNGs")
+    p.add_argument("--out", default="", help="Output folder for PNGs")
+    p.add_argument("--lang", choices=("en", "hi"), default="en", help="en = Latin catalog, hi = Devanagari Hindi")
     p.add_argument("--json", dest="extra_json", help="Optional JSON list of books (merges/overrides catalog)")
-    p.add_argument("--slugs-file", help="Text file of extra English /books/{slug}-summary lines")
+    p.add_argument("--slugs-file", help="Text file of extra /books/{slug} lines")
     p.add_argument("--limit", type=int, default=0, help="Render only the first N books (0 = all)")
     p.add_argument("--skip-existing", action="store_true", help="Do not overwrite existing PNGs")
     p.add_argument("--manifest", action="store_true", help="Write manifest.json next to PNGs")
@@ -59,27 +68,32 @@ def main() -> int:
     args = p.parse_args()
 
     if args.self_test:
-        return self_test()
+        return self_test(args.lang)
 
-    books = load_books(args.extra_json)
-    if args.slugs_file:
-        from extra_slugs import parse_english_slug
-        seen = {b["slug"] for b in books}
-        for line in Path(args.slugs_file).read_text(encoding="utf-8").splitlines():
-            item = parse_english_slug(line.strip())
-            if not item or item["slug"] in seen:
-                continue
-            seen.add(item["slug"])
-            books.append(item)
+    if args.lang == "hi":
+        from hindi_slugs import load_hindi_books
+        books = load_hindi_books(args.slugs_file)
+    else:
+        books = load_books(args.extra_json)
+        if args.slugs_file:
+            from extra_slugs import parse_english_slug
+            seen = {b["slug"] for b in books}
+            for line in Path(args.slugs_file).read_text(encoding="utf-8").splitlines():
+                item = parse_english_slug(line.strip())
+                if not item or item["slug"] in seen:
+                    continue
+                seen.add(item["slug"])
+                books.append(item)
     if args.limit and args.limit > 0:
         books = books[: args.limit]
 
-    out = Path(args.out)
+    out = Path(args.out or ("../../out/mindmaps-hi" if args.lang == "hi" else "../../out/mindmaps"))
     if not out.is_absolute():
         out = (Path.cwd() / out).resolve()
     out.mkdir(parents=True, exist_ok=True)
 
-    print(f"Rendering {len(books)} English mind maps → {out}")
+    label = "Hindi" if args.lang == "hi" else "English"
+    print(f"Rendering {len(books)} {label} mind maps → {out}")
     t0 = time.time()
     ok = 0
     rows = []

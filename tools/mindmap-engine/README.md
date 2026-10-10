@@ -1,6 +1,6 @@
 # Booknomics mind-map engine
 
-Python batch renderer for **16:9 PNG Visual Knowledge Maps**. Built to generate **300+ English books in one command**, with real type (Pillow) — not AI image text.
+Python batch renderer for **16:9 PNG Visual Knowledge Maps**. Built to generate **300+ English books** and **Hindi Devanagari maps** in one command, with real type (Pillow + HarfBuzz) — not AI image text.
 
 This is **not** the disabled `generate-batch*.cjs` content mill. It does not invent chapter plots. Thin catalog rows use honest genre reading-lenses. Overlay real `overview` / `key_ideas` via JSON when you have them.
 
@@ -16,6 +16,7 @@ From the repo root:
 
 ```bash
 python tools/mindmap-engine/generate.py --out out/mindmaps --manifest
+python tools/mindmap-engine/generate.py --lang hi --out out/mindmaps-hi --manifest
 ```
 
 Useful flags:
@@ -48,4 +49,4 @@ Useful flags:
 
 Each PNG is **2560×1440** (16:9): hero, 8 genre-colored branches, quick recall, `booknomics` mark.
 
-Default catalog is the 435-title seed plus extra English slugs from the live Booknomics sitemap (`extra_slugs.py`). Hindi (`-hindi-summary`, `-saransh`) is skipped. Thin rows use genre reading-lenses; overlay real notes via `--json` when you have them.
+Default English catalog is the seed plus extra ASCII `*-summary` slugs from the live Booknomics sitemap (`extra_slugs.py` + `data/batch*.txt`). Hindi (`--lang hi`) uses Devanagari Noto fonts, HarfBuzz shaping, and `hindi_slugs.py` + `data/hindi*.txt` (`*-saransh`, Devanagari titles). Thin rows use genre reading-lenses; overlay real notes via `--json` when you have them.

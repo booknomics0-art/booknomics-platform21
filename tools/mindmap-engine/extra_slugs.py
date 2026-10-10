@@ -737,7 +737,7 @@ def extra_books() -> list[dict]:
     raws = list(EXTRA_SLUGS)
     data_dir = Path(__file__).resolve().parent / "data"
     if data_dir.is_dir():
-        for path in sorted(data_dir.glob("*.txt")):
+        for path in sorted(data_dir.glob("batch*.txt")):
             raws.extend(path.read_text(encoding="utf-8").splitlines())
     for raw in raws:
         line = raw.strip()

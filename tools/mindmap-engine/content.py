@@ -6,6 +6,7 @@ import re
 from dataclasses import dataclass, field
 
 from genres import is_fiction, resolve_genre
+import hindi_copy as hi
 
 BOILERPLATE = re.compile(r"^(here (is|are)|in this (section|chapter|summary)|welcome|today we)", re.I)
 
@@ -140,6 +141,7 @@ class Mindmap:
     branches: list[Branch]
     takeaways: list[str]
     best: str
+    lang: str = "en"
 
 
 CONCEPT_LENSES = {
@@ -177,8 +179,8 @@ THEME_LENSES = {
 
 def _push(nodes: list[Node], seen: set[str], label: str, **kw: str) -> None:
     clean = shorten(label, 10 if kw.get("detail") else 12)
-    key = re.sub(r"\s+", " ", re.sub(r"[^a-z0-9 ]+", " ", clean.lower())).strip()[:60]
-    if not clean or key in seen or len(words(clean)) < 1:
+    key = re.sub(r"\s+", " ", re.sub(r"[^a-z0-9\u0900-\u097f ]+", " ", clean.lower())).strip()[:60]
+    if not clean or not key or key in seen or len(words(clean)) < 1:
         return
     seen.add(key)
     nodes.append(Node(label=clean, **kw))
@@ -188,6 +190,7 @@ def build_mindmap(book: dict) -> Mindmap:
     title = (book.get("title") or "Untitled").strip()
     author = (book.get("author") or "Unknown").strip()
     category = (book.get("category") or "General").strip()
+    lang = "hi" if str(book.get("lang") or "en").lower().startswith("hi") else "en"
     genre = resolve_genre(category)
     fiction = is_fiction(category)
 
@@ -201,30 +204,40 @@ def build_mindmap(book: dict) -> Mindmap:
     tagline = strip_md(_text(book.get("tagline")))
 
     overview_best = best_sentences(overview, 3)
-    one = tagline if 4 <= len(words(tagline)) <= 30 else (overview_best[0] if overview_best else f"{title} by {author} — the essential ideas, mapped.")
-    why = next((s for s in best_sentences(f"{overview}\n{daily}", 6) if re.search(r"\b(you|your|life|work|daily|decision)\b", s, re.I)), None)
-    why = shorten(why or (overview_best[1] if len(overview_best) > 1 else f"Understand {title} in minutes — then apply one idea today."), 26)
+    if lang == "hi":
+        one = tagline if 4 <= len(words(tagline)) <= 30 else (
+            overview_best[0] if overview_best else f"{title} — {author} के केंद्रीय विचार, एक मानचित्र में।"
+        )
+        why = next((s for s in best_sentences(f"{overview}\n{daily}", 6)), None)
+        why = shorten(why or (overview_best[1] if len(overview_best) > 1 else f"{title} को मिनटों में समझें — आज एक विचार अपनाएँ।"), 26)
+    else:
+        one = tagline if 4 <= len(words(tagline)) <= 30 else (overview_best[0] if overview_best else f"{title} by {author} — the essential ideas, mapped.")
+        why = next((s for s in best_sentences(f"{overview}\n{daily}", 6) if re.search(r"\b(you|your|life|work|daily|decision)\b", s, re.I)), None)
+        why = shorten(why or (overview_best[1] if len(overview_best) > 1 else f"Understand {title} in minutes — then apply one idea today."), 26)
 
     branches = [
-        _core(title, author, tagline, overview_best, overview, deep_analysis, key_ideas),
-        _concepts(key_ideas, deep_analysis, genre),
-        _story(deep_summary, deep_analysis, fiction),
-        _people(author, category, deep_analysis, key_ideas, fiction),
-        _themes(key_ideas, deep_analysis, overview, genre),
-        _lessons(title, daily, action, key_ideas),
-        _apply(title, action, daily, example),
-        _moments(deep_summary, deep_analysis, fiction),
+        _core(title, author, tagline, overview_best, overview, deep_analysis, key_ideas, lang),
+        _concepts(key_ideas, deep_analysis, genre, lang),
+        _story(deep_summary, deep_analysis, fiction, lang),
+        _people(author, category, deep_analysis, key_ideas, fiction, lang),
+        _themes(key_ideas, deep_analysis, overview, genre, lang),
+        _lessons(title, daily, action, key_ideas, lang),
+        _apply(title, action, daily, example, lang),
+        _moments(deep_summary, deep_analysis, fiction, lang),
     ]
 
     pool = dedupe(bullets(key_ideas)[:6] + best_sentences(overview, 4) + best_sentences(key_ideas, 6) + best_sentences(daily, 4))
     takeaways = [shorten(s, 18) for s in pool if 6 <= len(words(s)) <= 30][:5]
-    fillers = [
-        f"The core argument of {title} in one reread",
-        "One concept worth explaining to a friend",
-        "One story that makes the idea stick",
-        "One lesson to apply this week",
-        "One question to keep asking",
-    ]
+    if lang == "hi":
+        fillers = [s.format(title=title) for s in hi.TAKEAWAY_FILLERS]
+    else:
+        fillers = [
+            f"The core argument of {title} in one reread",
+            "One concept worth explaining to a friend",
+            "One story that makes the idea stick",
+            "One lesson to apply this week",
+            "One question to keep asking",
+        ]
     while len(takeaways) < 5:
         takeaways.append(fillers[len(takeaways)])
 
@@ -239,16 +252,17 @@ def build_mindmap(book: dict) -> Mindmap:
         branches=branches,
         takeaways=takeaways,
         best=takeaways[0],
+        lang=lang,
     )
 
 
-def _core(title, author, tagline, overview_best, overview, analysis, key_ideas) -> Branch:
+def _core(title, author, tagline, overview_best, overview, analysis, key_ideas, lang="en") -> Branch:
     nodes: list[Node] = []
     seen: set[str] = set()
     main = tagline if len(words(tagline)) >= 4 else (overview_best[0] if overview_best else "")
     if main:
         _push(nodes, seen, main, tag="Main message")
-    problem = next((s for s in split_sentences(overview) + best_sentences(analysis, 4) if re.search(r"problem|struggle|challenge|fear|failure|trap|stuck|distract|shallow|poor|pain", s, re.I)), "")
+    problem = next((s for s in split_sentences(overview) + best_sentences(analysis, 4) if re.search(r"problem|struggle|challenge|fear|failure|trap|stuck|distract|shallow|poor|pain|समस्या|संघर्ष|भय|व्यथा", s, re.I)), "")
     if problem:
         _push(nodes, seen, problem, tag="Central problem")
     for s in overview_best:
@@ -261,17 +275,28 @@ def _core(title, author, tagline, overview_best, overview, analysis, key_ideas) 
             break
         _push(nodes, seen, line)
     if not nodes:
-        for label, tag in [
-            (f"What {author} most wants you to understand", "Main message"),
-            ("The problem this book solves for its reader", "Central problem"),
-            ("The one shift to carry into daily life", "Ultimate teaching"),
-        ]:
-            _push(nodes, seen, label, tag=tag)
-    why = overview_best[0] if overview_best else (main or f"Read this first — it frames {title}.")
+        if lang == "hi":
+            for label, tag in [
+                (f"{author} सबसे अधिक क्या समझाना चाहते हैं", "मुख्य संदेश"),
+                ("यह पुस्तक पाठक की कौन-सी समस्या सुलझाती है", "केंद्रीय समस्या"),
+                ("रोज़मर्रा में ले जाने वाला एक बदलाव", "अंतिम शिक्षा"),
+            ]:
+                _push(nodes, seen, label, tag=tag)
+        else:
+            for label, tag in [
+                (f"What {author} most wants you to understand", "Main message"),
+                ("The problem this book solves for its reader", "Central problem"),
+                ("The one shift to carry into daily life", "Ultimate teaching"),
+            ]:
+                _push(nodes, seen, label, tag=tag)
+    why = overview_best[0] if overview_best else (main or (f"पहले यह पढ़ें — {title} का ढाँचा यहीं है।" if lang == "hi" else f"Read this first — it frames {title}."))
+    if lang == "hi":
+        t, q, c = hi.BRANCH["core"]
+        return Branch("core", t, q, nodes[:4], c, shorten(why, 22))
     return Branch("core", "Core Idea", "What is this book really about?", nodes[:4], "Why It Matters", shorten(why, 22))
 
 
-def _concepts(key_ideas, analysis, genre) -> Branch:
+def _concepts(key_ideas, analysis, genre, lang="en") -> Branch:
     nodes: list[Node] = []
     seen: set[str] = set()
     for line in bullets(key_ideas) + bullets(analysis):
@@ -290,16 +315,31 @@ def _concepts(key_ideas, analysis, genre) -> Branch:
         if len(nodes) >= 5:
             break
         _push(nodes, seen, s)
-    for lens in CONCEPT_LENSES.get(genre, CONCEPT_LENSES["default"]):
+    lenses = hi.CONCEPT_LENSES if lang == "hi" else CONCEPT_LENSES
+    for lens in lenses.get(genre, lenses["default"]):
         if len(nodes) >= 5:
             break
         _push(nodes, seen, lens)
     top = nodes[0].detail or nodes[0].label if nodes else ""
+    if lang == "hi":
+        t, q, c = hi.BRANCH["concepts"]
+        return Branch("concepts", t, q, nodes[:6], c, shorten(top, 22))
     return Branch("concepts", "Key Concepts", "What are the big ideas?", nodes[:6], "Key Insight", shorten(top, 22))
 
 
-def _story(summary, analysis, fiction) -> Branch:
-    steps = ("Beginning", "Development", "Turning point", "Climax", "Resolution") if fiction else ("Starting point", "Core framework", "Evidence", "Method", "Payoff")
+def _story(summary, analysis, fiction, lang="en") -> Branch:
+    if lang == "hi":
+        steps = hi.STORY_STEPS_F if fiction else hi.STORY_STEPS_N
+        fallback = hi.STORY_FALLBACK_F if fiction else hi.STORY_FALLBACK_N
+        text = hi.CONNECTION_F if fiction else hi.CONNECTION_N
+    else:
+        steps = ("Beginning", "Development", "Turning point", "Climax", "Resolution") if fiction else ("Starting point", "Core framework", "Evidence", "Method", "Payoff")
+        fallback = (
+            ["A world and want are established", "Pressure rises through choices", "One decision changes everything", "The truth is faced at full cost", "A new balance — changed or broken"]
+            if fiction
+            else ["The problem is named clearly", "A framework reframes the problem", "Stories and evidence make it stick", "A method turns insight into action", "The payoff compounds over time"]
+        )
+        text = "Follow the chain: want → obstacle → choice → consequence." if fiction else "Follow the chain: problem → principle → practice → payoff."
     sentences = dedupe(split_sentences(summary) + best_sentences(analysis, 6))
     nodes: list[Node] = []
     if len(sentences) >= 3:
@@ -308,108 +348,138 @@ def _story(summary, analysis, fiction) -> Branch:
             pick = sentences[min(len(sentences) - 1, i * per)]
             nodes.append(Node(label=shorten(pick), step=step))
     else:
-        fallback = (
-            ["A world and want are established", "Pressure rises through choices", "One decision changes everything", "The truth is faced at full cost", "A new balance — changed or broken"]
-            if fiction
-            else ["The problem is named clearly", "A framework reframes the problem", "Stories and evidence make it stick", "A method turns insight into action", "The payoff compounds over time"]
-        )
         for step, label in zip(steps, fallback):
             nodes.append(Node(label=label, step=step))
-    text = "Follow the chain: want → obstacle → choice → consequence." if fiction else "Follow the chain: problem → principle → practice → payoff."
+    if lang == "hi":
+        t, q, c = hi.BRANCH["story_f" if fiction else "story_n"]
+        return Branch("story", t, q, nodes[:5], c, text)
     return Branch("story", "Story Arc" if fiction else "Structure", "How does it unfold?" if fiction else "How is the argument built?", nodes[:5], "Connection", text)
 
 
-def _people(author, category, analysis, key_ideas, fiction) -> Branch:
+def _people(author, category, analysis, key_ideas, fiction, lang="en") -> Branch:
     nodes: list[Node] = []
     seen: set[str] = set()
-    if fiction:
-        lenses = [
-            ("The protagonist", "Track what they want — and what it costs."),
-            ("The key relationship", "Most change happens between two people."),
-            ("The opposing force", "Name what stands in the way."),
-            ("Who changes most", "The arc of change is the meaning."),
-        ]
-    elif re.search(r"biograph|memoir", category or "", re.I):
-        lenses = [
-            (author, "Whose life is the evidence for every lesson."),
-            ("Mentors and allies", "Notice who guided the key decisions."),
-            ("Rivals and critics", "Opposition sharpens the real principles."),
-            ("The era", "Context explains which bets were brave."),
-        ]
+    bio = bool(re.search(r"biograph|memoir|जीवनी|आत्मकथा", category or "", re.I))
+    if lang == "hi":
+        if fiction:
+            lenses = hi.PEOPLE_F
+        elif bio:
+            lenses = [(a.format(author=author), b) for a, b in hi.PEOPLE_B]
+        else:
+            lenses = [(a.format(author=author), b) for a, b in hi.PEOPLE_N]
+        insight = hi.PEOPLE_INSIGHT
     else:
-        lenses = [
-            (author, "The guide — follow their core argument first."),
-            ("Thinkers cited", "Watch whose research backs each claim."),
-            ("You, the reader", "Each idea asks one question back of you."),
-            ("Case studies", "Real stories show the idea under pressure."),
-        ]
+        if fiction:
+            lenses = [
+                ("The protagonist", "Track what they want — and what it costs."),
+                ("The key relationship", "Most change happens between two people."),
+                ("The opposing force", "Name what stands in the way."),
+                ("Who changes most", "The arc of change is the meaning."),
+            ]
+        elif bio:
+            lenses = [
+                (author, "Whose life is the evidence for every lesson."),
+                ("Mentors and allies", "Notice who guided the key decisions."),
+                ("Rivals and critics", "Opposition sharpens the real principles."),
+                ("The era", "Context explains which bets were brave."),
+            ]
+        else:
+            lenses = [
+                (author, "The guide — follow their core argument first."),
+                ("Thinkers cited", "Watch whose research backs each claim."),
+                ("You, the reader", "Each idea asks one question back of you."),
+                ("Case studies", "Real stories show the idea under pressure."),
+            ]
+        insight = "Trace one chain: person → motive → action → outcome."
     for label, detail in lenses:
         _push(nodes, seen, label, detail=detail)
-    title = "Characters" if fiction else ("People" if re.search(r"biograph|memoir", category or "", re.I) else "Thinkers")
-    return Branch("people", title, "Who matters and why?", nodes[:5], "Key Insight", "Trace one chain: person → motive → action → outcome.")
+    if lang == "hi":
+        key = "people_f" if fiction else ("people_b" if bio else "people")
+        t, q, c = hi.BRANCH[key]
+        return Branch("people", t, q, nodes[:5], c, insight)
+    title = "Characters" if fiction else ("People" if bio else "Thinkers")
+    return Branch("people", title, "Who matters and why?", nodes[:5], "Key Insight", insight)
 
 
-def _themes(key_ideas, analysis, overview, genre) -> Branch:
+def _themes(key_ideas, analysis, overview, genre, lang="en") -> Branch:
     nodes: list[Node] = []
     seen: set[str] = set()
     for h in headings(key_ideas) + headings(analysis):
         if len(nodes) >= 5:
             break
         _push(nodes, seen, h)
-    for lens in THEME_LENSES.get(genre, THEME_LENSES["default"]):
+    lenses = hi.THEME_LENSES if lang == "hi" else THEME_LENSES
+    for lens in lenses.get(genre, lenses["default"]):
         if len(nodes) >= 5:
             break
         _push(nodes, seen, lens)
-    keep = nodes[0].label if nodes else "the central tension"
+    keep = nodes[0].label if nodes else ("केंद्रीय तनाव" if lang == "hi" else "the central tension")
+    if lang == "hi":
+        t, q, c = hi.BRANCH["themes"]
+        return Branch("themes", t, q, nodes[:5], c, f"एक विषय रखें: {shorten(keep, 10)}।")
     return Branch("themes", "Themes", "What deeper ideas run through it?", nodes[:5], "Remember This", f"If you keep one theme: {shorten(keep, 10)}.")
 
 
-def _lessons(title, daily, action, key_ideas) -> Branch:
+def _lessons(title, daily, action, key_ideas, lang="en") -> Branch:
     nodes: list[Node] = []
     seen: set[str] = set()
     for line in bullets(daily) + bullets(action) + bullets(key_ideas):
         if len(nodes) >= 6:
             break
-        tag = "Avoid" if re.search(r"avoid|mistake|never |don't|trap", line, re.I) else ""
+        tag = "Avoid" if re.search(r"avoid|mistake|never |don't|trap|भूल|जाल|न करें", line, re.I) else ""
         _push(nodes, seen, line, tag=tag)
     for s in best_sentences(daily, 5) + best_sentences(key_ideas, 4):
         if len(nodes) >= 6:
             break
         _push(nodes, seen, s)
     if len(nodes) < 3:
-        for label, tag in [
-            ("Small actions beat rare intensity", ""),
-            ("Design the environment before willpower", ""),
-            ("Measure one thing that truly matters", ""),
-            ("Avoid consuming without applying", "Avoid"),
-        ]:
-            _push(nodes, seen, label, tag=tag)
+        if lang == "hi":
+            for label in hi.LESSON_FALLBACK:
+                _push(nodes, seen, label, tag="Avoid" if "व्यर्थ" in label else "")
+        else:
+            for label, tag in [
+                ("Small actions beat rare intensity", ""),
+                ("Design the environment before willpower", ""),
+                ("Measure one thing that truly matters", ""),
+                ("Avoid consuming without applying", "Avoid"),
+            ]:
+                _push(nodes, seen, label, tag=tag)
     mistake = next((n for n in nodes if n.tag == "Avoid"), None)
+    if lang == "hi":
+        text = f"भूल से बचें: {shorten(mistake.label, 16)}" if mistake else f"इस सप्ताह {title} का एक पाठ जिएँ।"
+        t, q, c = hi.BRANCH["lessons"]
+        return Branch("lessons", t, q, nodes[:6], c, text)
     text = f"Mistake to avoid: {shorten(mistake.label, 16)}" if mistake else f"Live one lesson from {title} this week."
     return Branch("lessons", "Key Lessons", "What should you remember?", nodes[:6], "Remember This", text)
 
 
-def _apply(title, action, daily, example) -> Branch:
+def _apply(title, action, daily, example, lang="en") -> Branch:
     nodes: list[Node] = []
     seen: set[str] = set()
     for line in bullets(action) + bullets(daily):
         if len(nodes) >= 6:
             break
-        imperative = bool(re.match(r"^(write|pick|choose|define|track|review|practice|start|stop|schedule|ask|note|build|set|make|try|do|take|list|plan)\b", line.strip(), re.I))
+        imperative = bool(re.match(r"^(write|pick|choose|define|track|review|practice|start|stop|schedule|ask|note|build|set|make|try|do|take|list|plan|लिखें|चुनें|करें|जोड़ें)\b", line.strip(), re.I))
         _push(nodes, seen, line, tag="Action" if imperative else "")
     for s in best_sentences(daily, 5):
         if len(nodes) >= 6:
             break
         _push(nodes, seen, s)
     if len(nodes) < 3:
-        for label in [
+        fallback = hi.APPLY_FALLBACK if lang == "hi" else [
             "Pick one idea to test for seven days",
             "Attach it to an existing daily cue",
             "Write a one-line evening review",
             "Use it in the next real decision",
-        ]:
+        ]
+        for label in fallback:
             _push(nodes, seen, label, tag="Action")
     ex = next((s for s in split_sentences(example) if len(words(s)) >= 8), "")
+    if lang == "hi":
+        t, q, c = hi.BRANCH["apply"]
+        call = "उदाहरण" if ex else c
+        text = shorten(ex, 22) if ex else f"आज: {title} का एक विचार किसी चल रहे निर्णय में लाएँ।"
+        return Branch("apply", t, q, nodes[:6], call, text)
     return Branch(
         "apply",
         "Real-Life Application",
@@ -420,23 +490,30 @@ def _apply(title, action, daily, example) -> Branch:
     )
 
 
-def _moments(summary, analysis, fiction) -> Branch:
+def _moments(summary, analysis, fiction, lang="en") -> Branch:
     nodes: list[Node] = []
     seen: set[str] = set()
     sentences = dedupe(split_sentences(summary) + split_sentences(analysis))
-    turning = [s for s in sentences if re.search(r"\bbut |however|realiz|discover|reveal|turning|breakthrough|failed|decided|changed|truth\b", s, re.I)]
+    turning = [s for s in sentences if re.search(r"\bbut |however|realiz|discover|reveal|turning|breakthrough|failed|decided|changed|truth\b|परंतु|किंतु|सच|मोड़", s, re.I)]
     for s in turning + sentences:
         if len(nodes) >= 5:
             break
         _push(nodes, seen, s)
     if len(nodes) < 3:
-        fallback = (
-            ["The moment the want becomes urgent", "The choice that cannot be undone", "The revelation that reframes everything", "The final cost — and what it buys"]
-            if fiction
-            else ["The reframe that changes the question", "The evidence that makes it undeniable", "The method that makes it usable", "The result that compounds over time"]
-        )
+        if lang == "hi":
+            fallback = hi.MOMENT_FALLBACK_F if fiction else hi.MOMENT_FALLBACK_N
+        else:
+            fallback = (
+                ["The moment the want becomes urgent", "The choice that cannot be undone", "The revelation that reframes everything", "The final cost — and what it buys"]
+                if fiction
+                else ["The reframe that changes the question", "The evidence that makes it undeniable", "The method that makes it usable", "The result that compounds over time"]
+            )
         for label in fallback:
             _push(nodes, seen, label)
+    if lang == "hi":
+        t, q, c = hi.BRANCH["moments_f" if fiction else "moments_n"]
+        text = hi.MOMENT_F if fiction else hi.MOMENT_N
+        return Branch("moments", t, q, nodes[:5], c, text)
     return Branch(
         "moments",
         "Key Moments" if fiction else "Key Insights",

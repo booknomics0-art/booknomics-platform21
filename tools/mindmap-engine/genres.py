@@ -135,22 +135,23 @@ THEMES: dict[str, GenreTheme] = {
 }
 
 _MATCHERS: list[tuple[GenreKey, re.Pattern[str]]] = [
-    ("mystery", re.compile(r"mystery|thriller|crime|detective|suspense|horror|noir", re.I)),
-    ("romance", re.compile(r"romance|love story|romantic", re.I)),
-    ("fantasy", re.compile(r"fantasy|magic|mytholog|epic|fairy", re.I)),
-    ("scifi", re.compile(r"sci[\s-]?fi|science fiction|dystopi|science\b|physics|cosmos|astronomy", re.I)),
-    ("biography", re.compile(r"biograph|memoir|autobiograph|life story", re.I)),
-    ("history", re.compile(r"histor|ancient|civilization|war\b|empire", re.I)),
-    ("philosophy", re.compile(r"philosoph|stoic|ethics|spiritual|meditation|vedanta|upani", re.I)),
-    ("psychology", re.compile(r"psycholog|behavior|behaviour|cognitive|emotion|bias|persuasion|influence", re.I)),
-    ("productivity", re.compile(r"productiv|time management|focus|deep work|habit|efficiency", re.I)),
-    ("leadership", re.compile(r"leadership|leader\b|management|executive", re.I)),
-    ("business", re.compile(r"business|finance|money|invest|wealth|startup|entrepreneur|econom|strategy|marketing", re.I)),
-    ("selfhelp", re.compile(r"self[\s-]?help|personal development|motivat|discipline|success", re.I)),
+    ("mystery", re.compile(r"mystery|thriller|crime|detective|suspense|horror|noir|रहस्य|थ्रिलर|जासूस|हत्या", re.I)),
+    ("romance", re.compile(r"romance|love story|romantic|प्रेम कथा", re.I)),
+    ("fantasy", re.compile(r"fantasy|magic|mytholog|epic|fairy|फंतासी", re.I)),
+    ("scifi", re.compile(r"sci[\s-]?fi|science fiction|dystopi|science\b|physics|cosmos|astronomy|विज्ञान कथा", re.I)),
+    ("biography", re.compile(r"biograph|memoir|autobiograph|life story|जीवनी|आत्मकथा", re.I)),
+    ("history", re.compile(r"histor|ancient|civilization|war\b|empire|इतिहास", re.I)),
+    ("philosophy", re.compile(r"philosoph|stoic|ethics|spiritual|meditation|vedanta|upani|दर्शन|अध्यात्म|भक्ति|योग|गीता|पुराण|उपनिषद", re.I)),
+    ("psychology", re.compile(r"psycholog|behavior|behaviour|cognitive|emotion|bias|persuasion|influence|मनोविज्ञान", re.I)),
+    ("productivity", re.compile(r"productiv|time management|focus|deep work|habit|efficiency|उत्पादकता", re.I)),
+    ("leadership", re.compile(r"leadership|leader\b|management|executive|नेतृत्व", re.I)),
+    ("business", re.compile(r"business|finance|money|invest|wealth|startup|entrepreneur|econom|strategy|marketing|व्यवसाय|वित्त", re.I)),
+    ("selfhelp", re.compile(r"self[\s-]?help|personal development|motivat|discipline|success|आत्म-विकास", re.I)),
 ]
 
 _FICTION = re.compile(
-    r"fiction|novel|romance|mystery|thriller|fantasy|sci[\s-]?fi|horror|drama|poetry|classic literature|play|tragedy",
+    r"fiction|novel|romance|mystery|thriller|fantasy|sci[\s-]?fi|horror|drama|poetry|classic literature|play|tragedy|"
+    r"हिन्दी साहित्य|हिंदी साहित्य|साहित्य|उपन्यास|कहानी|नाटक|काव्य|कविता|प्रेम कथा|रहस्य",
     re.I,
 )
 
