@@ -846,6 +846,7 @@ const BookDetail = () => {
               mindmapUrl={assets?.mindmap_url}
               loading={assetsLoading}
               isHindi={isHi}
+              book={book}
             />
           </div>
 

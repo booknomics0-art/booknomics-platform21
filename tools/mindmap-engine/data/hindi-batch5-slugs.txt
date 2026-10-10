@@ -1,0 +1,27 @@
+# Hindi batch 5 — leftover Devanagari + roman-saransh Hindi books (Devanagari titles via ROMAN_HI).
+# Skip roman South-Indian *-hindi-summary. Unique vs seed+batch1–4 at generate time.
+
+बुद्धिमत्ता-के-सात-स्तंभ-hindi-summary
+dhup-ka-ek-tukda-mannu-bhandari-saransh
+kitne-chaurahe-phanishwarnath-renu-saransh
+ek-akela-raste-mein-nirmal-verma-saransh
+dharti-ki-baat-phanishwar-nath-renu-saransh
+patthar-aur-pankhi-sumitranandan-pant-saransh
+ek-baat-aur-mannu-bhandari-saransh
+prem-ki-bhiksha-jayshankar-prasad-saransh
+ek-aur-ek-gyarah-srilal-shukla-saransh
+patthar-ki-deewar-bhagwati-charan-verma-saransh
+ek-aur-kavita-dinkar-saransh
+champaklal-ki-kahaniyan-krishan-chander-saransh
+patthar-ki-zuban-rajendra-yadav-saransh
+surya-ki-ghodi-ramdarash-mishra-saransh
+mahan-natak-vrindavan-lal-varma-saransh
+baazigar-shivani-saransh
+ek-nadi-vichitra-nadi-namwar-singh-saransh
+do-beegha-zameen-shailendra-saransh
+charitraheen-sharatchandra-saransh
+vaishali-ki-nagarvadhu-chatursen-saransh
+patthar-ka-ghoda-omprakash-valmiki-saransh
+amrapali-narendra-sharma-saransh
+patthar-ki-murten-ramdarash-mishra-saransh
+ek-vriksha-ki-chhaon-ram-nath-awasthi-saransh
