@@ -36,6 +36,8 @@ jobs:
   upload:
     runs-on: ubuntu-latest
     timeout-minutes: 180
+    # Picks up Environment secrets if the key was added under Settings → Environments → Production.
+    environment: Production
     env:
       SUPABASE_URL: https://pbkfewrtdgiagytmcigb.supabase.co
     steps:
@@ -52,10 +54,13 @@ jobs:
           K2: ${{ secrets.SUPABASE_SECRET_KEY }}
           K3: ${{ secrets.SUPABASE_SERVICE_KEY }}
           K4: ${{ secrets.SERVICE_ROLE_KEY }}
+          K5: ${{ secrets.SUPABASE_KEY }}
+          K6: ${{ secrets.SERVICE_ROLE }}
           ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
         run: |
-          KEY="${K1:-${K2:-${K3:-$K4}}}"
-          SRC="a repository secret"
+          echo "secret lengths (values never printed): K1=${#K1} K2=${#K2} K3=${#K3} K4=${#K4} K5=${#K5} K6=${#K6} ACCESS=${#ACCESS_TOKEN}"
+          KEY="${K1:-${K2:-${K3:-${K4:-${K5:-$K6}}}}}"
+          SRC="a repository/environment secret"
           if [ -z "$KEY" ] && [ -n "$ACCESS_TOKEN" ]; then
             SRC="SUPABASE_ACCESS_TOKEN via the Supabase Management API"
             KEY=$(curl -fsS -H "Authorization: Bearer $ACCESS_TOKEN" \
@@ -63,11 +68,12 @@ jobs:
               | python3 -c 'import json,sys; a=json.load(sys.stdin); k=next((x for x in a if x.get("name")=="service_role" or x.get("type")=="secret"), None); sys.stdout.write((k or {}).get("api_key") or "")') || KEY=""
           fi
           if [ -z "$KEY" ]; then
-            echo "::error::Add GitHub Actions secret SUPABASE_SERVICE_ROLE_KEY (Supabase → Project Settings → API Keys → service_role). Do not paste it in chat."
+            echo "::error::Runner still sees an empty key. Add SUPABASE_SERVICE_ROLE_KEY as a Repository secret (not a Variable, not Vercel): https://github.com/booknomics0-art/booknomics-platform21/settings/secrets/actions"
             {
               echo "### Mind maps not uploaded"
               echo ""
-              echo "No Supabase service-role key was found. Add **SUPABASE_SERVICE_ROLE_KEY** under Settings → Secrets and variables → Actions, then re-run **Upload mind maps to Supabase** with lang=hi."
+              echo "The Production environment job still has an empty service-role key."
+              echo "Add **SUPABASE_SERVICE_ROLE_KEY** under **Settings → Secrets and variables → Actions → Repository secrets** (not Environments, not Variables)."
             } >> "$GITHUB_STEP_SUMMARY"
             exit 1
           fi
