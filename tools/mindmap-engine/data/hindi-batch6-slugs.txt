@@ -1,0 +1,24 @@
+# Hindi batch 6 — leftover roman-saransh Hindi books (Devanagari titles via ROMAN_HI).
+# Skip roman South-Indian *-hindi-summary. Unique vs seed+batch1–5 at generate time.
+katha-sagar-premchand-saransh
+raat-ki-awaaz-krishna-sobti-saransh
+ek-samvad-mahadevi-varma-saransh
+aakhiri-kalam-suryakant-tripathi-nirala-saransh
+sone-ki-chidiya-rahul-sankrityayan-saransh
+sankalp-yashwant-dinkar-pendharkar-saransh
+teen-ekanki-bhagwati-charan-verma-saransh
+dharti-ki-awaaz-nagarjune-saransh
+ek-akeli-aurat-bhagwati-charan-verma-saransh
+chaurahon-par-kamleshwar-saransh
+do-mulaqatein-rajendra-yadav-saransh
+chidiya-ghar-ki-kahaniyan-krishan-chander-saransh
+ek-savera-jo-abya-aaya-harishankar-parsai-saransh
+kavita-ke-bahane-kunwar-narayan-saransh
+ek-aur-maleecha-kamleshwar-saransh
+neeli-ghas-krishna-baldev-vaaid-saransh
+kalam-ka-sipahi-amrit-rai-saransh
+sone-ka-anda-krishan-chander-saransh
+devdas-sharatchandra-saransh
+ek-bund-sahsa-kedarnath-singh-saransh
+ek-aur-savera-namwar-singh-saransh
+parineeta-sharatchandra-saransh
