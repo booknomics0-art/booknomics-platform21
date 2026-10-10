@@ -2,8 +2,8 @@
 """Upload vector SVG mind maps and set book_assets.mindmap_url.
 
 Use --catalog-json when available so the upload stage does not query the books
-catalog again. Existing mindmap_url rows are skipped. Upload concurrency is
-kept deliberately low to protect the Supabase Free database/storage project.
+catalog again. Existing mindmap_url rows are skipped. Upload concurrency and
+DB reads are deliberately bounded for the Supabase Free project.
 """
 from __future__ import annotations
 
@@ -17,7 +17,6 @@ from upload_supabase import (
     BUCKET,
     ensure_bucket,
     fetch_books,
-    fetch_existing_maps,
     index_books,
     match_book,
     public_url,
@@ -55,6 +54,45 @@ def load_catalog(path: str, lang: str) -> list[dict]:
     ]
 
 
+def fetch_existing_maps_safe(url: str, key: str) -> dict[str, str]:
+    out: dict[str, str] = {}
+    start = 0
+    page = 250
+    while True:
+        batch = None
+        for attempt in range(1, 6):
+            try:
+                code, raw, _ = rest(
+                    url,
+                    key,
+                    "GET",
+                    "/rest/v1/book_assets?select=book_id,mindmap_url",
+                    extra={"Range": f"{start}-{start + page - 1}"},
+                    timeout=60,
+                )
+                if code >= 500:
+                    raise RuntimeError(f"book_assets temporary HTTP {code}: {raw[:160]!r}")
+                if code >= 400:
+                    raise RuntimeError(f"book_assets fetch HTTP {code}: {raw[:300]!r}")
+                batch = json.loads(raw.decode("utf-8") or "[]")
+                break
+            except Exception as exc:  # noqa: BLE001
+                if attempt == 5:
+                    raise
+                delay = attempt * 2
+                print(f"book_assets range {start}: retry {attempt}/5 after {exc}; sleep={delay}s", flush=True)
+                time.sleep(delay)
+        assert batch is not None
+        for row in batch:
+            if row.get("book_id") and row.get("mindmap_url"):
+                out[row["book_id"]] = row["mindmap_url"]
+        print(f"existing mindmaps scanned: {start + len(batch)} rows", flush=True)
+        if len(batch) < page:
+            break
+        start += page
+    return out
+
+
 def main() -> int:
     p = argparse.ArgumentParser()
     p.add_argument("--lang", choices=("en", "hi"), default="en")
@@ -78,7 +116,7 @@ def main() -> int:
 
     books = load_catalog(args.catalog_json, args.lang) if args.catalog_json else fetch_books(url, key, args.lang)
     by_slug, by_core = index_books(books)
-    existing = {} if args.force else fetch_existing_maps(url, key)
+    existing = {} if args.force else fetch_existing_maps_safe(url, key)
     print(f"{len(svgs)} SVGs, {len(books)} catalog rows, {len(existing)} existing maps")
 
     matched = already = unmatched = 0
