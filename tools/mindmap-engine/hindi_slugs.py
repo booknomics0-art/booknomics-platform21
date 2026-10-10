@@ -366,6 +366,33 @@ def _slug_ascii(title: str, source: str = "") -> str:
     return slug or "hindi-book"
 
 
+_LATIN_AUTHORS = {
+    "ved prakash sharma": "वेद प्रकाश शर्मा",
+    "prakash sharma": "वेद प्रकाश शर्मा",
+    "surender mohan pathak": "सुरेंद्र मोहन पाठक",
+    "mohan pathak": "सुरेंद्र मोहन पाठक",
+    "om prakash sharma": "ओम प्रकाश शर्मा",
+}
+
+
+def _dev_tokens(text: str) -> str:
+    return " ".join(t for t in text.split() if _DEV.search(t))
+
+
+def _latin_author(parts: list[str], leftover: str) -> str:
+    toks = []
+    for t in list(parts) + leftover.split():
+        if re.fullmatch(r"[A-Za-z.]+", t) and t.lower() not in toks:
+            toks.append(t.lower())
+    blob = " ".join(toks).strip()
+    if blob in _LATIN_AUTHORS:
+        return _LATIN_AUTHORS[blob]
+    for key, val in sorted(_LATIN_AUTHORS.items(), key=lambda kv: -len(kv[0])):
+        if key in blob:
+            return val
+    return "अज्ञात"
+
+
 def _split_hi_parts(parts: list[str]) -> tuple[str, str]:
     if not parts:
         return "अज्ञात", "अज्ञात"
@@ -419,7 +446,17 @@ def parse_hindi_slug(raw: str) -> dict | None:
                 "source_slug": core,
                 "lang": "hi",
             }
-    title, author = _split_hi_parts(parts)
+    is_hindi_summary = "hindi-summary" in low
+    last = parts[-1]
+    if is_hindi_summary and last not in _AUTHOR_TAKE:
+        title, author = " ".join(parts), "अज्ञात"
+    else:
+        title, author = _split_hi_parts(parts)
+    if _DEV.search(title + author) and re.search(r"[A-Za-z]", title + author):
+        leftover = " ".join(t for t in (title + " " + author).split() if not _DEV.search(t))
+        title = _dev_tokens(title) or title
+        author_hi = _dev_tokens(author)
+        author = author_hi if author_hi else _latin_author(parts, leftover)
     if not _DEV.search(title + author):
         roman_authors = (
             "premchand", "prasad", "bachchan", "dinkar", "agyeya", "nirala", "pant",
@@ -432,7 +469,7 @@ def parse_hindi_slug(raw: str) -> dict | None:
             return None
         title = title.replace("-", " ").strip().title()
         author = author.replace("-", " ").strip().title()
-    slug = _slug_ascii(title, ascii_try)
+    slug = _slug_ascii(title, core)
     if len(slug) < 3:
         return None
     cat = "हिन्दी साहित्य"
