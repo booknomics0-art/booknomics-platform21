@@ -22,7 +22,6 @@ on:
     branches:
       - arena/7ad1337e-booknomics-platform21
     paths:
-      - .github/workflows/upload-mindmaps.yml
       - tools/mindmap-engine/upload_supabase.py
 
 permissions:
@@ -36,8 +35,6 @@ jobs:
   upload:
     runs-on: ubuntu-latest
     timeout-minutes: 180
-    # Picks up Environment secrets if the key was added under Settings → Environments → Production.
-    environment: Production
     env:
       SUPABASE_URL: https://pbkfewrtdgiagytmcigb.supabase.co
     steps:
