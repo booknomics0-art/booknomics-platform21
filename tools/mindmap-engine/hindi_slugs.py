@@ -351,6 +351,22 @@ ROMAN_HI = {
     "ek-bund-sahsa-kedarnath-singh": ("एक बूँद सहसा", "केदारनाथ सिंह"),
     "ek-aur-savera-namwar-singh": ("एक और सवेरा", "नामवर सिंह"),
     "parineeta-sharatchandra": ("परिणीता", "शरतचंद्र चट्टोपाध्याय"),
+    "pratigya-premchand": ("प्रतिज्ञा", "मुंशी प्रेमचंद"),
+    "kavita-ki-raat-mahadevi-varma": ("कविता की रात", "महादेवी वर्मा"),
+    "ek-purani-kahani-bhisham-sahni": ("एक पुरानी कहानी", "भीष्म साहनी"),
+    "do-rahe-mahadevi-varma": ("दो राहें", "महादेवी वर्मा"),
+    "kahan-kahan-se-guzar-aaya-suryakant-tripathi-nirala": ("कहाँ कहाँ से गुज़र आया", "सूर्यकांत त्रिपाठी निराला"),
+    "chitra-rabindranath-tagore": ("चित्रा", "रवींद्रनाथ ठाकुर"),
+    "patthar-ki-baat-ramdarash-mishra": ("पत्थर की बात", "रामदरश मिश्र"),
+    "ek-pyaar-ki-baat-jainendra-kumar": ("एक प्यार की बात", "जैनेंद्र कुमार"),
+    "dharti-dhan-na-apna-jagdish-chandra": ("धरती धन न अपना", "जगदीश चंद्र"),
+    "kahan-se-kahan-tak-ajneya": ("कहाँ से कहाँ तक", "अज्ञेय"),
+    "sone-ka-pinjra-shivani": ("सोने का पिंजरा", "शिवानी"),
+    "dharti-ki-beti-shivani": ("धरती की बेटी", "शिवानी"),
+    "barah-mah-kaifi-azmi": ("बारह माह", "कैफ़ी आज़मी"),
+    "ek-pyaar-kahani-jainendra-kumar": ("एक प्यार कहानी", "जैनेंद्र कुमार"),
+    "antahpur-madhav-sharma": ("अंतःपुर", "माधव शर्मा"),
+    "ek-chitthi-sadguru-prasad": ("एक चिट्ठी", "सद्गुरु प्रसाद"),
 }
 
 _DEV = re.compile(r"[\u0900-\u097F]")

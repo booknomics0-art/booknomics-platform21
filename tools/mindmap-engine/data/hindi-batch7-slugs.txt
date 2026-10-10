@@ -1,0 +1,18 @@
+# Hindi batch 7 — leftover roman-saransh Hindi books (Devanagari titles via ROMAN_HI).
+# Skip roman South-Indian *-hindi-summary. Unique vs seed+batch1–6 at generate time.
+pratigya-premchand-saransh
+kavita-ki-raat-mahadevi-varma-saransh
+ek-purani-kahani-bhisham-sahni-saransh
+do-rahe-mahadevi-varma-saransh
+kahan-kahan-se-guzar-aaya-suryakant-tripathi-nirala-saransh
+chitra-rabindranath-tagore-saransh
+patthar-ki-baat-ramdarash-mishra-saransh
+ek-pyaar-ki-baat-jainendra-kumar-saransh
+dharti-dhan-na-apna-jagdish-chandra-saransh
+kahan-se-kahan-tak-ajneya-saransh
+sone-ka-pinjra-shivani-saransh
+dharti-ki-beti-shivani-saransh
+barah-mah-kaifi-azmi-saransh
+ek-pyaar-kahani-jainendra-kumar-saransh
+antahpur-madhav-sharma-saransh
+ek-chitthi-sadguru-prasad-saransh
