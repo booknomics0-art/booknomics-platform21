@@ -7,6 +7,7 @@ on:
       - arena/7ad1337e-booknomics-platform21
     paths:
       - .github/workflows/upload-hindi-svg-mindmaps.yml
+      - tools/mindmap-engine/fetch_live_books.py
       - tools/mindmap-engine/render_svg.py
       - tools/mindmap-engine/generate_svg.py
       - tools/mindmap-engine/upload_svg_supabase.py
@@ -26,7 +27,6 @@ jobs:
       SUPABASE_URL: https://pbkfewrtdgiagytmcigb.supabase.co
     steps:
       - uses: actions/checkout@v4
-
       - uses: actions/setup-python@v5
         with:
           python-version: "3.11"
@@ -45,103 +45,40 @@ jobs:
               "https://api.supabase.com/v1/projects/pbkfewrtdgiagytmcigb/api-keys?reveal=true" \
               | python3 -c 'import json,sys; a=json.load(sys.stdin); k=next((x for x in a if x.get("name")=="service_role" or x.get("type")=="secret"), None); sys.stdout.write((k or {}).get("api_key") or "")') || KEY=""
           fi
-          if [ -z "$KEY" ]; then
-            echo "::error::No Supabase service-role/secret key available"
-            exit 1
-          fi
+          test -n "$KEY" || { echo "::error::No Supabase service-role/secret key available"; exit 1; }
           echo "::add-mask::$KEY"
           echo "SUPABASE_SERVICE_ROLE_KEY=$KEY" >> "$GITHUB_ENV"
 
-      - name: Validate SVG scripts
-        run: python -m py_compile render_svg.py generate_svg.py upload_svg_supabase.py upload_supabase.py content.py
+      - name: Validate scripts
         working-directory: tools/mindmap-engine
+        run: python -m py_compile fetch_live_books.py render_svg.py generate_svg.py upload_svg_supabase.py upload_supabase.py content.py
 
-      - name: Fetch exact published Hindi books
-        shell: bash
-        run: |
-          mkdir -p out
-          python - <<'PY'
-          import json, os, time, urllib.error, urllib.parse, urllib.request
-          from pathlib import Path
+      - name: Fetch exact published Hindi catalog
+        working-directory: tools/mindmap-engine
+        run: python fetch_live_books.py --lang hi --out ../../out/live-hindi-books.json --page 100
 
-          base = os.environ["SUPABASE_URL"].rstrip("/")
-          key = os.environ["SUPABASE_SERVICE_ROLE_KEY"]
-          fields = ",".join([
-              "id", "slug", "title", "author", "category", "tagline", "overview",
-              "key_ideas", "daily_application", "action_system", "real_life_example", "language"
-          ])
-          rows = []
-          start = 0
-          page = 100
-          while True:
-              query = urllib.parse.urlencode({
-                  "select": fields,
-                  "language": "eq.hi",
-                  "status": "eq.published",
-                  "is_draft": "eq.false",
-                  "order": "slug.asc",
-              })
-              last = None
-              for attempt in range(1, 6):
-                  try:
-                      req = urllib.request.Request(
-                          f"{base}/rest/v1/books?{query}",
-                          headers={
-                              "apikey": key,
-                              "Authorization": f"Bearer {key}",
-                              "Range": f"{start}-{start + page - 1}",
-                          },
-                      )
-                      with urllib.request.urlopen(req, timeout=60) as resp:
-                          batch = json.loads(resp.read().decode("utf-8") or "[]")
-                      break
-                  except Exception as exc:
-                      last = exc
-                      if attempt == 5:
-                          raise
-                      print(f"page {start} retry {attempt}/5 after {type(exc).__name__}: {exc}")
-                      time.sleep(attempt * 3)
-              rows.extend(batch)
-              print(f"Fetched {len(rows)} Hindi rows")
-              if len(batch) < page:
-                  break
-              start += page
-          if not rows:
-              raise SystemExit("No published Hindi books returned")
-          Path("out/live-hindi-books.json").write_text(json.dumps(rows, ensure_ascii=False), encoding="utf-8")
-          print(f"Fetched {len(rows)} published Hindi books")
-          PY
-
-      - name: Smoke render 5 localized Hindi SVG maps
+      - name: Smoke render localized Hindi maps
+        working-directory: tools/mindmap-engine
         run: python generate_svg.py --lang hi --json ../../out/live-hindi-books.json --out ../../out/svg-hi-smoke --limit 5
-        working-directory: tools/mindmap-engine
 
-      - name: Verify Devanagari labels are present
-        shell: bash
+      - name: Verify Devanagari labels
         run: |
           grep -R -q "एक नज़र में पूरी किताब" out/svg-hi-smoke
           grep -R -q "यह क्यों महत्वपूर्ण है" out/svg-hi-smoke
           grep -R -q "5 मुख्य सीखें" out/svg-hi-smoke
 
       - name: Render all Hindi SVG maps
-        run: python generate_svg.py --lang hi --json ../../out/live-hindi-books.json --out ../../out/mindmaps-hi-svg
         working-directory: tools/mindmap-engine
+        run: python generate_svg.py --lang hi --json ../../out/live-hindi-books.json --out ../../out/mindmaps-hi-svg
 
-      - name: Enforce storage-size and count guards
-        shell: bash
+      - name: Enforce count and size guards
         run: |
           bytes=$(du -sb out/mindmaps-hi-svg | cut -f1)
           count=$(find out/mindmaps-hi-svg -maxdepth 1 -name '*.svg' | wc -l)
           echo "Rendered $count Hindi SVGs using $bytes bytes"
-          if [ "$count" -lt 1500 ]; then
-            echo "::error::Expected at least 1500 Hindi SVGs, got $count"
-            exit 1
-          fi
-          if [ "$bytes" -gt 52428800 ]; then
-            echo "::error::Hindi SVG batch is above the 50 MB safety ceiling; refusing upload"
-            exit 1
-          fi
+          test "$count" -ge 1500 || { echo "::error::Expected >=1500 Hindi SVGs"; exit 1; }
+          test "$bytes" -le 52428800 || { echo "::error::Hindi SVG batch exceeds 50 MB safety ceiling"; exit 1; }
 
       - name: Upload only missing Hindi mindmaps
-        run: python upload_svg_supabase.py --lang hi --dir ../../out/mindmaps-hi-svg --workers 8
         working-directory: tools/mindmap-engine
+        run: python upload_svg_supabase.py --lang hi --dir ../../out/mindmaps-hi-svg --workers 8
