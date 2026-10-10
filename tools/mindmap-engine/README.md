@@ -25,6 +25,7 @@ Useful flags:
 | `--limit 20` | First N books only |
 | `--skip-existing` | Resume a long run |
 | `--json path.json` | Merge/override catalog (title, author, category, overview, key_ideas, …) |
+| `--slugs-file path.txt` | Merge more `/books/{slug}-summary` lines |
 | `--self-test` | Catalog size + one PNG smoke test |
 
 ## JSON overlay shape
@@ -47,4 +48,4 @@ Useful flags:
 
 Each PNG is **2560×1440** (16:9): hero, 8 genre-colored branches, quick recall, `booknomics` mark.
 
-Default catalog is 300+ English titles across self-help, productivity, psychology, business, finance, leadership, philosophy, biography, history, science, and literature.
+Default catalog is the 435-title seed plus extra English slugs from the live Booknomics sitemap (`extra_slugs.py`). Hindi (`-hindi-summary`, `-saransh`) is skipped. Thin rows use genre reading-lenses; overlay real notes via `--json` when you have them.

@@ -705,6 +705,8 @@ CONTENT: dict[str, dict] = {
 
 def load_books(extra_json: str | None = None) -> list[dict]:
     """Dedupe by slug. Extra JSON may add or override fields."""
+    from extra_slugs import extra_books, is_seed_title_author
+
     seen: set[str] = set()
     books: list[dict] = []
     for title, author, category in SEED:
@@ -715,6 +717,17 @@ def load_books(extra_json: str | None = None) -> list[dict]:
         row = {"title": title, "author": author, "category": category, "slug": slug}
         row.update(CONTENT.get(slug, {}))
         books.append(row)
+    for item in extra_books():
+        slug = item.get("slug") or _slug(item.get("title") or "")
+        if not slug or slug in seen or len(slug) < 4:
+            continue
+        src = item.get("source_slug") or ""
+        if src and any(is_seed_title_author(src, s) for s in seen):
+            continue
+        seen.add(slug)
+        item.setdefault("slug", slug)
+        item.update(CONTENT.get(slug, {}))
+        books.append(item)
     if extra_json:
         import json
         from pathlib import Path

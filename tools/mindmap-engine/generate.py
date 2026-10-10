@@ -51,6 +51,7 @@ def main() -> int:
     p = argparse.ArgumentParser(description="Render Booknomics 16:9 mind-map PNGs in batch.")
     p.add_argument("--out", default="../../out/mindmaps", help="Output folder for PNGs")
     p.add_argument("--json", dest="extra_json", help="Optional JSON list of books (merges/overrides catalog)")
+    p.add_argument("--slugs-file", help="Text file of extra English /books/{slug}-summary lines")
     p.add_argument("--limit", type=int, default=0, help="Render only the first N books (0 = all)")
     p.add_argument("--skip-existing", action="store_true", help="Do not overwrite existing PNGs")
     p.add_argument("--manifest", action="store_true", help="Write manifest.json next to PNGs")
@@ -61,6 +62,15 @@ def main() -> int:
         return self_test()
 
     books = load_books(args.extra_json)
+    if args.slugs_file:
+        from extra_slugs import parse_english_slug
+        seen = {b["slug"] for b in books}
+        for line in Path(args.slugs_file).read_text(encoding="utf-8").splitlines():
+            item = parse_english_slug(line.strip())
+            if not item or item["slug"] in seen:
+                continue
+            seen.add(item["slug"])
+            books.append(item)
     if args.limit and args.limit > 0:
         books = books[: args.limit]
 
