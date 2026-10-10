@@ -4,6 +4,7 @@
 Usage:
   python generate.py --out ../../out/mindmaps
   python generate.py --lang hi --out ../../out/mindmaps-hi
+  python generate.py --lang hi --json live-hindi-books.json --out ../../out/mindmaps-hi-live
   python generate.py --out ../../out/mindmaps --limit 20
   python generate.py --json books.json --out ./pngs
   python generate.py --self-test
@@ -11,6 +12,7 @@ Usage:
 
 Does not invent plot facts. Thin catalog rows use genre reading-lenses,
 not fake chapter claims. Extra JSON can overlay real summary fields.
+For Hindi, --json is authoritative so production DB slugs map 1:1 to PNGs.
 """
 
 from __future__ import annotations
@@ -32,6 +34,31 @@ from render import render_mindmap  # noqa: E402
 def slugify(title: str) -> str:
     import re
     return re.sub(r"[^a-z0-9]+", "-", title.lower()).strip("-")[:80]
+
+
+def load_json_rows(path: str, lang: str | None = None) -> list[dict]:
+    payload = json.loads(Path(path).read_text(encoding="utf-8"))
+    rows = payload if isinstance(payload, list) else payload.get("books", [])
+    out: list[dict] = []
+    seen: set[str] = set()
+    for raw in rows:
+        if not isinstance(raw, dict):
+            continue
+        row = dict(raw)
+        language = str(row.get("language") or row.get("lang") or "").lower().strip()
+        if lang and language and not language.startswith(lang):
+            continue
+        slug = str(row.get("slug") or "").strip().lower().strip("/")
+        if not slug:
+            slug = slugify(str(row.get("title") or ""))
+        if not slug or slug in seen:
+            continue
+        seen.add(slug)
+        row["slug"] = slug
+        if lang:
+            row["lang"] = lang
+        out.append(row)
+    return out
 
 
 def self_test(lang: str = "en") -> int:
@@ -59,7 +86,7 @@ def main() -> int:
     p = argparse.ArgumentParser(description="Render Booknomics 16:9 mind-map PNGs in batch.")
     p.add_argument("--out", default="", help="Output folder for PNGs")
     p.add_argument("--lang", choices=("en", "hi"), default="en", help="en = Latin catalog, hi = Devanagari Hindi")
-    p.add_argument("--json", dest="extra_json", help="Optional JSON list of books (merges/overrides catalog)")
+    p.add_argument("--json", dest="extra_json", help="Optional JSON list of books; authoritative for Hindi, merge/override for English")
     p.add_argument("--slugs-file", help="Text file of extra /books/{slug} lines")
     p.add_argument("--limit", type=int, default=0, help="Render only the first N books (0 = all)")
     p.add_argument("--skip-existing", action="store_true", help="Do not overwrite existing PNGs")
@@ -71,8 +98,13 @@ def main() -> int:
         return self_test(args.lang)
 
     if args.lang == "hi":
-        from hindi_slugs import load_hindi_books
-        books = load_hindi_books(args.slugs_file)
+        if args.extra_json:
+            books = load_json_rows(args.extra_json, "hi")
+            if not books:
+                raise SystemExit("Hindi --json contained no usable rows")
+        else:
+            from hindi_slugs import load_hindi_books
+            books = load_hindi_books(args.slugs_file)
     else:
         books = load_books(args.extra_json)
         if args.slugs_file:
