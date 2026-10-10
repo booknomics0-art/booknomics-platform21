@@ -82,8 +82,19 @@ const Hindi = () => {
 
       if (category !== "सभी") request = request.eq("category", category);
 
-      const q = debouncedQuery.trim().replace(/[,%()]/g, " ").slice(0, 80);
-      if (q) request = request.or(`title.ilike.%${q}%,author.ilike.%${q}%`);
+      const q = debouncedQuery.trim().replace(/[,%()]/g, " ").replace(/\s+/g, " ").slice(0, 80);
+      if (q) {
+        const romanSlugQuery = q
+          .toLocaleLowerCase()
+          .split(/[^a-z0-9]+/)
+          .filter(Boolean)
+          .join("%");
+        const searchFilters = [`title.ilike.%${q}%`, `author.ilike.%${q}%`];
+        if (romanSlugQuery) {
+          searchFilters.push(`slug.ilike.%${romanSlugQuery}%`, `seo_slug.ilike.%${romanSlugQuery}%`);
+        }
+        request = request.or(searchFilters.join(","));
+      }
 
       const { data, error, count } = await request
         .order("title")
