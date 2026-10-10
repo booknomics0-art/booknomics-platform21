@@ -55,6 +55,7 @@ const Paths = lazy(() => import("./pages/Paths.tsx"));
 const PathDetail = lazy(() => import("./pages/PathDetail.tsx"));
 const Contact = lazy(() => import("./pages/Contact.tsx"));
 const Press = lazy(() => import("./pages/Press.tsx"));
+const ReadingDiscoveryReport = lazy(() => import("./pages/ReadingDiscoveryReport.tsx"));
 const Blog = lazy(() => import("./pages/Blog.tsx"));
 const BlogPost = lazy(() => import("./pages/BlogPost.tsx"));
 const SeoDashboard = lazy(() => import("./pages/admin/SeoDashboard.tsx"));
@@ -158,6 +159,7 @@ const App = () => (
                 <Route path="/paths/:slug" element={<PathDetail />} />
                 <Route path="/contact" element={<Contact />} />
                 <Route path="/press" element={<Press />} />
+                <Route path="/research/reading-discovery-report-2026" element={<ReadingDiscoveryReport />} />
                 <Route path="/blog" element={<Blog />} />
                 <Route path="/blog/:slug" element={<BlogPost />} />
                 <Route path="*" element={<NotFound />} />
