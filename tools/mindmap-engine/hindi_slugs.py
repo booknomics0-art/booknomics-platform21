@@ -323,7 +323,7 @@ _AUTHOR_TAKE = {
     "सांकृत्यायन": 2, "सांकृतयायन": 2, "पाण्डेय": 2, "पांडेय": 2,
     "नारायण": 2, "केदारनाथ": 1, "निरंजननाथ": 1, "चक्रधर": 2,
     "बंद्योपाध्याय": 2, "चट्टोपाध्याय": 2, "नागर": 2,
-    "कम्बोज": 3,
+    "कम्बोज": 3, "शिवमूर्ति": 1, "कमलेश्वर": 1, "शास्त्री": 3,
 }
 
 
@@ -474,6 +474,9 @@ def parse_hindi_slug(raw: str) -> dict | None:
         title = title.replace("-", " ").strip().title()
         author = author.replace("-", " ").strip().title()
     slug = _slug_ascii(title, core)
+    if len(slug) < 3:
+        # Short title token (e.g. एक-ओंकार-सतनाम) — transliterate the full core.
+        slug = _slug_ascii(core.replace("-", " "), "")
     if len(slug) < 3:
         return None
     cat = "हिन्दी साहित्य"
