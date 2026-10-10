@@ -12,4 +12,8 @@ export const SERVER_SLUG_REDIRECTS: Record<string, string> = {
     "atlas-shrugged-ayn-rand-summary",
   "mary-shelley-s-frankenstein-or-the-modern-prometheus-1818-text-mary-shelley-summary":
     "frankenstein-1818-mary-shelley-summary",
+  "don-t-make-me-think-revisited-steve-krug-summary":
+    "universal-principles-of-design-lidwell-holden-butler-summary",
+  "hospitals-facility-planning-and-management-g-d-kunders-summary":
+    "hospitals-planning-design-management-kunders-gopinath-katakam-summary",
 };
