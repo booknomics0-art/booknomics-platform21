@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import re
+from pathlib import Path
 
 # Trailing `-summary` slugs, ASCII only, not hindi-summary / saransh.
 EXTRA_SLUGS = """
@@ -733,8 +734,16 @@ def is_seed_title_author(src: str, seed_slug: str) -> bool:
 def extra_books() -> list[dict]:
     seen: set[str] = set()
     out: list[dict] = []
-    for raw in EXTRA_SLUGS:
-        item = parse_english_slug(raw if raw.endswith("-summary") else f"{raw}-summary")
+    raws = list(EXTRA_SLUGS)
+    data_dir = Path(__file__).resolve().parent / "data"
+    if data_dir.is_dir():
+        for path in sorted(data_dir.glob("*.txt")):
+            raws.extend(path.read_text(encoding="utf-8").splitlines())
+    for raw in raws:
+        line = raw.strip()
+        if not line or line.startswith("#"):
+            continue
+        item = parse_english_slug(line if line.endswith("-summary") else f"{line}-summary")
         if not item or item["slug"] in seen:
             continue
         seen.add(item["slug"])
