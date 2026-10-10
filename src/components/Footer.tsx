@@ -14,6 +14,8 @@ const footerLinkClass = "inline-flex min-h-11 md:min-h-0 items-center hover:text
 export const Footer = () => {
   const { pathname } = useLocation();
   const isHindi = pathname.startsWith("/hindi") || pathname.startsWith("/best-hindi");
+  const openCookieSettings = () => window.dispatchEvent(new Event("bn-open-cookie-settings"));
+
   return (
     <footer className="bn-site-footer border-t border-border mt-12 md:mt-24">
       <div className="container py-8 md:py-14">
@@ -53,11 +55,17 @@ export const Footer = () => {
             <h2 className="font-serif text-xs md:text-sm font-semibold mb-2 md:mb-3">Company</h2>
             <ul className="space-y-1.5 md:space-y-2 text-xs md:text-sm text-muted-foreground">
               <li><Link to="/about" className={footerLinkClass}>About</Link></li>
+              <li><Link to="/about#editorial-process" className={footerLinkClass}>Editorial standards</Link></li>
               <li><Link to="/contact" className={footerLinkClass}>Contact</Link></li>
               <li><Link to="/press" className={footerLinkClass}>Press &amp; Media</Link></li>
               <li><Link to="/privacy" className={footerLinkClass}>Privacy</Link></li>
               <li><Link to="/terms" className={footerLinkClass}>Terms</Link></li>
               <li><Link to="/copyright" className={footerLinkClass}>Copyright / DMCA</Link></li>
+              <li>
+                <button type="button" onClick={openCookieSettings} className={`${footerLinkClass} text-left`}>
+                  Cookie settings
+                </button>
+              </li>
             </ul>
           </div>
         </div>

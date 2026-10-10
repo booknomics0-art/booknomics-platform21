@@ -14,6 +14,10 @@ const orgLd = {
   "@id": "https://www.booknomics.com/#organization",
   name: "Booknomics",
   url: "https://www.booknomics.com/",
+  logo: {
+    "@type": "ImageObject",
+    url: "https://www.booknomics.com/og-default.svg",
+  },
   description: "Booknomics is a bilingual learning platform for practical book summaries, deeper analysis, reflection, and action in Hindi and English.",
   areaServed: { "@type": "Country", name: "India" },
   knowsLanguage: ["hi", "en"],
@@ -84,6 +88,20 @@ const About = () => (
               <li><strong>Source separation:</strong> the original book is the source work; Booknomics is the publisher of the independent summary page.</li>
               <li><strong>Search quality:</strong> incomplete, duplicate, or lower-confidence pages can remain <code>noindex</code> until they meet the publishing gate.</li>
             </ol>
+          </>
+        ),
+      },
+      {
+        id: "funding",
+        title: "How Booknomics Is Funded",
+        body: (
+          <>
+            <p>
+              Booknomics may use clearly identified advertising, affiliate links, and optional paid features to help fund free access to the library and ongoing editorial work.
+            </p>
+            <p>
+              Commercial relationships do <strong>not</strong> determine which books we cover, how we rank books, or the conclusions of a summary or analysis. Advertising is kept separate from editorial decisions, and any sponsored material will be clearly labelled if we publish it.
+            </p>
           </>
         ),
       },

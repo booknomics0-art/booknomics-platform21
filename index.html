@@ -15,13 +15,20 @@
       })();
     </script>
 
-    <!-- Keep the gtag queue available immediately, but fetch third-party analytics
-         only after interaction/idle so it cannot contend with the homepage LCP. -->
+    <!-- Google Consent Mode defaults to denied until the visitor explicitly
+         accepts non-essential cookies. Third-party scripts are not fetched
+         before consent, which keeps analytics/advertising separate from the
+         essential reading experience. -->
     <script>
       window.dataLayer = window.dataLayer || [];
       function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
-      gtag('config', 'G-1MDPDTDYDQ');
+      gtag('consent', 'default', {
+        ad_storage: 'denied',
+        analytics_storage: 'denied',
+        ad_user_data: 'denied',
+        ad_personalization: 'denied',
+        wait_for_update: 500
+      });
 
       function loadAnalytics(){
         if (window.__IS_BOT__ || window.__analyticsLoaded) return;
@@ -30,6 +37,8 @@
         s.async = true;
         s.src = 'https://www.googletagmanager.com/gtag/js?id=G-1MDPDTDYDQ';
         document.head.appendChild(s);
+        gtag('js', new Date());
+        gtag('config', 'G-1MDPDTDYDQ', { anonymize_ip: true });
       }
 
       function loadClarity(){
@@ -42,26 +51,63 @@
         })(window, document, 'clarity', 'script', 'yre2cjh6gg');
       }
 
-      function scheduleAnalytics(){
+      function loadAds(){
+        if (window.__IS_BOT__ || window.__adsLoaded) return;
+        window.__adsLoaded = true;
+        var s = document.createElement('script');
+        s.async = true;
+        s.crossOrigin = 'anonymous';
+        s.src = 'https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3415243304589225';
+        document.head.appendChild(s);
+      }
+
+      function applyConsent(value){
+        var accepted = value === 'accepted';
+        gtag('consent', 'update', {
+          ad_storage: accepted ? 'granted' : 'denied',
+          analytics_storage: accepted ? 'granted' : 'denied',
+          ad_user_data: accepted ? 'granted' : 'denied',
+          ad_personalization: accepted ? 'granted' : 'denied'
+        });
+        if (accepted) {
+          loadAnalytics();
+          loadClarity();
+          loadAds();
+        }
+      }
+
+      window.__bnOnConsent = applyConsent;
+      // Backward-compatible hook used by older cached chunks.
+      window.__bnLoadThirdParties = function(){ applyConsent('accepted'); };
+
+      function getStoredConsent(){
+        try { return localStorage.getItem('bn-cookie-consent'); }
+        catch (e) { return null; }
+      }
+
+      function scheduleAcceptedThirdParties(){
+        if (getStoredConsent() !== 'accepted' || window.__IS_BOT__) return;
         var fired = false;
         function run(){
           if (fired) return;
           fired = true;
-          loadAnalytics();
-          loadClarity();
+          applyConsent('accepted');
         }
         ['pointerdown','keydown','scroll','touchstart'].forEach(function(e){
           window.addEventListener(e, run, { once: true, passive: true });
         });
         window.addEventListener('load', function(){
           if ('requestIdleCallback' in window) {
-            window.requestIdleCallback(run, { timeout: 3500 });
+            window.requestIdleCallback(run, { timeout: 4500 });
           } else {
-            setTimeout(run, 3000);
+            setTimeout(run, 3500);
           }
         }, { once: true });
       }
-      scheduleAnalytics();
+
+      // Persist a previous rejection as denied without loading any vendor script.
+      if (getStoredConsent() === 'rejected') applyConsent('rejected');
+      scheduleAcceptedThirdParties();
     </script>
 
     <meta name="google-site-verification" content="zbvpT5s8SosdZJkCtS-0aVLONPI0jZerMScqWvMtVrU" />
@@ -76,35 +122,6 @@
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:wght@600;700&family=Inter:wght@400;500;600&display=swap" media="print" onload="this.media='all'" />
     <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:wght@600;700&family=Inter:wght@400;500;600&display=swap" /></noscript>
 
-    <!-- AdSense remains deferred until first interaction or idle to protect LCP -->
-    <script>
-      function loadAds(){
-        if (window.__IS_BOT__ || window.__adsLoaded) return; window.__adsLoaded = true;
-        var s = document.createElement('script');
-        s.async = true; s.crossOrigin = 'anonymous';
-        s.src = 'https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3415243304589225';
-        document.head.appendChild(s);
-      }
-      var _tpFired = false;
-      function _tpTrigger(){ if(_tpFired) return; _tpFired = true; loadAds(); }
-      function _tpConsent(){
-        try { return localStorage.getItem('bn-cookie-consent'); } catch (e) { return 'accepted'; }
-      }
-      window.__bnLoadThirdParties = _tpTrigger;
-      function _tpSchedule(){
-        if (_tpConsent() !== 'accepted') return;
-        ['pointerdown','keydown','scroll','touchstart'].forEach(function(e){
-          window.addEventListener(e, _tpTrigger, { once: true, passive: true });
-        });
-        if ('requestIdleCallback' in window) {
-          window.requestIdleCallback(_tpTrigger, { timeout: 8000 });
-        } else {
-          setTimeout(_tpTrigger, 6000);
-        }
-      }
-      _tpSchedule();
-    </script>
-
     <meta name="google-site-verification" content="M6qwobaePtnNuoJth9UeTI1oHuxTbm4k0grRhVsbORg" />
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -116,7 +133,7 @@
     <meta name="author" content="Booknomics" />
     <link rel="ai-catalog" href="/.well-known/ai-catalog.json" />
     <script type="application/ld+json">
-      {"@context":"https://schema.org","@type":"Organization","name":"Booknomics","url":"https://www.booknomics.com","sameAs":["https://www.instagram.com/booknomics_official/","https://www.threads.com/@booknomics_official","https://www.facebook.com/profile.php?id=61590907565450","https://www.youtube.com/@booknomics_hindi","https://www.youtube.com/@BookNomicsOfficial","https://in.pinterest.com/booknomics_official/"]}
+      {"@context":"https://schema.org","@type":"Organization","@id":"https://www.booknomics.com/#organization","name":"Booknomics","url":"https://www.booknomics.com/","logo":{"@type":"ImageObject","url":"https://www.booknomics.com/og-default.svg"},"sameAs":["https://www.instagram.com/booknomics_official/","https://www.threads.com/@booknomics_official","https://www.facebook.com/profile.php?id=61590907565450","https://www.youtube.com/@booknomics_hindi","https://www.youtube.com/@BookNomicsOfficial","https://in.pinterest.com/booknomics_official/"]}
     </script>
 
     <meta property="og:type" content="website" />
