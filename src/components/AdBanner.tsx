@@ -3,16 +3,13 @@ import { useEffect, useRef } from "react";
 /**
  * Google AdSense ad unit component.
  *
- * Usage:
- *   <AdBanner slot="1234567890" format="horizontal" />
- *
- * The AdSense script is already loaded via the deferred third-parties block
- * in index.html (after cookie consent). This component just inserts the
- * <ins> element and pushes the ad request.
+ * Only real numeric ad-unit slot IDs are rendered. Before AdSense creates
+ * valid units (or when Auto Ads is used), the component returns null instead
+ * of showing an empty/invalid advertising container.
  */
 
 interface AdBannerProps {
-  /** Ad slot ID from your AdSense dashboard. */
+  /** Numeric ad slot ID from the AdSense dashboard. */
   slot: string;
   /** Ad format — "auto", "horizontal", "vertical", "rectangle", "fluid". */
   format?: "auto" | "horizontal" | "vertical" | "rectangle" | "fluid";
@@ -22,6 +19,8 @@ interface AdBannerProps {
   responsive?: boolean;
 }
 
+const isValidSlot = (slot?: string | null) => Boolean(slot && /^\d{5,}$/.test(slot));
+
 export const AdBanner = ({
   slot,
   format = "auto",
@@ -29,23 +28,25 @@ export const AdBanner = ({
   responsive = true,
 }: AdBannerProps) => {
   const insRef = useRef<HTMLModElement>(null);
+  const validSlot = isValidSlot(slot);
 
   useEffect(() => {
-    // Only push the ad if AdSense is loaded and we're not a bot
-    if (typeof window === "undefined") return;
+    if (!validSlot || typeof window === "undefined") return;
     if ((window as any).__IS_BOT__) return;
     if (!(window as any).adsbygoogle) return;
 
     try {
-      // Push the ad request — AdSense handles the rest
       ((window as any).adsbygoogle = (window as any).adsbygoogle || []).push({});
     } catch {
-      // Ignore AdSense errors
+      // AdSense can reject duplicate/early pushes while a route is changing.
+      // It should never interrupt the reading experience.
     }
-  }, [slot]);
+  }, [slot, validSlot]);
+
+  if (!validSlot) return null;
 
   return (
-    <div className={`ad-container ${className}`}>
+    <div className={`ad-container ${className}`} aria-label="Advertisement">
       <ins
         ref={insRef}
         className="adsbygoogle"
@@ -60,34 +61,21 @@ export const AdBanner = ({
 };
 
 /**
- * A styled in-feed ad that blends with the card grid on browse/index pages.
+ * Optional in-feed unit. It stays disabled until a real slot is provided via
+ * VITE_ADSENSE_INFEED_SLOT.
  */
-export const InFeedAd = ({ className = "" }: { className?: string }) => (
-  <div className={`rounded-xl border border-border bg-card overflow-hidden ${className}`}>
-    <ins
-      className="adsbygoogle"
-      style={{ display: "block" }}
-      data-ad-client="ca-pub-3415243304589225"
-      data-ad-slot="auto"
-      data-ad-format="fluid"
-      data-ad-layout-key="-6t+ed+2i-1n-4w"
-      data-full-width-responsive="true"
-    />
-  </div>
-);
+export const InFeedAd = ({ className = "" }: { className?: string }) => {
+  const slot = import.meta.env.VITE_ADSENSE_INFEED_SLOT as string | undefined;
+  if (!isValidSlot(slot)) return null;
+  return <AdBanner slot={slot!} format="fluid" className={`rounded-xl border border-border bg-card overflow-hidden ${className}`} />;
+};
 
 /**
- * A sidebar/sticky ad for the right column on detail pages.
+ * Optional sidebar unit. It stays disabled until a real slot is provided via
+ * VITE_ADSENSE_SIDEBAR_SLOT.
  */
-export const SidebarAd = ({ className = "" }: { className?: string }) => (
-  <div className={`sticky top-20 ${className}`}>
-    <ins
-      className="adsbygoogle"
-      style={{ display: "block" }}
-      data-ad-client="ca-pub-3415243304589225"
-      data-ad-slot="auto"
-      data-ad-format="vertical"
-      data-full-width-responsive="true"
-    />
-  </div>
-);
+export const SidebarAd = ({ className = "" }: { className?: string }) => {
+  const slot = import.meta.env.VITE_ADSENSE_SIDEBAR_SLOT as string | undefined;
+  if (!isValidSlot(slot)) return null;
+  return <AdBanner slot={slot!} format="vertical" className={`sticky top-20 ${className}`} />;
+};
