@@ -41,6 +41,12 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - uses: actions/cache@v4
+        with:
+          path: out/mindmaps-hi
+          key: mindmaps-hi-${{ hashFiles('tools/mindmap-engine/hindi_slugs.py', 'tools/mindmap-engine/render.py', 'tools/mindmap-engine/data/hindi*.txt') }}
+          restore-keys: mindmaps-hi-
+
       - uses: actions/setup-python@v5
         with:
           python-version: "3.11"

@@ -73,10 +73,11 @@ def rest(
     extra: dict[str, str] | None = None,
     timeout: int = 120,
 ) -> tuple[int, bytes, dict[str, str]]:
-    # New-style sb_publishable_ / sb_secret_ keys are not JWTs — apikey only.
-    headers = {"apikey": key, "Content-Type": content_type}
-    if not key.startswith("sb_"):
-        headers["Authorization"] = f"Bearer {key}"
+    headers = {
+        "apikey": key,
+        "Authorization": f"Bearer {key}",
+        "Content-Type": content_type,
+    }
     if extra:
         headers.update(extra)
     req = urllib.request.Request(f"{url}{path}", data=body, method=method, headers=headers)
@@ -174,36 +175,48 @@ def public_url(url: str, path: str) -> str:
     return f"{url}/storage/v1/object/public/{BUCKET}/{encoded}"
 
 
+def ensure_bucket(url: str, key: str) -> None:
+    code, raw, _ = rest(url, key, "GET", f"/storage/v1/bucket/{BUCKET}")
+    if code < 400:
+        return
+    payload = json.dumps({"id": BUCKET, "name": BUCKET, "public": True}).encode("utf-8")
+    code, raw, _ = rest(url, key, "POST", "/storage/v1/bucket", body=payload)
+    if code >= 400 and code != 409:
+        raise SystemExit(f"create bucket {BUCKET} failed {code}: {raw[:400]!r}")
+
+
 def upload_png(url: str, key: str, path: str, png: Path) -> str:
-    encoded = "/".join(urllib.parse.quote(part, safe="") for part in path.split("/"))
     data = png.read_bytes()
+    extra = {"x-upsert": "true", "cache-control": "31536000"}
     code, raw, _ = rest(
-        url,
-        key,
-        "POST",
-        f"/storage/v1/object/{BUCKET}/{encoded}",
-        body=data,
-        content_type="image/png",
-        extra={"x-upsert": "true", "cache-control": "31536000"},
-        timeout=180,
+        url, key, "POST", f"/storage/v1/object/{BUCKET}/{path}",
+        body=data, content_type="image/png", extra=extra, timeout=180,
     )
     if code >= 400:
-        raise RuntimeError(f"storage upload {code}: {raw[:400]!r}")
+        code, raw, _ = rest(
+            url, key, "PUT", f"/storage/v1/object/{BUCKET}/{path}",
+            body=data, content_type="image/png", extra=extra, timeout=180,
+        )
+    if code >= 400:
+        raise RuntimeError(f"storage upload {code}: {raw[:500]!r}")
     return public_url(url, path)
 
 
 def upsert_mindmap(url: str, key: str, book_id: str, mindmap_url: str) -> None:
     payload = json.dumps({"book_id": book_id, "mindmap_url": mindmap_url}).encode("utf-8")
     code, raw, _ = rest(
-        url,
-        key,
-        "POST",
-        "/rest/v1/book_assets",
+        url, key, "POST", "/rest/v1/book_assets?on_conflict=book_id",
         body=payload,
         extra={"Prefer": "resolution=merge-duplicates,return=minimal"},
     )
     if code >= 400:
-        raise RuntimeError(f"book_assets upsert {code}: {raw[:400]!r}")
+        code, raw, _ = rest(
+            url, key, "PATCH", f"/rest/v1/book_assets?book_id=eq.{book_id}",
+            body=json.dumps({"mindmap_url": mindmap_url}).encode("utf-8"),
+            extra={"Prefer": "return=minimal"},
+        )
+    if code >= 400:
+        raise RuntimeError(f"book_assets upsert {code}: {raw[:500]!r}")
 
 
 def main() -> int:
@@ -233,8 +246,14 @@ def main() -> int:
         raise SystemExit("no PNG folders found")
 
     url, key = require_env()
+    if key.startswith("sb_publishable"):
+        raise SystemExit("Got a publishable/anon key. SUPABASE_SERVICE_ROLE_KEY must be the service_role / sb_secret_ key.")
+    ensure_bucket(url, key)
     wanted_lang = None if args.lang == "both" else args.lang
     books = fetch_books(url, key, wanted_lang)
+    if wanted_lang and not books:
+        print(f"no books with language={wanted_lang}; fetching full catalog")
+        books = fetch_books(url, key, None)
     print(f"catalog {len(books)} books" + (f" language={wanted_lang}" if wanted_lang else ""))
     existing = {} if args.force else fetch_existing_maps(url, key)
     print(f"existing mindmap_url rows: {len(existing)}")
@@ -270,6 +289,11 @@ def main() -> int:
             except Exception as exc:  # noqa: BLE001 — batch must continue
                 failed += 1
                 print(f"FAIL {png.name} {book.get('slug')}: {exc}", file=sys.stderr)
+                if failed == 1:
+                    print(f"::error::{exc}")
+                if failed >= 5:
+                    print("aborting after 5 storage/DB failures", file=sys.stderr)
+                    break
             if args.limit and uploaded >= args.limit:
                 break
 
