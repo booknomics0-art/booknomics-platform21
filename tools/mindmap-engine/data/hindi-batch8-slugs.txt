@@ -1,0 +1,5 @@
+# Hindi batch 8 — leftover roman-saransh Hindi books (Devanagari titles via ROMAN_HI).
+# Skip roman South-Indian *-hindi-summary. Unique vs seed+batch1–7 at generate time.
+chandni-raat-aur-kavita-sumitranandan-pant-saransh
+ek-kahani-jo-sach-hui-madhav-juliyani-saransh
+suryast-ki-awaaz-kedarnath-agrawal-saransh

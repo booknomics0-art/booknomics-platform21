@@ -367,6 +367,9 @@ ROMAN_HI = {
     "ek-pyaar-kahani-jainendra-kumar": ("एक प्यार कहानी", "जैनेंद्र कुमार"),
     "antahpur-madhav-sharma": ("अंतःपुर", "माधव शर्मा"),
     "ek-chitthi-sadguru-prasad": ("एक चिट्ठी", "सद्गुरु प्रसाद"),
+    "chandni-raat-aur-kavita-sumitranandan-pant": ("चाँदनी रात और कविता", "सुमित्रानंदन पंत"),
+    "ek-kahani-jo-sach-hui-madhav-juliyani": ("एक कहानी जो सच हुई", "माधव जुलियानी"),
+    "suryast-ki-awaaz-kedarnath-agrawal": ("सूर्यास्त की आवाज़", "केदारनाथ अग्रवाल"),
 }
 
 _DEV = re.compile(r"[\u0900-\u097F]")
