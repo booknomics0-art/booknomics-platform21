@@ -16,7 +16,7 @@ permissions:
 
 concurrency:
   group: upload-english-svg-mindmaps
-  cancel-in-progress: false
+  cancel-in-progress: true
 
 jobs:
   publish:
@@ -66,10 +66,11 @@ jobs:
 
           base = os.environ["SUPABASE_URL"].rstrip("/")
           key = os.environ["SUPABASE_SERVICE_ROLE_KEY"]
+          # Keep factual book-specific fields that drive the map; omit the two
+          # largest long-form fields to avoid transferring ~52 MB unnecessarily.
           fields = ",".join([
               "id", "slug", "title", "author", "category", "tagline", "overview",
-              "key_ideas", "deep_summary", "deep_analysis", "daily_application",
-              "action_system", "real_life_example", "language"
+              "key_ideas", "daily_application", "action_system", "real_life_example", "language"
           ])
           rows = []
           start = 0
