@@ -101,8 +101,23 @@ const Browse = ({ categoryFilter, titleOverride, introText, skipSeo, aboveConten
       if (category !== "All") request = request.eq("category", category);
       if (language !== "all") request = request.eq("language", language);
 
-      const q = debouncedQuery.trim().replace(/[,%()]/g, " ").slice(0, 80);
-      if (q) request = request.or(`title.ilike.%${q}%,author.ilike.%${q}%,category.ilike.%${q}%`);
+      const q = debouncedQuery.trim().replace(/[,%()]/g, " ").replace(/\s+/g, " ").slice(0, 80);
+      if (q) {
+        const romanSlugQuery = q
+          .toLocaleLowerCase()
+          .split(/[^a-z0-9]+/)
+          .filter(Boolean)
+          .join("%");
+        const searchFilters = [
+          `title.ilike.%${q}%`,
+          `author.ilike.%${q}%`,
+          `category.ilike.%${q}%`,
+        ];
+        if (romanSlugQuery) {
+          searchFilters.push(`slug.ilike.%${romanSlugQuery}%`, `seo_slug.ilike.%${romanSlugQuery}%`);
+        }
+        request = request.or(searchFilters.join(","));
+      }
 
       if (sort === "latest") request = request.order("created_at", { ascending: false });
       else if (sort === "za") request = request.order("title", { ascending: false });
