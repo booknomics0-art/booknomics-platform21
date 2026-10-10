@@ -17,6 +17,12 @@ on:
         required: false
         default: false
         type: boolean
+  push:
+    branches:
+      - arena/7ad1337e-booknomics-platform21
+    paths:
+      - .github/workflows/upload-mindmaps.yml
+      - tools/mindmap-engine/upload_supabase.py
 
 permissions:
   contents: read
@@ -72,18 +78,20 @@ jobs:
         run: pip install -r tools/mindmap-engine/requirements.txt
 
       - name: Render Hindi maps
-        if: ${{ inputs.lang == 'hi' || inputs.lang == 'both' }}
+        if: ${{ github.event_name == 'push' || inputs.lang == 'hi' || inputs.lang == 'both' }}
         run: python generate.py --lang hi --out ../../out/mindmaps-hi --skip-existing
         working-directory: tools/mindmap-engine
 
       - name: Render English maps
-        if: ${{ inputs.lang == 'en' || inputs.lang == 'both' }}
+        if: ${{ github.event_name == 'workflow_dispatch' && (inputs.lang == 'en' || inputs.lang == 'both') }}
         run: python generate.py --lang en --out ../../out/mindmaps --skip-existing
         working-directory: tools/mindmap-engine
 
       - name: Upload to book_assets
         run: |
+          lang="${{ inputs.lang }}"
+          lang="${lang:-hi}"
           extra=""
           if [ "${{ inputs.force }}" = "true" ]; then extra="--force"; fi
-          python upload_supabase.py --lang ${{ inputs.lang }} $extra
+          python upload_supabase.py --lang "$lang" $extra
         working-directory: tools/mindmap-engine
