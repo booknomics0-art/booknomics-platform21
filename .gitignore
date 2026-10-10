@@ -40,3 +40,9 @@ secrets/
 backups/
 reports/
 supabase/.temp/
+out/
+preview/
+__pycache__/
+*.pyc
+tools/mindmap-engine/.venv/
+tools/mindmap-engine/_selftest.png
