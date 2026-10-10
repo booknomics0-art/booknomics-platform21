@@ -6,6 +6,7 @@ Matches local `{slug}.png` files to live `books.slug` rows (with/without
 `book-assets` bucket and upserts only `mindmap_url` so audio/quiz rows stay.
 
 Does not invent books. Unmatched PNGs are skipped.
+# Trigger: repository secret SUPABASE_SERVICE_ROLE_KEY.
 
   SUPABASE_URL=https://….supabase.co \\
   SUPABASE_SERVICE_ROLE_KEY=… \\
