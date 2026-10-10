@@ -28,6 +28,7 @@ const OFFERINGS = [
 ];
 
 const LINKS = [
+  { label: "Reading Discovery Report 2026", to: "/research/reading-discovery-report-2026" },
   { label: "Homepage", to: "/" },
   { label: "English Book Summaries", to: "/english" },
   { label: "Hindi Library", to: "/hindi" },
@@ -49,7 +50,7 @@ const FAQS = [
   },
   {
     q: "Can bloggers or educators reference Booknomics?",
-    a: "Yes. Bloggers, journalists, teachers, YouTubers, and newsletter writers are welcome to cite or link to any public Booknomics page. Please use the suggested citation text on this page and link to the specific page you reference.",
+    a: "Yes. Bloggers, journalists, teachers, YouTubers, and newsletter writers are welcome to cite or link to any public Booknomics page. The Reading Discovery Report 2026 includes citation-ready aggregate catalog and early Google Search data with a transparent methodology note.",
   },
   {
     q: "Where should media enquiries go?",
@@ -88,7 +89,7 @@ const Press = () => {
     <Layout>
       <SEO
         title="Press & Media — Booknomics"
-        description="Learn about Booknomics, a bilingual English and Hindi book summaries platform with practical insights, action plans, and reading resources."
+        description="Learn about Booknomics, a bilingual English and Hindi book summaries platform with practical insights, action plans, reading resources, and citation-ready research."
         canonical={PAGE_URL}
         ogType="website"
         jsonLd={[organizationLd, faqLd]}
@@ -121,10 +122,10 @@ const Press = () => {
           </p>
           <div className="mt-7 flex flex-wrap gap-3">
             <Button asChild size="lg" className="bg-gold text-primary-foreground hover:opacity-90 rounded-full gap-2 px-7">
-              <Link to="/contact">Media enquiries <ArrowRight className="h-4 w-4" /></Link>
+              <Link to="/research/reading-discovery-report-2026">View 2026 research <ArrowRight className="h-4 w-4" /></Link>
             </Button>
             <Button asChild size="lg" variant="outline" className="rounded-full px-7">
-              <Link to="/resources">Free reading resources</Link>
+              <Link to="/contact">Media enquiries</Link>
             </Button>
           </div>
         </div>
@@ -167,6 +168,23 @@ const Press = () => {
               <p className="text-sm text-muted-foreground leading-relaxed">{o.desc}</p>
             </div>
           ))}
+        </div>
+      </section>
+
+      <section className="container py-12 md:py-16 max-w-3xl" aria-labelledby="research">
+        <div className="border border-border rounded-3xl p-6 md:p-8 bg-card">
+          <div className="text-xs tracking-[0.2em] uppercase text-primary font-semibold mb-3">New research</div>
+          <h2 id="research" className="font-serif text-2xl md:text-4xl font-bold tracking-tight mb-4">
+            Booknomics Reading Discovery Report 2026
+          </h2>
+          <p className="text-muted-foreground leading-relaxed mb-5">
+            A transparent snapshot of our 5,062-book bilingual catalog, including English/Hindi composition,
+            category breadth, represented authors, and early Google Search discovery signals. The report clearly
+            separates Booknomics' own catalog data from broader claims about readers in India.
+          </p>
+          <Button asChild variant="outline" className="rounded-full gap-2">
+            <Link to="/research/reading-discovery-report-2026">Read the report <ArrowRight className="h-4 w-4" /></Link>
+          </Button>
         </div>
       </section>
 
@@ -223,8 +241,8 @@ const Press = () => {
             Media &amp; partnership enquiries
           </h2>
           <p className="text-primary-foreground/80 max-w-xl mx-auto mb-7 text-sm md:text-base">
-            Writing about reading habits, book summaries, or bilingual learning? We are happy to share
-            quotes, data, and context.
+            Writing about reading habits, book summaries, bilingual learning, or digital reading discovery? We are happy to share
+            quotes, aggregate data, and methodology context.
           </p>
           <Button asChild size="lg" variant="secondary" className="rounded-full px-8">
             <Link to="/contact">Contact the Booknomics team</Link>
