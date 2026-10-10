@@ -85,11 +85,11 @@ const Index = () => {
 
       if (cancelled) return;
       const heroRows = (hero ?? []) as BookCardData[];
-      const heroOrder = new Map(HERO_SLUGS.map((slug, index) => [slug, index]));
+      const heroOrder = new Map<string, number>(HERO_SLUGS.map((slug, index) => [slug, index]));
       heroRows.sort((a, b) => (heroOrder.get(a.slug) ?? 99) - (heroOrder.get(b.slug) ?? 99));
 
       const featuredRows = (feat ?? []) as BookCardData[];
-      const featuredOrder = new Map(MOST_READABLE_SLUGS.map((slug, index) => [slug, index]));
+      const featuredOrder = new Map<string, number>(MOST_READABLE_SLUGS.map((slug, index) => [slug, index]));
       featuredRows.sort((a, b) => (featuredOrder.get(a.slug) ?? 99) - (featuredOrder.get(b.slug) ?? 99));
 
       setHeroBooks(heroRows);
