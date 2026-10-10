@@ -1,5 +1,6 @@
 name: Upload mind maps to Supabase
 # Uses repository secret SUPABASE_SERVICE_ROLE_KEY.
+# Resume missing Hindi production mindmaps (2026-10-11).
 
 on:
   workflow_dispatch:
