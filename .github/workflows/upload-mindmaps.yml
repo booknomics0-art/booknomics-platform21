@@ -1,4 +1,5 @@
 name: Upload mind maps to Supabase
+# Re-run after SUPABASE_SERVICE_ROLE_KEY was added.
 
 on:
   workflow_dispatch:
