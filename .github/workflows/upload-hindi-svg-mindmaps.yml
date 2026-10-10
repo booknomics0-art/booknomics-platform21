@@ -61,7 +61,7 @@ jobs:
         run: |
           mkdir -p out
           python - <<'PY'
-          import json, os, urllib.parse, urllib.request
+          import json, os, time, urllib.error, urllib.parse, urllib.request
           from pathlib import Path
 
           base = os.environ["SUPABASE_URL"].rstrip("/")
@@ -72,7 +72,7 @@ jobs:
           ])
           rows = []
           start = 0
-          page = 500
+          page = 100
           while True:
               query = urllib.parse.urlencode({
                   "select": fields,
@@ -81,18 +81,28 @@ jobs:
                   "is_draft": "eq.false",
                   "order": "slug.asc",
               })
-              req = urllib.request.Request(
-                  f"{base}/rest/v1/books?{query}",
-                  headers={
-                      "apikey": key,
-                      "Authorization": f"Bearer {key}",
-                      "Range": f"{start}-{start + page - 1}",
-                      "Prefer": "count=exact",
-                  },
-              )
-              with urllib.request.urlopen(req, timeout=120) as resp:
-                  batch = json.loads(resp.read().decode("utf-8") or "[]")
+              last = None
+              for attempt in range(1, 6):
+                  try:
+                      req = urllib.request.Request(
+                          f"{base}/rest/v1/books?{query}",
+                          headers={
+                              "apikey": key,
+                              "Authorization": f"Bearer {key}",
+                              "Range": f"{start}-{start + page - 1}",
+                          },
+                      )
+                      with urllib.request.urlopen(req, timeout=60) as resp:
+                          batch = json.loads(resp.read().decode("utf-8") or "[]")
+                      break
+                  except Exception as exc:
+                      last = exc
+                      if attempt == 5:
+                          raise
+                      print(f"page {start} retry {attempt}/5 after {type(exc).__name__}: {exc}")
+                      time.sleep(attempt * 3)
               rows.extend(batch)
+              print(f"Fetched {len(rows)} Hindi rows")
               if len(batch) < page:
                   break
               start += page
