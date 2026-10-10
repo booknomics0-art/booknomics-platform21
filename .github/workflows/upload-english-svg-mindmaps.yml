@@ -7,6 +7,7 @@ on:
       - arena/7ad1337e-booknomics-platform21
     paths:
       - .github/workflows/upload-english-svg-mindmaps.yml
+      - tools/mindmap-engine/fetch_live_books.py
       - tools/mindmap-engine/render_svg.py
       - tools/mindmap-engine/generate_svg.py
       - tools/mindmap-engine/upload_svg_supabase.py
@@ -26,7 +27,6 @@ jobs:
       SUPABASE_URL: https://pbkfewrtdgiagytmcigb.supabase.co
     steps:
       - uses: actions/checkout@v4
-
       - uses: actions/setup-python@v5
         with:
           python-version: "3.11"
@@ -45,94 +45,34 @@ jobs:
               "https://api.supabase.com/v1/projects/pbkfewrtdgiagytmcigb/api-keys?reveal=true" \
               | python3 -c 'import json,sys; a=json.load(sys.stdin); k=next((x for x in a if x.get("name")=="service_role" or x.get("type")=="secret"), None); sys.stdout.write((k or {}).get("api_key") or "")') || KEY=""
           fi
-          if [ -z "$KEY" ]; then
-            echo "::error::No Supabase service-role/secret key available"
-            exit 1
-          fi
+          test -n "$KEY" || { echo "::error::No Supabase service-role/secret key available"; exit 1; }
           echo "::add-mask::$KEY"
           echo "SUPABASE_SERVICE_ROLE_KEY=$KEY" >> "$GITHUB_ENV"
 
-      - name: Validate SVG scripts
-        run: python -m py_compile render_svg.py generate_svg.py upload_svg_supabase.py upload_supabase.py content.py
+      - name: Validate scripts
         working-directory: tools/mindmap-engine
+        run: python -m py_compile fetch_live_books.py render_svg.py generate_svg.py upload_svg_supabase.py upload_supabase.py content.py
 
-      - name: Fetch exact published English books
-        shell: bash
-        run: |
-          mkdir -p out
-          python - <<'PY'
-          import json, os, time, urllib.parse, urllib.request
-          from pathlib import Path
-
-          base = os.environ["SUPABASE_URL"].rstrip("/")
-          key = os.environ["SUPABASE_SERVICE_ROLE_KEY"]
-          fields = ",".join([
-              "id", "slug", "title", "author", "category", "tagline", "overview",
-              "key_ideas", "daily_application", "action_system", "real_life_example", "language"
-          ])
-          rows = []
-          start = 0
-          page = 100
-          while True:
-              query = urllib.parse.urlencode({
-                  "select": fields,
-                  "language": "eq.en",
-                  "status": "eq.published",
-                  "is_draft": "eq.false",
-                  "order": "slug.asc",
-              })
-              for attempt in range(1, 6):
-                  try:
-                      req = urllib.request.Request(
-                          f"{base}/rest/v1/books?{query}",
-                          headers={
-                              "apikey": key,
-                              "Authorization": f"Bearer {key}",
-                              "Range": f"{start}-{start + page - 1}",
-                          },
-                      )
-                      with urllib.request.urlopen(req, timeout=60) as resp:
-                          batch = json.loads(resp.read().decode("utf-8") or "[]")
-                      break
-                  except Exception as exc:
-                      if attempt == 5:
-                          raise
-                      print(f"page {start} retry {attempt}/5 after {type(exc).__name__}: {exc}")
-                      time.sleep(attempt * 3)
-              rows.extend(batch)
-              print(f"Fetched {len(rows)} English rows")
-              if len(batch) < page:
-                  break
-              start += page
-          if not rows:
-              raise SystemExit("No published English books returned")
-          Path("out/live-english-books.json").write_text(json.dumps(rows, ensure_ascii=False), encoding="utf-8")
-          print(f"Fetched {len(rows)} published English books")
-          PY
-
-      - name: Smoke render 5 English SVG maps
-        run: python generate_svg.py --lang en --json ../../out/live-english-books.json --out ../../out/svg-smoke --limit 5
+      - name: Fetch exact published English catalog
         working-directory: tools/mindmap-engine
+        run: python fetch_live_books.py --lang en --out ../../out/live-english-books.json --page 100
+
+      - name: Smoke render English maps
+        working-directory: tools/mindmap-engine
+        run: python generate_svg.py --lang en --json ../../out/live-english-books.json --out ../../out/svg-en-smoke --limit 5
 
       - name: Render all English SVG maps
-        run: python generate_svg.py --lang en --json ../../out/live-english-books.json --out ../../out/mindmaps-en-svg
         working-directory: tools/mindmap-engine
+        run: python generate_svg.py --lang en --json ../../out/live-english-books.json --out ../../out/mindmaps-en-svg
 
-      - name: Enforce storage-size guard
-        shell: bash
+      - name: Enforce count and size guards
         run: |
           bytes=$(du -sb out/mindmaps-en-svg | cut -f1)
           count=$(find out/mindmaps-en-svg -maxdepth 1 -name '*.svg' | wc -l)
-          echo "Rendered $count SVGs using $bytes bytes"
-          if [ "$count" -lt 3400 ]; then
-            echo "::error::Expected at least 3400 English SVGs, got $count"
-            exit 1
-          fi
-          if [ "$bytes" -gt 104857600 ]; then
-            echo "::error::SVG batch is above the 100 MB safety ceiling; refusing upload"
-            exit 1
-          fi
+          echo "Rendered $count English SVGs using $bytes bytes"
+          test "$count" -ge 3400 || { echo "::error::Expected >=3400 English SVGs"; exit 1; }
+          test "$bytes" -le 104857600 || { echo "::error::English SVG batch exceeds 100 MB safety ceiling"; exit 1; }
 
-      - name: Upload missing English SVG maps
-        run: python upload_svg_supabase.py --lang en --dir ../../out/mindmaps-en-svg --workers 8
+      - name: Upload only missing English mindmaps
         working-directory: tools/mindmap-engine
+        run: python upload_svg_supabase.py --lang en --dir ../../out/mindmaps-en-svg --workers 8
