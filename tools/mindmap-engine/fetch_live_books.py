@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
-"""Fetch the exact published Booknomics catalog for mind-map generation.
+"""Fetch Booknomics catalog rows for mind-map generation with minimal DB work.
 
-The Supabase request is deliberately cheap: only a language filter is applied
-server-side. Published/non-draft filtering happens locally to avoid slow query
-plans while bulk asset work is running. Content is limited to factual identity
-fields plus tagline; missing detail uses safe language/genre lenses later.
+The database receives only a tiny-column SELECT with range pagination — no
+WHERE clause and no ORDER BY. Language, published status, and draft filtering
+all happen locally. This is intentionally the cheapest reliable path while
+bulk Storage work is active on the Supabase Free project.
 """
 from __future__ import annotations
 
@@ -33,12 +33,9 @@ def main() -> int:
     raw_rows: list[dict] = []
     start = 0
     page = max(25, min(args.page, 250))
+    query = urllib.parse.urlencode({"select": fields})
 
     while True:
-        query = urllib.parse.urlencode({
-            "select": fields,
-            "language": f"eq.{args.lang}",
-        })
         batch = None
         for attempt in range(1, 7):
             try:
@@ -57,19 +54,27 @@ def main() -> int:
                 if attempt == 6:
                     raise
                 delay = min(20, attempt * 3)
-                print(f"range {start}-{start+page-1}: retry {attempt}/6 after {type(exc).__name__}: {exc}; sleep={delay}s", flush=True)
+                print(
+                    f"range {start}-{start+page-1}: retry {attempt}/6 after "
+                    f"{type(exc).__name__}: {exc}; sleep={delay}s",
+                    flush=True,
+                )
                 time.sleep(delay)
 
         assert batch is not None
         raw_rows.extend(batch)
-        print(f"{args.lang}: fetched {len(raw_rows)} language rows", flush=True)
+        print(f"all catalog: fetched {len(raw_rows)} rows", flush=True)
         if len(batch) < page:
             break
         start += page
 
     rows = [
-        row for row in raw_rows
-        if str(row.get("status") or "").lower() == "published" and not bool(row.get("is_draft"))
+        row
+        for row in raw_rows
+        if str(row.get("language") or "").lower() == args.lang
+        and str(row.get("status") or "").lower() == "published"
+        and not bool(row.get("is_draft"))
+        and row.get("slug")
     ]
     rows.sort(key=lambda row: str(row.get("slug") or ""))
     if not rows:
@@ -78,7 +83,11 @@ def main() -> int:
     out = Path(args.out)
     out.parent.mkdir(parents=True, exist_ok=True)
     out.write_text(json.dumps(rows, ensure_ascii=False), encoding="utf-8")
-    print(f"done: {len(rows)} published {args.lang} books ({len(raw_rows)} language rows) -> {out}")
+    print(
+        f"done: {len(rows)} published {args.lang} books from "
+        f"{len(raw_rows)} total catalog rows -> {out}",
+        flush=True,
+    )
     return 0
 
 
