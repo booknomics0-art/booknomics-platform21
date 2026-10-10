@@ -16,7 +16,7 @@ permissions:
   contents: read
 
 concurrency:
-  group: upload-english-svg-mindmaps
+  group: upload-english-svg-mindmaps-v2
   cancel-in-progress: true
 
 jobs:
