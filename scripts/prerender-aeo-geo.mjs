@@ -139,7 +139,11 @@ async function fetchHindiPaged() {
 
 const liveHindi = await fetchHindiPaged();
 const publishedHindi = liveHindi.filter((book) => book.status === "published");
-if (publishedHindi.length < 20) throw new Error(`prerender-aeo-geo: expected published Hindi catalog, got ${publishedHindi.length}`);
+if (liveHindi.length < 20) throw new Error(`prerender-aeo-geo: expected Hindi catalog, got ${liveHindi.length}`);
+const hindiHubIndexable = publishedHindi.length >= 20;
+if (!hindiHubIndexable) {
+  console.warn(`[prerender-aeo-geo] Hindi catalog is in editorial quality hold: ${publishedHindi.length} indexable, ${liveHindi.length - publishedHindi.length} noindex`);
+}
 
 const organizationLd = {
   "@type": "Organization", "@id": ORG_ID, name: "Booknomics", url: `${BASE}/`,
@@ -149,10 +153,12 @@ const organizationLd = {
 };
 const websiteLd = { "@type": "WebSite", "@id": WEBSITE_ID, url: `${BASE}/`, name: "Booknomics", publisher: { "@id": ORG_ID }, inLanguage: ["hi", "en"] };
 
-const featured = publishedHindi.slice(0, 48);
+const featured = hindiHubIndexable ? publishedHindi.slice(0, 48) : [];
 const hindiCanonical = `${BASE}/hindi`;
 const hindiTitle = "हिंदी पुस्तक सारांश — लोकप्रिय किताबों के सारांश और विश्लेषण | Booknomics";
-const hindiDescription = "प्रेमचंद, दिनकर, महादेवी वर्मा और अन्य लेखकों की हिंदी किताबों के सारांश, पात्र, मुख्य विचार, सीख और गहन विश्लेषण Booknomics पर पढ़ें।";
+const hindiDescription = hindiHubIndexable
+  ? "प्रेमचंद, दिनकर, महादेवी वर्मा और अन्य लेखकों की हिंदी किताबों के सारांश, पात्र, मुख्य विचार, सीख और गहन विश्लेषण Booknomics पर पढ़ें।"
+  : "Booknomics की हिंदी लाइब्रेरी अभी editorial quality review में है। कम भरोसे या template-heavy पेज search indexing और advertising से बाहर रखे गए हैं जब तक वे publishing gate पास नहीं करते।";
 const hindiLd = { "@context": "https://schema.org", "@graph": [organizationLd, websiteLd, {
   "@type": "CollectionPage", "@id": `${hindiCanonical}#webpage`, name: "हिंदी पुस्तक सारांश", description: hindiDescription,
   inLanguage: "hi-IN", url: hindiCanonical, isPartOf: { "@id": WEBSITE_ID }, publisher: { "@id": ORG_ID },
@@ -160,13 +166,19 @@ const hindiLd = { "@context": "https://schema.org", "@graph": [organizationLd, w
   mainEntity: { "@type": "ItemList", numberOfItems: publishedHindi.length, itemListElement: featured.map((book, i) => ({ "@type": "ListItem", position: i + 1, name: book.title, url: `${BASE}/books/${encodeURI(book.seo_slug || book.slug)}` })) }
 }] };
 
+const hindiStatus = hindiHubIndexable
+  ? `<p><strong>${publishedHindi.length}</strong> इंडेक्स योग्य हिंदी पुस्तक सारांश उपलब्ध हैं।</p>`
+  : `<p><strong>${liveHindi.length}</strong> हिंदी पुस्तक रिकॉर्ड editorial quality review में हैं। अभी ये पेज search indexing और advertising से बाहर रखे गए हैं।</p>`;
+const hindiFeaturedSection = featured.length
+  ? `<section><h2>लोकप्रिय हिंदी पुस्तकें</h2><ul>${featured.map((book) => `<li><a href="/books/${escapeHtml(book.seo_slug || book.slug)}"><strong>${escapeHtml(book.title)}</strong></a> — ${escapeHtml(book.author || "")}</li>`).join("\n")}</ul></section>`
+  : `<section><h2>Editorial quality review</h2><p>Hindi catalog के पेज अभी book-specific accuracy, originality और usefulness के publishing gate से दोबारा गुजर रहे हैं। Quality gate pass होने पर योग्य pages फिर से indexable किए जाएंगे।</p></section>`;
 const hindiRoot = `<main lang="hi" style="font-family:system-ui,-apple-system,sans-serif;max-width:1180px;margin:0 auto;padding:32px 20px;line-height:1.65">
-<header><p>Booknomics हिंदी पुस्तकालय</p><h1>हिंदी पुस्तक सारांश</h1><p>${escapeHtml(hindiDescription)}</p><p><strong>${publishedHindi.length}</strong> इंडेक्स योग्य हिंदी पुस्तक सारांश उपलब्ध हैं।</p></header>
+<header><p>Booknomics हिंदी पुस्तकालय</p><h1>हिंदी पुस्तक सारांश</h1><p>${escapeHtml(hindiDescription)}</p>${hindiStatus}</header>
 <section><h2>Booknomics की हिंदी लाइब्रेरी में क्या मिलता है?</h2><p>Booknomics हिंदी पाठकों के लिए पुस्तक का संक्षिप्त उत्तर, मूल लेखक की पहचान, मुख्य विचार, गहरा विश्लेषण, व्यावहारिक सीख और संबंधित किताबों की खोज एक ही जगह देता है। हर Booknomics सारांश मूल पुस्तक से अलग एक स्वतंत्र अध्ययन-मार्गदर्शिका है।</p></section>
-<section><h2>लोकप्रिय हिंदी पुस्तकें</h2><ul>${featured.map((book) => `<li><a href="/books/${escapeHtml(book.seo_slug || book.slug)}"><strong>${escapeHtml(book.title)}</strong></a> — ${escapeHtml(book.author || "")}</li>`).join("\n")}</ul></section>
+${hindiFeaturedSection}
 <section><h2>सारांश कैसे तैयार होते हैं?</h2><p>Booknomics पुस्तक की सही पहचान, पुस्तक-विशिष्ट सामग्री, canonical URL, उपयोगी उत्तर और गुणवत्ता संकेतों को प्राथमिकता देता है। कम भरोसे या अधूरे पेज indexing से बाहर रखे जा सकते हैं। <a href="/about#editorial-process">Editorial process पढ़ें</a>.</p></section>
 </main>`;
-let hindiHtml = prepareHead(template, { title: hindiTitle, description: hindiDescription, canonical: hindiCanonical, jsonLd: hindiLd });
+let hindiHtml = prepareHead(template, { title: hindiTitle, description: hindiDescription, canonical: hindiCanonical, jsonLd: hindiLd, noindex: !hindiHubIndexable });
 hindiHtml = hindiHtml.replace('<div id="root"></div>', `<div id="root">${hindiRoot}</div>`);
 writeRoute("/hindi", hindiHtml);
 
@@ -221,4 +233,4 @@ ${overview ? `<section><h2>पुस्तक का परिचय और स�
   if (isNoindex) writtenNoindex++; else writtenIndexable++;
 }
 
-console.log(`[prerender-aeo-geo] wrote /hindi + ${writtenIndexable} indexable + ${writtenNoindex} noindex Hindi snapshots in ${Math.ceil(liveHindi.length / PAGE_SIZE)} paged fetches`);
+console.log(`[prerender-aeo-geo] wrote /hindi (${hindiHubIndexable ? "indexable" : "noindex quality hold"}) + ${writtenIndexable} indexable + ${writtenNoindex} noindex Hindi snapshots in ${Math.ceil(liveHindi.length / PAGE_SIZE)} paged fetches`);
