@@ -1,4 +1,4 @@
-import { SERVER_SLUG_REDIRECTS } from "./src/lib/serverSlugRedirects";
+import { SERVER_SLUG_REDIRECTS } from "./src/lib/serverSlugRedirects.js";
 
 export const config = {
   // Match only requests that always redirect. This avoids adding a middleware
