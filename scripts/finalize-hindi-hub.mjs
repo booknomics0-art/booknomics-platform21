@@ -52,7 +52,14 @@ async function fetchPublishedHindi() {
 
 const books = await fetchPublishedHindi();
 if (books.length < 20) {
-  throw new Error(`finalize-hindi-hub: suspiciously small published Hindi catalog (${books.length})`);
+  const html = readFileSync(HINDI_FILE, "utf8");
+  const noindex = /name="robots"\s+content="noindex,follow"/i.test(html);
+  const qualityHold = /quality review|quality hold|search indexing और advertising से बाहर/i.test(html);
+  if (!noindex || !qualityHold) {
+    throw new Error(`finalize-hindi-hub: Hindi catalog has ${books.length} published books but hub is not a verified noindex quality-hold page`);
+  }
+  console.log(`[finalize-hindi-hub] quality hold active; preserved noindex Hindi hub with ${books.length} published books`);
+  process.exit(0);
 }
 
 const groups = new Map();
