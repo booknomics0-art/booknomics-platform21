@@ -14,7 +14,7 @@ from PIL import Image, ImageDraw, ImageFilter, ImageFont, ImageOps
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 REPO = os.path.abspath(os.path.join(HERE, "..", ".."))
-MANIFEST = os.path.join(HERE, "manifest.tsv")
+MANIFEST = os.environ.get("COVER_MANIFEST", os.path.join(HERE, "manifest.tsv"))
 OUT_DIR = os.path.join(REPO, "content-drafts", "covers")
 SERIF = "/usr/share/fonts/truetype/dejavu/DejaVuSerif-Bold.ttf"
 SANS = "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf"
