@@ -1,0 +1,44 @@
+section,metric,label,value,unit,source_date,notes
+headline,total_books,Booknomics catalog,5062,books,2026-10-11,Aggregated production catalog snapshot
+headline,english_books,English books,3460,books,2026-10-11,68.4% of catalog
+headline,hindi_books,Hindi books,1602,books,2026-10-11,31.6% of catalog
+headline,published_non_draft,Published non-draft books,5027,books,2026-10-11,Production aggregate
+headline,median_reading_time,Median summary reading time,18,minutes,2026-10-11,Production aggregate
+headline,average_reading_time,Average summary reading time,17.3,minutes,2026-10-11,Production aggregate
+headline,mindmaps_ready,Mind maps ready,650,mindmaps,2026-10-11,Production aggregate at report time
+headline,learning_paths,Learning paths,5,paths,2026-10-11,Production aggregate
+category,count,Literary Fiction / Classic Literature,210,books,2026-10-11,Internal catalog label
+category,count,Hindi novels (उपन्यास),171,books,2026-10-11,Internal catalog label
+category,count,Science Fiction,130,books,2026-10-11,Internal catalog label
+category,count,Literary Fiction / Classic & Cultural Studies,111,books,2026-10-11,Internal catalog label
+category,count,Classic Literature,108,books,2026-10-11,Internal catalog label
+category,count,Regional literature · Telugu,100,books,2026-10-11,Internal catalog label
+category,count,Regional literature · Malayalam,100,books,2026-10-11,Internal catalog label
+category,count,Regional literature · Kannada,100,books,2026-10-11,Internal catalog label
+category,count,Psychology,90,books,2026-10-11,Internal catalog label
+category,count,Romance,85,books,2026-10-11,Internal catalog label
+category,count,Fantasy,82,books,2026-10-11,Internal catalog label
+category,count,Memoir,79,books,2026-10-11,Internal catalog label
+category,count,Historical Fiction,75,books,2026-10-11,Internal catalog label
+category,count,Personal Development,71,books,2026-10-11,Internal catalog label
+category,count,Leadership,70,books,2026-10-11,Internal catalog label
+author,count,Munshi Premchand,40,books,2026-10-11,Catalog representation only
+author,count,Stephen King,33,books,2026-10-11,Catalog representation only
+author,count,Agatha Christie,31,books,2026-10-11,Catalog representation only
+author,count,Rabindranath Tagore,25,books,2026-10-11,Catalog representation only
+author,count,Yaddanapudi Sulochana Rani,25,books,2026-10-11,Catalog representation only
+author,count,Surender Mohan Pathak,25,books,2026-10-11,Catalog representation only
+author,count,Triveni,21,books,2026-10-11,Catalog representation only
+author,count,William Shakespeare,20,books,2026-10-11,Catalog representation only
+search,total_clicks,Google Search clicks,23,clicks,2026-10-06,Latest settled report window used
+search,total_impressions,Google Search impressions,2524,impressions,2026-10-06,Latest settled report window used
+search,india_clicks,India clicks,18,clicks,2026-10-06,Country breakdown from GSC
+search,india_impressions,India impressions,2110,impressions,2026-10-06,Country breakdown from GSC
+search,india_average_position,India average position,7.40,position,2026-10-06,Impression-weighted average
+query,impressions,कामायनी का सारांश,8,impressions,2026-10-06,1 click; avg position 7.63
+query,impressions,मैला आँचल का सारांश,7,impressions,2026-10-06,1 click; avg position 6.71
+query,impressions,पहला गिरमिटिया,5,impressions,2026-10-06,1 click; avg position 9.80
+query,impressions,वयं रक्षामः उपन्यास का सारांश,2,impressions,2026-10-06,1 click; avg position 1.50
+query,impressions,how emotions are made summary,2,impressions,2026-10-06,1 click; avg position 9.50
+query,impressions,thanks for the feedback summary,2,impressions,2026-10-06,1 click; avg position 7.50
+query,impressions,atit ke chalchitra kiski rachna hai,36,impressions,2026-10-06,0 clicks; avg position 6.64
