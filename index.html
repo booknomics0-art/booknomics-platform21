@@ -51,8 +51,13 @@
         })(window, document, 'clarity', 'script', 'yre2cjh6gg');
       }
 
+      function adsBlockedForPage(){
+        var robots = document.querySelector('meta[name="robots"]');
+        return !!(robots && /noindex/i.test(robots.getAttribute('content') || ''));
+      }
+
       function loadAds(){
-        if (window.__IS_BOT__ || window.__adsLoaded) return;
+        if (window.__IS_BOT__ || window.__adsLoaded || adsBlockedForPage()) return;
         window.__adsLoaded = true;
         var s = document.createElement('script');
         s.async = true;
