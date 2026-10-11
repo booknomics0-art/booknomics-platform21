@@ -1,7 +1,10 @@
+import { useEffect, useMemo, useState } from "react";
 import { Helmet } from "react-helmet-async";
+import { supabase } from "@/integrations/supabase/client";
 
 const SITE = "https://www.booknomics.com";
 const DEFAULT_OG = `${SITE}/og-default.svg`;
+const ORG_ID = `${SITE}/#organization`;
 
 interface SEOProps {
   title: string;
@@ -45,16 +48,36 @@ const canonicalize = (value: string) => {
   return withoutHash.split("?", 1)[0];
 };
 
-const normalizeStructuredDataUrls = (value: unknown): unknown => {
+/**
+ * Normalize first-party URLs and repair Booknomics Organization nodes so every
+ * Organization emitted inside Article/publisher markup carries a stable @id and logo.
+ */
+const normalizeStructuredData = (value: unknown): unknown => {
   if (typeof value === "string") return BOOKNOMICS_HOST_RE.test(value) ? normalizeUrl(value) : value;
-  if (Array.isArray(value)) return value.map(normalizeStructuredDataUrls);
+  if (Array.isArray(value)) return value.map(normalizeStructuredData);
   if (value && typeof value === "object") {
-    return Object.fromEntries(
-      Object.entries(value as Record<string, unknown>).map(([key, nested]) => [key, normalizeStructuredDataUrls(nested)]),
-    );
+    const input = value as Record<string, unknown>;
+    const normalized = Object.fromEntries(
+      Object.entries(input).map(([key, nested]) => [key, normalizeStructuredData(nested)]),
+    ) as Record<string, unknown>;
+
+    if (normalized["@type"] === "Organization" && normalized.name === "Booknomics") {
+      if (!normalized["@id"]) normalized["@id"] = ORG_ID;
+      if (!normalized.url) normalized.url = `${SITE}/`;
+      if (!normalized.logo) {
+        normalized.logo = {
+          "@type": "ImageObject",
+          url: DEFAULT_OG,
+        };
+      }
+    }
+
+    return normalized;
   }
   return value;
 };
+
+const getSchemaType = (entry: object) => (entry as Record<string, unknown>)["@type"];
 
 export const SEO = ({
   title,
@@ -72,22 +95,90 @@ export const SEO = ({
 }: SEOProps) => {
   const url = canonicalize(canonical ?? path);
   const ogImg = normalizeUrl(ogImage ?? image ?? DEFAULT_OG);
-  const ld: object[] = jsonLd ? (Array.isArray(jsonLd) ? [...jsonLd] : [jsonLd]) : [];
+  const [bookArticlePublishedAt, setBookArticlePublishedAt] = useState<string | null>(null);
 
-  if (breadcrumbs && breadcrumbs.length > 0) {
-    ld.push({
-      "@context": "https://schema.org",
-      "@type": "BreadcrumbList",
-      itemListElement: breadcrumbs.map((b, i) => ({
-        "@type": "ListItem",
-        position: i + 1,
-        name: b.name,
-        item: normalizeUrl(b.path),
-      })),
-    });
-  }
+  const ld = useMemo(() => {
+    const rows: object[] = jsonLd ? (Array.isArray(jsonLd) ? [...jsonLd] : [jsonLd]) : [];
 
-  const normalizedLd = ld.map((entry) => normalizeStructuredDataUrls(entry) as object);
+    if (breadcrumbs && breadcrumbs.length > 0) {
+      rows.push({
+        "@context": "https://schema.org",
+        "@type": "BreadcrumbList",
+        itemListElement: breadcrumbs.map((b, i) => ({
+          "@type": "ListItem",
+          position: i + 1,
+          name: b.name,
+          item: normalizeUrl(b.path),
+        })),
+      });
+    }
+
+    return rows;
+  }, [jsonLd, breadcrumbs]);
+
+  const needsBookArticleDate = useMemo(
+    () => ld.some((entry) => {
+      const row = entry as Record<string, unknown>;
+      return getSchemaType(entry) === "Article" && !row.datePublished;
+    }) && url.includes("/books/"),
+    [ld, url],
+  );
+
+  useEffect(() => {
+    let cancelled = false;
+    setBookArticlePublishedAt(null);
+
+    if (!needsBookArticleDate) return () => { cancelled = true; };
+
+    let slug = "";
+    try {
+      const parsed = new URL(url);
+      const marker = "/books/";
+      const idx = parsed.pathname.indexOf(marker);
+      slug = idx >= 0 ? decodeURIComponent(parsed.pathname.slice(idx + marker.length)).replace(/\/$/, "") : "";
+    } catch {
+      slug = "";
+    }
+    if (!slug) return () => { cancelled = true; };
+
+    (async () => {
+      const bySlug = await supabase
+        .from("books")
+        .select("created_at")
+        .eq("slug", slug)
+        .eq("is_draft", false)
+        .in("status", ["published", "published_noindex"])
+        .maybeSingle();
+
+      let createdAt = bySlug.data?.created_at ?? null;
+      if (!createdAt) {
+        const bySeoSlug = await supabase
+          .from("books")
+          .select("created_at")
+          .eq("seo_slug", slug)
+          .eq("is_draft", false)
+          .in("status", ["published", "published_noindex"])
+          .maybeSingle();
+        createdAt = bySeoSlug.data?.created_at ?? null;
+      }
+
+      if (!cancelled && createdAt) setBookArticlePublishedAt(createdAt);
+    })();
+
+    return () => { cancelled = true; };
+  }, [needsBookArticleDate, url]);
+
+  const normalizedLd = ld
+    .map((entry) => {
+      const row = normalizeStructuredData(entry) as Record<string, unknown>;
+      if (row["@type"] === "Article" && !row.datePublished && bookArticlePublishedAt) {
+        row.datePublished = bookArticlePublishedAt;
+      }
+      return row;
+    })
+    // Never emit an incomplete book Article while its real publication timestamp
+    // is still being resolved. Book + Breadcrumb markup remain available immediately.
+    .filter((entry) => entry["@type"] !== "Article" || Boolean(entry.datePublished));
 
   // hreflang is emitted only for explicit, verified language counterparts.
   // A canonical page without a real translation relationship should not invent one.
