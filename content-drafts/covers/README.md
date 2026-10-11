@@ -7,6 +7,18 @@
 |---|---|---|
 | `raktakarabi-cover.jpg` | रक्तकरबी — रवींद्रनाथ ठाकुर | 165 KB |
 | `chitra-cover.jpg` | चित्रा — रवींद्रनाथ ठाकुर | 139 KB |
+| `deep-work-cover.jpg` | Deep Work — Cal Newport | 78 KB |
+| `educated-cover.jpg` | Educated — Tara Westover | 183 KB |
+| `hooked-cover.jpg` | Hooked — Nir Eyal | 86 KB |
+| `influence-cover.jpg` | Influence — Robert B. Cialdini | 137 KB |
+| `nudge-cover.jpg` | Nudge — Richard H. Thaler & Cass R. Sunstein | 89 KB |
+| `the-100-startup-cover.jpg` | The $100 Startup — Chris Guillebeau | 123 KB |
+| `the-e-myth-cover.jpg` | The E-Myth Revisited — Michael E. Gerber | 172 KB |
+| `the-one-thing-cover.jpg` | The One Thing — Gary Keller & Jay Papasan | 103 KB |
+| `the-tipping-point-cover.jpg` | The Tipping Point — Malcolm Gladwell | 127 KB |
+| `thinking-fast-and-slow-cover.jpg` | Thinking, Fast and Slow — Daniel Kahneman | 142 KB |
+
+English covers (10) are 800x1200 JPEG, with title and author set in DejaVu Serif/Sans and the BOOKNOMICS wordmark at the foot. Artwork is AI-generated; the text is overlaid with ImageMagick so spelling is exact.
 
 ## What changed in v2
 
