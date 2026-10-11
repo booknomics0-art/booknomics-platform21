@@ -33,7 +33,7 @@ W, H = P.W, P.H
 
 DEVA_RE = re.compile(r"[\u0900-\u097F]")
 # Books whose cover already exists in content-drafts/covers (README table).
-ALREADY_COVERED = {"चित्रा", "रक्तकरबी"}
+ALREADY_COVERED = {"चित्रा", "रक्तकरबी", "रक्त करबी"}
 
 
 def _deva_or_translit(s):
