@@ -11,7 +11,7 @@ permissions:
   contents: read
 concurrency:
   group: import-verified-covers-20261011
-  cancel-in-progress: false
+  cancel-in-progress: true
 jobs:
   upload:
     runs-on: ubuntu-latest

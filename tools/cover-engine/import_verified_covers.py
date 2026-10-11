@@ -2,6 +2,7 @@
 """Import a reviewed, immutable cover plan; retain old URLs for rollback."""
 import concurrent.futures
 import hashlib
+import http.client
 import json
 import os
 from pathlib import Path
@@ -18,19 +19,27 @@ PLAN = json.loads((ROOT / 'tools/cover-engine/import-plan-20261011.json').read_t
 OUT = ROOT / 'out/cover-import-20261011'
 OUT.mkdir(parents=True, exist_ok=True)
 LOCK = threading.Lock()
+CONNECTIONS = threading.local()
 
 def request(path, method='GET', body=None, extra=None, public=False):
     headers = {} if public else {'apikey': KEY, 'Authorization': 'Bearer ' + KEY}
     headers.update(extra or {})
     for attempt in range(4):
         try:
-            req = urllib.request.Request(BASE + path, data=body, headers=headers, method=method)
-            with urllib.request.urlopen(req, timeout=90) as response:
-                return response.read(), response.headers
-        except urllib.error.HTTPError as error:
-            if error.code not in (429, 500, 502, 503, 504) or attempt == 3:
-                raise RuntimeError(f'{method} {path}: HTTP {error.code}') from None
-        except (TimeoutError, urllib.error.URLError):
+            if not getattr(CONNECTIONS, 'http', None):
+                CONNECTIONS.http = http.client.HTTPSConnection(urllib.parse.urlsplit(BASE).netloc, timeout=90)
+            CONNECTIONS.http.request(method, path, body=body, headers=headers)
+            response = CONNECTIONS.http.getresponse()
+            data = response.read()
+            response_headers = response.headers
+            if 200 <= response.status < 300:
+                return data, response_headers
+            if response.status not in (429, 500, 502, 503, 504) or attempt == 3:
+                raise RuntimeError(f'{method} {path}: HTTP {response.status}')
+        except (TimeoutError, OSError, http.client.HTTPException):
+            if getattr(CONNECTIONS, 'http', None):
+                CONNECTIONS.http.close()
+                CONNECTIONS.http = None
             if attempt == 3:
                 raise RuntimeError(f'{method} {path}: network failure') from None
         time.sleep(2 ** attempt)
@@ -71,7 +80,7 @@ def upload(row):
         if not headers.get('Content-Type','').startswith('image/') or hashlib.sha256(image).hexdigest() != row['sha256']:
             raise ValueError('Public image checksum verification failed')
         if current['cover_url'] != url:
-            query = {'id':'eq.' + row['book_id'], 'cover_url': 'is.null' if row['old_cover_url'] is None else 'eq.' + row['old_cover_url']}
+            query = {'select':'id,cover_url', 'id':'eq.' + row['book_id'], 'cover_url': 'is.null' if row['old_cover_url'] is None else 'eq.' + row['old_cover_url']}
             data, _ = request('/rest/v1/books?' + urllib.parse.urlencode(query), 'PATCH',
                               json.dumps({'cover_url':url}).encode(),
                               {'Content-Type':'application/json','Prefer':'return=representation'})
@@ -107,7 +116,7 @@ def main():
         raise SystemExit('Pilot failed; bulk import was not started')
     print('English and Hindi pilot uploads verified',flush=True)
     pilot_ids = {x['book_id'] for x in pilot}
-    with concurrent.futures.ThreadPoolExecutor(max_workers=6) as pool:
+    with concurrent.futures.ThreadPoolExecutor(max_workers=16) as pool:
         futures = [pool.submit(upload,row) for row in PLAN if row['book_id'] not in pilot_ids]
         for future in concurrent.futures.as_completed(futures):
             result = future.result()
