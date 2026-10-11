@@ -1,0 +1,36 @@
+name: Import verified GitHub covers to Supabase
+on:
+  push:
+    branches: [codex/import-verified-covers-20261011]
+    paths:
+      - .github/workflows/import-verified-covers.yml
+      - tools/cover-engine/import_verified_covers.py
+      - tools/cover-engine/import-plan-20261011.json
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: import-verified-covers-20261011
+  cancel-in-progress: false
+jobs:
+  upload:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    env:
+      SUPABASE_URL: https://pbkfewrtdgiagytmcigb.supabase.co
+      SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          sparse-checkout: |
+            content-drafts/covers
+            tools/cover-engine
+      - name: Upload, verify images, and update only matched cover URLs
+        run: python3 tools/cover-engine/import_verified_covers.py
+      - name: Preserve per-book verification and rollback URLs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: verified-cover-import-20261011
+          path: out/cover-import-20261011
+          retention-days: 90
