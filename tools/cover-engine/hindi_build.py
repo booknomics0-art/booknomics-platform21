@@ -31,24 +31,47 @@ AUTH_RGB = (233, 220, 192)
 W, H = P.W, P.H
 
 
+DEVA_RE = re.compile(r"[\u0900-\u097F]")
+# Books whose cover already exists in content-drafts/covers (README table).
+ALREADY_COVERED = {"चित्रा", "रक्तकरबी"}
+
+
+def _deva_or_translit(s):
+    return s if DEVA_RE.search(s) else to_deva(s)
+
+
 def manifest(raw, dst):
-    seen, out = set(), []
+    import hashlib
+    seen_slugs, seen_lines, out, skipped = set(), set(), [], []
     for line in open(raw, encoding="utf-8"):
         line = line.strip()
         if not line or " — " not in line:
             continue
         t, a = (html.unescape(p.strip()) for p in line.split(" — ", 1))
         a = a.split(", ")[0].strip()
-        s = unicodedata.normalize("NFKD", t).encode("ascii", "ignore").decode().lower()
-        s = re.sub(r"[^a-z0-9]+", "-", s).strip("-")[:70] or "book"
+        if (t, a) in seen_lines:
+            skipped.append(f"duplicate: {t}")
+            continue
+        seen_lines.add((t, a))
+        if t in ALREADY_COVERED:
+            skipped.append(f"already covered: {t}")
+            continue
+        if DEVA_RE.search(t):
+            # already Devanagari: keep as-is, stable hash slug (ASCII slug would be empty)
+            s = "hi-" + hashlib.md5(t.encode("utf-8")).hexdigest()[:10]
+        else:
+            s = unicodedata.normalize("NFKD", t).encode("ascii", "ignore").decode().lower()
+            s = re.sub(r"[^a-z0-9]+", "-", s).strip("-")[:70] or "book"
         base, n = s, 2
-        while s in seen:
+        while s in seen_slugs:
             s = f"{base}-{n}"
             n += 1
-        seen.add(s)
-        out.append(f"{s}\t{to_deva(t)}\t{to_deva(a)}\t{t}\t{a}")
+        seen_slugs.add(s)
+        out.append(f"{s}\t{_deva_or_translit(t)}\t{_deva_or_translit(a)}\t{t}\t{a}")
     open(dst, "w", encoding="utf-8").write("\n".join(out) + "\n")
     print(len(out), "books ->", dst)
+    for x in skipped:
+        print("skipped:", x)
 
 
 def caption(text, font, pointsize, width):
