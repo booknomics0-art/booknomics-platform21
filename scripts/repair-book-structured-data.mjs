@@ -31,7 +31,7 @@ async function api(path) {
 const publicationBySlug = new Map();
 for (let offset = 0; ; offset += PAGE_SIZE) {
   const page = await api(
-    `books?select=slug,seo_slug,created_at&is_draft=eq.false&status=eq.published&limit=${PAGE_SIZE}&offset=${offset}`,
+    `books?select=slug,seo_slug,created_at&is_draft=eq.false&status=in.(published,published_noindex)&limit=${PAGE_SIZE}&offset=${offset}`,
   );
   for (const book of page) {
     if (!book.created_at) continue;
