@@ -7,7 +7,7 @@ const ORG_LOGO = `${BASE}/og-default.svg`;
 const BOOKS_DIR = resolve("dist", "books");
 const SUPABASE_URL = process.env.VITE_SUPABASE_URL?.trim();
 const SUPABASE_KEY = process.env.VITE_SUPABASE_PUBLISHABLE_KEY?.trim();
-const PAGE_SIZE = 1000;
+const PAGE_SIZE = 500;
 
 if (!SUPABASE_URL || !SUPABASE_KEY) {
   throw new Error("repair-book-structured-data: missing Supabase env");
@@ -31,7 +31,7 @@ async function api(path) {
 const publicationBySlug = new Map();
 for (let offset = 0; ; offset += PAGE_SIZE) {
   const page = await api(
-    `books?select=slug,seo_slug,created_at&is_draft=eq.false&status=in.(published,published_noindex)&limit=${PAGE_SIZE}&offset=${offset}`,
+    `books?select=id,slug,seo_slug,created_at&is_draft=eq.false&status=in.(published,published_noindex)&order=id.asc&limit=${PAGE_SIZE}&offset=${offset}`,
   );
   for (const book of page) {
     if (!book.created_at) continue;
