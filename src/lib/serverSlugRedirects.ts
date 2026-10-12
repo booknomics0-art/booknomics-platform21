@@ -16,4 +16,6 @@ export const SERVER_SLUG_REDIRECTS: Record<string, string> = {
     "universal-principles-of-design-lidwell-holden-butler-summary",
   "hospitals-facility-planning-and-management-g-d-kunders-summary":
     "hospitals-planning-design-management-kunders-gopinath-katakam-summary",
+  "picasso-william-s-lieberman-summary":
+    "picasso-his-graphic-art-william-s-lieberman-summary",
 };
