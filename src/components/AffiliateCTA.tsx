@@ -12,8 +12,9 @@ interface Props {
   label?: string;
 }
 
+const AMAZON_ASSOCIATE_TAG = "booksinsighthu-21";
 const AMAZON_SEARCH = (q: string) =>
-  `https://www.amazon.in/s?k=${encodeURIComponent(q)}&tag=bookinsight-21`;
+  `https://www.amazon.in/s?k=${encodeURIComponent(q)}&tag=${AMAZON_ASSOCIATE_TAG}`;
 
 export const AffiliateCTA = ({ bookId, link, title, placement = "detail", variant = "primary", label }: Props) => {
   const { user } = useAuth();
@@ -30,10 +31,13 @@ export const AffiliateCTA = ({ bookId, link, title, placement = "detail", varian
 
   if (variant === "inline") {
     return (
-      <a href={href} target="_blank" rel="nofollow sponsored noopener noreferrer" onClick={onClick}
-        className="inline-flex items-center gap-1.5 text-primary font-semibold hover:underline">
-        {label || "Read full book on Amazon"} <ExternalLink className="h-3.5 w-3.5" />
-      </a>
+      <span className="inline-flex flex-col items-start gap-1">
+        <a href={href} target="_blank" rel="nofollow sponsored noopener noreferrer" onClick={onClick}
+          className="inline-flex items-center gap-1.5 text-primary font-semibold hover:underline">
+          {label || "Read full book on Amazon"} <ExternalLink className="h-3.5 w-3.5" />
+        </a>
+        <span className="text-[10px] text-muted-foreground">Paid link · As an Amazon Associate I earn from qualifying purchases.</span>
+      </span>
     );
   }
 
@@ -50,7 +54,7 @@ export const AffiliateCTA = ({ bookId, link, title, placement = "detail", varian
         </a>
       </Button>
       <p className="text-[11px] text-muted-foreground mt-4">
-        Affiliate disclosure: We may earn a commission from qualifying purchases.
+        Paid link · As an Amazon Associate I earn from qualifying purchases.
       </p>
     </div>
   );
