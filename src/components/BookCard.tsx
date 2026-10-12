@@ -122,12 +122,17 @@ export const BookCover = ({ book, size = "md", priority = false }: { book: BookC
 
   if (book.cover_url) {
     const url = book.cover_url;
-    const isSupabase = /\/storage\/v1\/object\/public\//.test(url);
+    const isSupabaseObject = /\/storage\/v1\/object\/public\//.test(url);
+    const isSupabaseRender = /\/storage\/v1\/render\/image\/public\//.test(url);
+    const isSupabase = isSupabaseObject || isSupabaseRender;
     const isGoogleBooks = /books\.google\.com|googleusercontent\.com/.test(url);
     const toRender = (w: number) => {
       if (isSupabase) {
         const h = Math.round(w * 1.5);
-        return url.replace("/object/public/", "/render/image/public/") + `?width=${w}&height=${h}&resize=cover&quality=82&format=webp`;
+        const base = isSupabaseObject
+          ? url.replace("/object/public/", "/render/image/public/").split("?", 1)[0]
+          : url.split("?", 1)[0];
+        return `${base}?width=${w}&height=${h}&resize=cover&quality=78&format=webp`;
       }
       if (isGoogleBooks) {
         return url.replace(/([?&])zoom=\d+/, "$1zoom=1").replace(/([?&])edge=curl/, "$1");
