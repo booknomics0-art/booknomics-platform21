@@ -18,4 +18,6 @@ export const SERVER_SLUG_REDIRECTS: Record<string, string> = {
     "hospitals-planning-design-management-kunders-gopinath-katakam-summary",
   "picasso-william-s-lieberman-summary":
     "picasso-his-graphic-art-william-s-lieberman-summary",
+  "design-for-the-read-world-victor-j-papanek-summary":
+    "design-for-the-real-world-victor-j-papanek-summary",
 };
