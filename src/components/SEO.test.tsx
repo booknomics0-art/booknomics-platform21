@@ -1,6 +1,13 @@
 import { render, waitFor } from "@testing-library/react";
 import { HelmetProvider } from "react-helmet-async";
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
+
+// These tests exercise canonical/meta rendering only. Keep them independent of
+// production Supabase environment variables so CI does not need live credentials.
+vi.mock("@/integrations/supabase/client", () => ({
+  supabase: {},
+}));
+
 import { SEO } from "./SEO";
 
 describe("SEO canonical host invariants", () => {
