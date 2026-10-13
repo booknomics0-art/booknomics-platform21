@@ -12,6 +12,7 @@ export const config = {
     "/books/mary-shelley-s-frankenstein-or-the-modern-prometheus-1818-text-mary-shelley-summary",
     "/books/don-t-make-me-think-revisited-steve-krug-summary",
     "/books/hospitals-facility-planning-and-management-g-d-kunders-summary",
+    "/books/बीजक-कबीर-saransh",
   ],
 };
 
