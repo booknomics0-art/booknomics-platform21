@@ -26,7 +26,7 @@ This branch stages a zero/low-downtime migration from Supabase + Vercel to Cloud
 - Covers/mindmaps/audio/PDF/static user-facing files: Cloudflare R2
 - Authentication: Google OAuth handled by the Worker + D1 sessions
 - Scheduled/background tasks: Workers Cron/Queues (migrate only active jobs)
-- `images.booknomics.com`: R2-backed media hostname
+- `images.booknomics.com`: keep existing Cloudflare-backed media URLs stable where possible
 - `booknomics.com`: Worker + Static Assets after validation
 
 ## Safety rules
@@ -37,30 +37,34 @@ This branch stages a zero/low-downtime migration from Supabase + Vercel to Cloud
 4. Import active business data only. Archive historical audit/backup tables to R2 if they must be retained.
 5. Before copying an object to R2, HEAD the destination key and skip if the object already exists.
 6. Keep object keys stable where possible so URLs can be rewritten deterministically.
-7. Do not expose D1 directly to browsers. All D1 access goes through Worker routes.
+7. Do not expose D1 directly to browsers. All runtime D1 access goes through Worker routes.
 
-## Cloudflare resources to create
+## Cloudflare resources
 
-Create in the same Cloudflare account that owns `booknomics.com`:
+Use the Cloudflare account that owns `booknomics.com`. Reuse existing R2 resources behind `images.booknomics.com` when they are the correct destination; do not create duplicates blindly.
+
+Required bindings/resources:
 
 - D1 database: `booknomics-production`
-- R2 bucket: `booknomics-covers`
-- R2 bucket: `booknomics-assets`
+- R2 covers binding: `BOOK_COVERS`
+- R2 assets binding: `BOOK_ASSETS`
 - Worker: `booknomics`
 
-After creation, add their IDs/bindings to `wrangler.jsonc`.
+After the resources are confirmed, add their IDs/bindings to `wrangler.jsonc`.
 
 Required Worker secrets:
 
 - `GOOGLE_CLIENT_ID`
 - `GOOGLE_CLIENT_SECRET`
-- `SESSION_SECRET`
 
 Migration-only secrets belong in local/CI secret storage, never source control:
 
-- Supabase service-role/database credentials (as needed by the chosen exporter)
-- Cloudflare API token scoped to D1/R2/Workers
-- R2 S3 access-key ID/secret (if using S3 bulk-copy tooling)
+- `SUPABASE_SERVICE_ROLE_KEY`
+- `CLOUDFLARE_ACCOUNT_ID`
+- `CLOUDFLARE_API_TOKEN`
+- `CLOUDFLARE_D1_DATABASE_ID`
+- `R2_ACCESS_KEY_ID`
+- `R2_SECRET_ACCESS_KEY`
 
 ## D1 schema
 
@@ -69,8 +73,21 @@ Apply in order:
 1. `cloudflare/migrations/0001_core.sql`
 2. `cloudflare/migrations/0002_admin_seo.sql`
 3. `cloudflare/migrations/0003_google_auth.sql`
+4. Import the source data with `cloudflare/migrate.mjs`
+5. `cloudflare/migrations/0004_rewrite_legacy_urls.sql` as a post-import safety pass
 
-The core schema intentionally uses SQLite-compatible types and stores JSON values as TEXT.
+The core schema uses SQLite-compatible types and stores JSON values as TEXT. The migration utility automatically sizes insert batches below D1's bound-parameter ceiling.
+
+## Data migration utility
+
+`cloudflare/migrate.mjs` migrates active Supabase REST data and Google Auth identities to D1. It can also copy both public Storage buckets to R2 with destination HEAD checks so existing objects are skipped.
+
+It defaults to dry-run behavior. Production writes require:
+
+- `MIGRATION_APPLY=YES`
+- `MIGRATE_STORAGE=YES` to enable R2 copying
+
+The utility rewrites legacy Supabase storage URLs to Cloudflare media routes during import and converts dynamic Supabase fallback-cover URLs to `/api/covers/<book-id>.svg`.
 
 ## Data migration policy
 
@@ -83,7 +100,7 @@ The core schema intentionally uses SQLite-compatible types and stores JSON value
 - reviews/comments/reactions/discussions
 - learning paths/enrollments
 - subscriptions/user roles
-- app settings and URL redirects
+- safe app settings and URL redirects
 - active catalog/research/quality/SEO records
 - current jobs/social/backlink records needed in production
 - Google user identity mapping (no Supabase session tokens)
@@ -103,18 +120,16 @@ If retention is required, export those tables as compressed JSON/CSV and put the
 
 Map:
 
-- Supabase `book-covers/*` -> R2 `booknomics-covers/*`
-- Supabase `book-assets/*` -> R2 `booknomics-assets/*`
+- Supabase `book-covers/*` -> Cloudflare covers R2 destination
+- Supabase `book-assets/*` -> Cloudflare assets R2 destination
 
-Both existing Supabase buckets are public, so source objects can be copied by URL during the migration. Destination writes must use authenticated R2 API/S3 credentials.
+Both existing Supabase buckets are public, so source objects can be copied by URL. Destination writes use authenticated R2 S3 credentials. Existing destination keys are checked first and skipped.
 
-For existing `images.booknomics.com` objects, check destination first and skip duplicates.
+After migration:
 
-After parity verification, rewrite:
-
-- cover URLs to `https://images.booknomics.com/covers/...` (or the chosen stable public prefix)
-- mindmap/media URLs to their R2-backed hostname
-- the 3,912 dynamic Supabase fallback cover URLs to `/api/covers/<book-id>.svg` initially, then optionally pre-render/upload them to R2
+- existing valid `images.booknomics.com` URLs stay unchanged
+- legacy Supabase Storage URLs become `/media/covers/*` or `/media/assets/*`
+- 3,912 dynamic Supabase fallback cover URLs become `/api/covers/<book-id>.svg`
 
 ## Google OAuth migration
 
@@ -123,7 +138,7 @@ Current Supabase identities are Google identities, so password hashes do not nee
 Worker flow:
 
 1. `/api/auth/google/start` generates state and redirects to Google.
-2. `/api/auth/google/callback` validates state, exchanges code, obtains the Google profile, upserts/matches the D1 user and creates an HttpOnly session.
+2. `/api/auth/google/callback` validates state, exchanges code, gets the verified Google profile, maps/upserts the D1 user and creates an HttpOnly session.
 3. `/api/auth/session` returns the safe current-user payload.
 4. `/api/auth/logout` deletes the session and clears the cookie.
 
@@ -139,11 +154,11 @@ All gates must pass before DNS changes:
 - all public book slugs resolve
 - Browse/search/filter pagination works
 - Admin role check works
-- 10 existing Google users can sign in or are correctly mapped
-- R2 object count/size reconciled with the source minus intentional deduplication
+- 10 existing Google users are correctly mapped/sign-in tested
+- R2 object count/size reconciled with source minus intentional deduplication
 - no public page calls `pbkfewrtdgiagytmcigb.supabase.co`
 - generated sitemap count and canonical URLs are correct
-- `booknomics.com` preview passes mobile/desktop smoke tests
+- Cloudflare preview passes mobile/desktop smoke tests
 
 ## Cutover sequence
 
