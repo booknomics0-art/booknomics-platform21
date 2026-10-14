@@ -1,31 +1,32 @@
-import { useEffect, useState } from "react";
-import { User } from "@supabase/supabase-js";
-import { supabase } from "@/integrations/supabase/client";
-import { completeOAuthRedirect } from "@/lib/oauthCallback";
+import { useCallback, useEffect, useState } from "react";
+import { apiFetch, normalizeUser, type CloudflareUser } from "@/lib/cloudflareApi";
 
 export function useAuth() {
-  const [user, setUser] = useState<User | null>(null);
+  const [user, setUser] = useState<CloudflareUser | null>(null);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    const { data: sub } = supabase.auth.onAuthStateChange((_e, session) => {
-      setUser(session?.user ?? null);
-    });
-    (async () => {
-      // Complete any in-flight OAuth redirect (e.g. "Continue with Google")
-      // before reading the session, so the user isn't shown as signed out.
-      try {
-        await completeOAuthRedirect();
-        const { data } = await supabase.auth.getSession();
-        setUser(data.session?.user ?? null);
-      } catch {
-        setUser(null);
-      } finally {
-        setLoading(false);
-      }
-    })();
-    return () => sub.subscription.unsubscribe();
+  const refresh = useCallback(async () => {
+    try {
+      const data = await apiFetch<{ user: Omit<CloudflareUser, "user_metadata"> | null }>("/api/auth/session");
+      setUser(normalizeUser(data.user));
+    } catch {
+      setUser(null);
+    } finally {
+      setLoading(false);
+    }
   }, []);
 
-  return { user, loading, signOut: () => supabase.auth.signOut() };
+  useEffect(() => {
+    refresh();
+  }, [refresh]);
+
+  const signOut = useCallback(async () => {
+    try {
+      await apiFetch<{ ok: boolean }>("/api/auth/logout", { method: "POST" });
+    } finally {
+      setUser(null);
+    }
+  }, []);
+
+  return { user, loading, signOut, refresh };
 }
