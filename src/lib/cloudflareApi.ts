@@ -1,0 +1,50 @@
+const configuredBase = (import.meta.env.VITE_API_BASE || "").trim();
+const API_BASE = configuredBase.endsWith("/") ? configuredBase.slice(0, -1) : configuredBase;
+
+export type CloudflareUser = {
+  id: string;
+  email: string;
+  display_name: string | null;
+  avatar_url: string | null;
+  user_metadata: {
+    name?: string;
+    full_name?: string;
+    avatar_url?: string;
+  };
+};
+
+export async function apiFetch<T>(path: string, init: RequestInit = {}): Promise<T> {
+  const response = await fetch(`${API_BASE}${path}`, {
+    ...init,
+    credentials: "include",
+    headers: {
+      accept: "application/json",
+      ...(init.body ? { "content-type": "application/json" } : {}),
+      ...init.headers,
+    },
+  });
+
+  const payload = await response.json().catch(() => null);
+  if (!response.ok) {
+    const message = payload && typeof payload.error === "string" ? payload.error : `Request failed (${response.status})`;
+    throw new Error(message);
+  }
+  return payload as T;
+}
+
+export function normalizeUser(user: Omit<CloudflareUser, "user_metadata"> | null): CloudflareUser | null {
+  if (!user) return null;
+  return {
+    ...user,
+    user_metadata: {
+      name: user.display_name || undefined,
+      full_name: user.display_name || undefined,
+      avatar_url: user.avatar_url || undefined,
+    },
+  };
+}
+
+export function googleSignInUrl(returnTo = "/") {
+  const safe = returnTo.startsWith("/") && !returnTo.startsWith("//") ? returnTo : "/";
+  return `${API_BASE}/api/auth/google/start?return_to=${encodeURIComponent(safe)}`;
+}
