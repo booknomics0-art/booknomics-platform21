@@ -1,0 +1,23 @@
+{
+  "$schema": "./node_modules/wrangler/config-schema.json",
+  "name": "booknomics",
+  "main": "worker/index.ts",
+  "compatibility_date": "2026-10-14",
+  "upload_source_maps": true,
+  "assets": {
+    "directory": "./dist",
+    "binding": "ASSETS",
+    "not_found_handling": "single-page-application",
+    "run_worker_first": ["/api/*", "/media/*"]
+  },
+  "observability": {
+    "enabled": true
+  },
+  "vars": {
+    "BOOKNOMICS_ENV": "migration"
+  }
+
+  // D1 and R2 bindings are intentionally added only after the Cloudflare
+  // resources are created in the target account. Keeping IDs out of source
+  // prevents an accidental production cutover while the migration is staged.
+}
