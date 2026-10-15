@@ -96,6 +96,13 @@ function safeBooknomicsUrl(value: unknown) {
   }
 }
 
+function safeSiteProperty(value: unknown) {
+  if (typeof value !== "string") return null;
+  const trimmed = value.trim();
+  if (trimmed === "sc-domain:booknomics.com") return trimmed;
+  return safeBooknomicsUrl(trimmed);
+}
+
 async function persistPageMetrics(env: AdminGscEnv, siteUrl: string, startDate: string, endDate: string, rows: any[]) {
   if (!env.DB || !rows.length) return false;
   try {
@@ -152,7 +159,7 @@ export async function handleAdminGscRoute(request: Request, env: AdminGscEnv): P
 
     const body = await request.json().catch(() => null) as any;
     const action = typeof body?.action === "string" ? body.action : "";
-    const siteUrl = safeBooknomicsUrl(body?.siteUrl);
+    const siteUrl = safeSiteProperty(body?.siteUrl);
     const pageUrl = safeBooknomicsUrl(body?.pageUrl);
     const startDate = body?.startDate;
     const endDate = body?.endDate;
