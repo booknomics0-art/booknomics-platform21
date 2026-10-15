@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { AdminGuard } from "@/components/admin/AdminGuard";
 import { AdminShell } from "@/components/admin/AdminShell";
-import { supabase } from "@/integrations/supabase/client";
+import { adminGsc } from "@/lib/adminApi";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -34,12 +34,7 @@ function Inner() {
 
   useEffect(() => { localStorage.setItem("gsc_site", site); }, [site]);
 
-  const call = async (body: any) => {
-    const { data, error } = await supabase.functions.invoke("admin-gsc", { body });
-    if (error) throw new Error(error.message);
-    if ((data as any)?.error) throw new Error((data as any).error);
-    return data;
-  };
+  const call = async (body: any) => adminGsc<any>(body);
 
   const loadSites = async () => {
     try { const d: any = await call({ action: "list_sites" }); setSites(d.siteEntry || []); }
@@ -174,7 +169,6 @@ function Mini({ label, value }: { label: string; value: any }) {
   );
 }
 
-
 function buildCtrOpportunities(rows: any[]) {
   const normalized = rows
     .filter((r) => r?.keys?.[0] && Number(r.impressions || 0) > 0)
@@ -186,9 +180,7 @@ function buildCtrOpportunities(rows: any[]) {
       position: Number(r.position || 0),
     }));
 
-  const bandFor = (position: number) =>
-    position <= 3 ? "1-3" : position <= 7 ? "4-7" : position <= 15 ? "8-15" : "16+";
-
+  const bandFor = (position: number) => position <= 3 ? "1-3" : position <= 7 ? "4-7" : position <= 15 ? "8-15" : "16+";
   const median = (values: number[]) => {
     if (!values.length) return 0;
     const sorted = [...values].sort((a, b) => a - b);
@@ -199,7 +191,6 @@ function buildCtrOpportunities(rows: any[]) {
   const impressionValues = normalized.map((r) => r.impressions).sort((a, b) => a - b);
   const q3Index = Math.max(0, Math.floor((impressionValues.length - 1) * 0.75));
   const highImpressionCutoff = impressionValues[q3Index] || 0;
-
   const medians = new Map<string, number>();
   for (const band of ["1-3", "4-7", "8-15"]) {
     medians.set(band, median(normalized.filter((r) => bandFor(r.position) === band).map((r) => r.ctr)));
