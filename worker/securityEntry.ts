@@ -1,5 +1,6 @@
 import appWorker from "./appEntry";
 import { handleSocialRoute } from "./socialRoutes";
+import { handleCompatRoute } from "./compatRoutes";
 
 type D1 = any;
 type Env = {
@@ -79,6 +80,8 @@ async function stripPremiumFields(response: Response) {
 
 export default {
   async fetch(request: Request, env: Env): Promise<Response> {
+    const compat = await handleCompatRoute(request, env);
+    if (compat) return compat;
     const social = await handleSocialRoute(request, env);
     if (social) return social;
 
