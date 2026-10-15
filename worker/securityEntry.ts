@@ -1,6 +1,7 @@
 import appWorker from "./appEntry";
 import { handleSocialRoute } from "./socialRoutes";
 import { handleCompatRoute } from "./compatRoutes";
+import { handlePaymentRoute } from "./paymentRoutes";
 
 type D1 = any;
 type Env = {
@@ -11,6 +12,8 @@ type Env = {
   BOOKNOMICS_ENV?: string;
   GOOGLE_CLIENT_ID?: string;
   GOOGLE_CLIENT_SECRET?: string;
+  RAZORPAY_KEY_ID?: string;
+  RAZORPAY_KEY_SECRET?: string;
 };
 
 type SafeUser = { id: string; email: string; display_name: string | null; avatar_url: string | null };
@@ -80,6 +83,9 @@ async function stripPremiumFields(response: Response) {
 
 export default {
   async fetch(request: Request, env: Env): Promise<Response> {
+    const payment = await handlePaymentRoute(request, env);
+    if (payment) return payment;
+
     const compat = await handleCompatRoute(request, env);
     if (compat) return compat;
     const social = await handleSocialRoute(request, env);
