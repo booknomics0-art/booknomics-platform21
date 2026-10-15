@@ -22,16 +22,19 @@ jobs:
       CANDIDATE_VERSION_ID: 18669084-891e-4907-b9bd-2bca17d2358d
     steps:
       - uses: actions/checkout@v4
+
       - uses: actions/setup-node@v4
         with:
           node-version: 22
           cache: npm
+
       - name: Require Cloudflare credentials
         shell: bash
         run: |
           set -euo pipefail
           test -n "${CLOUDFLARE_ACCOUNT_ID:-}"
           test -n "${CLOUDFLARE_API_TOKEN:-}"
+
       - name: Verify cutover config and exact tested version
         shell: bash
         run: |
@@ -48,6 +51,7 @@ jobs:
             echo "::error::Tested Worker version $CANDIDATE_VERSION_ID is not available"
             exit 1
           }
+
       - name: Confirm clean pre-cutover route state
         shell: bash
         run: |
@@ -69,6 +73,7 @@ jobs:
           }
           console.log('Pre-cutover route state safe.');
           NODE
+
       - name: Promote exact tested Worker version
         shell: bash
         run: |
@@ -83,45 +88,65 @@ jobs:
             exit 1
           }
           echo 'Exact tested Worker version is active; public traffic remains unchanged until routes are applied.'
-      - name: Activate Worker routes and verify them
+
+      - name: Activate Worker routes through Zone API and smoke production
         shell: bash
         run: |
           set -euo pipefail
-          rollback_routes() {
+          AUTH=(-H "Authorization: Bearer ${CLOUDFLARE_API_TOKEN}" -H 'Content-Type: application/json')
+          : > /tmp/created-route-ids
+
+          rollback_created_routes() {
             echo 'Attempting automatic Worker-route rollback to Vercel origin...'
-            AUTH=(-H "Authorization: Bearer ${CLOUDFLARE_API_TOKEN}" -H 'Content-Type: application/json')
-            ROUTES=$(curl --fail --silent --show-error "${AUTH[@]}" "https://api.cloudflare.com/client/v4/zones/${ZONE_ID}/workers/routes" || true)
-            IDS=$(node - "$ROUTES" <<'NODE'
-          let d={}; try { d=JSON.parse(process.argv[2]||'{}'); } catch {}
-          for (const r of (d.result||[])) {
-            if (r.script === 'booknomics' && ['booknomics.com/*','www.booknomics.com/*'].includes(r.pattern)) console.log(r.id);
+            if [[ -f /tmp/created-route-ids ]]; then
+              while IFS= read -r id; do
+                [[ -n "$id" ]] || continue
+                curl --fail --silent --show-error -X DELETE "${AUTH[@]}" \
+                  "https://api.cloudflare.com/client/v4/zones/${ZONE_ID}/workers/routes/${id}" >/dev/null || true
+              done < /tmp/created-route-ids
+            fi
           }
+          trap 'rc=$?; if [[ $rc -ne 0 ]]; then rollback_created_routes; fi; exit $rc' EXIT
+
+          ROUTES=$(curl --fail --silent --show-error "${AUTH[@]}" "https://api.cloudflare.com/client/v4/zones/${ZONE_ID}/workers/routes")
+          for pattern in 'booknomics.com/*' 'www.booknomics.com/*'; do
+            EXISTING_ID=$(node - "$ROUTES" "$pattern" <<'NODE'
+          const d=JSON.parse(process.argv[2]);
+          const pattern=process.argv[3];
+          const route=(d.result||[]).find(r => r.pattern===pattern && r.script==='booknomics');
+          process.stdout.write(route?.id || '');
           NODE
             )
-            for id in $IDS; do
-              curl --fail --silent --show-error -X DELETE "${AUTH[@]}" \
-                "https://api.cloudflare.com/client/v4/zones/${ZONE_ID}/workers/routes/${id}" >/dev/null || true
-            done
-          }
-          trap 'rc=$?; if [[ $rc -ne 0 ]]; then rollback_routes; fi; exit $rc' EXIT
+            if [[ -n "$EXISTING_ID" ]]; then
+              echo "Route already active: ${pattern} (${EXISTING_ID})"
+              continue
+            fi
 
-          # Use a routes-only config so applying triggers never requires rebuilding the
-          # static assets. The already-tested Worker version remains byte-for-byte the
-          # version serving production.
-          cat > wrangler.routes.jsonc <<'JSON'
-          {
-            "name": "booknomics",
-            "main": "worker/securityEntry.ts",
-            "compatibility_date": "2026-10-14",
-            "routes": [
-              { "pattern": "booknomics.com/*", "zone_name": "booknomics.com" },
-              { "pattern": "www.booknomics.com/*", "zone_name": "booknomics.com" }
-            ]
+            BODY=$(node -e 'process.stdout.write(JSON.stringify({pattern:process.argv[1],script:"booknomics"}))' "$pattern")
+            HTTP_CODE=$(curl --silent --show-error --output /tmp/route-create.json --write-out '%{http_code}' \
+              -X POST "${AUTH[@]}" \
+              --data "$BODY" \
+              "https://api.cloudflare.com/client/v4/zones/${ZONE_ID}/workers/routes" || true)
+            if [[ "$HTTP_CODE" -lt 200 || "$HTTP_CODE" -ge 300 ]]; then
+              echo "::error::Cloudflare Workers Route create failed for ${pattern} (HTTP ${HTTP_CODE})"
+              cat /tmp/route-create.json || true
+              exit 1
+            fi
+            CREATED_ID=$(node - <<'NODE'
+          const fs=require('fs');
+          const d=JSON.parse(fs.readFileSync('/tmp/route-create.json','utf8'));
+          if (!d.success || !d.result?.id || d.result?.script !== 'booknomics') {
+            console.error(d);
+            process.exit(1);
           }
-          JSON
-          npx --yes wrangler@4.136.3 triggers deploy --config wrangler.routes.jsonc --name "$WORKER_NAME"
+          process.stdout.write(d.result.id);
+          NODE
+            )
+            echo "$CREATED_ID" >> /tmp/created-route-ids
+            echo "Created route: ${pattern} (${CREATED_ID})"
+            ROUTES=$(curl --fail --silent --show-error "${AUTH[@]}" "https://api.cloudflare.com/client/v4/zones/${ZONE_ID}/workers/routes")
+          done
 
-          AUTH=(-H "Authorization: Bearer ${CLOUDFLARE_API_TOKEN}" -H 'Content-Type: application/json')
           ROUTES=$(curl --fail --silent --show-error "${AUTH[@]}" "https://api.cloudflare.com/client/v4/zones/${ZONE_ID}/workers/routes")
           node - "$ROUTES" <<'NODE'
           const d = JSON.parse(process.argv[2]);
@@ -133,7 +158,7 @@ jobs:
           NODE
 
           echo 'Waiting briefly for edge route propagation...'
-          sleep 5
+          sleep 8
 
           APEX_STATUS=$(curl --silent --show-error --output /dev/null --dump-header /tmp/apex.headers \
             --write-out '%{http_code}' --max-redirs 0 'https://booknomics.com/' || true)
