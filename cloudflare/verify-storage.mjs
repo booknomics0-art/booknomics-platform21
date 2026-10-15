@@ -28,9 +28,25 @@ const sourceHeaders = { apikey: SOURCE_KEY, authorization: `Bearer ${SOURCE_KEY}
 const hash = (value) => createHash("sha256").update(value).digest("hex");
 const hmac = (key, value, encoding) => createHmac("sha256", key).update(value).digest(encoding);
 const encodeKey = (key) => key.split("/").map(encodeURIComponent).join("/");
+const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+
+async function fetchWithRetry(url, init = {}, label = url) {
+  let lastError;
+  for (let attempt = 1; attempt <= 4; attempt += 1) {
+    try {
+      const response = await fetch(url, init);
+      if (response.status !== 429 && response.status < 500) return response;
+      lastError = new Error(`${label}: HTTP ${response.status}`);
+    } catch (error) {
+      lastError = error;
+    }
+    if (attempt < 4) await sleep(400 * (2 ** (attempt - 1)));
+  }
+  throw lastError;
+}
 
 async function fetchText(url, init = {}) {
-  const response = await fetch(url, init);
+  const response = await fetchWithRetry(url, init, url);
   const text = await response.text();
   if (!response.ok) throw new Error(`${response.status} ${url}: ${text.slice(0, 700)}`);
   return text;
@@ -58,27 +74,56 @@ function signedHeaders(method, bucket, key, payloadHash) {
   };
 }
 
-async function r2Head(bucket, key) {
+async function r2Probe(bucket, key) {
   const empty = hash(Buffer.alloc(0));
-  const response = await fetch(`https://${R2_HOST}/${encodeURIComponent(bucket)}/${encodeKey(key)}`, {
+  const url = `https://${R2_HOST}/${encodeURIComponent(bucket)}/${encodeKey(key)}`;
+  const head = await fetchWithRetry(url, {
     method: "HEAD",
     headers: signedHeaders("HEAD", bucket, key, empty),
-  });
-  if (response.status === 404) return { exists: false, size: null };
-  if (!response.ok) throw new Error(`R2 HEAD ${bucket}/${key}: ${response.status}`);
-  const rawSize = response.headers.get("content-length");
-  return {
-    exists: true,
-    size: rawSize && Number.isFinite(Number(rawSize)) ? Number(rawSize) : null,
-  };
+  }, `R2 HEAD ${bucket}/${key}`);
+
+  if (head.status === 404) return { exists: false, size: null };
+  if (!head.ok) throw new Error(`R2 HEAD ${bucket}/${key}: ${head.status}`);
+
+  const rawSize = head.headers.get("content-length");
+  if (rawSize && Number.isFinite(Number(rawSize))) {
+    return { exists: true, size: Number(rawSize) };
+  }
+
+  // Some R2/S3 HEAD responses do not expose content-length to fetch().
+  // Probe one byte and read the total from Content-Range instead of treating it as a mismatch.
+  const ranged = await fetchWithRetry(url, {
+    method: "GET",
+    headers: { ...signedHeaders("GET", bucket, key, empty), range: "bytes=0-0" },
+  }, `R2 range probe ${bucket}/${key}`);
+  if (ranged.status === 404) return { exists: false, size: null };
+  if (!ranged.ok) throw new Error(`R2 range probe ${bucket}/${key}: ${ranged.status}`);
+
+  const contentRange = ranged.headers.get("content-range") || "";
+  const rangeMatch = contentRange.match(/\/(\d+)$/);
+  if (rangeMatch) {
+    await ranged.arrayBuffer().catch(() => null);
+    return { exists: true, size: Number(rangeMatch[1]) };
+  }
+
+  const rangedLength = ranged.headers.get("content-length");
+  if (ranged.status === 200 && rangedLength && Number.isFinite(Number(rangedLength))) {
+    await ranged.arrayBuffer().catch(() => null);
+    return { exists: true, size: Number(rangedLength) };
+  }
+
+  const body = Buffer.from(await ranged.arrayBuffer());
+  if (ranged.status === 200) return { exists: true, size: body.byteLength };
+  throw new Error(`R2 size unavailable for ${bucket}/${key}`);
 }
 
 async function r2GetHash(bucket, key) {
   const empty = hash(Buffer.alloc(0));
-  const response = await fetch(`https://${R2_HOST}/${encodeURIComponent(bucket)}/${encodeKey(key)}`, {
-    method: "GET",
-    headers: signedHeaders("GET", bucket, key, empty),
-  });
+  const response = await fetchWithRetry(
+    `https://${R2_HOST}/${encodeURIComponent(bucket)}/${encodeKey(key)}`,
+    { method: "GET", headers: signedHeaders("GET", bucket, key, empty) },
+    `R2 GET ${bucket}/${key}`,
+  );
   if (!response.ok) throw new Error(`R2 GET ${bucket}/${key}: ${response.status}`);
   return hash(Buffer.from(await response.arrayBuffer()));
 }
@@ -130,9 +175,10 @@ function metadataSize(item) {
 }
 
 async function fetchSourceObject(sourceBucket, key, item) {
-  const response = await fetch(
+  const response = await fetchWithRetry(
     `${SOURCE_URL}/storage/v1/object/public/${encodeURIComponent(sourceBucket)}/${encodeKey(key)}`,
     { headers: sourceHeaders },
+    `source object ${sourceBucket}/${key}`,
   );
   if (!response.ok) throw new Error(`source object ${sourceBucket}/${key}: ${response.status}`);
   const buffer = Buffer.from(await response.arrayBuffer());
@@ -173,7 +219,7 @@ async function verifyBucket(sourceBucket, targetBucket) {
       const item = objects[index];
       const key = item.name;
       try {
-        const target = await r2Head(targetBucket, key);
+        const target = await r2Probe(targetBucket, key);
         if (!target.exists) {
           report.missing++;
           addSample(report, "missing", { key });
@@ -188,7 +234,7 @@ async function verifyBucket(sourceBucket, targetBucket) {
           sourceSize = source.size;
         }
 
-        if (target.size == null || sourceSize !== target.size) {
+        if (sourceSize !== target.size) {
           report.sizeMismatch++;
           addSample(report, "size-mismatch", { key, sourceSize, targetSize: target.size });
           continue;
