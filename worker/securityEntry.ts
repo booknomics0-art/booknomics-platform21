@@ -5,6 +5,7 @@ import { handlePaymentRoute } from "./paymentRoutes";
 import { handleGrowthRoute } from "./growthRoutes";
 import { handleAdminRoute } from "./adminRoutes";
 import { handleAdminOpsRoute } from "./adminOpsRoutes";
+import { handleAdminAiRoute } from "./adminAiRoutes";
 import { handleSitemapDataRoute } from "./sitemapRoutes";
 
 type D1 = any;
@@ -18,6 +19,7 @@ type Env = {
   GOOGLE_CLIENT_SECRET?: string;
   RAZORPAY_KEY_ID?: string;
   RAZORPAY_KEY_SECRET?: string;
+  LOVABLE_API_KEY?: string;
 };
 
 type SafeUser = { id: string; email: string; display_name: string | null; avatar_url: string | null };
@@ -98,6 +100,9 @@ export default {
 
     const adminOps = await handleAdminOpsRoute(request, env);
     if (adminOps) return adminOps;
+
+    const adminAi = await handleAdminAiRoute(request, env);
+    if (adminAi) return adminAi;
 
     const sitemapData = await handleSitemapDataRoute(request, env);
     if (sitemapData) return sitemapData;
