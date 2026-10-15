@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { AdminGuard } from "@/components/admin/AdminGuard";
 import { AdminShell } from "@/components/admin/AdminShell";
-import { supabase } from "@/integrations/supabase/client";
+import { adminCreateSocialPost, adminListBooksPaged, adminListSocialPosts, adminUpdateSocialPost } from "@/lib/adminApi";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -34,14 +34,17 @@ function Inner() {
   const [q, setQ] = useState("");
   const [selectedId, setSelectedId] = useState<string | null>(focusId);
 
+  const loadPosts = async () => setPosts(await adminListSocialPosts<SocialPost>());
+
   useEffect(() => { (async () => {
-    const { data } = await supabase.from("books_admin")
-      .select("id,slug,title,author,category,language,tagline,overview,key_ideas,action_system,daily_application")
-      .eq("is_draft", false).order("created_at", { ascending: false }).limit(500);
-    setBooks((data || []) as any);
-    if (!focusId && data?.[0]) setSelectedId(data[0].id);
-    const { data: p } = await supabase.from("social_posts").select("id,book_id,platform,status,content,published_at");
-    setPosts((p || []) as any);
+    try {
+      const data = (await adminListBooksPaged<BookForAudit>(500, "full")).filter((b: any) => !b.is_draft);
+      setBooks(data);
+      if (!focusId && data[0]) setSelectedId(data[0].id);
+      await loadPosts();
+    } catch (e: any) {
+      toast.error(e.message || "Could not load social publisher");
+    }
   })(); }, [focusId]);
 
   const book = useMemo(() => books.find(b => b.id === selectedId) || null, [books, selectedId]);
@@ -64,10 +67,7 @@ function Inner() {
             const count = PLATFORMS.filter(p => st[p]).length;
             return (
               <li key={b.id}>
-                <button
-                  onClick={() => setSelectedId(b.id)}
-                  className={`w-full text-left p-2 rounded text-sm hover:bg-muted ${selectedId === b.id ? "bg-muted" : ""}`}
-                >
+                <button onClick={() => setSelectedId(b.id)} className={`w-full text-left p-2 rounded text-sm hover:bg-muted ${selectedId === b.id ? "bg-muted" : ""}`}>
                   <div className="line-clamp-1">{b.title}</div>
                   <div className="text-[10px] text-muted-foreground">{count}/{PLATFORMS.length} posted</div>
                 </button>
@@ -78,11 +78,7 @@ function Inner() {
       </Card>
       <div>
         {!book && <div className="text-muted-foreground">Select a book.</div>}
-        {book && <BookPanel book={book} posts={posts.filter(p => p.book_id === book.id)}
-                            onChange={async () => {
-                              const { data } = await supabase.from("social_posts").select("id,book_id,platform,status,content,published_at");
-                              setPosts((data || []) as any);
-                            }} />}
+        {book && <BookPanel book={book} posts={posts.filter(p => p.book_id === book.id)} onChange={loadPosts} />}
       </div>
     </div>
   );
@@ -117,6 +113,11 @@ function PlatformBlock({ platform, book, existing, onChange }: {
   const [status, setStatus] = useState(existing?.status || "draft");
   const [saving, setSaving] = useState(false);
 
+  useEffect(() => {
+    setContent(existing?.content || `${tpl.title}\n\n${tpl.description}\n\n---\n${tpl.body}`);
+    setStatus(existing?.status || "draft");
+  }, [existing?.id, platform, book.id]); // eslint-disable-line
+
   const save = async (newStatus = status) => {
     setSaving(true);
     try {
@@ -125,16 +126,11 @@ function PlatformBlock({ platform, book, existing, onChange }: {
         published_at: newStatus === "published" ? new Date().toISOString() : null,
         post_type: "manual",
       };
-      if (existing?.id) {
-        const { error } = await supabase.from("social_posts").update(payload).eq("id", existing.id);
-        if (error) throw error;
-      } else {
-        const { error } = await supabase.from("social_posts").insert(payload);
-        if (error) throw error;
-      }
+      if (existing?.id) await adminUpdateSocialPost(existing.id, payload);
+      else await adminCreateSocialPost(payload);
       setStatus(newStatus);
       toast.success(newStatus === "published" ? "Marked as posted" : "Draft saved");
-      onChange();
+      await onChange();
     } catch (e: any) { toast.error(e.message); }
     finally { setSaving(false); }
   };
