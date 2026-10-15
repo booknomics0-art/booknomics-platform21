@@ -7,11 +7,17 @@ const ROOT = new URL("../src/", import.meta.url);
 const extensions = new Set([".js", ".jsx", ".ts", ".tsx", ".mjs", ".cjs"]);
 const allowedPrefixes = [
   "integrations/supabase/",
+  // Legacy non-browser MCP implementation. The active MCP server is worker/oauthMcpRoutes.ts.
+  "lib/mcp/",
 ];
 const rules = [
   {
     label: "Supabase browser client import",
     regex: /(?:from\s*["'][^"']*integrations\/supabase\/client["']|import\s*\(\s*["'][^"']*integrations\/supabase\/client["']\s*\))/g,
+  },
+  {
+    label: "Direct Supabase SDK import",
+    regex: /(?:from\s*["']@supabase\/supabase-js["']|import\s*\(\s*["']@supabase\/supabase-js["']\s*\))/g,
   },
   {
     label: "Direct Supabase project URL",
@@ -68,7 +74,7 @@ async function main() {
   }
 
   if (!violations.length) {
-    console.log("Browser Supabase guard passed: no direct Supabase runtime dependency found outside src/integrations/supabase/.");
+    console.log("Browser Supabase guard passed: no direct Supabase runtime dependency found outside explicitly non-browser legacy paths.");
     return;
   }
 
