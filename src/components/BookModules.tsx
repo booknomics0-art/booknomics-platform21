@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { Lock, Loader2, Sparkles } from "lucide-react";
-import { supabase } from "@/integrations/supabase/client";
+import { apiFetch } from "@/lib/cloudflareApi";
 import { usePremium } from "@/hooks/usePremium";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Button } from "@/components/ui/button";
@@ -26,14 +26,14 @@ export function BookModules({ bookId, language }: { bookId: string; language: "e
 
   const load = async () => {
     setLoading(true);
-    const { data } = await supabase
-      .from("book_modules")
-      .select("id,part_number,part_key,title,content,is_premium")
-      .eq("book_id", bookId)
-      .eq("language", language)
-      .order("part_number");
-    setModules((data ?? []) as Module[]);
-    setLoading(false);
+    try {
+      const { data } = await apiFetch<{ data: Module[] }>(`/api/book-modules?book_id=${encodeURIComponent(bookId)}&language=${language}`);
+      setModules(data ?? []);
+    } catch {
+      setModules([]);
+    } finally {
+      setLoading(false);
+    }
   };
 
   useEffect(() => { load(); /* eslint-disable-next-line */ }, [bookId, language]);
@@ -41,8 +41,10 @@ export function BookModules({ bookId, language }: { bookId: string; language: "e
   const generate = async () => {
     setGenerating(true);
     try {
-      const { data, error } = await supabase.functions.invoke("generate-book-modules", { body: { book_id: bookId } });
-      if (error || data?.error) throw new Error(data?.error ?? error?.message);
+      await apiFetch<{ ok?: boolean; cached?: boolean; count: number }>("/api/book-modules/generate", {
+        method: "POST",
+        body: JSON.stringify({ book_id: bookId }),
+      });
       toast.success(language === "hi" ? "सारे भाग तैयार हैं!" : "All 10 parts ready!");
       await load();
     } catch (e: any) {
@@ -58,9 +60,7 @@ export function BookModules({ bookId, language }: { bookId: string; language: "e
     return (
       <div className="text-center py-16 border border-dashed border-border rounded-2xl bg-muted/30">
         <Sparkles className="h-10 w-10 mx-auto text-primary mb-4" />
-        <h3 className="font-serif text-2xl font-semibold mb-2">
-          {language === "hi" ? "10 भाग में सीखें" : "Learn in 10 modular parts"}
-        </h3>
+        <h3 className="font-serif text-2xl font-semibold mb-2">{language === "hi" ? "10 भाग में सीखें" : "Learn in 10 modular parts"}</h3>
         <p className="text-muted-foreground mb-6 max-w-md mx-auto text-sm">
           {language === "hi" ? "हुक, मूल विचार, गहन अंतर्दृष्टि, एक्शन सिस्टम — सब कुछ छोटे, स्कैनेबल भागों में।" : "Hook, ideas, insights, action — broken into 10 short, scannable parts."}
         </p>
@@ -89,9 +89,7 @@ export function BookModules({ bookId, language }: { bookId: string; language: "e
                 {locked ? (
                   <div className="rounded-xl bg-gradient-to-b from-muted/50 to-muted/20 border border-dashed border-primary/30 p-6 text-center">
                     <Lock className="h-6 w-6 mx-auto text-primary mb-3" />
-                    <p className="text-sm text-muted-foreground mb-4">
-                      {language === "hi" ? "यह भाग प्रीमियम सदस्यों के लिए है।" : "This part is for premium members."}
-                    </p>
+                    <p className="text-sm text-muted-foreground mb-4">{language === "hi" ? "यह भाग प्रीमियम सदस्यों के लिए है।" : "This part is for premium members."}</p>
                     <Button asChild size="sm" className="bg-gold text-primary-foreground hover:opacity-90 rounded-full">
                       <Link to="/pricing">{language === "hi" ? "अनलॉक करें" : "Unlock"}</Link>
                     </Button>
