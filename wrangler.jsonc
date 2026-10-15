@@ -1,7 +1,7 @@
 {
   "$schema": "./node_modules/wrangler/config-schema.json",
   "name": "booknomics",
-  "main": "worker/entry.ts",
+  "main": "worker/appEntry.ts",
   "compatibility_date": "2026-10-14",
   "upload_source_maps": true,
   "assets": {
