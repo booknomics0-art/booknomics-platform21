@@ -55,7 +55,7 @@ jobs:
         run: |
           node --check cloudflare/apply-d1-sql.mjs
           node --check cloudflare/reconcile-d1.mjs
-          node --check cloudflare/reconcile-storage.mjs
+          node --check cloudflare/reconcile-storage-list.mjs
           node --check cloudflare/sync-referrals.mjs
           node --check cloudflare/sync-book-modules.mjs
           node --check cloudflare/verify-parity.mjs
@@ -94,16 +94,15 @@ jobs:
           set -o pipefail
           node cloudflare/sync-book-modules.mjs | tee book-modules-parity.json
 
-      - name: Reconcile and verify Supabase Storage to R2
+      - name: Fast reconcile and verify Supabase Storage to R2
         id: storage_parity
         continue-on-error: true
         env:
           MIGRATION_APPLY: 'YES'
-          STORAGE_RECONCILE_CONCURRENCY: '8'
         shell: bash
         run: |
           set -o pipefail
-          node cloudflare/reconcile-storage.mjs | tee r2-parity-report.log
+          node cloudflare/reconcile-storage-list.mjs | tee r2-parity-report.log
 
       - name: Verify D1 migration parity
         id: db_parity
