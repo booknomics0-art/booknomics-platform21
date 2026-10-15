@@ -54,7 +54,6 @@ jobs:
       - name: Validate migration scripts
         run: |
           node --check cloudflare/apply-d1-sql.mjs
-          node --check cloudflare/migrate.mjs
           node --check cloudflare/reconcile-d1.mjs
           node --check cloudflare/reconcile-storage.mjs
           node --check cloudflare/sync-referrals.mjs
@@ -68,25 +67,6 @@ jobs:
           node cloudflare/apply-d1-sql.mjs cloudflare/migrations/0005_referrals.sql
           node cloudflare/apply-d1-sql.mjs cloudflare/migrations/0006_cutover_features.sql
           node cloudflare/apply-d1-sql.mjs cloudflare/migrations/0007_oauth_mcp.sql
-
-      - name: Delta sync active Supabase data to D1
-        env:
-          MIGRATION_APPLY: 'YES'
-          MIGRATE_STORAGE: 'NO'
-        shell: bash
-        run: |
-          set -o pipefail
-          : > d1-delta-sync.log
-          ok=0
-          for attempt in 1 2 3; do
-            echo "D1 delta sync attempt ${attempt}/3" | tee -a d1-delta-sync.log
-            if node cloudflare/migrate.mjs 2>&1 | tee -a d1-delta-sync.log; then
-              ok=1
-              break
-            fi
-            sleep $((attempt * 3))
-          done
-          test "$ok" -eq 1
 
       - name: Reconcile source-authoritative D1 rows
         env:
@@ -141,7 +121,6 @@ jobs:
           if-no-files-found: warn
           retention-days: 14
           path: |
-            d1-delta-sync.log
             d1-reconcile.log
             referrals-delta-sync.log
             book-modules-parity.json
