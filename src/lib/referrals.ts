@@ -1,4 +1,4 @@
-import { supabase } from "@/integrations/supabase/client";
+import { apiFetch } from "@/lib/cloudflareApi";
 
 const KEY = "bn_ref_code";
 
@@ -23,26 +23,18 @@ export function clearPendingReferral() {
   localStorage.removeItem(KEY);
 }
 
-/** Records a referral for the freshly-signed-up user, if a pending code exists. */
-export async function recordReferralIfPending(referredUserId: string) {
+/** Records a pending referral against the currently authenticated Cloudflare session. */
+export async function recordReferralIfPending() {
   const code = getPendingReferral();
   if (!code) return;
   try {
-    const { data: refProfile } = await supabase
-      .from("profiles")
-      .select("id")
-      .eq("referral_code", code)
-      .maybeSingle();
-    if (!refProfile || refProfile.id === referredUserId) {
-      clearPendingReferral();
-      return;
-    }
-    await supabase.from("referrals").insert({
-      referrer_user_id: refProfile.id,
-      referred_user_id: referredUserId,
+    await apiFetch<{ ok: boolean; claimed: boolean }>("/api/referrals/claim", {
+      method: "POST",
+      body: JSON.stringify({ code }),
     });
   } catch {
-    // ignore; unique constraint will prevent dupes
+    // Referral attribution must never block sign-in. The D1 unique constraint
+    // keeps repeated claims idempotent for users who already have a referrer.
   } finally {
     clearPendingReferral();
   }
