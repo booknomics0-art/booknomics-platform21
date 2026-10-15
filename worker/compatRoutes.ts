@@ -33,10 +33,41 @@ async function currentUserId(request: Request, db: D1): Promise<string | null> {
 }
 
 const ids = (value: string | null) => (value || "").split(",").filter((v) => /^[0-9a-f-]{36}$/i.test(v)).slice(0, 90);
+const goodUuid = (value: unknown) => typeof value === "string" && /^[0-9a-f-]{36}$/i.test(value);
+
+async function recordAffiliateClick(request: Request, env: CompatEnv) {
+  const body = await request.json().catch(() => null) as {
+    book_id?: unknown;
+    source?: unknown;
+    placement?: unknown;
+  } | null;
+  const bookId = body?.book_id;
+  if (!goodUuid(bookId)) return json({ error: "Bad book id" }, { status: 400 });
+
+  const source = typeof body?.source === "string" ? body.source.trim().slice(0, 40) : "amazon";
+  const placement = typeof body?.placement === "string" ? body.placement.trim().slice(0, 80) : null;
+  if (!source) return json({ error: "Source is required" }, { status: 400 });
+
+  const userId = await currentUserId(request, env.DB!);
+  try {
+    await env.DB!.prepare(
+      `INSERT INTO affiliate_clicks (id, book_id, user_id, source, placement, created_at)
+       VALUES (?, ?, ?, ?, ?, ?)`,
+    ).bind(crypto.randomUUID(), bookId, userId, source, placement, new Date().toISOString()).run();
+  } catch (error) {
+    console.error("affiliate click insert failed", error);
+    return json({ error: "Could not record click" }, { status: 500 });
+  }
+  return json({ ok: true });
+}
 
 export async function handleCompatRoute(request: Request, env: CompatEnv): Promise<Response | null> {
   if (!env.DB) return null;
   const url = new URL(request.url);
+
+  if (url.pathname === "/api/affiliate-click" && request.method === "POST") {
+    return recordAffiliateClick(request, env);
+  }
 
   if (url.pathname === "/api/social/book-meta" && request.method === "GET") {
     const id = url.searchParams.get("id") || "";
