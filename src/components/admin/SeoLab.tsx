@@ -126,12 +126,18 @@ export function SeoLab({ bookId }: Props) {
 
   const runAi = async () => {
     setAiBusy(true);
-    const { data, error } = await supabase.functions.invoke("seo-marketing", {
-      body: { book_id: bookId, mode: "seo" },
-    });
-    setAiBusy(false);
-    if (error || data?.error) return toast.error(error?.message || data?.error);
-    setSuggestions(Array.isArray(data?.suggestions) ? data.suggestions : []);
+    try {
+      const data = await apiFetch<{ suggestions?: Suggestion[]; error?: string }>("/api/admin/ai/seo-marketing", {
+        method: "POST",
+        body: JSON.stringify({ book_id: bookId, mode: "seo" }),
+      });
+      if (data?.error) return toast.error(data.error);
+      setSuggestions(Array.isArray(data?.suggestions) ? data.suggestions : []);
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "AI optimization failed");
+    } finally {
+      setAiBusy(false);
+    }
   };
 
   if (loading) return <div className="p-6 text-sm text-muted-foreground">Loading…</div>;
