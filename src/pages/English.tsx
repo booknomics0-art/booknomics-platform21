@@ -11,7 +11,7 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import { SEO } from "@/components/SEO";
-import { supabase } from "@/integrations/supabase/client";
+import { supabase } from "@/lib/catalogCloudflareCompat";
 import { slugifyCategory } from "@/lib/categorySlug";
 
 const FEATURED_SLUGS = [
