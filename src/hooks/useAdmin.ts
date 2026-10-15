@@ -1,10 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { useAuth } from './useAuth';
 import { isAdminUser } from '@/lib/isAdmin';
-import { installAdminFunctionBridge } from '@/lib/adminFunctionBridge';
-
-installAdminFunctionBridge();
-
 export function useAdmin() {
   const auth = useAuth();
   const role = useQuery({
