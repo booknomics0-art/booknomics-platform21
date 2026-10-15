@@ -3,6 +3,16 @@ on: [push, pull_request]
 permissions:
   contents: read
 jobs:
+  cutover-guard:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Enforce browser Supabase cutover guard
+        run: node scripts/guard-no-browser-supabase.mjs
+
   check:
     runs-on: ubuntu-latest
     steps:
@@ -27,8 +37,6 @@ jobs:
           node --check cloudflare/sync-referrals.mjs
           node --check cloudflare/verify-parity.mjs
           node --check scripts/guard-no-browser-supabase.mjs
-      - name: Enforce browser Supabase cutover guard
-        run: node scripts/guard-no-browser-supabase.mjs
       - name: Build app without live-data lifecycle hooks
         run: npm run build --ignore-scripts
         env:
