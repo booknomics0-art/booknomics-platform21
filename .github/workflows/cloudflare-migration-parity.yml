@@ -56,11 +56,10 @@ jobs:
           node --check cloudflare/apply-d1-sql.mjs
           node --check cloudflare/migrate.mjs
           node --check cloudflare/reconcile-d1.mjs
-          node --check cloudflare/migrate-storage.mjs
+          node --check cloudflare/reconcile-storage.mjs
           node --check cloudflare/sync-referrals.mjs
           node --check cloudflare/sync-book-modules.mjs
           node --check cloudflare/verify-parity.mjs
-          node --check cloudflare/verify-storage.mjs
 
       - name: Ensure cutover schemas exist in D1
         env:
@@ -115,25 +114,16 @@ jobs:
           set -o pipefail
           node cloudflare/sync-book-modules.mjs | tee book-modules-parity.json
 
-      - name: Delta sync Supabase Storage to R2
+      - name: Reconcile and verify Supabase Storage to R2
+        id: storage_parity
+        continue-on-error: true
         env:
           MIGRATION_APPLY: 'YES'
-          MIGRATE_STORAGE: 'YES'
-          MIGRATION_VERIFY_EXISTING: 'NO'
+          STORAGE_RECONCILE_CONCURRENCY: '8'
         shell: bash
         run: |
           set -o pipefail
-          : > r2-delta-sync.log
-          ok=0
-          for attempt in 1 2 3; do
-            echo "R2 delta sync attempt ${attempt}/3" | tee -a r2-delta-sync.log
-            if node cloudflare/migrate-storage.mjs 2>&1 | tee -a r2-delta-sync.log; then
-              ok=1
-              break
-            fi
-            sleep $((attempt * 3))
-          done
-          test "$ok" -eq 1
+          node cloudflare/reconcile-storage.mjs | tee r2-parity-report.log
 
       - name: Verify D1 migration parity
         id: db_parity
@@ -142,17 +132,6 @@ jobs:
         run: |
           set -o pipefail
           node cloudflare/verify-parity.mjs | tee d1-parity-report.json
-
-      - name: Verify R2 storage parity
-        id: storage_parity
-        continue-on-error: true
-        shell: bash
-        env:
-          STORAGE_VERIFY_HASHES: 'NO'
-          STORAGE_VERIFY_CONCURRENCY: '6'
-        run: |
-          set -o pipefail
-          node cloudflare/verify-storage.mjs | tee r2-parity-report.log
 
       - name: Upload migration reports
         if: always()
@@ -166,7 +145,6 @@ jobs:
             d1-reconcile.log
             referrals-delta-sync.log
             book-modules-parity.json
-            r2-delta-sync.log
             d1-parity-report.json
             r2-parity-report.log
 
