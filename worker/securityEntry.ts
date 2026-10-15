@@ -6,6 +6,7 @@ import { handleGrowthRoute } from "./growthRoutes";
 import { handleBookAiRoute } from "./bookAiRoutes";
 import { handleBookDetailRoute } from "./bookDetailRoutes";
 import { handleCatalogRoute } from "./catalogRoutes";
+import { handleAudioRoute } from "./audioRoutes";
 import { handleAdminRoute } from "./adminRoutes";
 import { handleAdminOpsRoute } from "./adminOpsRoutes";
 import { handleAdminAiRoute } from "./adminAiRoutes";
@@ -27,6 +28,7 @@ type Env = {
   LOVABLE_API_KEY?: string;
   GEMINI_API_KEY?: string;
   XAI_API_KEY?: string;
+  ELEVENLABS_API_KEY?: string;
 };
 
 type SafeUser = { id: string; email: string; display_name: string | null; avatar_url: string | null };
@@ -110,6 +112,9 @@ export default {
 
     const catalog = await handleCatalogRoute(request, env);
     if (catalog) return catalog;
+
+    const audio = await handleAudioRoute(request, env);
+    if (audio) return audio;
 
     const admin = await handleAdminRoute(request, env);
     if (admin) return admin;
