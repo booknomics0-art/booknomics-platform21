@@ -6,8 +6,8 @@ import { Progress } from "@/components/ui/progress";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Check, BookOpen, ArrowLeft, Sparkles } from "lucide-react";
-import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
+import { apiFetch } from "@/lib/cloudflareApi";
 import { toast } from "sonner";
 
 export default function PathDetail() {
@@ -20,45 +20,54 @@ export default function PathDetail() {
   const [loading, setLoading] = useState(true);
 
   const load = async () => {
+    if (!slug) { setLoading(false); return; }
     setLoading(true);
-    const { data: p } = await supabase.from("learning_paths").select("*").eq("slug", slug!).maybeSingle();
-    if (!p) { setLoading(false); return; }
-    setPath(p);
-    document.title = `${p.title} — Learning Path — BookInsight`;
-
-    const { data: lpb } = await supabase
-      .from("learning_path_books")
-      .select("position,books(id,slug,title,author,cover_color,cover_url,tagline,reading_time)")
-      .eq("path_id", p.id)
-      .order("position");
-    setBooks((lpb ?? []).map((r: any) => ({ ...r.books, position: r.position })).filter(b => b.id));
-
-    if (user) {
-      const [{ data: prog }, { data: enr }] = await Promise.all([
-        supabase.from("reading_progress").select("book_id").eq("user_id", user.id).eq("completed", true),
-        supabase.from("path_enrollments").select("id").eq("user_id", user.id).eq("path_id", p.id).maybeSingle(),
-      ]);
-      setCompleted(new Set((prog ?? []).map((x: any) => x.book_id)));
-      setEnrolled(!!enr);
+    try {
+      const data = await apiFetch<{ path: any; books: any[]; enrolled: boolean }>(
+        `/api/learning-paths/${encodeURIComponent(slug)}`,
+      );
+      setPath(data.path);
+      const nextBooks = data.books || [];
+      setBooks(nextBooks);
+      setCompleted(new Set(nextBooks.filter((book: any) => book.completed).map((book: any) => book.id)));
+      setEnrolled(!!data.enrolled);
+      document.title = `${data.path.title} — Learning Path — BookInsight`;
+    } catch {
+      setPath(null);
+      setBooks([]);
+      setCompleted(new Set());
+      setEnrolled(false);
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   };
 
   useEffect(() => { load(); /* eslint-disable-next-line */ }, [slug, user]);
 
   const enroll = async () => {
     if (!user) { toast.error("Sign in to enroll"); return; }
-    const { error } = await supabase.from("path_enrollments").insert({ user_id: user.id, path_id: path.id });
-    if (error) { toast.error(error.message); return; }
-    setEnrolled(true);
-    toast.success(`Enrolled in ${path.title}`);
+    try {
+      await apiFetch<{ ok: boolean; enrolled: boolean }>(`/api/learning-paths/${encodeURIComponent(path.id)}/enroll`, {
+        method: "POST",
+      });
+      setEnrolled(true);
+      toast.success(`Enrolled in ${path.title}`);
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Could not enroll");
+    }
   };
 
   const unenroll = async () => {
     if (!user) return;
-    await supabase.from("path_enrollments").delete().eq("user_id", user.id).eq("path_id", path.id);
-    setEnrolled(false);
-    toast("Left the path");
+    try {
+      await apiFetch<{ ok: boolean; enrolled: boolean }>(`/api/learning-paths/${encodeURIComponent(path.id)}/enroll`, {
+        method: "DELETE",
+      });
+      setEnrolled(false);
+      toast("Left the path");
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Could not leave path");
+    }
   };
 
   if (loading) return <Layout><div className="container py-20 text-center text-muted-foreground">Loading…</div></Layout>;
