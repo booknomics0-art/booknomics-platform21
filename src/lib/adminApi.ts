@@ -163,3 +163,28 @@ export async function adminGetSeoAudit<T = any>(bookId: string) {
   const result = await apiFetch<AdminApiResult<T | null>>(`/api/admin/seo-audits/${encodeURIComponent(bookId)}`);
   return result.data ?? null;
 }
+
+export async function adminListBookRequests<T = any>(limit = 500, offset = 0) {
+  const result = await apiFetch<AdminApiResult<T[]>>(`/api/admin/book-requests${query({ limit, offset })}`);
+  return result.data || [];
+}
+
+export async function adminUpdateBookRequestStatus(ids: string[], status: "planned" | "in_progress" | "published" | "rejected" | "new") {
+  return apiFetch<{ ok: true; updated: number }>("/api/admin/book-requests/status", {
+    method: "PATCH",
+    body: JSON.stringify({ ids, status }),
+  });
+}
+
+export async function adminPutUrlRedirect(payload: {
+  old_path: string;
+  new_path: string;
+  status_code?: number;
+  notes?: string | null;
+}) {
+  const result = await apiFetch<AdminApiResult<any>>("/api/admin/url-redirects", {
+    method: "PUT",
+    body: JSON.stringify(payload),
+  });
+  return result.data;
+}
