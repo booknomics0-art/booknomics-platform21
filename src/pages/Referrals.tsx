@@ -5,8 +5,8 @@ import { Layout } from "@/components/Layout";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
-import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
+import { apiFetch } from "@/lib/cloudflareApi";
 import { toast } from "sonner";
 import { SEO } from "@/components/SEO";
 
@@ -24,18 +24,15 @@ export default function Referrals() {
     if (!user) { navigate("/auth"); return; }
     (async () => {
       setLoading(true);
-      const { data: p } = await supabase
-        .from("profiles")
-        .select("referral_code")
-        .eq("id", user.id)
-        .maybeSingle();
-      setCode((p as any)?.referral_code || null);
-      const { count: c } = await supabase
-        .from("referrals")
-        .select("id", { count: "exact", head: true })
-        .eq("referrer_user_id", user.id);
-      setCount(c || 0);
-      setLoading(false);
+      try {
+        const data = await apiFetch<{ code: string | null; count: number }>("/api/referrals/me");
+        setCode(data.code || null);
+        setCount(Number(data.count || 0));
+      } catch (error) {
+        toast.error(error instanceof Error ? error.message : "Could not load referrals");
+      } finally {
+        setLoading(false);
+      }
     })();
   }, [user, authLoading, navigate]);
 
