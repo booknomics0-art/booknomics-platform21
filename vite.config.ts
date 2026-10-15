@@ -3,7 +3,6 @@ import react from "@vitejs/plugin-react-swc";
 import path from "path";
 import { existsSync, readFileSync, writeFileSync } from "fs";
 import { componentTagger } from "lovable-tagger";
-import { mcpPlugin } from "@lovable.dev/mcp-js/stacks/supabase/vite";
 
 const LEGACY_SITE = "https://booknomics.com";
 const CANONICAL_SITE = "https://www.booknomics.com";
@@ -49,7 +48,7 @@ export default defineConfig(({ mode }) => ({
       overlay: false,
     },
   },
-  plugins: [react(), mcpPlugin(), mode === "development" && componentTagger(), normalizeSeoArtifacts()].filter(Boolean),
+  plugins: [react(), mode === "development" && componentTagger(), normalizeSeoArtifacts()].filter(Boolean),
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src"),
@@ -67,7 +66,7 @@ export default defineConfig(({ mode }) => ({
           "react-vendor": ["react", "react-dom", "react-router-dom"],
           "supabase": ["@supabase/supabase-js"],
           "helmet": ["react-helmet-async"],
-          "query": ["@tanstack/react-query"],
+          "query": ["@tanstack/react-query", "@tanstack/query-core"],
           "markdown": ["react-markdown", "remark-gfm"],
         },
       },
