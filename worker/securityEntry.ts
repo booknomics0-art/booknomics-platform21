@@ -11,6 +11,7 @@ import { handleAdminRoute } from "./adminRoutes";
 import { handleAdminOpsRoute } from "./adminOpsRoutes";
 import { handleAdminGscRoute } from "./adminGscRoutes";
 import { handleCutoverAdminRoute } from "./cutoverAdminRoutes";
+import { handleCutoverFeatureRoute } from "./cutoverFeatureRoutes";
 import { handleAdminAiRoute } from "./adminAiRoutes";
 import { handleAdminContentAiRoute } from "./adminContentAiRoutes";
 import { handleAdminMediaAiRoute } from "./adminMediaAiRoutes";
@@ -106,6 +107,9 @@ export default {
 
     const growth = await handleGrowthRoute(request, env);
     if (growth) return growth;
+
+    const cutoverFeature = await handleCutoverFeatureRoute(request, env);
+    if (cutoverFeature) return cutoverFeature;
 
     const bookAi = await handleBookAiRoute(request, env);
     if (bookAi) return bookAi;
