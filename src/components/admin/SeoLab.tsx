@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
-import { supabase } from "@/integrations/supabase/client";
 import { apiFetch } from "@/lib/cloudflareApi";
+import { adminGetBook, adminGetSeoAudit, adminUpdateBook } from "@/lib/adminApi";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -62,28 +62,29 @@ export function SeoLab({ bookId }: Props) {
   const [audit, setAudit] = useState<AiAudit | null>(null);
 
   useEffect(() => {
+    let active = true;
     (async () => {
-      const [bookResult, auditResult] = await Promise.all([
-        supabase
-          .from("books_admin")
-          .select("title, meta_title, meta_description, slug, overview, key_ideas, category")
-          .eq("id", bookId)
-          .maybeSingle(),
-        apiFetch<{ data: AiAudit | null }>(`/api/admin/seo-audits/${encodeURIComponent(bookId)}`)
-          .catch(() => ({ data: null })),
-      ]);
-
-      const data = bookResult.data;
-      if (data) {
-        setTitle(data.meta_title ?? data.title ?? "");
-        setDesc(data.meta_description ?? "");
-        setSlug(data.slug ?? "");
-        setKeyword(data.title ?? "");
-        setBody(`${data.overview ?? ""}\n${data.key_ideas ?? ""}`);
+      try {
+        const [data, auditData] = await Promise.all([
+          adminGetBook<any>(bookId),
+          adminGetSeoAudit<AiAudit>(bookId).catch(() => null),
+        ]);
+        if (!active) return;
+        if (data) {
+          setTitle(data.meta_title ?? data.title ?? "");
+          setDesc(data.meta_description ?? "");
+          setSlug(data.slug ?? "");
+          setKeyword(data.title ?? "");
+          setBody(`${data.overview ?? ""}\n${data.key_ideas ?? ""}`);
+        }
+        if (auditData) setAudit(auditData);
+      } catch (error) {
+        if (active) toast.error(error instanceof Error ? error.message : "Could not load SEO data");
+      } finally {
+        if (active) setLoading(false);
       }
-      if (auditResult.data) setAudit(auditResult.data);
-      setLoading(false);
     })();
+    return () => { active = false; };
   }, [bookId]);
 
   const titleLen = title.length;
@@ -114,14 +115,18 @@ export function SeoLab({ bookId }: Props) {
 
   const save = async () => {
     setSaving(true);
-    const { error } = await supabase.from("books").update({
-      meta_title: title || null,
-      meta_description: desc || null,
-      slug: slug || undefined,
-    }).eq("id", bookId);
-    setSaving(false);
-    if (error) toast.error(error.message);
-    else toast.success("SEO saved");
+    try {
+      await adminUpdateBook(bookId, {
+        meta_title: title || null,
+        meta_description: desc || null,
+        ...(slug ? { slug } : {}),
+      });
+      toast.success("SEO saved");
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Could not save SEO");
+    } finally {
+      setSaving(false);
+    }
   };
 
   const runAi = async () => {
