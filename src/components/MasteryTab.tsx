@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { CheckCircle2, XCircle, Trophy, Sparkles, RotateCcw, Brain, ArrowRight } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { supabase } from "@/integrations/supabase/client";
+import { apiFetch } from "@/lib/cloudflareApi";
 import { useAuth } from "@/hooks/useAuth";
 import { toast } from "sonner";
 
@@ -21,6 +21,7 @@ interface Props {
   bookId: string;
   quiz: QuizQuestion[];
   flashcards: Flashcard[];
+  language?: Language;
 }
 
 const cp = (hi: boolean, en: string, hindi: string) => hi ? hindi : en;
@@ -34,12 +35,7 @@ function FlipCard({ card, language }: { card: Flashcard; language: Language }) {
       className="group relative w-full aspect-[4/3] [perspective:1000px] focus:outline-none"
       aria-label={cp(hi, "Flip card", "कार्ड पलटें")}
     >
-      <div
-        className={cn(
-          "absolute inset-0 transition-transform duration-500 [transform-style:preserve-3d]",
-          flipped && "[transform:rotateY(180deg)]"
-        )}
-      >
+      <div className={cn("absolute inset-0 transition-transform duration-500 [transform-style:preserve-3d]", flipped && "[transform:rotateY(180deg)]")}>
         <div className="absolute inset-0 [backface-visibility:hidden] rounded-2xl border border-gold/30 bg-gradient-to-br from-card to-muted/40 p-5 flex flex-col justify-between shadow-paper">
           <div className="text-[10px] tracking-[0.2em] uppercase text-primary font-semibold">{cp(hi, "Recall", "याद करें")}</div>
           <div className="font-serif text-lg md:text-xl leading-snug text-foreground">{card.front}</div>
@@ -55,24 +51,15 @@ function FlipCard({ card, language }: { card: Flashcard; language: Language }) {
   );
 }
 
-export function MasteryTab({ bookId, quiz, flashcards }: Props) {
+export function MasteryTab({ bookId, quiz, flashcards, language = "en" }: Props) {
   const { user } = useAuth();
   const [answers, setAnswers] = useState<Record<string, number>>({});
   const [submitted, setSubmitted] = useState(false);
   const [reviewed, setReviewed] = useState<Set<string>>(new Set());
-  const [language, setLanguage] = useState<Language>("en");
   const hi = language === "hi";
 
-  useEffect(() => {
-    supabase.from("books").select("language").eq("id", bookId).maybeSingle()
-      .then(({ data }) => data?.language === "hi" && setLanguage("hi"));
-  }, [bookId]);
-
   const total = quiz.length;
-  const score = useMemo(
-    () => quiz.reduce((acc, q) => acc + (answers[q.id] === q.correct_option ? 1 : 0), 0),
-    [answers, quiz]
-  );
+  const score = useMemo(() => quiz.reduce((acc, q) => acc + (answers[q.id] === q.correct_option ? 1 : 0), 0), [answers, quiz]);
   const pct = total ? Math.round((score / total) * 100) : 0;
   const allAnswered = total > 0 && quiz.every((q) => answers[q.id] !== undefined);
   const answeredCount = quiz.filter(q => answers[q.id] !== undefined).length;
@@ -81,19 +68,21 @@ export function MasteryTab({ bookId, quiz, flashcards }: Props) {
     if (!submitted || !user) return;
     (async () => {
       const badge = pct === 100;
-      const { error } = await supabase.from("user_book_mastery").upsert(
-        {
-          user_id: user.id,
-          book_id: bookId,
-          quiz_score: score,
-          quiz_total: total,
-          flashcards_reviewed: reviewed.size,
-          badge_awarded: badge,
-          completed_at: new Date().toISOString(),
-        },
-        { onConflict: "user_id,book_id" }
-      );
-      if (!error && badge) toast.success(cp(hi, "Book Master badge unlocked!", "Book Master badge मिल गया!"));
+      try {
+        await apiFetch<{ ok: boolean; badge_awarded: boolean }>("/api/mastery", {
+          method: "POST",
+          body: JSON.stringify({
+            book_id: bookId,
+            quiz_score: score,
+            quiz_total: total,
+            flashcards_reviewed: reviewed.size,
+            badge_awarded: badge,
+          }),
+        });
+        if (badge) toast.success(cp(hi, "Book Master badge unlocked!", "Book Master badge मिल गया!"));
+      } catch {
+        // The quiz result stays visible even if persistence fails; the next attempt can save it.
+      }
     })();
   }, [submitted]); // eslint-disable-line
 
@@ -116,12 +105,7 @@ export function MasteryTab({ bookId, quiz, flashcards }: Props) {
           <Brain className="h-5 w-5 text-primary mt-0.5 shrink-0" />
           <div>
             <h2 className="font-serif text-xl md:text-2xl font-bold mb-1">{cp(hi, "Can you explain it without looking?", "क्या आप बिना देखे समझा सकते हैं?")}</h2>
-            <p className="text-sm text-muted-foreground leading-relaxed">
-              {cp(hi,
-                "Rereading feels familiar. Recall shows what actually stayed. Answer from memory first — then use the explanation to close the gap.",
-                "दोबारा पढ़ना परिचित लगता है; recall बताता है कि सच में क्या याद रहा। पहले याद से जवाब दें, फिर explanation से gap भरें।"
-              )}
-            </p>
+            <p className="text-sm text-muted-foreground leading-relaxed">{cp(hi, "Rereading feels familiar. Recall shows what actually stayed. Answer from memory first — then use the explanation to close the gap.", "दोबारा पढ़ना परिचित लगता है; recall बताता है कि सच में क्या याद रहा। पहले याद से जवाब दें, फिर explanation से gap भरें।")}</p>
           </div>
         </div>
       </div>
@@ -138,10 +122,7 @@ export function MasteryTab({ bookId, quiz, flashcards }: Props) {
           </div>
 
           {submitted && (
-            <div className={cn(
-              "mb-8 rounded-2xl p-6 border",
-              pct === 100 ? "bg-gold/15 border-gold/40" : "bg-muted/40 border-border"
-            )}>
+            <div className={cn("mb-8 rounded-2xl p-6 border", pct === 100 ? "bg-gold/15 border-gold/40" : "bg-muted/40 border-border")}>
               <div className="flex items-center gap-3 mb-2">
                 <Trophy className={cn("h-6 w-6", pct === 100 ? "text-gold" : "text-primary")} />
                 <h3 className="font-serif text-2xl font-bold">{cp(hi, "Mastery score", "महारत स्कोर")}: {pct}%</h3>
@@ -152,9 +133,7 @@ export function MasteryTab({ bookId, quiz, flashcards }: Props) {
                   ? cp(hi, "Perfect recall. Now try explaining the book in three sentences without looking.", "बहुत बढ़िया। अब बिना देखे किताब को तीन वाक्यों में समझाने की कोशिश करें।")
                   : cp(hi, `${score} of ${total} correct. Read only the explanations you missed, then retake.`, `${total} में से ${score} सही। सिर्फ गलत answers की explanation देखें, फिर दोबारा प्रयास करें।`)}
               </p>
-              <Button onClick={reset} variant="outline" size="sm" className="mt-4 rounded-full gap-2">
-                <RotateCcw className="h-3 w-3" /> {cp(hi, "Retake", "फिर से करें")}
-              </Button>
+              <Button onClick={reset} variant="outline" size="sm" className="mt-4 rounded-full gap-2"><RotateCcw className="h-3 w-3" /> {cp(hi, "Retake", "फिर से करें")}</Button>
             </div>
           )}
 
@@ -167,23 +146,16 @@ export function MasteryTab({ bookId, quiz, flashcards }: Props) {
                   <div className="font-serif text-lg md:text-xl mb-4">{q.question}</div>
                   <div className="grid gap-2">
                     {q.options.map((opt, oi) => {
-                      const chosen = sel === oi;
-                      const isCorrect = oi === q.correct_option;
-                      const showState = submitted && (chosen || isCorrect);
+                      const chosen = sel === oi; const isCorrect = oi === q.correct_option; const showState = submitted && (chosen || isCorrect);
                       return (
-                        <button
-                          key={oi}
-                          disabled={submitted}
-                          onClick={() => setAnswers((a) => ({ ...a, [q.id]: oi }))}
-                          className={cn(
-                            "text-left px-4 py-3 rounded-xl border transition flex items-center gap-3",
-                            !submitted && chosen && "border-primary bg-primary/5",
-                            !submitted && !chosen && "border-border hover:border-primary/50",
-                            showState && isCorrect && "border-emerald-500 bg-emerald-500/10",
-                            showState && chosen && !isCorrect && "border-destructive bg-destructive/10",
-                            submitted && !chosen && !isCorrect && "border-border opacity-60",
-                          )}
-                        >
+                        <button key={oi} disabled={submitted} onClick={() => setAnswers((a) => ({ ...a, [q.id]: oi }))} className={cn(
+                          "text-left px-4 py-3 rounded-xl border transition flex items-center gap-3",
+                          !submitted && chosen && "border-primary bg-primary/5",
+                          !submitted && !chosen && "border-border hover:border-primary/50",
+                          showState && isCorrect && "border-emerald-500 bg-emerald-500/10",
+                          showState && chosen && !isCorrect && "border-destructive bg-destructive/10",
+                          submitted && !chosen && !isCorrect && "border-border opacity-60",
+                        )}>
                           <span className="text-xs font-semibold w-5">{String.fromCharCode(65 + oi)}</span>
                           <span className="flex-1 text-sm">{opt}</span>
                           {showState && isCorrect && <CheckCircle2 className="h-4 w-4 text-emerald-600" />}
@@ -192,26 +164,14 @@ export function MasteryTab({ bookId, quiz, flashcards }: Props) {
                       );
                     })}
                   </div>
-                  {submitted && q.explanation && (
-                    <div className="mt-3 text-sm text-muted-foreground bg-muted/40 rounded-lg p-3 leading-relaxed">
-                      <span className="font-semibold text-foreground">{cp(hi, "Why: ", "क्यों: ")}</span>{q.explanation}
-                    </div>
-                  )}
+                  {submitted && q.explanation && <div className="mt-3 text-sm text-muted-foreground bg-muted/40 rounded-lg p-3 leading-relaxed"><span className="font-semibold text-foreground">{cp(hi, "Why: ", "क्यों: ")}</span>{q.explanation}</div>}
                 </div>
               );
             })}
           </div>
 
           {!submitted && (
-            <Button
-              onClick={() => {
-                if (!user) { toast.error(cp(hi, "Sign in to save your mastery score", "महारत स्कोर सेव करने के लिए साइन इन करें")); }
-                setSubmitted(true);
-              }}
-              disabled={!allAnswered}
-              size="lg"
-              className="mt-6 bg-gold text-primary-foreground hover:opacity-90 rounded-full gap-2"
-            >
+            <Button onClick={() => { if (!user) toast.error(cp(hi, "Sign in to save your mastery score", "महारत स्कोर सेव करने के लिए साइन इन करें")); setSubmitted(true); }} disabled={!allAnswered} size="lg" className="mt-6 bg-gold text-primary-foreground hover:opacity-90 rounded-full gap-2">
               <Sparkles className="h-4 w-4" /> {cp(hi, "Check my recall", "मेरी याददाश्त जाँचें")}
             </Button>
           )}
@@ -224,11 +184,7 @@ export function MasteryTab({ bookId, quiz, flashcards }: Props) {
           <h2 className="font-serif text-3xl md:text-4xl font-bold tracking-tight mb-2">{cp(hi, "Recall cards", "Recall cards")}</h2>
           <p className="text-sm text-muted-foreground mb-6">{cp(hi, "Say the answer out loud before you flip. Recognition is easier than recall.", "कार्ड पलटने से पहले जवाब बोलें। पहचानना आसान है; याद से निकालना असली अभ्यास है।")}</p>
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            {flashcards.map((c) => (
-              <div key={c.id} onClick={() => setReviewed((s) => new Set(s).add(c.id))}>
-                <FlipCard card={c} language={language} />
-              </div>
-            ))}
+            {flashcards.map((c) => <div key={c.id} onClick={() => setReviewed((s) => new Set(s).add(c.id))}><FlipCard card={c} language={language} /></div>)}
           </div>
           <div className="mt-4 flex items-center gap-2 text-xs text-muted-foreground">
             <ArrowRight className="h-3.5 w-3.5 text-primary" />
