@@ -32,6 +32,17 @@ export async function adminListBooks<T = any>(params: AdminBookListParams = {}) 
   return result.data || [];
 }
 
+export async function adminListBooksPaged<T = any>(limit = 1000, view: "catalog" | "full" = "full") {
+  const out: T[] = [];
+  for (let offset = 0; offset < limit; offset += 500) {
+    const pageSize = Math.min(500, limit - offset);
+    const page = await adminListBooks<T>({ view, limit: pageSize, offset });
+    out.push(...page);
+    if (page.length < pageSize) break;
+  }
+  return out;
+}
+
 export async function adminGetBook<T = any>(id: string) {
   const rows = await adminListBooks<T>({ view: "full", id, limit: 1 });
   return rows[0] ?? null;
@@ -184,6 +195,49 @@ export async function adminPutUrlRedirect(payload: {
 }) {
   const result = await apiFetch<AdminApiResult<any>>("/api/admin/url-redirects", {
     method: "PUT",
+    body: JSON.stringify(payload),
+  });
+  return result.data;
+}
+
+export async function adminGsc<T = any>(body: Record<string, unknown>) {
+  return apiFetch<T>("/api/admin/gsc", { method: "POST", body: JSON.stringify(body) });
+}
+
+export async function adminPublishedTodayCount() {
+  const result = await apiFetch<{ count: number }>("/api/admin/published-today-count");
+  return Number(result.count || 0);
+}
+
+export async function adminListIndexingJobs<T = any>(limit = 200) {
+  const result = await apiFetch<AdminApiResult<T[]>>(`/api/admin/indexing-jobs?limit=${encodeURIComponent(String(limit))}`);
+  return result.data || [];
+}
+
+export async function adminUpdateIndexingJob<T = any>(id: string, patch: Record<string, unknown>) {
+  const result = await apiFetch<AdminApiResult<T>>(`/api/admin/indexing-jobs/${encodeURIComponent(id)}`, {
+    method: "PATCH",
+    body: JSON.stringify(patch),
+  });
+  return result.data;
+}
+
+export async function adminListSocialPosts<T = any>() {
+  const result = await apiFetch<AdminApiResult<T[]>>("/api/admin/social-posts");
+  return result.data || [];
+}
+
+export async function adminCreateSocialPost<T = any>(payload: Record<string, unknown>) {
+  const result = await apiFetch<AdminApiResult<T>>("/api/admin/social-posts", {
+    method: "POST",
+    body: JSON.stringify(payload),
+  });
+  return result.data;
+}
+
+export async function adminUpdateSocialPost<T = any>(id: string, payload: Record<string, unknown>) {
+  const result = await apiFetch<AdminApiResult<T>>(`/api/admin/social-posts/${encodeURIComponent(id)}`, {
+    method: "PATCH",
     body: JSON.stringify(payload),
   });
   return result.data;
