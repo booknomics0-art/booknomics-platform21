@@ -38,5 +38,27 @@
       "binding": "BOOK_ASSETS",
       "bucket_name": "booknomics-assets"
     }
-  ]
+  ],
+  "previews": {
+    "vars": {
+      "BOOKNOMICS_ENV": "preview"
+    },
+    "d1_databases": [
+      {
+        "binding": "DB",
+        "database_name": "booknomics-production",
+        "database_id": "b4774bd2-a463-4115-bc32-fb32119332e8"
+      }
+    ],
+    "r2_buckets": [
+      {
+        "binding": "BOOK_COVERS",
+        "bucket_name": "booknomics-covers"
+      },
+      {
+        "binding": "BOOK_ASSETS",
+        "bucket_name": "booknomics-assets"
+      }
+    ]
+  }
 }
