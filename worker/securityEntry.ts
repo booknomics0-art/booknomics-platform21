@@ -6,6 +6,8 @@ import { handleGrowthRoute } from "./growthRoutes";
 import { handleAdminRoute } from "./adminRoutes";
 import { handleAdminOpsRoute } from "./adminOpsRoutes";
 import { handleAdminAiRoute } from "./adminAiRoutes";
+import { handleAdminContentAiRoute } from "./adminContentAiRoutes";
+import { handleAdminMediaAiRoute } from "./adminMediaAiRoutes";
 import { handleSitemapDataRoute } from "./sitemapRoutes";
 
 type D1 = any;
@@ -20,6 +22,8 @@ type Env = {
   RAZORPAY_KEY_ID?: string;
   RAZORPAY_KEY_SECRET?: string;
   LOVABLE_API_KEY?: string;
+  GEMINI_API_KEY?: string;
+  XAI_API_KEY?: string;
 };
 
 type SafeUser = { id: string; email: string; display_name: string | null; avatar_url: string | null };
@@ -103,6 +107,12 @@ export default {
 
     const adminAi = await handleAdminAiRoute(request, env);
     if (adminAi) return adminAi;
+
+    const adminContentAi = await handleAdminContentAiRoute(request, env);
+    if (adminContentAi) return adminContentAi;
+
+    const adminMediaAi = await handleAdminMediaAiRoute(request, env);
+    if (adminMediaAi) return adminMediaAi;
 
     const sitemapData = await handleSitemapDataRoute(request, env);
     if (sitemapData) return sitemapData;
