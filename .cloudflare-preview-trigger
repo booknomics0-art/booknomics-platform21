@@ -1,0 +1,2 @@
+Final Cloudflare preview/auth smoke trigger for PR #46.
+Production routing must remain unchanged until parity and preview gates pass.
