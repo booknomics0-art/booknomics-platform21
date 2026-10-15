@@ -7,6 +7,7 @@ export const isCloudflareBackend = backend === 'cloudflare';
 
 const configuredUrl = import.meta.env.VITE_SUPABASE_URL?.trim();
 const configuredKey = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY?.trim();
+const configuredApiBase = (import.meta.env.VITE_API_BASE || '').trim().replace(/\/$/, '');
 
 export const SUPABASE_URL = configuredUrl || '';
 export const SUPABASE_KEY = configuredKey || '';
@@ -27,10 +28,12 @@ function makeCloudflareQuery(table: string) {
     countRequested: false,
     payload: null as any,
     single: false,
+    columns: '*',
   };
 
   const builder: any = {
-    select(_columns?: string, options?: any) {
+    select(columns = '*', options?: any) {
+      state.columns = columns;
       if (state.mode === 'select') state.mode = 'select';
       state.countRequested = options?.count === 'exact';
       return builder;
@@ -64,7 +67,90 @@ const filterValue = (filters: Filter[], op: Filter['op'], field: string) =>
 const ok = (data: any, single = false, count?: number) => ({ data: single ? (Array.isArray(data) ? (data[0] ?? null) : data) : data, error: null, count: count ?? (Array.isArray(data) ? data.length : data ? 1 : 0) });
 const fail = (message: string, single = false) => ({ data: single ? null : [], error: { message }, count: 0 });
 
+function adminBookSelect(state: any, view: 'catalog' | 'full') {
+  const filters = state.filters as Filter[];
+  const params = new URLSearchParams({
+    view,
+    limit: String(Math.min(Math.max(Number(state.limit ?? 100), 1), 500)),
+    offset: String(Math.max(Number(state.offset || 0), 0)),
+  });
+  const id = filterValue(filters, 'eq', 'id');
+  const status = filterValue(filters, 'eq', 'status');
+  const draft = filterValue(filters, 'eq', 'is_draft');
+  if (id) params.set('id', String(id));
+  if (status != null) params.set('status', String(status));
+  if (typeof draft === 'boolean') params.set('is_draft', String(draft));
+  return params;
+}
+
+async function executeAdminBooksQuery(table: string, state: any) {
+  const filters = state.filters as Filter[];
+  const id = filterValue(filters, 'eq', 'id');
+  try {
+    if (table === 'books' && state.mode === 'insert') {
+      const payload = await apiFetch<{ data: any[] }>('/api/admin/books', { method: 'POST', body: JSON.stringify(state.payload) });
+      return ok(state.single ? (payload.data?.[0] ?? null) : (payload.data ?? []), state.single);
+    }
+    if (table === 'books' && state.mode === 'update') {
+      if (!id) return fail('Admin book update requires id', state.single);
+      const payload = await apiFetch<{ data: any }>(`/api/admin/books/${encodeURIComponent(String(id))}`, { method: 'PATCH', body: JSON.stringify(state.payload || {}) });
+      return ok(payload.data, state.single);
+    }
+    if (table === 'books' && state.mode === 'delete') {
+      if (!id) return fail('Admin book delete requires id', state.single);
+      const payload = await apiFetch<any>(`/api/admin/books/${encodeURIComponent(String(id))}`, { method: 'DELETE' });
+      return ok(payload, state.single);
+    }
+
+    const view: 'catalog' | 'full' = table === 'admin_book_catalog' ? 'catalog' : 'full';
+    const payload = await apiFetch<{ data: any[] }>(`/api/admin/books?${adminBookSelect(state, view).toString()}`);
+    const rows = payload.data ?? [];
+    return ok(state.single ? (rows[0] ?? null) : rows, state.single, rows.length);
+  } catch (e: any) {
+    return fail(e?.message || 'Admin book query failed', state.single);
+  }
+}
+
+async function executeBookAssetsAdminQuery(state: any) {
+  const filters = state.filters as Filter[];
+  const payloadBookId = Array.isArray(state.payload) ? null : state.payload?.book_id;
+  const bookId = payloadBookId ?? filterValue(filters, 'eq', 'book_id');
+  try {
+    if (state.mode === 'insert') {
+      const payload = await apiFetch<{ data: any[] }>('/api/admin/book-assets', { method: 'POST', body: JSON.stringify(state.payload) });
+      return ok(state.single ? (payload.data?.[0] ?? null) : (payload.data ?? []), state.single);
+    }
+    if (state.mode === 'upsert' || state.mode === 'update') {
+      if (!bookId) return fail('Book asset write requires book_id', state.single);
+      const payload = await apiFetch<{ data: any }>(`/api/admin/book-assets/${encodeURIComponent(String(bookId))}`, { method: 'PUT', body: JSON.stringify(state.payload || {}) });
+      return ok(payload.data, state.single);
+    }
+    if (!bookId) return fail('Book asset query requires book_id', state.single);
+    const payload = await apiFetch<{ data: any | null }>(`/api/admin/book-assets/${encodeURIComponent(String(bookId))}`);
+    return ok(state.single ? payload.data : (payload.data ? [payload.data] : []), state.single);
+  } catch (e: any) {
+    return fail(e?.message || 'Book assets query failed', state.single);
+  }
+}
+
+async function executeAdminAccessLogQuery(state: any) {
+  if (state.mode !== 'insert') return fail(disabledMessage, state.single);
+  try {
+    const payload = await apiFetch<any>('/api/admin/access-log', { method: 'POST', body: JSON.stringify(state.payload || {}) });
+    return ok(payload, state.single);
+  } catch (e: any) {
+    return fail(e?.message || 'Admin access log failed', state.single);
+  }
+}
+
+function needsAdminBookSelect(state: any) {
+  if (state.mode !== 'select') return true;
+  const columns = String(state.columns || '');
+  return /overview|key_ideas|deep_analysis|meta_title|meta_description|affiliate_link|is_draft|status/i.test(columns);
+}
+
 async function executeBooksQuery(state: any) {
+  if (needsAdminBookSelect(state)) return executeAdminBooksQuery('books', state);
   const filters = state.filters as Filter[];
   const id = filterValue(filters, 'eq', 'id');
   if (id) {
@@ -252,7 +338,10 @@ async function executeBookNotesQuery(state: any) {
 }
 
 async function executeCloudflareQuery(table: string, state: any) {
+  if (table === 'admin_book_catalog' || table === 'books_admin') return executeAdminBooksQuery(table, state);
   if (table === 'books') return executeBooksQuery(state);
+  if (table === 'book_assets') return executeBookAssetsAdminQuery(state);
+  if (table === 'admin_access_logs') return executeAdminAccessLogQuery(state);
   if (table === 'library') return executeLibraryQuery(state);
   if (table === 'reading_progress') return executeReadingProgressQuery(state);
   if (table === 'profiles') return executeProfilesQuery(state);
@@ -265,11 +354,42 @@ async function executeCloudflareQuery(table: string, state: any) {
   return { data: state.single ? null : [], error: disabledError, count: 0, status: 503, statusText: 'Supabase disabled' };
 }
 
-function makeDisabledSupabase() {
-  const storageBucket = {
-    upload: async () => ({ data: null, error: disabledError }), update: async () => ({ data: null, error: disabledError }), remove: async () => ({ data: null, error: disabledError }),
-    list: async () => ({ data: [], error: disabledError }), download: async () => ({ data: null, error: disabledError }), getPublicUrl: () => ({ data: { publicUrl: '' } }), createSignedUrl: async () => ({ data: null, error: disabledError }),
+function mediaUrl(bucketName: string, path: string) {
+  const kind = bucketName === 'book-covers' ? 'covers' : 'assets';
+  const safePath = path.split('/').map((part) => encodeURIComponent(part)).join('/');
+  const origin = configuredApiBase || (typeof window !== 'undefined' ? window.location.origin : '');
+  return `${origin}/media/${kind}/${safePath}`;
+}
+
+function makeCloudflareStorageBucket(bucketName: string) {
+  const supported = bucketName === 'book-covers' || bucketName === 'book-assets';
+  const kind = bucketName === 'book-covers' ? 'covers' : 'assets';
+  const upload = async (path: string, file: File) => {
+    if (!supported) return { data: null, error: disabledError };
+    try {
+      const form = new FormData();
+      form.set('path', path);
+      form.set('file', file);
+      const payload = await apiFetch<{ data: { path: string; publicUrl: string } }>(`/api/admin/storage/${kind}`, { method: 'POST', body: form });
+      return { data: { path: payload.data.path }, error: null };
+    } catch (e: any) {
+      return { data: null, error: { message: e?.message || 'Upload failed' } };
+    }
   };
+  return {
+    upload,
+    update: upload,
+    remove: async () => ({ data: null, error: disabledError }),
+    list: async () => ({ data: [], error: disabledError }),
+    download: async () => ({ data: null, error: disabledError }),
+    getPublicUrl: (path: string) => ({ data: { publicUrl: supported ? mediaUrl(bucketName, path) : '' } }),
+    createSignedUrl: async (path: string) => supported
+      ? ({ data: { signedUrl: mediaUrl(bucketName, path) }, error: null })
+      : ({ data: null, error: disabledError }),
+  };
+}
+
+function makeDisabledSupabase() {
   const channel = { on() { return channel; }, subscribe() { return channel; }, unsubscribe() { return Promise.resolve('ok'); } };
   return {
     from: (table: string) => makeCloudflareQuery(table),
@@ -281,7 +401,7 @@ function makeDisabledSupabase() {
       return { data: null, error: disabledError };
     },
     functions: { invoke: async () => ({ data: null, error: disabledError }) },
-    storage: { from: () => storageBucket },
+    storage: { from: (bucketName: string) => makeCloudflareStorageBucket(bucketName) },
     auth: {
       getSession: async () => ({ data: { session: null }, error: null }), getUser: async () => ({ data: { user: null }, error: null }), signOut: async () => ({ error: null }),
       signInWithPassword: async () => ({ data: { user: null, session: null }, error: disabledError }), signUp: async () => ({ data: { user: null, session: null }, error: disabledError }),
@@ -294,6 +414,8 @@ function makeDisabledSupabase() {
 
 if (!isSupabaseConfigured && !isCloudflareBackend) throw new Error('Booknomics configuration missing: set VITE_SUPABASE_URL and VITE_SUPABASE_PUBLISHABLE_KEY.');
 
-export const supabase: any = isSupabaseConfigured
-  ? createClient<Database>(configuredUrl!, configuredKey!, { auth: { persistSession: true, autoRefreshToken: true, flowType: 'pkce', detectSessionInUrl: true } })
-  : makeDisabledSupabase();
+export const supabase: any = isCloudflareBackend
+  ? makeDisabledSupabase()
+  : isSupabaseConfigured
+    ? createClient<Database>(configuredUrl!, configuredKey!, { auth: { persistSession: true, autoRefreshToken: true, flowType: 'pkce', detectSessionInUrl: true } })
+    : makeDisabledSupabase();
