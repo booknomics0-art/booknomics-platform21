@@ -2,10 +2,10 @@ import { useEffect, useRef, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Search, X } from "lucide-react";
 import { Input } from "@/components/ui/input";
-import { supabase } from "@/integrations/supabase/client";
+import { apiFetch } from "@/lib/cloudflareApi";
 import { trackSearch } from "@/lib/analytics";
 
-type Row = { id: string; slug: string; title: string; author: string; category: string; language: string };
+type Row = { id: string; slug: string; seo_slug?: string | null; title: string; author: string; category: string; language: string };
 
 export const GlobalSearch = ({
   placeholder = "Search books, authors, or topics…",
@@ -34,18 +34,16 @@ export const GlobalSearch = ({
     let cancelled = false;
     const timer = window.setTimeout(async () => {
       setSearching(true);
-      const safe = term.replace(/[,%()]/g, " ").slice(0, 80);
-      const { data, error } = await supabase
-        .from("books")
-        .select("id,slug,title,author,category,language")
-        .eq("is_draft", false)
-        .or(`title.ilike.%${safe}%,author.ilike.%${safe}%,category.ilike.%${safe}%`)
-        .order("title")
-        .limit(8);
-
-      if (cancelled) return;
-      setResults(error ? [] : ((data ?? []) as Row[]));
-      setSearching(false);
+      const safe = term.replace(/[,%()]/g, " ").replace(/\s+/g, " ").slice(0, 80);
+      try {
+        const payload = await apiFetch<{ data: Row[] }>(`/api/books?q=${encodeURIComponent(safe)}&sort=az&limit=8&offset=0`);
+        if (cancelled) return;
+        setResults((payload.data ?? []).map((row) => ({ ...row, slug: row.seo_slug || row.slug })));
+      } catch {
+        if (!cancelled) setResults([]);
+      } finally {
+        if (!cancelled) setSearching(false);
+      }
     }, 220);
 
     return () => {
