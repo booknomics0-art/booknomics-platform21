@@ -10,6 +10,7 @@ import { BookOpen } from "lucide-react";
 import { trackLogin, trackSignup } from "@/lib/analytics";
 import { SEO } from "@/components/SEO";
 import { apiFetch, googleSignInUrl, type CloudflareUser } from "@/lib/cloudflareApi";
+import { recordReferralIfPending } from "@/lib/referrals";
 
 const Auth = () => {
   const navigate = useNavigate();
@@ -31,7 +32,10 @@ const Auth = () => {
     (async () => {
       try {
         const data = await apiFetch<{ user: Omit<CloudflareUser, "user_metadata"> | null }>("/api/auth/session");
-        if (!cancelled && data.user) navigate(afterAuth, { replace: true });
+        if (!cancelled && data.user) {
+          await recordReferralIfPending();
+          navigate(afterAuth, { replace: true });
+        }
       } catch {
         // Signed-out state is valid on the auth page.
       }
@@ -61,6 +65,7 @@ const Auth = () => {
         trackLogin("email");
         toast.success("Welcome back");
       }
+      await recordReferralIfPending();
       navigate(afterAuth, { replace: true });
     } catch (error) {
       toast.error(error instanceof Error ? error.message : "Authentication failed");
@@ -72,7 +77,8 @@ const Auth = () => {
   const handleGoogle = () => {
     setLoading(true);
     trackLogin("google");
-    window.location.href = googleSignInUrl(afterAuth);
+    const authReturn = `/auth?next=${encodeURIComponent(afterAuth)}`;
+    window.location.href = googleSignInUrl(authReturn);
   };
 
   return (
