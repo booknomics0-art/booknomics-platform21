@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { AdminGuard } from "@/components/admin/AdminGuard";
 import { AdminShell } from "@/components/admin/AdminShell";
-import { supabase } from "@/integrations/supabase/client";
+import { adminListBooks, adminUpdateBook } from "@/lib/adminApi";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -19,14 +19,8 @@ const MAX_ADMIN_BOOKS = 5000;
 async function fetchBooksForPolish() {
   const rows: BookForAudit[] = [];
   for (let from = 0; from < MAX_ADMIN_BOOKS; from += PAGE_SIZE) {
-    const { data, error } = await supabase
-      .from("books_admin")
-      .select("*")
-      .order("created_at", { ascending: false })
-      .range(from, from + PAGE_SIZE - 1);
-    if (error) throw error;
-    const page = (data || []) as any[];
-    rows.push(...(page as BookForAudit[]));
+    const page = await adminListBooks<BookForAudit>({ view: "full", limit: PAGE_SIZE, offset: from });
+    rows.push(...page);
     if (page.length < PAGE_SIZE) break;
   }
   return rows;
@@ -57,8 +51,8 @@ function Inner() {
         if (cancelled) return;
         setBooks(data);
         if (!focusId && data[0]) setSelectedId(data[0].id);
-      } catch (e: any) {
-        if (!cancelled) toast.error(e?.message || "Could not load books for content audit");
+      } catch (e) {
+        if (!cancelled) toast.error(e instanceof Error ? e.message : "Could not load books for content audit");
       }
     })();
     return () => { cancelled = true; };
@@ -108,11 +102,13 @@ function PolishPanel({ initial }: { initial: BookForAudit }) {
         reflection_questions: draft.reflection_questions ?? null,
         deep_analysis: draft.deep_analysis ?? null,
       };
-      const { error } = await supabase.from("books").update(patch).eq("id", draft.id);
-      if (error) throw error;
+      await adminUpdateBook(draft.id, patch);
       toast.success("Saved");
-    } catch (e: any) { toast.error(e.message); }
-    finally { setSaving(false); }
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : "Could not save changes");
+    } finally {
+      setSaving(false);
+    }
   };
 
   const setField = (f: Field, v: string) => setDraft(d => ({ ...d, [f]: v }));
