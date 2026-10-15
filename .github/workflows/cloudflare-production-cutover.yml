@@ -19,7 +19,7 @@ jobs:
       CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
       WORKER_NAME: booknomics
       ZONE_NAME: booknomics.com
-      CANDIDATE_VERSION_ID: c0b90618-0d79-4480-915c-3d71a1ac1967
+      CANDIDATE_VERSION_ID: 9dac9084-53ea-42c1-b38d-5af2beba7174
     steps:
       - uses: actions/checkout@v4
 
