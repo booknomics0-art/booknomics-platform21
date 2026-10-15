@@ -3,10 +3,10 @@ import { Check, Crown, Loader2, Sparkles } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
-import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { useTier, type Tier } from "@/hooks/useTier";
 import { PLANS, FEATURES, type PaidPlan } from "@/lib/plans";
+import { apiFetch } from "@/lib/cloudflareApi";
 import { useNavigate } from "react-router-dom";
 
 type Ctx = { open: () => void };
@@ -65,37 +65,51 @@ function PricingDialog({ open, onOpenChange }: { open: boolean; onOpenChange: (v
       const ok = await loadRazorpay();
       if (!ok) { toast.error("Could not load Razorpay. Check your internet."); return; }
 
-      const { data, error } = await supabase.functions.invoke("razorpay-create-order", {
-        body: { plan: selected },
-      });
-      if (error || !data?.order_id || !data?.key_id) {
-        toast.error(error?.message || data?.error || "Could not start payment");
+      const data = await apiFetch<{ ok: boolean; order_id: string; key_id: string; amount: number }>(
+        "/api/payments/razorpay/order",
+        { method: "POST", body: JSON.stringify({ plan: selected }) },
+      );
+      if (!data?.order_id || !data?.key_id) {
+        toast.error("Could not start payment");
         return;
       }
 
       const plan = PLANS[selected];
-      const metadata = user.user_metadata as ({ display_name?: string } & typeof user.user_metadata) | undefined;
       const rzp = new (window as any).Razorpay({
         key: data.key_id,
         order_id: data.order_id,
-        amount: plan.amountPaise,
+        amount: data.amount,
         currency: "INR",
         name: "Booknomics Premium",
         description: `${plan.label} subscription`,
-        prefill: { email: user.email ?? "", name: metadata?.display_name ?? metadata?.full_name ?? metadata?.name ?? "" },
+        prefill: {
+          email: user.email ?? "",
+          name: user.display_name ?? user.user_metadata.full_name ?? user.user_metadata.name ?? "",
+        },
         theme: { color: "#8B5CF6" },
         handler: async (resp: any) => {
-          const { data: vdata, error: verr } = await supabase.functions.invoke("razorpay-verify", {
-            body: {
-              razorpay_order_id: resp.razorpay_order_id,
-              razorpay_payment_id: resp.razorpay_payment_id,
-              razorpay_signature: resp.razorpay_signature,
-            },
-          });
-          if (verr || !vdata?.ok) { toast.error(verr?.message || vdata?.error || "Payment verification failed"); return; }
-          toast.success(`Welcome to ${plan.label} Premium!`);
-          await refresh();
-          onOpenChange(false);
+          try {
+            const verified = await apiFetch<{ ok: boolean; plan: PaidPlan; expires_at: string }>(
+              "/api/payments/razorpay/verify",
+              {
+                method: "POST",
+                body: JSON.stringify({
+                  razorpay_order_id: resp.razorpay_order_id,
+                  razorpay_payment_id: resp.razorpay_payment_id,
+                  razorpay_signature: resp.razorpay_signature,
+                }),
+              },
+            );
+            if (!verified?.ok) {
+              toast.error("Payment verification failed");
+              return;
+            }
+            toast.success(`Welcome to ${plan.label} Premium!`);
+            await refresh();
+            onOpenChange(false);
+          } catch (error: any) {
+            toast.error(error?.message || "Payment verification failed");
+          }
         },
         modal: { ondismiss: () => setPaying(false) },
       });
