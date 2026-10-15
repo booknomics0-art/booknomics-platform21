@@ -9,6 +9,8 @@ import { handleCatalogRoute } from "./catalogRoutes";
 import { handleAudioRoute } from "./audioRoutes";
 import { handleAdminRoute } from "./adminRoutes";
 import { handleAdminOpsRoute } from "./adminOpsRoutes";
+import { handleAdminGscRoute } from "./adminGscRoutes";
+import { handleCutoverAdminRoute } from "./cutoverAdminRoutes";
 import { handleAdminAiRoute } from "./adminAiRoutes";
 import { handleAdminContentAiRoute } from "./adminContentAiRoutes";
 import { handleAdminMediaAiRoute } from "./adminMediaAiRoutes";
@@ -23,6 +25,7 @@ type Env = {
   BOOKNOMICS_ENV?: string;
   GOOGLE_CLIENT_ID?: string;
   GOOGLE_CLIENT_SECRET?: string;
+  GOOGLE_SEARCH_CONSOLE_API_KEY?: string;
   RAZORPAY_KEY_ID?: string;
   RAZORPAY_KEY_SECRET?: string;
   LOVABLE_API_KEY?: string;
@@ -121,6 +124,12 @@ export default {
 
     const adminOps = await handleAdminOpsRoute(request, env);
     if (adminOps) return adminOps;
+
+    const adminGsc = await handleAdminGscRoute(request, env);
+    if (adminGsc) return adminGsc;
+
+    const cutoverAdmin = await handleCutoverAdminRoute(request, env);
+    if (cutoverAdmin) return cutoverAdmin;
 
     const adminAi = await handleAdminAiRoute(request, env);
     if (adminAi) return adminAi;
