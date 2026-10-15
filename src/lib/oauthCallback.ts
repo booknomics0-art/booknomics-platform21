@@ -9,7 +9,7 @@ export function completeOAuthRedirect(): Promise<boolean> {
     const isCallback = new URLSearchParams(window.location.search).has('code');
     const { data, error } = await supabase.auth.getSession();
     if (error || !data.session) return false;
-    if (isCallback && data.session.user) await recordReferralIfPending(data.session.user.id);
+    if (isCallback && data.session.user) await recordReferralIfPending();
     return true;
   })();
   return completion;
