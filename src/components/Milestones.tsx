@@ -3,7 +3,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Slider } from "@/components/ui/slider";
 import { Button } from "@/components/ui/button";
 import { Award, Lock, Bell, BellOff, Target, Sparkles } from "lucide-react";
-import { supabase } from "@/integrations/supabase/client";
+import { apiFetch } from "@/lib/cloudflareApi";
 import { toast } from "sonner";
 
 interface Milestone { id: string; label: string; threshold: number; icon: string; }
@@ -21,13 +21,22 @@ export function Milestones({ userId, completed, streak }: { userId: string; comp
   const [notif, setNotif] = useState<NotificationPermission>(typeof Notification !== "undefined" ? Notification.permission : "default");
 
   useEffect(() => {
-    supabase.from("profiles").select("daily_goal_minutes").eq("id", userId).maybeSingle()
-      .then(({ data }) => { if (data?.daily_goal_minutes) setGoal(data.daily_goal_minutes); });
+    if (!userId) return;
+    apiFetch<{ daily_goal_minutes: number }>("/api/profile/reading-goal")
+      .then((data) => { if (data.daily_goal_minutes) setGoal(data.daily_goal_minutes); })
+      .catch(() => {});
   }, [userId]);
 
   const saveGoal = async (v: number) => {
     setGoal(v);
-    await supabase.from("profiles").update({ daily_goal_minutes: v }).eq("id", userId);
+    try {
+      await apiFetch<{ daily_goal_minutes: number }>("/api/profile/reading-goal", {
+        method: "POST",
+        body: JSON.stringify({ daily_goal_minutes: v }),
+      });
+    } catch {
+      toast.error("Couldn't save reading goal");
+    }
   };
 
   const enableNotif = async () => {
