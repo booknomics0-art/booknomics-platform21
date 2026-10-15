@@ -4,6 +4,7 @@ import { handleCompatRoute } from "./compatRoutes";
 import { handlePaymentRoute } from "./paymentRoutes";
 import { handleGrowthRoute } from "./growthRoutes";
 import { handleAdminRoute } from "./adminRoutes";
+import { handleSitemapDataRoute } from "./sitemapRoutes";
 
 type D1 = any;
 type Env = {
@@ -93,6 +94,9 @@ export default {
 
     const admin = await handleAdminRoute(request, env);
     if (admin) return admin;
+
+    const sitemapData = await handleSitemapDataRoute(request, env);
+    if (sitemapData) return sitemapData;
 
     const compat = await handleCompatRoute(request, env);
     if (compat) return compat;
