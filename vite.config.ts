@@ -64,7 +64,6 @@ export default defineConfig(({ mode }) => ({
       output: {
         manualChunks: {
           "react-vendor": ["react", "react-dom", "react-router-dom"],
-          "supabase": ["@supabase/supabase-js"],
           "helmet": ["react-helmet-async"],
           "query": ["@tanstack/react-query", "@tanstack/query-core"],
           "markdown": ["react-markdown", "remark-gfm"],
