@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { supabase } from "@/integrations/supabase/client";
+import { adminPublishedTodayCount } from "@/lib/adminApi";
 import { Card } from "@/components/ui/card";
 import { Gauge, AlertCircle, CheckCircle2 } from "lucide-react";
 
@@ -11,8 +11,8 @@ export function useDailyPublishCount() {
 
   const refresh = async () => {
     setLoading(true);
-    const { data } = await supabase.rpc("published_today_count_ist");
-    setCount(typeof data === "number" ? data : 0);
+    try { setCount(await adminPublishedTodayCount()); }
+    catch { setCount(0); }
     setLoading(false);
   };
 
