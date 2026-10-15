@@ -1,0 +1,64 @@
+name: Cloudflare Cutover Audit
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - cloudflare-full-migration
+
+permissions:
+  contents: read
+
+jobs:
+  audit:
+    if: github.event_name == 'workflow_dispatch' || contains(github.event.head_commit.message, '[cloudflare-cutover-audit]')
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Require Cloudflare credentials
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -n "${CLOUDFLARE_ACCOUNT_ID:-}"
+          test -n "${CLOUDFLARE_API_TOKEN:-}"
+      - name: Inspect Worker versions and deployments
+        shell: bash
+        run: |
+          set -euo pipefail
+          echo '=== DEPLOYMENTS ==='
+          npx --yes wrangler@4.136.3 deployments list --name booknomics || true
+          echo '=== VERSIONS ==='
+          npx --yes wrangler@4.136.3 versions list --name booknomics || true
+      - name: Inspect Cloudflare zone, DNS and Worker routes (read-only)
+        shell: bash
+        run: |
+          set -euo pipefail
+          AUTH=(-H "Authorization: Bearer ${CLOUDFLARE_API_TOKEN}" -H 'Content-Type: application/json')
+          ZONES=$(curl --fail --silent --show-error "${AUTH[@]}" "https://api.cloudflare.com/client/v4/zones?name=booknomics.com&status=active")
+          node -e 'const d=JSON.parse(process.argv[1]); console.log(JSON.stringify({success:d.success,zones:(d.result||[]).map(z=>({id:z.id,name:z.name,status:z.status}))},null,2))' "$ZONES"
+          ZONE_ID=$(node -e 'const d=JSON.parse(process.argv[1]); process.stdout.write((d.result&&d.result[0]&&d.result[0].id)||"")' "$ZONES")
+          if [[ -z "$ZONE_ID" ]]; then
+            echo '::error::Active Cloudflare zone booknomics.com not visible to API token'
+            exit 1
+          fi
+          echo '=== WORKER ROUTES ==='
+          curl --fail --silent --show-error "${AUTH[@]}" "https://api.cloudflare.com/client/v4/zones/${ZONE_ID}/workers/routes" \
+            | node -e 'let s="";process.stdin.on("data",c=>s+=c).on("end",()=>{const d=JSON.parse(s); console.log(JSON.stringify({success:d.success,routes:(d.result||[]).map(r=>({id:r.id,pattern:r.pattern,script:r.script}))},null,2))})'
+          echo '=== DNS apex/www ==='
+          curl --fail --silent --show-error "${AUTH[@]}" "https://api.cloudflare.com/client/v4/zones/${ZONE_ID}/dns_records?per_page=100" \
+            | node -e 'let s="";process.stdin.on("data",c=>s+=c).on("end",()=>{const d=JSON.parse(s); const wanted=(d.result||[]).filter(r=>["booknomics.com","www.booknomics.com"].includes(r.name)); console.log(JSON.stringify({success:d.success,records:wanted.map(r=>({id:r.id,type:r.type,name:r.name,content:r.content,proxied:r.proxied,ttl:r.ttl}))},null,2))})'
+      - name: Inspect current public origin behavior
+        shell: bash
+        run: |
+          set -euo pipefail
+          for url in https://booknomics.com/ https://www.booknomics.com/ https://booknomics.com/api/catalog/books?limit=1 https://booknomics.com/api/auth/session; do
+            echo "=== $url ==="
+            curl --silent --show-error --max-redirs 0 -D - -o /dev/null "$url" | sed -n '1,30p'
+          done
