@@ -2,6 +2,14 @@
 
 This branch stages a zero/low-downtime migration from Supabase + Vercel to Cloudflare Workers, D1 and R2.
 
+## Current migration state (2026-10-15)
+
+- Browser cutover guard: **0 Supabase runtime imports**.
+- CI: typecheck, tests, migration safety validation and production build pass.
+- Cloudflare-native OAuth 2.1 + MCP authorization/resource server is implemented in the Worker.
+- `book_modules` now has a D1 schema plus an explicit delta-sync/parity step.
+- Production remains on the existing path until D1/R2 parity and Cloudflare preview smoke tests pass.
+
 ## Current production inventory (2026-10-14)
 
 - Supabase project: `booknomics-production` (`pbkfewrtdgiagytmcigb`, Mumbai)
@@ -25,6 +33,7 @@ This branch stages a zero/low-downtime migration from Supabase + Vercel to Cloud
 - Active application database: Cloudflare D1
 - Covers/mindmaps/audio/PDF/static user-facing files: Cloudflare R2
 - Authentication: Google OAuth handled by the Worker + D1 sessions
+- Delegated MCP authorization: Cloudflare Worker OAuth 2.1 + PKCE with D1 token/client state
 - Scheduled/background tasks: Workers Cron/Queues (migrate only active jobs)
 - `images.booknomics.com`: keep existing Cloudflare-backed media URLs stable where possible
 - `booknomics.com`: Worker + Static Assets after validation
@@ -56,6 +65,11 @@ Required Worker secrets:
 
 - `GOOGLE_CLIENT_ID`
 - `GOOGLE_CLIENT_SECRET`
+- `GEMINI_API_KEY` when AI editorial/podcast generation is enabled
+- `LOVABLE_API_KEY` when Lovable AI-backed generation is enabled
+- `XAI_API_KEY` when cover generation is enabled
+- `ELEVENLABS_API_KEY` when audio generation is enabled
+- payment secrets when payment routes are enabled
 
 Migration-only secrets belong in local/CI secret storage, never source control:
 
@@ -75,12 +89,21 @@ Apply in order:
 3. `cloudflare/migrations/0003_google_auth.sql`
 4. Import the source data with `cloudflare/migrate.mjs`
 5. `cloudflare/migrations/0004_rewrite_legacy_urls.sql` as a post-import safety pass
+6. `cloudflare/migrations/0005_referrals.sql`
+7. `cloudflare/migrations/0006_cutover_features.sql` for modular book content
+8. `cloudflare/migrations/0007_oauth_mcp.sql` for Cloudflare-native OAuth/MCP state
+9. Run the dedicated referral and book-module delta syncs before final parity enforcement
 
 The core schema uses SQLite-compatible types and stores JSON values as TEXT. The migration utility automatically sizes insert batches below D1's bound-parameter ceiling.
 
 ## Data migration utility
 
 `cloudflare/migrate.mjs` migrates active Supabase REST data and Google Auth identities to D1. It can also copy both public Storage buckets to R2 with destination HEAD checks so existing objects are skipped.
+
+Additional final-delta utilities:
+
+- `cloudflare/sync-referrals.mjs`
+- `cloudflare/sync-book-modules.mjs`
 
 It defaults to dry-run behavior. Production writes require:
 
@@ -96,10 +119,12 @@ The utility rewrites legacy Supabase storage URLs to Cloudflare media routes dur
 - `books`
 - `profiles`
 - `book_assets`
+- `book_modules`
 - user library/progress/notes/mastery
 - reviews/comments/reactions/discussions
 - learning paths/enrollments
 - subscriptions/user roles
+- referrals
 - safe app settings and URL redirects
 - active catalog/research/quality/SEO records
 - current jobs/social/backlink records needed in production
@@ -113,6 +138,7 @@ The utility rewrites legacy Supabase storage URLs to Cloudflare media routes dur
 - R2 migration backup tables
 - temporary batch tables
 - obsolete Edge Function bookkeeping
+- legacy Supabase OAuth/MCP authorization tokens; Cloudflare issues fresh delegated OAuth tokens after cutover
 
 If retention is required, export those tables as compressed JSON/CSV and put them in a private R2 archive prefix.
 
@@ -144,12 +170,33 @@ Worker flow:
 
 Before production cutover, update Google OAuth authorized redirect URI to the final Worker/site callback URL.
 
+## MCP OAuth migration
+
+The browser consent flow no longer depends on Supabase Auth OAuth APIs.
+
+Cloudflare Worker endpoints:
+
+- `/.well-known/oauth-authorization-server`
+- `/.well-known/oauth-protected-resource`
+- `/oauth/register`
+- `/oauth/authorize`
+- `/oauth/token`
+- `/oauth/revoke`
+- `/api/oauth/authorizations/:id`
+- `/api/oauth/authorizations/:id/decision`
+- `/mcp`
+
+Public clients use Authorization Code + PKCE S256. Access and refresh tokens are stored hashed in D1; authorization codes are one-time and short-lived.
+
 ## Cutover gates
 
 All gates must pass before DNS changes:
 
+- normal CI is green
+- browser Supabase cutover guard reports 0 violations
 - D1 count = 5,062 books
 - published count = 5,027
+- book-module source IDs exist in D1 after delta sync
 - sample English/Hindi summaries match source
 - all public book slugs resolve
 - Browse/search/filter pagination works
@@ -157,6 +204,7 @@ All gates must pass before DNS changes:
 - 10 existing Google users are correctly mapped/sign-in tested
 - R2 object count/size reconciled with source minus intentional deduplication
 - no public page calls `pbkfewrtdgiagytmcigb.supabase.co`
+- OAuth/MCP discovery, PKCE consent, token exchange and a read-only MCP tool smoke test pass
 - generated sitemap count and canonical URLs are correct
 - Cloudflare preview passes mobile/desktop smoke tests
 
