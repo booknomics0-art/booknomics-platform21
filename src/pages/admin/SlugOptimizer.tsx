@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { AdminGuard } from "@/components/admin/AdminGuard";
 import { AdminShell } from "@/components/admin/AdminShell";
-import { supabase } from "@/integrations/supabase/client";
+import { adminListBooks, adminPutUrlRedirect, adminUpdateBook } from "@/lib/adminApi";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -31,12 +31,11 @@ function Inner() {
   const [savingId, setSavingId] = useState<string | null>(null);
 
   useEffect(() => {
-    (async () => {
-      const { data } = await supabase.from("books")
-        .select("id,slug,title,author,is_draft")
-        .order("created_at", { ascending: false }).limit(500);
-      setBooks((data || []) as B[]);
-    })();
+    let active = true;
+    adminListBooks<B>({ view: "full", limit: 500, offset: 0 })
+      .then((data) => { if (active) setBooks(data); })
+      .catch((error) => { if (active) toast.error(error instanceof Error ? error.message : "Could not load slugs"); });
+    return () => { active = false; };
   }, []);
 
   const rows = useMemo(() => {
@@ -55,16 +54,17 @@ function Inner() {
     try {
       const oldPath = `/books/${b.slug}`;
       const newPath = `/books/${newSlug}`;
-      const { error: rerr } = await supabase.from("url_redirects").upsert({
-        old_path: oldPath, new_path: newPath, status_code: 301, notes: `slug change for ${b.title}`,
-      }, { onConflict: "old_path" });
-      if (rerr) throw rerr;
-      const { error: uerr } = await supabase.from("books").update({ slug: newSlug }).eq("id", b.id);
-      if (uerr) throw uerr;
+      await adminPutUrlRedirect({
+        old_path: oldPath,
+        new_path: newPath,
+        status_code: 301,
+        notes: `slug change for ${b.title}`,
+      });
+      await adminUpdateBook(b.id, { slug: newSlug });
       setBooks(prev => prev.map(x => x.id === b.id ? { ...x, slug: newSlug } : x));
       toast.success("Slug updated and redirect saved");
-    } catch (e: any) {
-      toast.error(e.message || "Failed");
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : "Failed");
     } finally { setSavingId(null); }
   };
 
