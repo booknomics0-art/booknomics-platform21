@@ -10,6 +10,7 @@ This branch stages a zero/low-downtime migration from Supabase + Vercel to Cloud
 - `book_modules` now has a D1 schema plus an explicit delta-sync/parity step.
 - Production remains on the existing path until D1/R2 parity and Cloudflare preview smoke tests pass.
 - Final parity run requested from the current green cutover branch on 2026-10-15.
+- Final Cloudflare preview smoke run requested from the current Supabase-free browser build on 2026-10-15.
 
 ## Current production inventory (2026-10-14)
 
