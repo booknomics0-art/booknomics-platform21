@@ -4,6 +4,7 @@ import { handleCompatRoute } from "./compatRoutes";
 import { handlePaymentRoute } from "./paymentRoutes";
 import { handleGrowthRoute } from "./growthRoutes";
 import { handleAdminRoute } from "./adminRoutes";
+import { handleAdminOpsRoute } from "./adminOpsRoutes";
 import { handleSitemapDataRoute } from "./sitemapRoutes";
 
 type D1 = any;
@@ -94,6 +95,9 @@ export default {
 
     const admin = await handleAdminRoute(request, env);
     if (admin) return admin;
+
+    const adminOps = await handleAdminOpsRoute(request, env);
+    if (adminOps) return adminOps;
 
     const sitemapData = await handleSitemapDataRoute(request, env);
     if (sitemapData) return sitemapData;
