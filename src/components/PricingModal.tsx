@@ -74,6 +74,7 @@ function PricingDialog({ open, onOpenChange }: { open: boolean; onOpenChange: (v
       }
 
       const plan = PLANS[selected];
+      const metadata = user.user_metadata as ({ display_name?: string } & typeof user.user_metadata) | undefined;
       const rzp = new (window as any).Razorpay({
         key: data.key_id,
         order_id: data.order_id,
@@ -81,7 +82,7 @@ function PricingDialog({ open, onOpenChange }: { open: boolean; onOpenChange: (v
         currency: "INR",
         name: "Booknomics Premium",
         description: `${plan.label} subscription`,
-        prefill: { email: user.email ?? "", name: user.user_metadata?.display_name ?? "" },
+        prefill: { email: user.email ?? "", name: metadata?.display_name ?? metadata?.full_name ?? metadata?.name ?? "" },
         theme: { color: "#8B5CF6" },
         handler: async (resp: any) => {
           const { data: vdata, error: verr } = await supabase.functions.invoke("razorpay-verify", {
