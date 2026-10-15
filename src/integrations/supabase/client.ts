@@ -15,7 +15,7 @@ export const isSupabaseConfigured = Boolean(configuredUrl && configuredKey);
 const disabledMessage = 'Supabase runtime is disabled while Booknomics is using the Cloudflare backend.';
 const disabledError = { message: disabledMessage };
 
-type Filter = { op: 'eq' | 'neq' | 'in' | 'not' | 'contains' | 'or'; field?: string; value: any; extra?: any };
+type Filter = { op: 'eq' | 'neq' | 'in' | 'not' | 'contains' | 'or' | 'gte'; field?: string; value: any; extra?: any };
 
 function makeCloudflareQuery(table: string) {
   const state: any = {
@@ -31,13 +31,14 @@ function makeCloudflareQuery(table: string) {
 
   const builder: any = {
     select(_columns?: string, options?: any) {
-      state.mode = 'select';
+      if (state.mode === 'select') state.mode = 'select';
       state.countRequested = options?.count === 'exact';
       return builder;
     },
     eq(field: string, value: any) { state.filters.push({ op: 'eq', field, value }); return builder; },
     neq(field: string, value: any) { state.filters.push({ op: 'neq', field, value }); return builder; },
     in(field: string, value: any[]) { state.filters.push({ op: 'in', field, value }); return builder; },
+    gte(field: string, value: any) { state.filters.push({ op: 'gte', field, value }); return builder; },
     not(field: string, op: string, value: any) { state.filters.push({ op: 'not', field, value, extra: op }); return builder; },
     contains(field: string, value: any) { state.filters.push({ op: 'contains', field, value }); return builder; },
     or(value: string) { state.filters.push({ op: 'or', value }); return builder; },
@@ -60,23 +61,28 @@ function makeCloudflareQuery(table: string) {
 const filterValue = (filters: Filter[], op: Filter['op'], field: string) =>
   filters.find((f) => f.op === op && f.field === field)?.value;
 
+const ok = (data: any, single = false, count?: number) => ({ data: single ? (Array.isArray(data) ? (data[0] ?? null) : data) : data, error: null, count: count ?? (Array.isArray(data) ? data.length : data ? 1 : 0) });
+const fail = (message: string, single = false) => ({ data: single ? null : [], error: { message }, count: 0 });
+
 async function executeBooksQuery(state: any) {
   const filters = state.filters as Filter[];
-
-  // Never guess for unsupported identity/history filters. Returning null is safer
-  // than accidentally treating the first catalog row as a match.
-  if (filterValue(filters, 'eq', 'id') || filters.some((f) => f.op === 'contains')) {
-    return { data: state.single ? null : [], error: null, count: 0 };
+  const id = filterValue(filters, 'eq', 'id');
+  if (id) {
+    try {
+      const payload = await apiFetch<{ data: any | null }>(`/api/social/book-meta?id=${encodeURIComponent(String(id))}`);
+      return ok(payload.data ? (state.single ? payload.data : [payload.data]) : (state.single ? null : []), state.single);
+    } catch (e: any) { return fail(e?.message || 'Book query failed', state.single); }
   }
+  if (filters.some((f) => f.op === 'contains')) return ok(state.single ? null : [], state.single, 0);
 
   const slug = filterValue(filters, 'eq', 'slug') ?? filterValue(filters, 'eq', 'seo_slug');
   if (slug) {
     try {
       const payload = await apiFetch<{ data: any }>(`/api/books/${encodeURIComponent(String(slug))}`);
-      return { data: state.single ? payload.data : [payload.data], error: null, count: payload.data ? 1 : 0 };
+      return ok(state.single ? payload.data : [payload.data], state.single, payload.data ? 1 : 0);
     } catch (error: any) {
-      if (/404|not found/i.test(error?.message || '')) return { data: state.single ? null : [], error: null, count: 0 };
-      return { data: state.single ? null : [], error: { message: error?.message || 'Book query failed' }, count: 0 };
+      if (/404|not found/i.test(error?.message || '')) return ok(state.single ? null : [], state.single, 0);
+      return fail(error?.message || 'Book query failed', state.single);
     }
   }
 
@@ -86,7 +92,7 @@ async function executeBooksQuery(state: any) {
       try { return (await apiFetch<{ data: any }>(`/api/books/${encodeURIComponent(String(item))}`)).data; }
       catch { return null; }
     }))).filter(Boolean);
-    return { data: state.single ? (rows[0] ?? null) : rows, error: null, count: rows.length };
+    return ok(state.single ? (rows[0] ?? null) : rows, state.single, rows.length);
   }
 
   const language = filterValue(filters, 'eq', 'language');
@@ -94,13 +100,9 @@ async function executeBooksQuery(state: any) {
   let q = '';
   const titleEq = filterValue(filters, 'eq', 'title');
   const authorEq = filterValue(filters, 'eq', 'author');
-  if (titleEq) q = String(titleEq);
-  else if (authorEq) q = String(authorEq);
+  if (titleEq) q = String(titleEq); else if (authorEq) q = String(authorEq);
   const orFilter = filters.find((f) => f.op === 'or')?.value as string | undefined;
-  if (!q && orFilter) {
-    const match = orFilter.match(/ilike\.%(.*?)%/i);
-    if (match?.[1]) q = match[1].replace(/%/g, ' ').trim();
-  }
+  if (!q && orFilter) { const match = orFilter.match(/ilike\.%(.*?)%/i); if (match?.[1]) q = match[1].replace(/%/g, ' ').trim(); }
 
   let sort = 'az';
   if (state.order?.field === 'created_at') sort = state.order.ascending ? 'az' : 'latest';
@@ -122,104 +124,176 @@ async function executeBooksQuery(state: any) {
       if (filter.op === 'eq' && filter.field === 'title') rows = rows.filter((row) => row?.title === filter.value);
       if (filter.op === 'eq' && filter.field === 'author') rows = rows.filter((row) => row?.author === filter.value);
     }
-    return { data: state.single ? (rows[0] ?? null) : rows, error: null, count: state.countRequested ? payload.count : rows.length };
-  } catch (error: any) {
-    return { data: state.single ? null : [], error: { message: error?.message || 'Book query failed' }, count: 0 };
-  }
+    return ok(state.single ? (rows[0] ?? null) : rows, state.single, state.countRequested ? payload.count : rows.length);
+  } catch (error: any) { return fail(error?.message || 'Book query failed', state.single); }
 }
 
 async function executeLibraryQuery(state: any) {
-  const filters = state.filters as Filter[];
-  const bookId = filterValue(filters, 'eq', 'book_id') ?? state.payload?.book_id;
-  if (!bookId) return { data: state.single ? null : [], error: disabledError, count: 0 };
+  const filters = state.filters as Filter[]; const bookId = filterValue(filters, 'eq', 'book_id') ?? state.payload?.book_id;
+  if (!bookId) return fail(disabledMessage, state.single);
   try {
-    if (state.mode === 'insert') {
-      const payload = await apiFetch<{ saved: boolean }>("/api/library/toggle", {
-        method: 'POST', body: JSON.stringify({ book_id: bookId, saved: true }),
-      });
-      return { data: payload, error: null, count: 1 };
-    }
-    if (state.mode === 'delete') {
-      const payload = await apiFetch<{ saved: boolean }>("/api/library/toggle", {
-        method: 'POST', body: JSON.stringify({ book_id: bookId, saved: false }),
-      });
-      return { data: payload, error: null, count: 1 };
+    if (state.mode === 'insert' || state.mode === 'delete') {
+      const payload = await apiFetch<{ saved: boolean }>("/api/library/toggle", { method: 'POST', body: JSON.stringify({ book_id: bookId, saved: state.mode === 'insert' }) });
+      return ok(payload, state.single);
     }
     const payload = await apiFetch<{ saved: boolean }>(`/api/library/status?book_id=${encodeURIComponent(String(bookId))}`);
     const row = payload.saved ? { id: `saved:${bookId}` } : null;
-    return { data: state.single ? row : (row ? [row] : []), error: null, count: row ? 1 : 0 };
-  } catch (error: any) {
-    return { data: state.single ? null : [], error: { message: error?.message || 'Library query failed' }, count: 0 };
-  }
+    return ok(state.single ? row : (row ? [row] : []), state.single);
+  } catch (e: any) { return fail(e?.message || 'Library query failed', state.single); }
 }
 
 async function executeReadingProgressQuery(state: any) {
-  const filters = state.filters as Filter[];
-  const bookId = state.payload?.book_id ?? filterValue(filters, 'eq', 'book_id');
-  if (!bookId || !['upsert', 'insert', 'update'].includes(state.mode)) {
-    return { data: state.single ? null : [], error: disabledError, count: 0 };
-  }
+  const filters = state.filters as Filter[]; const bookId = state.payload?.book_id ?? filterValue(filters, 'eq', 'book_id');
+  if (!bookId || !['upsert', 'insert', 'update'].includes(state.mode)) return fail(disabledMessage, state.single);
   try {
-    const payload = await apiFetch<{ ok: boolean; completed: boolean }>("/api/reading-progress", {
-      method: 'POST',
-      body: JSON.stringify({ book_id: bookId, completed: Boolean(state.payload?.completed) }),
-    });
-    return { data: payload, error: null, count: 1 };
-  } catch (error: any) {
-    return { data: null, error: { message: error?.message || 'Progress update failed' }, count: 0 };
-  }
+    const payload = await apiFetch<any>("/api/reading-progress", { method: 'POST', body: JSON.stringify({ book_id: bookId, completed: Boolean(state.payload?.completed) }) });
+    return ok(payload, state.single);
+  } catch (e: any) { return fail(e?.message || 'Progress update failed', state.single); }
+}
+
+async function executeProfilesQuery(state: any) {
+  const filters = state.filters as Filter[];
+  try {
+    if (state.mode === 'update' && state.payload?.daily_goal_minutes != null) {
+      const data = await apiFetch<any>('/api/profile/reading-goal', { method: 'POST', body: JSON.stringify({ daily_goal_minutes: state.payload.daily_goal_minutes }) });
+      return ok(data, state.single);
+    }
+    const one = filterValue(filters, 'eq', 'id'); const many = filterValue(filters, 'in', 'id'); const ids = Array.isArray(many) ? many : one ? [one] : [];
+    if (!ids.length) return ok(state.single ? null : [], state.single, 0);
+    const payload = await apiFetch<{ data: any[] }>(`/api/social/profiles?ids=${encodeURIComponent(ids.slice(0, 90).join(','))}`);
+    return ok(state.single ? (payload.data[0] ?? null) : payload.data, state.single);
+  } catch (e: any) { return fail(e?.message || 'Profile query failed', state.single); }
+}
+
+async function executeBookReviewsQuery(state: any) {
+  const filters = state.filters as Filter[]; const bookId = state.payload?.book_id ?? filterValue(filters, 'eq', 'book_id');
+  try {
+    if (state.mode === 'upsert' || state.mode === 'insert' || state.mode === 'update') {
+      const payload = await apiFetch<{ data: any }>('/api/social/reviews', { method: 'POST', body: JSON.stringify({ book_id: bookId, rating: state.payload?.rating, content: state.payload?.content || '' }) });
+      return ok(payload.data, state.single);
+    }
+    if (state.mode === 'delete') {
+      const id = filterValue(filters, 'eq', 'id');
+      const payload = await apiFetch<any>('/api/social/reviews', { method: 'DELETE', body: JSON.stringify({ id, book_id: bookId }) });
+      return ok(payload, state.single);
+    }
+    if (!bookId) return ok(state.single ? null : [], state.single, 0);
+    const payload = await apiFetch<{ data: any[] }>(`/api/social/reviews?book_id=${encodeURIComponent(String(bookId))}`);
+    return ok(state.single ? (payload.data[0] ?? null) : payload.data, state.single);
+  } catch (e: any) { return fail(e?.message || 'Review query failed', state.single); }
+}
+
+async function executeReviewUpvotesQuery(state: any) {
+  const filters = state.filters as Filter[]; const reviewId = state.payload?.review_id ?? filterValue(filters, 'eq', 'review_id');
+  try {
+    if (state.mode === 'insert' || state.mode === 'delete') {
+      const payload = await apiFetch<any>('/api/social/review-upvote', { method: 'POST', body: JSON.stringify({ review_id: reviewId, active: state.mode === 'insert' }) });
+      return ok(payload, state.single);
+    }
+    const ids = filterValue(filters, 'in', 'review_id'); if (!Array.isArray(ids) || !ids.length) return ok([], state.single, 0);
+    const payload = await apiFetch<{ data: any[] }>(`/api/social/review-upvotes?ids=${encodeURIComponent(ids.slice(0, 90).join(','))}`);
+    return ok(payload.data, state.single);
+  } catch (e: any) { return fail(e?.message || 'Upvote query failed', state.single); }
+}
+
+async function executeCommentsQuery(state: any) {
+  const filters = state.filters as Filter[]; const bookId = state.payload?.book_id ?? filterValue(filters, 'eq', 'book_id');
+  try {
+    if (state.mode === 'insert') {
+      const payload = await apiFetch<{ data: any }>('/api/social/comments', { method: 'POST', body: JSON.stringify({ book_id: bookId, parent_comment_id: state.payload?.parent_comment_id ?? null, content: state.payload?.content || '' }) });
+      return ok(payload.data, state.single);
+    }
+    if (!bookId) return ok(state.single ? null : [], state.single, 0);
+    const payload = await apiFetch<{ data: any[] }>(`/api/social/comments?book_id=${encodeURIComponent(String(bookId))}`);
+    return ok(state.single ? (payload.data[0] ?? null) : payload.data, state.single);
+  } catch (e: any) { return fail(e?.message || 'Comment query failed', state.single); }
+}
+
+async function executeReactionsQuery(state: any) {
+  const filters = state.filters as Filter[]; const commentId = state.payload?.comment_id ?? filterValue(filters, 'eq', 'comment_id'); const type = state.payload?.type ?? filterValue(filters, 'eq', 'type'); const bookId = state.payload?.book_id;
+  try {
+    if (state.mode === 'insert' || state.mode === 'delete') {
+      const payload = await apiFetch<any>('/api/social/comment-reaction', { method: 'POST', body: JSON.stringify({ book_id: bookId, comment_id: commentId, type, active: state.mode === 'insert' }) });
+      return ok(payload, state.single);
+    }
+    const ids = filterValue(filters, 'in', 'comment_id'); if (!Array.isArray(ids) || !ids.length) return ok([], state.single, 0);
+    const payload = await apiFetch<{ data: any[] }>(`/api/social/reactions?comment_ids=${encodeURIComponent(ids.slice(0, 90).join(','))}`);
+    return ok(payload.data, state.single);
+  } catch (e: any) { return fail(e?.message || 'Reaction query failed', state.single); }
+}
+
+async function executeHabitEntriesQuery(state: any) {
+  const filters = state.filters as Filter[]; const bookId = state.payload?.book_id ?? filterValue(filters, 'eq', 'book_id');
+  try {
+    if (state.mode === 'upsert' || state.mode === 'insert' || state.mode === 'update') {
+      const payload = await apiFetch<any>('/api/habits', { method: 'POST', body: JSON.stringify(state.payload) });
+      return ok(payload, state.single);
+    }
+    if (!bookId) return ok([], state.single, 0);
+    const payload = await apiFetch<{ data: any[] }>(`/api/habits?book_id=${encodeURIComponent(String(bookId))}`);
+    return ok(payload.data, state.single);
+  } catch (e: any) { return fail(e?.message || 'Habit query failed', state.single); }
+}
+
+async function executeBookNotesQuery(state: any) {
+  const filters = state.filters as Filter[]; const bookId = state.payload?.book_id ?? filterValue(filters, 'eq', 'book_id');
+  try {
+    if (state.mode === 'insert') {
+      const payload = await apiFetch<{ data: any }>('/api/notes', { method: 'POST', body: JSON.stringify({ book_id: bookId, content: state.payload?.content || '' }) });
+      return ok(payload.data, state.single);
+    }
+    if (state.mode === 'delete') {
+      const id = filterValue(filters, 'eq', 'id'); const payload = await apiFetch<any>('/api/notes', { method: 'DELETE', body: JSON.stringify({ id }) }); return ok(payload, state.single);
+    }
+    const payload = await apiFetch<{ data: any[] }>(bookId ? `/api/notes?book_id=${encodeURIComponent(String(bookId))}` : '/api/notes');
+    const rows = bookId ? payload.data : payload.data.map((r: any) => ({ ...r, books: r.slug ? { slug: r.slug, title: r.title, author: r.author } : null }));
+    return ok(state.single ? (rows[0] ?? null) : rows, state.single);
+  } catch (e: any) { return fail(e?.message || 'Notes query failed', state.single); }
 }
 
 async function executeCloudflareQuery(table: string, state: any) {
   if (table === 'books') return executeBooksQuery(state);
   if (table === 'library') return executeLibraryQuery(state);
   if (table === 'reading_progress') return executeReadingProgressQuery(state);
+  if (table === 'profiles') return executeProfilesQuery(state);
+  if (table === 'book_reviews') return executeBookReviewsQuery(state);
+  if (table === 'review_upvotes') return executeReviewUpvotesQuery(state);
+  if (table === 'comments') return executeCommentsQuery(state);
+  if (table === 'reactions') return executeReactionsQuery(state);
+  if (table === 'habit_entries') return executeHabitEntriesQuery(state);
+  if (table === 'book_notes') return executeBookNotesQuery(state);
   return { data: state.single ? null : [], error: disabledError, count: 0, status: 503, statusText: 'Supabase disabled' };
 }
 
 function makeDisabledSupabase() {
   const storageBucket = {
-    upload: async () => ({ data: null, error: disabledError }),
-    update: async () => ({ data: null, error: disabledError }),
-    remove: async () => ({ data: null, error: disabledError }),
-    list: async () => ({ data: [], error: disabledError }),
-    download: async () => ({ data: null, error: disabledError }),
-    getPublicUrl: () => ({ data: { publicUrl: '' } }),
-    createSignedUrl: async () => ({ data: null, error: disabledError }),
+    upload: async () => ({ data: null, error: disabledError }), update: async () => ({ data: null, error: disabledError }), remove: async () => ({ data: null, error: disabledError }),
+    list: async () => ({ data: [], error: disabledError }), download: async () => ({ data: null, error: disabledError }), getPublicUrl: () => ({ data: { publicUrl: '' } }), createSignedUrl: async () => ({ data: null, error: disabledError }),
   };
-
-  const channel = {
-    on() { return channel; },
-    subscribe() { return channel; },
-    unsubscribe() { return Promise.resolve('ok'); },
-  };
-
+  const channel = { on() { return channel; }, subscribe() { return channel; }, unsubscribe() { return Promise.resolve('ok'); } };
   return {
     from: (table: string) => makeCloudflareQuery(table),
-    rpc: async () => ({ data: null, error: disabledError }),
+    rpc: async (name: string, args?: any) => {
+      if (name === 'get_premium_summary' && args?.p_book_id) {
+        try { const payload = await apiFetch<{ data: any }>(`/api/premium-summary/${encodeURIComponent(String(args.p_book_id))}`); return { data: [payload.data], error: null }; }
+        catch (e: any) { return { data: null, error: { message: e?.message || 'Premium data unavailable' } }; }
+      }
+      return { data: null, error: disabledError };
+    },
     functions: { invoke: async () => ({ data: null, error: disabledError }) },
     storage: { from: () => storageBucket },
     auth: {
-      getSession: async () => ({ data: { session: null }, error: null }),
-      getUser: async () => ({ data: { user: null }, error: null }),
-      signOut: async () => ({ error: null }),
-      signInWithPassword: async () => ({ data: { user: null, session: null }, error: disabledError }),
-      signUp: async () => ({ data: { user: null, session: null }, error: disabledError }),
-      signInWithOAuth: async () => ({ data: null, error: disabledError }),
-      exchangeCodeForSession: async () => ({ data: { user: null, session: null }, error: disabledError }),
+      getSession: async () => ({ data: { session: null }, error: null }), getUser: async () => ({ data: { user: null }, error: null }), signOut: async () => ({ error: null }),
+      signInWithPassword: async () => ({ data: { user: null, session: null }, error: disabledError }), signUp: async () => ({ data: { user: null, session: null }, error: disabledError }),
+      signInWithOAuth: async () => ({ data: null, error: disabledError }), exchangeCodeForSession: async () => ({ data: { user: null, session: null }, error: disabledError }),
       onAuthStateChange: () => ({ data: { subscription: { unsubscribe() {} } } }),
     },
-    channel: () => channel,
-    removeChannel: async () => 'ok',
+    channel: () => channel, removeChannel: async () => 'ok',
   } as any;
 }
 
-if (!isSupabaseConfigured && !isCloudflareBackend) {
-  throw new Error('Booknomics configuration missing: set VITE_SUPABASE_URL and VITE_SUPABASE_PUBLISHABLE_KEY.');
-}
+if (!isSupabaseConfigured && !isCloudflareBackend) throw new Error('Booknomics configuration missing: set VITE_SUPABASE_URL and VITE_SUPABASE_PUBLISHABLE_KEY.');
 
 export const supabase: any = isSupabaseConfigured
-  ? createClient<Database>(configuredUrl!, configuredKey!, {
-      auth: { persistSession: true, autoRefreshToken: true, flowType: 'pkce', detectSessionInUrl: true },
-    })
+  ? createClient<Database>(configuredUrl!, configuredKey!, { auth: { persistSession: true, autoRefreshToken: true, flowType: 'pkce', detectSessionInUrl: true } })
   : makeDisabledSupabase();
