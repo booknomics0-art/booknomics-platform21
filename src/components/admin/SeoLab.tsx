@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import { apiFetch } from "@/lib/cloudflareApi";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -68,13 +69,8 @@ export function SeoLab({ bookId }: Props) {
           .select("title, meta_title, meta_description, slug, overview, key_ideas, category")
           .eq("id", bookId)
           .maybeSingle(),
-        supabase
-          .from("seo_audits")
-          .select("aeo_score, geo_score, ai_visibility_score, scoring_version, aeo_details, geo_details, updated_at")
-          .eq("book_id", bookId)
-          .order("updated_at", { ascending: false })
-          .limit(1)
-          .maybeSingle(),
+        apiFetch<{ data: AiAudit | null }>(`/api/admin/seo-audits/${encodeURIComponent(bookId)}`)
+          .catch(() => ({ data: null })),
       ]);
 
       const data = bookResult.data;
@@ -85,7 +81,7 @@ export function SeoLab({ bookId }: Props) {
         setKeyword(data.title ?? "");
         setBody(`${data.overview ?? ""}\n${data.key_ideas ?? ""}`);
       }
-      if (auditResult.data) setAudit(auditResult.data as unknown as AiAudit);
+      if (auditResult.data) setAudit(auditResult.data);
       setLoading(false);
     })();
   }, [bookId]);
@@ -142,7 +138,6 @@ export function SeoLab({ bookId }: Props) {
 
   return (
     <div className="space-y-4">
-      {/* SERP Preview */}
       <Card className="p-4 bg-background border-l-4 border-l-primary">
         <div className="flex items-center gap-2 mb-3">
           <Globe className="w-4 h-4 text-primary" />
@@ -159,7 +154,6 @@ export function SeoLab({ bookId }: Props) {
         </div>
       </Card>
 
-      {/* AEO / GEO readiness */}
       <Card className="p-4 space-y-3">
         <div className="flex items-start justify-between gap-3 flex-wrap">
           <div>
@@ -207,7 +201,6 @@ export function SeoLab({ bookId }: Props) {
         )}
       </Card>
 
-      {/* Editors */}
       <Card className="p-4 space-y-3">
         <div>
           <div className="flex items-center justify-between">
@@ -246,7 +239,6 @@ export function SeoLab({ bookId }: Props) {
         </div>
       </Card>
 
-      {/* Keyword density */}
       <Card className="p-4">
         <h4 className="font-semibold text-sm mb-2">Keyword Density Map</h4>
         <div className="flex flex-wrap gap-2 text-xs">
@@ -262,7 +254,6 @@ export function SeoLab({ bookId }: Props) {
         </div>
       </Card>
 
-      {/* AI suggestions */}
       {suggestions.length > 0 && (
         <Card className="p-4 space-y-3">
           <h4 className="font-semibold text-sm">AI Suggestions</h4>
