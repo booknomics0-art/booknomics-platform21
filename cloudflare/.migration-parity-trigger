@@ -1,0 +1,3 @@
+Cloudflare migration parity trigger
+Triggered for final D1/R2 delta sync and parity verification on 2026-10-15.
+Do not remove Supabase until parity and preview/auth smoke gates pass.
