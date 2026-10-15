@@ -105,7 +105,21 @@ jobs:
           }
           trap 'rc=$?; if [[ $rc -ne 0 ]]; then rollback_routes; fi; exit $rc' EXIT
 
-          npx --yes wrangler@4.136.3 triggers deploy --name "$WORKER_NAME"
+          # Use a routes-only config so applying triggers never requires rebuilding the
+          # static assets. The already-tested Worker version remains byte-for-byte the
+          # version serving production.
+          cat > wrangler.routes.jsonc <<'JSON'
+          {
+            "name": "booknomics",
+            "main": "worker/securityEntry.ts",
+            "compatibility_date": "2026-10-14",
+            "routes": [
+              { "pattern": "booknomics.com/*", "zone_name": "booknomics.com" },
+              { "pattern": "www.booknomics.com/*", "zone_name": "booknomics.com" }
+            ]
+          }
+          JSON
+          npx --yes wrangler@4.136.3 triggers deploy --config wrangler.routes.jsonc --name "$WORKER_NAME"
 
           AUTH=(-H "Authorization: Bearer ${CLOUDFLARE_API_TOKEN}" -H 'Content-Type: application/json')
           ROUTES=$(curl --fail --silent --show-error "${AUTH[@]}" "https://api.cloudflare.com/client/v4/zones/${ZONE_ID}/workers/routes")
@@ -121,14 +135,12 @@ jobs:
           echo 'Waiting briefly for edge route propagation...'
           sleep 5
 
-          # Canonical apex behavior must remain unchanged.
           APEX_STATUS=$(curl --silent --show-error --output /dev/null --dump-header /tmp/apex.headers \
             --write-out '%{http_code}' --max-redirs 0 'https://booknomics.com/' || true)
           [[ "$APEX_STATUS" == '308' ]] || { echo "::error::Apex expected 308, got $APEX_STATUS"; exit 1; }
           APEX_LOCATION=$(tr -d '\r' < /tmp/apex.headers | awk 'tolower($1)=="location:" {print $2}' | tail -1)
           [[ "$APEX_LOCATION" == 'https://www.booknomics.com/' ]] || { echo "::error::Apex redirect target mismatch: $APEX_LOCATION"; exit 1; }
 
-          # Frontend must be served by Worker, not Vercel.
           HOME_STATUS=$(curl --silent --show-error --output /tmp/home.html --dump-header /tmp/home.headers \
             --write-out '%{http_code}' 'https://www.booknomics.com/' || true)
           [[ "$HOME_STATUS" == '200' ]] || { echo "::error::www home expected 200, got $HOME_STATUS"; exit 1; }
@@ -138,7 +150,6 @@ jobs:
             exit 1
           fi
 
-          # D1-backed catalog and a real book page.
           curl --fail --silent --show-error 'https://www.booknomics.com/api/catalog/books?limit=1' -o /tmp/catalog.json
           BOOK_SLUG=$(node - <<'NODE'
           const fs=require('fs'); const d=JSON.parse(fs.readFileSync('/tmp/catalog.json','utf8'));
@@ -151,7 +162,6 @@ jobs:
           BOOK_STATUS=$(curl --silent --show-error --output /tmp/book.html --write-out '%{http_code}' "https://www.booknomics.com/books/${BOOK_SLUG}" || true)
           [[ "$BOOK_STATUS" == '200' ]] || { echo "::error::Book page expected 200, got $BOOK_STATUS"; exit 1; }
 
-          # Session and Google OAuth configuration.
           curl --fail --silent --show-error 'https://www.booknomics.com/api/auth/session' -o /tmp/session.json
           node -e 'const d=require("/tmp/session.json"); if (!("user" in d)) process.exit(1)'
           GOOGLE_STATUS=$(curl --silent --show-error --output /dev/null --dump-header /tmp/google.headers \
@@ -168,7 +178,6 @@ jobs:
           console.log('Google OAuth production redirect URI is correct.');
           NODE
 
-          # Discovery + key public pages.
           curl --fail --silent --show-error 'https://www.booknomics.com/.well-known/oauth-authorization-server' -o /tmp/oauth.json
           node -e 'const d=require("/tmp/oauth.json"); for (const k of ["issuer","authorization_endpoint","token_endpoint","registration_endpoint"]) if(!d[k]) process.exit(1)'
           for path in /browse /hindi; do
