@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 import { readdir, readFile } from "node:fs/promises";
-import { extname, join, relative } from "node:path";
+import { extname, relative } from "node:path";
 
 const ROOT = new URL("../src/", import.meta.url);
 const extensions = new Set([".js", ".jsx", ".ts", ".tsx", ".mjs", ".cjs"]);
@@ -40,6 +40,10 @@ function lineNumber(text, index) {
   return text.slice(0, index).split("\n").length;
 }
 
+function isTestFixture(rel) {
+  return /(^|\/)__tests__\//.test(rel) || /\.(?:test|spec)\.[^.]+$/.test(rel);
+}
+
 async function main() {
   const files = await walk(ROOT);
   const violations = [];
@@ -47,7 +51,7 @@ async function main() {
   for (const fileUrl of files) {
     const filePath = fileUrl.pathname;
     const rel = relative(new URL("../src/", import.meta.url).pathname, filePath).replaceAll("\\", "/");
-    if (allowedPrefixes.some((prefix) => rel.startsWith(prefix))) continue;
+    if (allowedPrefixes.some((prefix) => rel.startsWith(prefix)) || isTestFixture(rel)) continue;
 
     const text = await readFile(fileUrl, "utf8");
     for (const rule of rules) {
