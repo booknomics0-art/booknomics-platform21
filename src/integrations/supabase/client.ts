@@ -62,6 +62,13 @@ const filterValue = (filters: Filter[], op: Filter['op'], field: string) =>
 
 async function executeBooksQuery(state: any) {
   const filters = state.filters as Filter[];
+
+  // Never guess for unsupported identity/history filters. Returning null is safer
+  // than accidentally treating the first catalog row as a match.
+  if (filterValue(filters, 'eq', 'id') || filters.some((f) => f.op === 'contains')) {
+    return { data: state.single ? null : [], error: null, count: 0 };
+  }
+
   const slug = filterValue(filters, 'eq', 'slug') ?? filterValue(filters, 'eq', 'seo_slug');
   if (slug) {
     try {
@@ -85,8 +92,12 @@ async function executeBooksQuery(state: any) {
   const language = filterValue(filters, 'eq', 'language');
   const category = filterValue(filters, 'eq', 'category');
   let q = '';
+  const titleEq = filterValue(filters, 'eq', 'title');
+  const authorEq = filterValue(filters, 'eq', 'author');
+  if (titleEq) q = String(titleEq);
+  else if (authorEq) q = String(authorEq);
   const orFilter = filters.find((f) => f.op === 'or')?.value as string | undefined;
-  if (orFilter) {
+  if (!q && orFilter) {
     const match = orFilter.match(/ilike\.%(.*?)%/i);
     if (match?.[1]) q = match[1].replace(/%/g, ' ').trim();
   }
@@ -108,6 +119,8 @@ async function executeBooksQuery(state: any) {
     for (const filter of filters) {
       if (filter.op === 'neq' && filter.field) rows = rows.filter((row) => row?.[filter.field!] !== filter.value);
       if (filter.op === 'not' && filter.field && filter.extra === 'is' && filter.value === null) rows = rows.filter((row) => row?.[filter.field!] != null);
+      if (filter.op === 'eq' && filter.field === 'title') rows = rows.filter((row) => row?.title === filter.value);
+      if (filter.op === 'eq' && filter.field === 'author') rows = rows.filter((row) => row?.author === filter.value);
     }
     return { data: state.single ? (rows[0] ?? null) : rows, error: null, count: state.countRequested ? payload.count : rows.length };
   } catch (error: any) {
