@@ -103,6 +103,12 @@ async function stripPremiumFields(response: Response) {
 
 export default {
   async fetch(request: Request, env: Env): Promise<Response> {
+    const requestUrl = new URL(request.url);
+    if (requestUrl.hostname === "booknomics.com") {
+      requestUrl.hostname = "www.booknomics.com";
+      return Response.redirect(requestUrl.toString(), 308);
+    }
+
     const oauthMcp = await handleOAuthMcpRoute(request, env);
     if (oauthMcp) return oauthMcp;
 
