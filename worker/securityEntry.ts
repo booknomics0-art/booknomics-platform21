@@ -2,6 +2,7 @@ import appWorker from "./appEntry";
 import { handleSocialRoute } from "./socialRoutes";
 import { handleCompatRoute } from "./compatRoutes";
 import { handlePaymentRoute } from "./paymentRoutes";
+import { handleGrowthRoute } from "./growthRoutes";
 
 type D1 = any;
 type Env = {
@@ -85,6 +86,9 @@ export default {
   async fetch(request: Request, env: Env): Promise<Response> {
     const payment = await handlePaymentRoute(request, env);
     if (payment) return payment;
+
+    const growth = await handleGrowthRoute(request, env);
+    if (growth) return growth;
 
     const compat = await handleCompatRoute(request, env);
     if (compat) return compat;
