@@ -4,14 +4,12 @@ import { Layout } from "@/components/Layout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { supabase, SUPABASE_URL } from "@/integrations/supabase/client";
 import { safeRedirectPath } from "@/lib/safeRedirect";
 import { toast } from "sonner";
 import { BookOpen } from "lucide-react";
 import { trackLogin, trackSignup } from "@/lib/analytics";
 import { SEO } from "@/components/SEO";
-import { recordReferralIfPending } from "@/lib/referrals";
-import { completeOAuthRedirect } from "@/lib/oauthCallback";
+import { apiFetch, googleSignInUrl, type CloudflareUser } from "@/lib/cloudflareApi";
 
 const Auth = () => {
   const navigate = useNavigate();
@@ -22,125 +20,59 @@ const Auth = () => {
   const [name, setName] = useState("");
   const [loading, setLoading] = useState(false);
 
-  // Same-origin relative path to return to after auth (used by the OAuth consent flow).
   const rawNext = params.get("next") ?? "";
   const next = safeRedirectPath(rawNext);
   const afterAuth = next || "/";
-  // Always return through the auth page so OAuth/email-confirmation callbacks
-  // are completed in one predictable place before continuing to the target page.
-  const returnUrl = `${window.location.origin}/auth?next=${encodeURIComponent(afterAuth)}`;
 
   useEffect(() => {
     document.title = "Sign in — Booknomics";
-
-    const errorMessage = params.get("error_description") || params.get("error");
-    if (errorMessage) {
-      toast.error(errorMessage);
-    }
-
     let cancelled = false;
+
     (async () => {
       try {
-        await completeOAuthRedirect();
-        const { data, error } = await supabase.auth.getSession();
-        if (error) throw error;
-        if (!cancelled && data.session?.user) {
-          await recordReferralIfPending(data.session.user.id);
-          navigate(afterAuth, { replace: true });
-        }
-      } catch (error) {
-        if (!cancelled) {
-          toast.error(error instanceof Error ? error.message : "Could not complete sign in");
-        }
+        const data = await apiFetch<{ user: Omit<CloudflareUser, "user_metadata"> | null }>("/api/auth/session");
+        if (!cancelled && data.user) navigate(afterAuth, { replace: true });
+      } catch {
+        // Signed-out state is valid on the auth page.
       }
     })();
 
     return () => {
       cancelled = true;
     };
-  }, [afterAuth, navigate, params]);
-
-
-  const sendWelcomeWebhook = async (u: { email?: string | null; user_metadata?: any } | null) => {
-    if (!u?.email) return;
-    try {
-      const session = (await supabase.auth.getSession()).data.session;
-      if (!session?.access_token) return;
-      await fetch(
-        `${SUPABASE_URL}/functions/v1/welcome-email`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${session.access_token}`,
-          },
-          body: JSON.stringify({
-            email: u.email,
-            name: u.user_metadata?.name || u.user_metadata?.full_name || u.email.split("@")[0],
-          }),
-        }
-      );
-    } catch (error) {
-      console.error("Welcome email webhook failed:", error);
-    }
-  };
+  }, [afterAuth, navigate]);
 
   const handleEmail = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-    if (mode === "signup") {
-      const { data, error } = await supabase.auth.signUp({
-        email, password,
-        options: { emailRedirectTo: returnUrl, data: { display_name: name } },
-      });
-      if (error) toast.error(error.message);
-      else {
-        trackSignup("email");
-
-        // If email confirmation is disabled, Supabase returns a session immediately.
-        // Otherwise the callback through /auth will finish referral/welcome handling.
-        if (data.session?.user) {
-          await recordReferralIfPending(data.session.user.id);
-          await sendWelcomeWebhook(data.session.user);
-          toast.success("Account created successfully");
-          navigate(afterAuth, { replace: true });
-          return;
-        }
-
-        toast.success("Check your email to confirm your account");
-      }
-
-    } else {
-      const { data, error } = await supabase.auth.signInWithPassword({ email, password });
-      if (error) toast.error(error.message);
-      else {
-        trackLogin("email");
-        if (data.user) {
-          await recordReferralIfPending(data.user.id);
-        }
-        toast.success("Welcome back");
-        if (next) window.location.href = next;
-        else navigate("/");
-      }
-    }
-    setLoading(false);
-  };
-
-  const handleGoogle = async () => {
-    setLoading(true);
     try {
-      const { error } = await supabase.auth.signInWithOAuth({
-        provider: "google",
-        options: {
-          redirectTo: returnUrl,
-          queryParams: { prompt: "select_account" },
-        },
-      });
-      if (error) throw error;
+      if (mode === "signup") {
+        await apiFetch<{ user: Omit<CloudflareUser, "user_metadata"> }>("/api/auth/signup", {
+          method: "POST",
+          body: JSON.stringify({ email, password, name }),
+        });
+        trackSignup("email");
+        toast.success("Account created successfully");
+      } else {
+        await apiFetch<{ user: Omit<CloudflareUser, "user_metadata"> }>("/api/auth/login", {
+          method: "POST",
+          body: JSON.stringify({ email, password }),
+        });
+        trackLogin("email");
+        toast.success("Welcome back");
+      }
+      navigate(afterAuth, { replace: true });
     } catch (error) {
-      toast.error(error instanceof Error ? error.message : "Google sign-in failed");
+      toast.error(error instanceof Error ? error.message : "Authentication failed");
+    } finally {
       setLoading(false);
     }
+  };
+
+  const handleGoogle = () => {
+    setLoading(true);
+    trackLogin("google");
+    window.location.href = googleSignInUrl(afterAuth);
   };
 
   return (
@@ -180,7 +112,7 @@ const Auth = () => {
             </div>
             <div>
               <Label htmlFor="password">Password</Label>
-              <Input id="password" type="password" autoComplete={mode === "signup" ? "new-password" : "current-password"} value={password} onChange={e => setPassword(e.target.value)} required minLength={6} className="mt-1.5" />
+              <Input id="password" type="password" autoComplete={mode === "signup" ? "new-password" : "current-password"} value={password} onChange={e => setPassword(e.target.value)} required minLength={8} className="mt-1.5" />
             </div>
             <Button type="submit" disabled={loading} className="w-full bg-gold text-primary-foreground hover:opacity-90 rounded-full" size="lg">
               {loading ? "Please wait…" : mode === "signin" ? "Sign in" : "Create account"}
