@@ -56,12 +56,26 @@ jobs:
       - name: Validate browser cutover guard
         run: node scripts/guard-no-browser-supabase.mjs
 
-      - name: Build Preview assets
+      - name: Build Preview assets without Supabase browser configuration
         run: npm run build --ignore-scripts
         env:
-          VITE_SUPABASE_URL: https://ci-preview.supabase.co
-          VITE_SUPABASE_PUBLISHABLE_KEY: sb_publishable_ci_placeholder
           ALLOW_STATIC_SITEMAP: 'true'
+
+      - name: Enforce Supabase-free Preview bundle
+        shell: bash
+        run: |
+          set -euo pipefail
+          if find dist/assets -maxdepth 1 -type f -name 'supabase-*.js' | grep -q .; then
+            echo '::error::Unexpected Supabase vendor chunk found in Preview assets.'
+            find dist/assets -maxdepth 1 -type f -name 'supabase-*.js' -print
+            exit 1
+          fi
+          if grep -RIlE 'pbkfewrtdgiagytmcigb\.supabase\.co|ci-preview\.supabase\.co' dist/assets --include='*.js' | grep -q .; then
+            echo '::error::Supabase project host leaked into Preview JavaScript bundle.'
+            grep -RIlE 'pbkfewrtdgiagytmcigb\.supabase\.co|ci-preview\.supabase\.co' dist/assets --include='*.js'
+            exit 1
+          fi
+          echo 'Preview browser bundle is Supabase-free.'
 
       - name: Configure Preview Base secrets
         shell: bash
