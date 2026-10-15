@@ -55,6 +55,7 @@ jobs:
         run: |
           node --check cloudflare/apply-d1-sql.mjs
           node --check cloudflare/migrate.mjs
+          node --check cloudflare/reconcile-d1.mjs
           node --check cloudflare/migrate-storage.mjs
           node --check cloudflare/sync-referrals.mjs
           node --check cloudflare/sync-book-modules.mjs
@@ -73,12 +74,36 @@ jobs:
         env:
           MIGRATION_APPLY: 'YES'
           MIGRATE_STORAGE: 'NO'
-        run: node cloudflare/migrate.mjs | tee d1-delta-sync.log
+        shell: bash
+        run: |
+          set -o pipefail
+          : > d1-delta-sync.log
+          ok=0
+          for attempt in 1 2 3; do
+            echo "D1 delta sync attempt ${attempt}/3" | tee -a d1-delta-sync.log
+            if node cloudflare/migrate.mjs 2>&1 | tee -a d1-delta-sync.log; then
+              ok=1
+              break
+            fi
+            sleep $((attempt * 3))
+          done
+          test "$ok" -eq 1
+
+      - name: Reconcile source-authoritative D1 rows
+        env:
+          MIGRATION_APPLY: 'YES'
+        shell: bash
+        run: |
+          set -o pipefail
+          node cloudflare/reconcile-d1.mjs | tee d1-reconcile.log
 
       - name: Delta sync referrals to D1
         env:
           MIGRATION_APPLY: 'YES'
-        run: node cloudflare/sync-referrals.mjs | tee referrals-delta-sync.log
+        shell: bash
+        run: |
+          set -o pipefail
+          node cloudflare/sync-referrals.mjs | tee referrals-delta-sync.log
 
       - name: Delta sync and verify book modules
         id: modules_parity
@@ -95,7 +120,20 @@ jobs:
           MIGRATION_APPLY: 'YES'
           MIGRATE_STORAGE: 'YES'
           MIGRATION_VERIFY_EXISTING: 'NO'
-        run: node cloudflare/migrate-storage.mjs | tee r2-delta-sync.log
+        shell: bash
+        run: |
+          set -o pipefail
+          : > r2-delta-sync.log
+          ok=0
+          for attempt in 1 2 3; do
+            echo "R2 delta sync attempt ${attempt}/3" | tee -a r2-delta-sync.log
+            if node cloudflare/migrate-storage.mjs 2>&1 | tee -a r2-delta-sync.log; then
+              ok=1
+              break
+            fi
+            sleep $((attempt * 3))
+          done
+          test "$ok" -eq 1
 
       - name: Verify D1 migration parity
         id: db_parity
@@ -125,6 +163,7 @@ jobs:
           retention-days: 14
           path: |
             d1-delta-sync.log
+            d1-reconcile.log
             referrals-delta-sync.log
             book-modules-parity.json
             r2-delta-sync.log
