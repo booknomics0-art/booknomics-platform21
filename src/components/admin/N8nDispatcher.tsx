@@ -44,17 +44,23 @@ export function N8nDispatcher({ bookId }: { bookId: string }) {
 
   const generateCaptions = async () => {
     setAiBusy(true);
-    const { data, error } = await supabase.functions.invoke("seo-marketing", {
-      body: { book_id: bookId, mode: "captions" },
-    });
-    setAiBusy(false);
-    if (error || data?.error) return toast.error(error?.message || data?.error);
-    setCaptions({
-      linkedin: data?.linkedin ?? "",
-      instagram: data?.instagram ?? "",
-      twitter: data?.twitter ?? "",
-    });
-    toast.success("Captions generated");
+    try {
+      const data = await apiFetch<{ linkedin?: string; instagram?: string; twitter?: string; error?: string }>("/api/admin/ai/seo-marketing", {
+        method: "POST",
+        body: JSON.stringify({ book_id: bookId, mode: "captions" }),
+      });
+      if (data?.error) return toast.error(data.error);
+      setCaptions({
+        linkedin: data?.linkedin ?? "",
+        instagram: data?.instagram ?? "",
+        twitter: data?.twitter ?? "",
+      });
+      toast.success("Captions generated");
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Caption generation failed");
+    } finally {
+      setAiBusy(false);
+    }
   };
 
   const publish = async () => {
