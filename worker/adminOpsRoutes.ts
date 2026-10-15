@@ -158,6 +158,63 @@ async function latestSeoAudit(request: Request, env: AdminOpsEnv, bookId: string
   return json({ data: row });
 }
 
+async function listBookRequests(request: Request, env: AdminOpsEnv) {
+  const auth = await requireAdmin(request, env);
+  if (auth.response) return auth.response;
+  const url = new URL(request.url);
+  const limit = Math.min(Math.max(Number(url.searchParams.get("limit") || 500), 1), 500);
+  const offset = Math.max(Number(url.searchParams.get("offset") || 0), 0);
+  const result = await env.DB!.prepare(
+    `SELECT id, title, author, language, reason, status, created_at
+     FROM book_requests ORDER BY datetime(created_at) DESC LIMIT ? OFFSET ?`,
+  ).bind(limit, offset).all();
+  return json({ data: result.results || [] });
+}
+
+async function updateBookRequestStatus(request: Request, env: AdminOpsEnv) {
+  const auth = await requireAdmin(request, env);
+  if (auth.response) return auth.response;
+  const body = await request.json().catch(() => null) as any;
+  const ids = Array.isArray(body?.ids)
+    ? body.ids.filter((id: unknown) => typeof id === "string" && /^[0-9a-f-]{36}$/i.test(id)).slice(0, 500)
+    : [];
+  const allowed = new Set(["new", "planned", "in_progress", "published", "rejected"]);
+  const status = typeof body?.status === "string" ? body.status : "";
+  if (!ids.length) return json({ error: "Provide request ids" }, { status: 400 });
+  if (!allowed.has(status)) return json({ error: "Invalid request status" }, { status: 400 });
+  const now = new Date().toISOString();
+  const statements = ids.map((id: string) => env.DB!.prepare(
+    "UPDATE book_requests SET status = ?, updated_at = ? WHERE id = ?",
+  ).bind(status, now, id));
+  await env.DB!.batch(statements);
+  return json({ ok: true, updated: ids.length });
+}
+
+async function putUrlRedirect(request: Request, env: AdminOpsEnv) {
+  const auth = await requireAdmin(request, env);
+  if (auth.response) return auth.response;
+  const body = await request.json().catch(() => null) as any;
+  const oldPath = typeof body?.old_path === "string" ? body.old_path.trim() : "";
+  const newPath = typeof body?.new_path === "string" ? body.new_path.trim() : "";
+  const statusCode = Number(body?.status_code || 301);
+  const notes = typeof body?.notes === "string" ? body.notes.slice(0, 500) : null;
+  if (!oldPath.startsWith("/books/") || !newPath.startsWith("/books/")) {
+    return json({ error: "Redirect paths must stay under /books/" }, { status: 400 });
+  }
+  if (![301, 302, 307, 308].includes(statusCode)) return json({ error: "Invalid redirect status" }, { status: 400 });
+  const now = new Date().toISOString();
+  await env.DB!.prepare(
+    `INSERT INTO url_redirects (old_path, new_path, status_code, notes, created_at, updated_at)
+     VALUES (?, ?, ?, ?, ?, ?)
+     ON CONFLICT(old_path) DO UPDATE SET
+       new_path = excluded.new_path,
+       status_code = excluded.status_code,
+       notes = excluded.notes,
+       updated_at = excluded.updated_at`,
+  ).bind(oldPath, newPath, statusCode, notes, now, now).run();
+  return json({ data: { old_path: oldPath, new_path: newPath, status_code: statusCode, notes, updated_at: now } });
+}
+
 const INDEXNOW_HOST = "booknomics.com";
 const INDEXNOW_KEY = "b00kn0m1cs4anetwlnowind3xnowkey91";
 const INDEXNOW_ENDPOINTS = [
@@ -233,6 +290,9 @@ export async function handleAdminOpsRoute(request: Request, env: AdminOpsEnv): P
     if (url.pathname === "/api/admin/promotions" && request.method === "GET") return await listPromotions(request, env);
     if (url.pathname === "/api/admin/dispatch-n8n" && request.method === "POST") return await dispatchN8n(request, env);
     if (url.pathname === "/api/admin/indexnow" && request.method === "POST") return await submitIndexNow(request, env);
+    if (url.pathname === "/api/admin/book-requests" && request.method === "GET") return await listBookRequests(request, env);
+    if (url.pathname === "/api/admin/book-requests/status" && request.method === "PATCH") return await updateBookRequestStatus(request, env);
+    if (url.pathname === "/api/admin/url-redirects" && request.method === "PUT") return await putUrlRedirect(request, env);
     const seoMatch = url.pathname.match(/^\/api\/admin\/seo-audits\/([^/]+)$/);
     if (seoMatch && request.method === "GET") return await latestSeoAudit(request, env, decodeURIComponent(seoMatch[1]));
     return null;
