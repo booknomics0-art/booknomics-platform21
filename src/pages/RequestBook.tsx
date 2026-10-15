@@ -10,7 +10,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
 import { useAuth } from "@/hooks/useAuth";
-import { supabase } from "@/integrations/supabase/client";
+import { apiFetch } from "@/lib/cloudflareApi";
 import { trackEvent } from "@/lib/analytics";
 import { toast } from "sonner";
 
@@ -44,13 +44,12 @@ export default function RequestBook() {
 
   const loadMine = async () => {
     if (!user) return setRequests([]);
-    const { data } = await supabase
-      .from("book_requests")
-      .select("id,title,author,language,reason,status,created_at")
-      .eq("user_id", user.id)
-      .order("created_at", { ascending: false })
-      .limit(50);
-    setRequests((data ?? []) as RequestRow[]);
+    try {
+      const { data } = await apiFetch<{ data: RequestRow[] }>("/api/book-requests");
+      setRequests(data ?? []);
+    } catch {
+      setRequests([]);
+    }
   };
 
   useEffect(() => { void loadMine(); }, [user?.id]);
@@ -63,20 +62,19 @@ export default function RequestBook() {
     if (cleanTitle.length < 2) return toast.error("Please enter the book title.");
 
     setBusy(true);
-    const { error } = await supabase.from("book_requests").insert({
-      user_id: user.id,
-      title: cleanTitle,
-      author: cleanAuthor || null,
-      language,
-      reason: reason.trim() || null,
-    });
-    setBusy(false);
-
-    if (error) {
-      if (error.code === "23505") return toast.info("You already requested this book.");
-      if (/Daily book request limit/i.test(error.message)) return toast.error("Daily request limit reached. Try again tomorrow.");
-      return toast.error(error.message);
+    try {
+      await apiFetch<{ data: RequestRow }>("/api/book-requests", {
+        method: "POST",
+        body: JSON.stringify({ title: cleanTitle, author: cleanAuthor || null, language, reason: reason.trim() || null }),
+      });
+    } catch (error: any) {
+      setBusy(false);
+      const message = error?.message || "Request failed";
+      if (/already requested/i.test(message)) return toast.info("You already requested this book.");
+      if (/Daily book request limit/i.test(message)) return toast.error("Daily request limit reached. Try again tomorrow.");
+      return toast.error(message);
     }
+    setBusy(false);
 
     trackEvent("book_request_submitted", { requested_language: language, has_author: !!cleanAuthor });
     toast.success("Request received. We'll use reader demand to prioritise the catalog.");
