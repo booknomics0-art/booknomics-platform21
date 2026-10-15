@@ -5,6 +5,7 @@ import { handlePaymentRoute } from "./paymentRoutes";
 import { handleGrowthRoute } from "./growthRoutes";
 import { handleBookAiRoute } from "./bookAiRoutes";
 import { handleBookDetailRoute } from "./bookDetailRoutes";
+import { handleCatalogRoute } from "./catalogRoutes";
 import { handleAdminRoute } from "./adminRoutes";
 import { handleAdminOpsRoute } from "./adminOpsRoutes";
 import { handleAdminAiRoute } from "./adminAiRoutes";
@@ -106,6 +107,9 @@ export default {
 
     const bookDetail = await handleBookDetailRoute(request, env);
     if (bookDetail) return bookDetail;
+
+    const catalog = await handleCatalogRoute(request, env);
+    if (catalog) return catalog;
 
     const admin = await handleAdminRoute(request, env);
     if (admin) return admin;
