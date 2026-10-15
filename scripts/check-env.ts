@@ -1,7 +1,9 @@
 import { loadEnv } from 'vite';
 
 const env = { ...loadEnv('production', process.cwd(), ''), ...process.env };
-const backend = (env.VITE_DATA_BACKEND || 'supabase').trim().toLowerCase();
+// Cloudflare is the migration branch's primary backend. Supabase remains available
+// only as an explicit rollback mode until parity and production smoke tests pass.
+const backend = (env.VITE_DATA_BACKEND || 'cloudflare').trim().toLowerCase();
 
 if (backend === 'cloudflare') {
   const apiBase = (env.VITE_API_BASE || '').trim();
@@ -24,7 +26,7 @@ if (backend === 'cloudflare') {
       throw new Error('Use a publishable key or an anon JWT for this same project');
     }
   }
-  console.log('Supabase backend environment configuration validated');
+  console.log('Supabase rollback environment configuration validated');
 } else {
   throw new Error(`Unsupported VITE_DATA_BACKEND: ${backend}`);
 }
