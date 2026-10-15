@@ -107,12 +107,14 @@ jobs:
           console.log('Auth session endpoint OK');
           NODE
 
-          STATUS=$(curl --silent --output /dev/null --write-out '%{http_code}' --max-redirs 0 "$VERSION_URL/api/auth/google/start?return_to=%2F" || true)
+          STATUS=$(curl --silent --show-error --output /dev/null --dump-header /tmp/google-oauth.headers \
+            --write-out '%{http_code}' --max-redirs 0 \
+            "$VERSION_URL/api/auth/google/start?return_to=%2F" || true)
           if [[ "$STATUS" != "302" ]]; then
             echo "::error::Google OAuth start expected 302, got $STATUS"
             exit 1
           fi
-          LOCATION=$(curl --silent --head --max-redirs 0 "$VERSION_URL/api/auth/google/start?return_to=%2F" | tr -d '\r' | awk 'tolower($1)=="location:" {print $2}' | tail -1)
+          LOCATION=$(tr -d '\r' < /tmp/google-oauth.headers | awk 'tolower($1)=="location:" {print $2}' | tail -1)
           if [[ "$LOCATION" != https://accounts.google.com/* ]]; then
             echo "::error::Google OAuth start did not redirect to Google"
             exit 1
