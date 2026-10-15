@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { Headphones, Loader2, Pause, Play, Lock } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { supabase, SUPABASE_URL, SUPABASE_KEY } from "@/integrations/supabase/client";
+import { apiRawFetch } from "@/lib/cloudflareApi";
 import { usePremium } from "@/hooks/usePremium";
 import { useAuth } from "@/hooks/useAuth";
 import { toast } from "sonner";
@@ -39,30 +39,25 @@ export function AudioInsight({ bookId, lang }: { bookId: string; lang: "en" | "h
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
   useEffect(() => { setUrl(null); setPlaying(false); }, [bookId, lang]);
+  useEffect(() => () => { if (url) URL.revokeObjectURL(url); }, [url]);
 
   const generate = async () => {
     setLoading(true);
     try {
-      const { data: { session } } = await supabase.auth.getSession();
-      const res = await fetch(
-        `${SUPABASE_URL}/functions/v1/book-audio`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            apikey: SUPABASE_KEY,
-            ...(session?.access_token ? { Authorization: `Bearer ${session.access_token}` } : {}),
-          },
-          body: JSON.stringify({ book_id: bookId, lang }),
-        }
-      );
+      const res = await apiRawFetch("/api/book-audio", {
+        method: "POST",
+        body: JSON.stringify({ book_id: bookId, lang }),
+      });
       if (!res.ok) {
-        const err = await res.json().catch(() => ({ error: "Audio failed" }));
+        const err = await res.json().catch(() => ({ error: "Audio failed" })) as { error?: string };
         throw new Error(err.error || "Audio generation failed");
       }
       const blob = await res.blob();
       const u = URL.createObjectURL(blob);
-      setUrl(u);
+      setUrl((prev) => {
+        if (prev) URL.revokeObjectURL(prev);
+        return u;
+      });
       setTimeout(() => audioRef.current?.play(), 50);
     } catch (e: any) {
       toast.error(e.message ?? "Couldn't generate audio");
