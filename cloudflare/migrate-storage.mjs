@@ -17,6 +17,7 @@ const R2_SECRET_ACCESS_KEY = need("R2_SECRET_ACCESS_KEY");
 const R2_COVERS_BUCKET = env("R2_COVERS_BUCKET", "booknomics-covers");
 const R2_ASSETS_BUCKET = env("R2_ASSETS_BUCKET", "booknomics-assets");
 const APPLY = env("MIGRATION_APPLY") === "YES" && env("MIGRATE_STORAGE") === "YES";
+const VERIFY_EXISTING = env("MIGRATION_VERIFY_EXISTING") === "YES";
 const R2_HOST = `${CF_ACCOUNT_ID}.r2.cloudflarestorage.com`;
 const sourceHeaders = { apikey: SOURCE_KEY, authorization: `Bearer ${SOURCE_KEY}` };
 
@@ -53,15 +54,31 @@ function signedHeaders(method, bucket, key, payloadHash) {
   };
 }
 
-async function r2Exists(bucket, key) {
+async function r2Head(bucket, key) {
   const empty = hash(Buffer.alloc(0));
   const response = await fetch(`https://${R2_HOST}/${encodeURIComponent(bucket)}/${encodeKey(key)}`, {
     method: "HEAD",
     headers: signedHeaders("HEAD", bucket, key, empty)
   });
-  if (response.status === 404) return false;
+  if (response.status === 404) return { exists: false, size: null, lastModified: null };
   if (!response.ok) throw new Error(`R2 HEAD ${bucket}/${key}: ${response.status}`);
-  return true;
+  const rawSize = response.headers.get("content-length");
+  const rawModified = response.headers.get("last-modified");
+  return {
+    exists: true,
+    size: rawSize && Number.isFinite(Number(rawSize)) ? Number(rawSize) : null,
+    lastModified: rawModified ? Date.parse(rawModified) : null
+  };
+}
+
+async function r2GetHash(bucket, key) {
+  const empty = hash(Buffer.alloc(0));
+  const response = await fetch(`https://${R2_HOST}/${encodeURIComponent(bucket)}/${encodeKey(key)}`, {
+    method: "GET",
+    headers: signedHeaders("GET", bucket, key, empty)
+  });
+  if (!response.ok) throw new Error(`R2 GET ${bucket}/${key}: ${response.status}`);
+  return hash(Buffer.from(await response.arrayBuffer()));
 }
 
 async function r2Put(bucket, key, body, type) {
@@ -116,10 +133,66 @@ async function walkStorage(bucket, prefix = "", seen = new Set()) {
   return result;
 }
 
+function sourceSize(item) {
+  const candidates = [item?.metadata?.size, item?.metadata?.contentLength, item?.metadata?.content_length];
+  for (const candidate of candidates) {
+    const n = Number(candidate);
+    if (Number.isFinite(n) && n >= 0) return n;
+  }
+  return null;
+}
+
+function sourceModified(item) {
+  const raw = item?.updated_at || item?.created_at;
+  if (!raw) return null;
+  const value = Date.parse(raw);
+  return Number.isFinite(value) ? value : null;
+}
+
+async function fetchSourceObject(sourceBucket, key, item) {
+  const source = await fetch(
+    `${SOURCE_URL}/storage/v1/object/public/${encodeURIComponent(sourceBucket)}/${encodeKey(key)}`,
+    { headers: sourceHeaders }
+  );
+  if (!source.ok) throw new Error(`source object ${sourceBucket}/${key}: ${source.status}`);
+  const body = await source.arrayBuffer();
+  return {
+    body,
+    type: source.headers.get("content-type") || item.metadata?.mimetype || "application/octet-stream"
+  };
+}
+
+async function classifyObject(sourceBucket, targetBucket, item) {
+  const key = item.name;
+  const target = await r2Head(targetBucket, key);
+  if (!target.exists) return { action: "copy", source: null };
+
+  const srcSize = sourceSize(item);
+  const srcModified = sourceModified(item);
+  if (srcSize != null && target.size != null && srcSize !== target.size) return { action: "update", source: null };
+  // Supabase timestamps have millisecond precision while HTTP Last-Modified is second precision.
+  if (srcModified != null && target.lastModified != null && srcModified > target.lastModified + 1500) {
+    return { action: "update", source: null };
+  }
+
+  if (!VERIFY_EXISTING) return { action: "skip", source: null };
+  const source = await fetchSourceObject(sourceBucket, key, item);
+  const sourceHash = hash(Buffer.from(source.body));
+  const targetHash = await r2GetHash(targetBucket, key);
+  return sourceHash === targetHash ? { action: "skip", source } : { action: "update", source };
+}
+
 async function copyBucket(sourceBucket, targetBucket) {
   console.log(`Scanning ${sourceBucket} recursively...`);
   const objects = await walkStorage(sourceBucket);
-  const report = { source: objects.length, copied: 0, skippedExisting: 0, bytes: 0 };
+  const report = {
+    source: objects.length,
+    copiedNew: 0,
+    updatedChanged: 0,
+    skippedUnchanged: 0,
+    verifiedExisting: 0,
+    bytes: 0
+  };
   console.log(`${sourceBucket}: ${objects.length} file objects found`);
   if (!APPLY) return report;
 
@@ -131,22 +204,20 @@ async function copyBucket(sourceBucket, targetBucket) {
       if (index >= objects.length) return;
       const item = objects[index];
       const key = item.name;
-      if (await r2Exists(targetBucket, key)) {
-        report.skippedExisting++;
+      const classified = await classifyObject(sourceBucket, targetBucket, item);
+      if (classified.action === "skip") {
+        report.skippedUnchanged++;
+        if (VERIFY_EXISTING && classified.source) report.verifiedExisting++;
       } else {
-        const source = await fetch(
-          `${SOURCE_URL}/storage/v1/object/public/${encodeURIComponent(sourceBucket)}/${encodeKey(key)}`,
-          { headers: sourceHeaders }
-        );
-        if (!source.ok) throw new Error(`source object ${sourceBucket}/${key}: ${source.status}`);
-        const body = await source.arrayBuffer();
-        await r2Put(targetBucket, key, body, source.headers.get("content-type") || item.metadata?.mimetype);
-        report.copied++;
-        report.bytes += body.byteLength;
+        const source = classified.source || await fetchSourceObject(sourceBucket, key, item);
+        await r2Put(targetBucket, key, source.body, source.type);
+        if (classified.action === "copy") report.copiedNew++;
+        else report.updatedChanged++;
+        report.bytes += source.body.byteLength;
       }
-      const done = report.copied + report.skippedExisting;
+      const done = report.copiedNew + report.updatedChanged + report.skippedUnchanged;
       if (done % 100 === 0 || done === objects.length) {
-        console.log(`${sourceBucket}: ${done}/${objects.length} processed; copied=${report.copied}; existing=${report.skippedExisting}`);
+        console.log(`${sourceBucket}: ${done}/${objects.length} processed; new=${report.copiedNew}; updated=${report.updatedChanged}; unchanged=${report.skippedUnchanged}`);
       }
     }
   };
@@ -156,9 +227,10 @@ async function copyBucket(sourceBucket, targetBucket) {
 
 async function main() {
   console.log(`Booknomics storage migration mode: ${APPLY ? "APPLY" : "DRY RUN"}`);
+  console.log(`Existing-object verification: ${VERIFY_EXISTING ? "FULL SHA-256" : "SIZE + MODIFIED-TIME DELTA"}`);
   const covers = await copyBucket("book-covers", R2_COVERS_BUCKET);
   const assets = await copyBucket("book-assets", R2_ASSETS_BUCKET);
-  console.log(JSON.stringify({ mode: APPLY ? "apply" : "dry-run", covers, assets }, null, 2));
+  console.log(JSON.stringify({ mode: APPLY ? "apply" : "dry-run", verifyExisting: VERIFY_EXISTING, covers, assets }, null, 2));
 }
 
 main().catch((error) => {
