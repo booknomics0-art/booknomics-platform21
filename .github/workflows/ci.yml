@@ -26,6 +26,9 @@ jobs:
           node --check cloudflare/verify-storage.mjs
           node --check cloudflare/sync-referrals.mjs
           node --check cloudflare/verify-parity.mjs
+          node --check scripts/guard-no-browser-supabase.mjs
+      - name: Enforce browser Supabase cutover guard
+        run: node scripts/guard-no-browser-supabase.mjs
       - name: Build app without live-data lifecycle hooks
         run: npm run build --ignore-scripts
         env:
