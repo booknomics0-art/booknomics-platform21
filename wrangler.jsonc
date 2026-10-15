@@ -4,6 +4,16 @@
   "main": "worker/securityEntry.ts",
   "compatibility_date": "2026-10-14",
   "upload_source_maps": true,
+  "routes": [
+    {
+      "pattern": "booknomics.com/*",
+      "zone_name": "booknomics.com"
+    },
+    {
+      "pattern": "www.booknomics.com/*",
+      "zone_name": "booknomics.com"
+    }
+  ],
   "assets": {
     "directory": "./dist",
     "binding": "ASSETS",
@@ -20,7 +30,7 @@
     "enabled": true
   },
   "vars": {
-    "BOOKNOMICS_ENV": "migration"
+    "BOOKNOMICS_ENV": "production"
   },
   "d1_databases": [
     {
