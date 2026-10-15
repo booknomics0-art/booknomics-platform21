@@ -16,6 +16,7 @@ const PUBLIC_CARD_FIELDS = `
   rating, reading_time, language, status, created_at, year, meta_title, meta_description,
   og_image, overview, seo_keywords, old_slugs
 `;
+const PUBLIC_META_FIELDS = "category, status, title, slug, seo_slug";
 
 const safeList = (raw: string | null, max = 100) =>
   (raw || "")
@@ -37,6 +38,7 @@ export async function handleCatalogRoute(request: Request, env: CatalogEnv): Pro
     const limit = Math.min(Math.max(Number(url.searchParams.get("limit") || 100), 1), 500);
     const offset = Math.max(Number(url.searchParams.get("offset") || 0), 0);
     const sort = url.searchParams.get("sort") || "az";
+    const fields = url.searchParams.get("view") === "meta" ? PUBLIC_META_FIELDS : PUBLIC_CARD_FIELDS;
 
     const where = ["is_draft = 0"];
     const binds: unknown[] = [];
@@ -71,7 +73,7 @@ export async function handleCatalogRoute(request: Request, env: CatalogEnv): Pro
     const whereSql = `WHERE ${where.join(" AND ")}`;
     const count = await env.DB.prepare(`SELECT COUNT(*) AS total FROM books ${whereSql}`).bind(...binds).first();
     const result = await env.DB.prepare(
-      `SELECT ${PUBLIC_CARD_FIELDS} FROM books ${whereSql} ORDER BY ${orderBy} LIMIT ? OFFSET ?`,
+      `SELECT ${fields} FROM books ${whereSql} ORDER BY ${orderBy} LIMIT ? OFFSET ?`,
     ).bind(...binds, limit, offset).all();
 
     return json({
