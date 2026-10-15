@@ -1,4 +1,5 @@
 import appWorker from "./appEntry";
+import { handleSocialRoute } from "./socialRoutes";
 
 type D1 = any;
 type Env = {
@@ -78,6 +79,9 @@ async function stripPremiumFields(response: Response) {
 
 export default {
   async fetch(request: Request, env: Env): Promise<Response> {
+    const social = await handleSocialRoute(request, env);
+    if (social) return social;
+
     const url = new URL(request.url);
     if (url.pathname.startsWith("/api/premium-summary/") && request.method === "GET") {
       return premiumSummary(request, env, decodeURIComponent(url.pathname.slice("/api/premium-summary/".length)));
