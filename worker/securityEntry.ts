@@ -3,6 +3,7 @@ import { handleSocialRoute } from "./socialRoutes";
 import { handleCompatRoute } from "./compatRoutes";
 import { handlePaymentRoute } from "./paymentRoutes";
 import { handleGrowthRoute } from "./growthRoutes";
+import { handleAdminRoute } from "./adminRoutes";
 
 type D1 = any;
 type Env = {
@@ -89,6 +90,9 @@ export default {
 
     const growth = await handleGrowthRoute(request, env);
     if (growth) return growth;
+
+    const admin = await handleAdminRoute(request, env);
+    if (admin) return admin;
 
     const compat = await handleCompatRoute(request, env);
     if (compat) return compat;
