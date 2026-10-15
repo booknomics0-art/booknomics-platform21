@@ -1,4 +1,5 @@
 import appWorker from "./appEntry";
+import { handleOAuthMcpRoute } from "./oauthMcpRoutes";
 import { handleSocialRoute } from "./socialRoutes";
 import { handleCompatRoute } from "./compatRoutes";
 import { handlePaymentRoute } from "./paymentRoutes";
@@ -102,6 +103,9 @@ async function stripPremiumFields(response: Response) {
 
 export default {
   async fetch(request: Request, env: Env): Promise<Response> {
+    const oauthMcp = await handleOAuthMcpRoute(request, env);
+    if (oauthMcp) return oauthMcp;
+
     const payment = await handlePaymentRoute(request, env);
     if (payment) return payment;
 
