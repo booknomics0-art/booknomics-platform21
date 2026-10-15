@@ -57,13 +57,17 @@ jobs:
           node --check cloudflare/migrate.mjs
           node --check cloudflare/migrate-storage.mjs
           node --check cloudflare/sync-referrals.mjs
+          node --check cloudflare/sync-book-modules.mjs
           node --check cloudflare/verify-parity.mjs
           node --check cloudflare/verify-storage.mjs
 
-      - name: Ensure referrals schema exists in D1
+      - name: Ensure cutover schemas exist in D1
         env:
           MIGRATION_APPLY: 'YES'
-        run: node cloudflare/apply-d1-sql.mjs cloudflare/migrations/0005_referrals.sql
+        run: |
+          node cloudflare/apply-d1-sql.mjs cloudflare/migrations/0005_referrals.sql
+          node cloudflare/apply-d1-sql.mjs cloudflare/migrations/0006_cutover_features.sql
+          node cloudflare/apply-d1-sql.mjs cloudflare/migrations/0007_oauth_mcp.sql
 
       - name: Delta sync active Supabase data to D1
         env:
@@ -75,6 +79,16 @@ jobs:
         env:
           MIGRATION_APPLY: 'YES'
         run: node cloudflare/sync-referrals.mjs | tee referrals-delta-sync.log
+
+      - name: Delta sync and verify book modules
+        id: modules_parity
+        continue-on-error: true
+        env:
+          MIGRATION_APPLY: 'YES'
+        shell: bash
+        run: |
+          set -o pipefail
+          node cloudflare/sync-book-modules.mjs | tee book-modules-parity.json
 
       - name: Delta sync Supabase Storage to R2
         env:
@@ -112,6 +126,7 @@ jobs:
           path: |
             d1-delta-sync.log
             referrals-delta-sync.log
+            book-modules-parity.json
             r2-delta-sync.log
             d1-parity-report.json
             r2-parity-report.log
@@ -120,8 +135,8 @@ jobs:
         if: always()
         shell: bash
         run: |
-          if [[ "${{ steps.db_parity.outcome }}" != "success" || "${{ steps.storage_parity.outcome }}" != "success" ]]; then
+          if [[ "${{ steps.modules_parity.outcome }}" != "success" || "${{ steps.db_parity.outcome }}" != "success" || "${{ steps.storage_parity.outcome }}" != "success" ]]; then
             echo "::error::Cloudflare parity gate failed. Keep Supabase enabled and do not cut over yet."
             exit 1
           fi
-          echo "Cloudflare D1 + R2 parity gate passed. Supabase must still remain available until preview/auth smoke tests pass."
+          echo "Cloudflare D1 + book modules + R2 parity gate passed. Supabase must still remain available until preview/auth smoke tests pass."
