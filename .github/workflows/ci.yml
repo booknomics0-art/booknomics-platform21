@@ -20,6 +20,8 @@ jobs:
           node --check scripts/guard-aeo-prerender.mjs
       - name: Validate Cloudflare migration safety scripts
         run: |
+          node --check cloudflare/apply-d1-sql.mjs
+          node --check cloudflare/migrate.mjs
           node --check cloudflare/migrate-storage.mjs
           node --check cloudflare/verify-storage.mjs
           node --check cloudflare/sync-referrals.mjs
