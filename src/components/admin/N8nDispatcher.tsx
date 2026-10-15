@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import { supabase } from "@/integrations/supabase/client";
 import { apiFetch } from "@/lib/cloudflareApi";
+import { adminGetBook, adminGetBookAssets } from "@/lib/adminApi";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
@@ -29,14 +29,21 @@ export function N8nDispatcher({ bookId }: { bookId: string }) {
   const [sending, setSending] = useState(false);
 
   useEffect(() => {
+    let active = true;
     (async () => {
-      const [{ data: b }, { data: a }] = await Promise.all([
-        supabase.from("books").select("id,title,author,slug,tagline,overview,meta_title,meta_description").eq("id", bookId).maybeSingle(),
-        supabase.from("book_assets").select("audio_url,mindmap_url").eq("book_id", bookId).maybeSingle(),
-      ]);
-      setBook(b);
-      setAssets(a);
+      try {
+        const [b, a] = await Promise.all([
+          adminGetBook<any>(bookId),
+          adminGetBookAssets<any>(bookId),
+        ]);
+        if (!active) return;
+        setBook(b);
+        setAssets(a);
+      } catch (error) {
+        if (active) toast.error(error instanceof Error ? error.message : "Could not load distribution data");
+      }
     })();
+    return () => { active = false; };
   }, [bookId]);
 
   const toggle = (id: string) =>
