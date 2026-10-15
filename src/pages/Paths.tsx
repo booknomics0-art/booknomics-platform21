@@ -5,8 +5,8 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
 import { Flame, TrendingUp, Target, Brain, MessageCircle, Sparkles, ArrowRight } from "lucide-react";
-import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
+import { apiFetch } from "@/lib/cloudflareApi";
 
 const iconMap: Record<string, any> = {
   "trending-up": TrendingUp, flame: Flame, target: Target, brain: Brain,
@@ -34,36 +34,19 @@ export default function Paths() {
   useEffect(() => { document.title = "Learning Paths — BookInsight"; }, []);
 
   useEffect(() => {
+    let cancelled = false;
     (async () => {
       setLoading(true);
-      const { data: lp } = await supabase
-        .from("learning_paths")
-        .select("id,slug,title,description,theme_color,icon,learning_path_books(book_id)")
-        .order("sort_order");
-
-      let completedByBook = new Set<string>();
-      let enrolledIds = new Set<string>();
-      if (user) {
-        const [{ data: prog }, { data: enr }] = await Promise.all([
-          supabase.from("reading_progress").select("book_id,completed").eq("user_id", user.id).eq("completed", true),
-          supabase.from("path_enrollments").select("path_id").eq("user_id", user.id),
-        ]);
-        completedByBook = new Set((prog ?? []).map((p: any) => p.book_id));
-        enrolledIds = new Set((enr ?? []).map((e: any) => e.path_id));
+      try {
+        const data = await apiFetch<{ paths: PathRow[] }>("/api/learning-paths");
+        if (!cancelled) setPaths(data.paths || []);
+      } catch {
+        if (!cancelled) setPaths([]);
+      } finally {
+        if (!cancelled) setLoading(false);
       }
-
-      setPaths((lp ?? []).map((p: any) => {
-        const books = p.learning_path_books ?? [];
-        return {
-          id: p.id, slug: p.slug, title: p.title, description: p.description,
-          theme_color: p.theme_color, icon: p.icon,
-          total: books.length,
-          completed: books.filter((b: any) => completedByBook.has(b.book_id)).length,
-          enrolled: enrolledIds.has(p.id),
-        };
-      }));
-      setLoading(false);
     })();
+    return () => { cancelled = true; };
   }, [user]);
 
   return (
