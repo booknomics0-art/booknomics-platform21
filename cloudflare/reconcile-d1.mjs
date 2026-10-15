@@ -15,6 +15,20 @@ const D1_ID = need("CLOUDFLARE_D1_DATABASE_ID");
 const APPLY = env("MIGRATION_APPLY") === "YES";
 const sourceHeaders = { apikey: SOURCE_KEY, authorization: `Bearer ${SOURCE_KEY}` };
 
+const HOMEPAGE_SLUGS = new Set([
+  "atomic-habits-james-clear-summary",
+  "deep-work-cal-newport-summary",
+  "the-psychology-of-money-morgan-housel-summary",
+  "thinking-fast-and-slow-daniel-kahneman-summary",
+  "godan-munshi-premchand-saransh",
+  "nirmala-munshi-premchand-saransh",
+  "gaban-munshi-premchand-saransh",
+  "rich-dad-poor-dad-robert-t-kiyosaki-with-sharon-lechter-summary",
+  "the-7-habits-of-highly-effective-people-stephen-r-covey-summary",
+  "how-to-win-friends-and-influence-people-dale-carnegie-summary",
+  "the-power-of-habit-charles-duhigg-summary",
+]);
+
 const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
 async function d1(sql, params = []) {
@@ -82,10 +96,79 @@ async function reconcileById(table, maxStale = 10) {
   return report;
 }
 
+const isFallbackCover = (value) => !value || String(value).startsWith("/api/covers/") || String(value).includes("/functions/v1/book-cover-fallback");
+const isRealCover = (value) => Boolean(value) && !isFallbackCover(value);
+
+async function sourceBookCovers() {
+  const rows = [];
+  for (let offset = 0; ; offset += 500) {
+    const response = await fetch(
+      `${SOURCE_URL}/rest/v1/books?select=id,slug,seo_slug,title,cover_url&order=id.asc&limit=500&offset=${offset}`,
+      { headers: sourceHeaders },
+    );
+    const text = await response.text();
+    if (!response.ok) throw new Error(`books cover source: ${response.status} ${text.slice(0, 500)}`);
+    const batch = JSON.parse(text);
+    rows.push(...batch);
+    if (batch.length < 500) break;
+  }
+  return rows;
+}
+
+async function reconcileRealCoverUrls() {
+  const source = await sourceBookCovers();
+  const targetResult = await d1("SELECT id, slug, seo_slug, title, cover_url FROM books ORDER BY id");
+  const target = targetResult.results || [];
+  const targetById = new Map(target.map((row) => [String(row.id), row]));
+
+  const changes = [];
+  for (const row of source) {
+    const current = targetById.get(String(row.id));
+    if (!current) continue;
+    if (isFallbackCover(current.cover_url) && isRealCover(row.cover_url)) {
+      changes.push({
+        id: String(row.id),
+        slug: String(row.seo_slug || row.slug || ""),
+        title: String(row.title || ""),
+        from: current.cover_url || null,
+        to: String(row.cover_url),
+      });
+    }
+  }
+
+  const homepageChanges = changes.filter((row) => HOMEPAGE_SLUGS.has(row.slug));
+  console.log(JSON.stringify({ coverUrlReconcile: { mode: APPLY ? "apply" : "dry-run", changes: changes.length, homepageChanges } }, null, 2));
+
+  if (APPLY) {
+    for (let i = 0; i < changes.length; i += 30) {
+      const batch = changes.slice(i, i + 30);
+      const cases = batch.map(() => "WHEN ? THEN ?").join(" ");
+      const marks = batch.map(() => "?").join(",");
+      const params = [...batch.flatMap((row) => [row.id, row.to]), ...batch.map((row) => row.id)];
+      await d1(`UPDATE books SET cover_url = CASE id ${cases} ELSE cover_url END WHERE id IN (${marks})`, params);
+    }
+  }
+
+  const verify = await d1("SELECT id, slug, seo_slug, title, cover_url FROM books ORDER BY id");
+  const verifyById = new Map((verify.results || []).map((row) => [String(row.id), row]));
+  const failures = [];
+  const homepageVerification = [];
+  for (const row of source) {
+    const slug = String(row.seo_slug || row.slug || "");
+    if (!HOMEPAGE_SLUGS.has(slug) || !isRealCover(row.cover_url)) continue;
+    const current = verifyById.get(String(row.id));
+    const ok = Boolean(current) && String(current.cover_url || "") === String(row.cover_url);
+    homepageVerification.push({ slug, title: row.title, cover_url: current?.cover_url || null, ok });
+    if (!ok) failures.push(slug);
+  }
+
+  console.log(JSON.stringify({ coverUrlVerification: { homepageVerification, failures } }, null, 2));
+  if (failures.length) throw new Error(`Homepage cover URL reconciliation failed for: ${failures.join(", ")}`);
+}
+
 async function main() {
-  // D1 is not production yet; Supabase is the authoritative source during cutover.
-  // Keep this deliberately narrow: only remove stale library rows from previous migration attempts.
   await reconcileById("library", 10);
+  await reconcileRealCoverUrls();
 }
 
 main().catch((error) => {
