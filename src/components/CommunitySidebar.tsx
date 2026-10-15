@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { ThumbsUp, Flame, Lightbulb, CheckCircle2, Users, MessageSquare, BookmarkPlus, Trophy } from "lucide-react";
 import { Card } from "@/components/ui/card";
-import { supabase } from "@/integrations/supabase/client";
+import { apiFetch } from "@/lib/cloudflareApi";
 import { useAuth } from "@/hooks/useAuth";
 import { toast } from "sonner";
 
@@ -14,6 +14,7 @@ const REACTIONS = [
 ] as const;
 
 type Top = { user_id: string; display_name: string | null; avatar_url: string | null; total_points: number; books_completed: number };
+type SidebarData = { counts: Record<string, number>; mine: string[]; stats: { readers: number; comments: number; saves: number }; top: Top[] };
 
 export const CommunitySidebar = ({ bookId }: { bookId: string }) => {
   const { user } = useAuth();
@@ -24,18 +25,15 @@ export const CommunitySidebar = ({ bookId }: { bookId: string }) => {
   const [top, setTop] = useState<Top[]>([]);
 
   const load = async () => {
-    const [{ data: rx }, { data: lib }, { data: disc }, { data: lb }] = await Promise.all([
-      supabase.from("reactions").select("type,user_id").eq("book_id", bookId).is("comment_id", null),
-      supabase.from("library").select("user_id").eq("book_id", bookId),
-      supabase.from("discussions").select("id").eq("book_id", bookId),
-      (supabase as any).from("leaderboard_view").select("*").order("total_points", { ascending: false }).limit(5),
-    ]);
-    const c: Record<string, number> = {};
-    (rx || []).forEach((r: any) => { c[r.type] = (c[r.type] || 0) + 1; });
-    setCounts(c);
-    if (user) setMine(new Set((rx || []).filter((r: any) => r.user_id === user.id).map((r: any) => r.type)));
-    setStats({ readers: (lib || []).length, comments: (disc || []).length, saves: (lib || []).length });
-    setTop((lb as Top[]) || []);
+    try {
+      const data = await apiFetch<SidebarData>(`/api/book-community-sidebar?book_id=${encodeURIComponent(bookId)}`);
+      setCounts(data.counts || {});
+      setMine(new Set(data.mine || []));
+      setStats(data.stats || { readers: 0, comments: 0, saves: 0 });
+      setTop(data.top || []);
+    } catch {
+      setCounts({}); setMine(new Set()); setStats({ readers: 0, comments: 0, saves: 0 }); setTop([]);
+    }
   };
 
   useEffect(() => { load(); /* eslint-disable-next-line */ }, [bookId, user?.id]);
@@ -43,28 +41,19 @@ export const CommunitySidebar = ({ bookId }: { bookId: string }) => {
   const toggle = async (type: string) => {
     if (!user) { navigate("/auth"); return; }
     const has = mine.has(type);
-    // Optimistic
     const next = new Set(mine);
     has ? next.delete(type) : next.add(type);
     setMine(next);
     setCounts((p) => ({ ...p, [type]: Math.max(0, (p[type] || 0) + (has ? -1 : 1)) }));
 
     try {
-      if (has) {
-        const { error } = await supabase
-          .from("reactions").delete()
-          .eq("user_id", user.id).eq("book_id", bookId).eq("type", type)
-          .is("comment_id", null);
-        if (error) throw error;
-      } else {
-        const { error } = await supabase
-          .from("reactions").insert({ user_id: user.id, book_id: bookId, type });
-        if (error) throw error;
-      }
-    } catch (e: any) {
-      // Revert
-      const revert = new Set(mine);
-      setMine(revert);
+      const result = await apiFetch<{ active: boolean; count: number }>("/api/book-reaction", {
+        method: "POST",
+        body: JSON.stringify({ book_id: bookId, type, active: !has }),
+      });
+      setCounts((p) => ({ ...p, [type]: result.count }));
+    } catch {
+      setMine(new Set(mine));
       setCounts((p) => ({ ...p, [type]: Math.max(0, (p[type] || 0) + (has ? 1 : -1)) }));
       toast.error("Reaction failed. Please retry.");
     }
