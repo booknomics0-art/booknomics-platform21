@@ -18,6 +18,12 @@ jobs:
         run: |
           node --check scripts/prerender-aeo-geo.mjs
           node --check scripts/guard-aeo-prerender.mjs
+      - name: Validate Cloudflare migration safety scripts
+        run: |
+          node --check cloudflare/migrate-storage.mjs
+          node --check cloudflare/verify-storage.mjs
+          node --check cloudflare/sync-referrals.mjs
+          node --check cloudflare/verify-parity.mjs
       - name: Build app without live-data lifecycle hooks
         run: npm run build --ignore-scripts
         env:
