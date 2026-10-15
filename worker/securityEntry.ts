@@ -3,6 +3,7 @@ import { handleSocialRoute } from "./socialRoutes";
 import { handleCompatRoute } from "./compatRoutes";
 import { handlePaymentRoute } from "./paymentRoutes";
 import { handleGrowthRoute } from "./growthRoutes";
+import { handleBookAiRoute } from "./bookAiRoutes";
 import { handleAdminRoute } from "./adminRoutes";
 import { handleAdminOpsRoute } from "./adminOpsRoutes";
 import { handleAdminAiRoute } from "./adminAiRoutes";
@@ -98,6 +99,9 @@ export default {
 
     const growth = await handleGrowthRoute(request, env);
     if (growth) return growth;
+
+    const bookAi = await handleBookAiRoute(request, env);
+    if (bookAi) return bookAi;
 
     const admin = await handleAdminRoute(request, env);
     if (admin) return admin;
