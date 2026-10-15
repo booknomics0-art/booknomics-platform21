@@ -76,8 +76,8 @@ jobs:
       - name: Delta sync Supabase Storage to R2
         env:
           MIGRATION_APPLY: 'YES'
+          MIGRATE_STORAGE: 'YES'
           MIGRATION_VERIFY_EXISTING: 'NO'
-          STORAGE_MIGRATION_CONCURRENCY: '6'
         run: node cloudflare/migrate-storage.mjs | tee r2-delta-sync.log
 
       - name: Verify D1 migration parity
