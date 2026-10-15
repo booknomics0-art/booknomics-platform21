@@ -1,5 +1,5 @@
 import { lazy, Suspense, useState } from "react";
-import { supabase } from "@/integrations/supabase/client";
+import { adminUpdateBook } from "@/lib/adminApi";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -36,11 +36,15 @@ export function PublishingWizard({
   const saveContent = async () => {
     setSaving(true);
     const { id, ...patch } = edit;
-    const { error } = await supabase.from("books").update(patch).eq("id", id);
-    setSaving(false);
-    if (error) return toast.error(error.message);
-    toast.success("Content saved");
-    onSaved();
+    try {
+      await adminUpdateBook(id, patch);
+      toast.success("Content saved");
+      onSaved();
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Could not save content");
+    } finally {
+      setSaving(false);
+    }
   };
 
   const fallback = <div className="p-6 text-sm text-muted-foreground">Loading…</div>;
