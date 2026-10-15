@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import { apiFetch } from "@/lib/cloudflareApi";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
@@ -75,13 +76,10 @@ export function N8nDispatcher({ bookId }: { bookId: string }) {
     };
 
     try {
-      const { data, error } = await supabase.functions.invoke("dispatch-n8n", {
-        body: { book_id: book.id, book_title: book.title, platforms: selected, payload },
+      const data = await apiFetch<{ ok?: boolean; status?: number; error?: string }>("/api/admin/dispatch-n8n", {
+        method: "POST",
+        body: JSON.stringify({ book_id: book.id, book_title: book.title, platforms: selected, payload }),
       });
-      if (error) {
-        toast.error(error.message || "Dispatch failed");
-        return;
-      }
       if (data?.error) {
         toast.error(data.error);
         return;
