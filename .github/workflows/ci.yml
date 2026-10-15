@@ -38,11 +38,24 @@ jobs:
           node --check cloudflare/sync-book-modules.mjs
           node --check cloudflare/verify-parity.mjs
           node --check scripts/guard-no-browser-supabase.mjs
-      - name: Build app without live-data lifecycle hooks
+      - name: Build app without Supabase browser configuration
         run: npm run build --ignore-scripts
         env:
-          VITE_SUPABASE_URL: https://ci-preview.supabase.co
-          VITE_SUPABASE_PUBLISHABLE_KEY: sb_publishable_ci_placeholder
           ALLOW_STATIC_SITEMAP: 'true'
+      - name: Enforce Supabase-free browser bundle
+        shell: bash
+        run: |
+          set -euo pipefail
+          if find dist/assets -maxdepth 1 -type f -name 'supabase-*.js' | grep -q .; then
+            echo 'Unexpected Supabase vendor chunk found in dist/assets.' >&2
+            find dist/assets -maxdepth 1 -type f -name 'supabase-*.js' -print >&2
+            exit 1
+          fi
+          if grep -RIlE 'pbkfewrtdgiagytmcigb\.supabase\.co|ci-preview\.supabase\.co' dist/assets --include='*.js' | grep -q .; then
+            echo 'Supabase project host leaked into production JavaScript bundle.' >&2
+            grep -RIlE 'pbkfewrtdgiagytmcigb\.supabase\.co|ci-preview\.supabase\.co' dist/assets --include='*.js' >&2
+            exit 1
+          fi
+          echo 'Production browser bundle is Supabase-free.'
       - name: Validate Wrangler config and Worker bundle
         run: npx --yes wrangler@4.136.3 deploy --dry-run --outdir /tmp/booknomics-wrangler-dry-run
