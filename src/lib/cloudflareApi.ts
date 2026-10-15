@@ -13,15 +13,24 @@ export type CloudflareUser = {
   };
 };
 
-export async function apiFetch<T>(path: string, init: RequestInit = {}): Promise<T> {
+export async function apiRawFetch(path: string, init: RequestInit = {}): Promise<Response> {
   const isFormData = typeof FormData !== "undefined" && init.body instanceof FormData;
   const isBlob = typeof Blob !== "undefined" && init.body instanceof Blob;
-  const response = await fetch(`${API_BASE}${path}`, {
+  return fetch(`${API_BASE}${path}`, {
     ...init,
     credentials: "include",
     headers: {
-      accept: "application/json",
       ...(init.body && !isFormData && !isBlob ? { "content-type": "application/json" } : {}),
+      ...init.headers,
+    },
+  });
+}
+
+export async function apiFetch<T>(path: string, init: RequestInit = {}): Promise<T> {
+  const response = await apiRawFetch(path, {
+    ...init,
+    headers: {
+      accept: "application/json",
       ...init.headers,
     },
   });
