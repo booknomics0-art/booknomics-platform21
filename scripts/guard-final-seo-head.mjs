@@ -2,7 +2,7 @@ import { existsSync, readFileSync, readdirSync } from "node:fs";
 import { resolve } from "node:path";
 
 const DIST = resolve("dist");
-const EXPECTED_HOME_TITLE = "Booknomics — English & Hindi Book Summaries";
+const EXPECTED_HOME_TITLE = "Booknomics — English & Hindi Book Summaries & Key Insights";
 const CANONICAL_RE = /<link\s+[^>]*rel=["']canonical["'][^>]*>/gi;
 
 const fail = (message) => {
