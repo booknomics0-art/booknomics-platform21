@@ -8,7 +8,7 @@
     "prebuild": "node --import tsx scripts/check-env.ts && node --import tsx scripts/generate-sitemap-v2.ts",
     "dev": "vite",
     "build": "vite build",
-    "postbuild": "node scripts/prerender-en-crawl.mjs && node scripts/prerender-all-books.mjs && node scripts/enhance-english-top50-seo.mjs && node scripts/prerender-aeo-geo.mjs && node scripts/finalize-hindi-hub.mjs && node scripts/finalize-hindi-guide.mjs && node scripts/repair-book-structured-data.mjs && node scripts/guard-aeo-prerender.mjs && node scripts/guard-public-prerender.mjs && node scripts/finalize-core-technical-seo.mjs",
+    "postbuild": "node scripts/prerender-en-crawl.mjs && node scripts/prerender-all-books.mjs && node scripts/enhance-english-top50-seo.mjs && node scripts/prerender-aeo-geo.mjs && node scripts/finalize-hindi-hub.mjs && node scripts/finalize-hindi-guide.mjs && node scripts/repair-book-structured-data.mjs && node scripts/guard-aeo-prerender.mjs && node scripts/guard-public-prerender.mjs && node scripts/finalize-core-technical-seo.mjs && node scripts/guard-final-seo-head.mjs",
     "build:dev": "vite build --mode development",
     "lint": "eslint .",
     "preview": "vite preview",
@@ -58,7 +58,7 @@
     "cmdk": "^1.1.1",
     "date-fns": "^3.6.0",
     "embla-carousel-react": "^8.6.0",
-    "input-otp": "^1.4.2",
+    "input-otp": "^1.4.0",
     "jspdf": "^4.2.1",
     "lucide-react": "^0.462.0",
     "next-themes": "^0.3.0",
@@ -75,10 +75,10 @@
     "recharts": "^2.15.4",
     "remark-gfm": "^4.0.1",
     "sonner": "^1.7.4",
-    "tailwind-merge": "^2.6.0",
+    "tailwind-merge": "^3.3.0",
     "tailwindcss-animate": "^1.0.7",
     "vaul": "^0.9.9",
-    "zod": "^4.4.3"
+    "zod": "^3.25.76"
   },
   "devDependencies": {
     "@eslint/js": "^9.32.0",
