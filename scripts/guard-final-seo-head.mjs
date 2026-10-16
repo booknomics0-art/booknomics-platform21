@@ -64,7 +64,8 @@ const home = resolve(DIST, "index.html");
 if (existsSync(home)) {
   const html = readFileSync(home, "utf8");
   const title = html.match(/<title>([\s\S]*?)<\/title>/i)?.[1]?.trim();
-  if (title !== EXPECTED_HOME_TITLE) {
+  const decodedTitle = title?.replace(/&amp;/g, "&").replace(/&#38;/g, "&");
+  if (decodedTitle !== EXPECTED_HOME_TITLE) {
     fail(`homepage title mismatch: ${JSON.stringify(title)}`);
   }
 }
