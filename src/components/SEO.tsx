@@ -5,7 +5,7 @@ import { supabase } from "@/integrations/supabase/client";
 const SITE = "https://www.booknomics.com";
 const DEFAULT_OG = `${SITE}/og-default.svg`;
 const ORG_ID = `${SITE}/#organization`;
-const HOME_TITLE = "Booknomics — English & Hindi Book Summaries";
+const HOME_TITLE = "Booknomics — English & Hindi Book Summaries & Key Insights";
 
 interface SEOProps {
   title: string;

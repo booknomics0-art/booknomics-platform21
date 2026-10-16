@@ -115,7 +115,7 @@ const sharedAlternates = [
 
 {
   const canonical = `${BASE}/`;
-  const title = "Booknomics — English & Hindi Book Summaries";
+  const title = "Booknomics — English & Hindi Book Summaries & Key Insights";
   const description = "Read practical English and Hindi book summaries with key ideas, deeper analysis, memorable lessons, and clear actions you can apply.";
   const root = `<main style="font-family:system-ui,-apple-system,sans-serif;max-width:1080px;margin:0 auto;padding:36px 20px;line-height:1.7">
     <header>
