@@ -39,11 +39,15 @@ const normalizeBook = (book: ApiBook): BookCardData => ({
 });
 
 const fetchBookBySlug = async (slug: string): Promise<BookCardData | null> => {
-  const payload = await apiFetch<{ data: ApiBook[] }>(
-    `/api/books?q=${encodeURIComponent(slug)}&limit=20&offset=0&sort=az`,
-  );
-  const match = (payload.data ?? []).find((row) => row.slug === slug || row.seo_slug === slug);
-  return match ? normalizeBook(match) : null;
+  try {
+    const payload = await apiFetch<{ data: ApiBook[] }>(
+      `/api/books?q=${encodeURIComponent(slug)}&limit=20&offset=0&sort=az`,
+    );
+    const match = (payload.data ?? []).find((row) => row.slug === slug || row.seo_slug === slug);
+    return match ? normalizeBook(match) : null;
+  } catch {
+    return null;
+  }
 };
 
 const Index = () => {
@@ -71,25 +75,20 @@ const Index = () => {
 
   useEffect(() => {
     let cancelled = false;
-    (async () => {
-      try {
-        const [hero, feat, pop] = await Promise.all([
-          Promise.all(HERO_SLUGS.map((slug) => fetchBookBySlug(slug))),
-          Promise.all(MOST_READABLE_SLUGS.map((slug) => fetchBookBySlug(slug))),
-          apiFetch<{ data: ApiBook[] }>("/api/books?sort=latest&limit=8&offset=0"),
-        ]);
 
-        if (cancelled) return;
-        setHeroBooks(hero.filter((book): book is BookCardData => Boolean(book)));
-        setFeatured(feat.filter((book): book is BookCardData => Boolean(book)));
-        setPopular((pop.data ?? []).map(normalizeBook));
-      } catch {
-        if (cancelled) return;
-        setHeroBooks([]);
-        setFeatured([]);
-        setPopular([]);
-      }
+    (async () => {
+      const [hero, feat, pop] = await Promise.all([
+        Promise.all(HERO_SLUGS.map((slug) => fetchBookBySlug(slug))),
+        Promise.all(MOST_READABLE_SLUGS.map((slug) => fetchBookBySlug(slug))),
+        apiFetch<{ data: ApiBook[] }>("/api/books?sort=latest&limit=8&offset=0").catch(() => ({ data: [] })),
+      ]);
+
+      if (cancelled) return;
+      setHeroBooks(hero.filter((book): book is BookCardData => Boolean(book)));
+      setFeatured(feat.filter((book): book is BookCardData => Boolean(book)));
+      setPopular((pop.data ?? []).map(normalizeBook));
     })();
+
     return () => { cancelled = true; };
   }, []);
 
