@@ -1,7 +1,6 @@
 name: Upload mind maps to Supabase
-# Uses repository secret SUPABASE_SERVICE_ROLE_KEY.
-# Hindi production maps are rendered from exact live DB slugs/content so every
-# published Hindi book maps 1:1 to book_assets.mindmap_url.
+# Manual, production-scoped workflow. Uses only the dedicated repository
+# secret SUPABASE_SERVICE_ROLE_KEY; no management-token fallback is allowed.
 
 on:
   workflow_dispatch:
@@ -20,13 +19,6 @@ on:
         required: false
         default: false
         type: boolean
-  push:
-    branches:
-      - arena/7ad1337e-booknomics-platform21
-    paths:
-      - .github/workflows/upload-mindmaps.yml
-      - tools/mindmap-engine/generate.py
-      - tools/mindmap-engine/upload_supabase.py
 
 permissions:
   contents: read
@@ -39,46 +31,31 @@ jobs:
   upload:
     runs-on: ubuntu-latest
     timeout-minutes: 180
+    environment: production
     env:
       SUPABASE_URL: https://pbkfewrtdgiagytmcigb.supabase.co
+      SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
 
-      - uses: actions/setup-python@v5
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5
         with:
           python-version: "3.11"
 
-      - name: Find a Supabase key in the repository secrets
-        id: key
-        env:
-          K1: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
-          K2: ${{ secrets.SUPABASE_SECRET_KEY }}
-          K3: ${{ secrets.SUPABASE_SERVICE_KEY }}
-          K4: ${{ secrets.SERVICE_ROLE_KEY }}
-          ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+      - name: Verify Supabase service credential
+        shell: bash
         run: |
-          echo "secret lengths (values never printed): K1=${#K1} K2=${#K2} K3=${#K3} K4=${#K4} ACCESS=${#ACCESS_TOKEN}"
-          KEY="${K1:-${K2:-${K3:-$K4}}}"
-          SRC="repository secret"
-          if [ -z "$KEY" ] && [ -n "$ACCESS_TOKEN" ]; then
-            SRC="SUPABASE_ACCESS_TOKEN via the Supabase Management API"
-            KEY=$(curl -fsS -H "Authorization: Bearer $ACCESS_TOKEN" \
-              "https://api.supabase.com/v1/projects/pbkfewrtdgiagytmcigb/api-keys?reveal=true" \
-              | python3 -c 'import json,sys; a=json.load(sys.stdin); k=next((x for x in a if x.get("name")=="service_role" or x.get("type")=="secret"), None); sys.stdout.write((k or {}).get("api_key") or "")') || KEY=""
-          fi
-          if [ -z "$KEY" ]; then
-            echo "::error::Repository secret SUPABASE_SERVICE_ROLE_KEY is still empty in this run."
+          if [ -z "$SUPABASE_SERVICE_ROLE_KEY" ]; then
+            echo "::error::Missing SUPABASE_SERVICE_ROLE_KEY repository secret"
             exit 1
           fi
-          echo "::add-mask::$KEY"
-          echo "SUPABASE_SERVICE_ROLE_KEY=$KEY" >> "$GITHUB_ENV"
-          echo "Using a key from $SRC (length ${#KEY})."
+          echo "::add-mask::$SUPABASE_SERVICE_ROLE_KEY"
 
       - name: Install renderer
         run: pip install -r tools/mindmap-engine/requirements.txt
 
       - name: Fetch exact published Hindi books from production
-        if: ${{ github.event_name == 'push' || inputs.lang == 'hi' || inputs.lang == 'both' }}
+        if: ${{ inputs.lang == 'hi' || inputs.lang == 'both' }}
         shell: bash
         run: |
           mkdir -p out
@@ -131,12 +108,12 @@ jobs:
           PY
 
       - name: Render Hindi maps from live content
-        if: ${{ github.event_name == 'push' || inputs.lang == 'hi' || inputs.lang == 'both' }}
+        if: ${{ inputs.lang == 'hi' || inputs.lang == 'both' }}
         run: python generate.py --lang hi --json ../../out/live-hindi-books.json --out ../../out/mindmaps-hi-live --manifest
         working-directory: tools/mindmap-engine
 
       - name: Render English maps
-        if: ${{ github.event_name == 'workflow_dispatch' && (inputs.lang == 'en' || inputs.lang == 'both') }}
+        if: ${{ inputs.lang == 'en' || inputs.lang == 'both' }}
         run: python generate.py --lang en --out ../../out/mindmaps --skip-existing
         working-directory: tools/mindmap-engine
 
@@ -144,7 +121,6 @@ jobs:
         shell: bash
         run: |
           lang="${{ inputs.lang }}"
-          lang="${lang:-hi}"
           extra=""
           if [ "${{ inputs.force }}" = "true" ]; then extra="--force"; fi
           if [ "$lang" = "hi" ]; then
