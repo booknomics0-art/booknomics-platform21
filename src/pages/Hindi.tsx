@@ -127,7 +127,7 @@ const Hindi = () => {
   const collectionLd = {
     "@context": "https://schema.org",
     "@type": "CollectionPage",
-    name: "Hindi Book Summaries",
+    name: "Booknomics Hindi Library",
     url: "https://www.booknomics.com/hindi",
     mainEntity: {
       "@type": "ItemList",
@@ -143,8 +143,8 @@ const Hindi = () => {
   return (
     <Layout>
       <SEO
-        title="हिंदी पुस्तक सारांश — Best Hindi Book Summaries | Booknomics"
-        description="हिंदी में चुनी हुई किताबों के विस्तृत सारांश, मुख्य विचार, गहन विश्लेषण और व्यावहारिक सीख Booknomics पर पढ़ें।"
+        title="हिंदी पुस्तकालय — सभी प्रकाशित हिंदी पुस्तक सारांश | Booknomics"
+        description="Booknomics की पूरी हिंदी पुस्तक लाइब्रेरी ब्राउज़ करें — प्रकाशित हिंदी पुस्तक सारांश, लेखक, श्रेणियाँ, मुख्य विचार और गहन विश्लेषण एक जगह।"
         canonical="https://www.booknomics.com/hindi"
         lang="hi"
         jsonLd={collectionLd}
