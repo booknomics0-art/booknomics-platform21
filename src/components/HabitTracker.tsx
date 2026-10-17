@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { Check, Loader2, Pencil, Save, Trophy, X, ArrowRight, Lightbulb } from "lucide-react";
 import confetti from "canvas-confetti";
-import { supabase } from "@/integrations/supabase/client";
+import { apiFetch } from "@/lib/cloudflareApi";
 import { useAuth } from "@/hooks/useAuth";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -11,8 +11,27 @@ import { toast } from "sonner";
 
 interface Entry { day_number: number; done: boolean; score: number; notes: string | null }
 type Language = "en" | "hi";
+type BookMeta = { id: string; language?: string | null };
+type Note = { id: string; book_id: string; content: string; created_at: string; updated_at?: string | null };
 
 const copy = (hi: boolean, en: string, hindi: string) => hi ? hindi : en;
+
+function useBookLanguage(bookId: string) {
+  const [language, setLanguage] = useState<Language>("en");
+
+  useEffect(() => {
+    let alive = true;
+    setLanguage("en");
+    void apiFetch<{ data: BookMeta | null }>(`/api/social/book-meta?id=${encodeURIComponent(bookId)}`)
+      .then(({ data }) => {
+        if (alive && data?.language === "hi") setLanguage("hi");
+      })
+      .catch(() => {});
+    return () => { alive = false; };
+  }, [bookId]);
+
+  return language;
+}
 
 function ReflectionEditor({
   day, entry, onSave, language,
@@ -96,31 +115,28 @@ export const HabitTracker = ({ bookId }: { bookId: string }) => {
   const { user } = useAuth();
   const [entries, setEntries] = useState<Record<number, Entry>>({});
   const [loading, setLoading] = useState(true);
-  const [language, setLanguage] = useState<Language>("en");
+  const language = useBookLanguage(bookId);
   const celebratedRef = useRef(false);
   const hi = language === "hi";
 
   useEffect(() => {
+    if (!user) { setEntries({}); setLoading(false); return; }
     let alive = true;
-    supabase.from("books").select("language").eq("id", bookId).maybeSingle()
+    setLoading(true);
+    void apiFetch<{ data: Entry[] }>(`/api/habits?book_id=${encodeURIComponent(bookId)}`)
       .then(({ data }) => {
-        if (alive && data?.language === "hi") setLanguage("hi");
-      });
+        if (!alive) return;
+        const map: Record<number, Entry> = {};
+        (data || []).forEach((entry) => { map[Number(entry.day_number)] = { ...entry, done: Boolean(entry.done) }; });
+        setEntries(map);
+        if ([1,2,3,4,5,6,7].every((day) => map[day]?.done)) celebratedRef.current = true;
+      })
+      .catch(() => {
+        if (alive) toast.error(copy(hi, "Could not load practice progress", "प्रैक्टिस प्रगति लोड नहीं हो पाई"));
+      })
+      .finally(() => { if (alive) setLoading(false); });
     return () => { alive = false; };
-  }, [bookId]);
-
-  useEffect(() => {
-    if (!user) { setLoading(false); return; }
-    (async () => {
-      const { data } = await supabase.from("habit_entries").select("*").eq("user_id", user.id).eq("book_id", bookId);
-      const map: Record<number, Entry> = {};
-      (data ?? []).forEach(e => { map[e.day_number] = e as any; });
-      setEntries(map);
-      const allDone = [1,2,3,4,5,6,7].every(d => map[d]?.done);
-      if (allDone) celebratedRef.current = true;
-      setLoading(false);
-    })();
-  }, [user, bookId]);
+  }, [user, bookId, hi]);
 
   if (!user) return <p className="text-muted-foreground text-sm">{copy(hi, "Sign in to track your 7-day practice.", "7-दिन की प्रैक्टिस ट्रैक करने के लिए साइन इन करें।")}</p>;
   if (loading) return <div className="flex justify-center py-6"><Loader2 className="h-5 w-5 animate-spin" /></div>;
@@ -139,20 +155,32 @@ export const HabitTracker = ({ bookId }: { bookId: string }) => {
     const next = { ...current, ...patch };
     const nextMap = { ...entries, [day]: next };
     setEntries(nextMap);
-    const { error } = await supabase.from("habit_entries").upsert({
-      user_id: user.id, book_id: bookId, day_number: day,
-      done: next.done, score: next.score, notes: next.notes,
-    }, { onConflict: "user_id,book_id,day_number" });
-    if (error) { toast.error(copy(hi, "Save failed", "सेव नहीं हो पाया")); return; }
+    try {
+      await apiFetch<{ ok: boolean }>("/api/habits", {
+        method: "POST",
+        body: JSON.stringify({
+          book_id: bookId,
+          day_number: day,
+          done: next.done,
+          score: next.score,
+          notes: next.notes,
+        }),
+      });
+    } catch {
+      setEntries(entries);
+      toast.error(copy(hi, "Save failed", "सेव नहीं हो पाया"));
+      return;
+    }
+
     const allDone = [1,2,3,4,5,6,7].every(d => nextMap[d]?.done);
     if (allDone && !celebratedRef.current) {
       celebratedRef.current = true;
       fireConfetti();
       toast.success(copy(hi, "7-day practice complete — keep the one idea that worked best.", "7-दिन की प्रैक्टिस पूरी — अब वही एक सीख रखें जो सबसे काम आई।"));
-      await supabase.from("reading_progress").upsert(
-        { user_id: user.id, book_id: bookId, completed: true, last_read_at: new Date().toISOString() },
-        { onConflict: "user_id,book_id" } as any
-      );
+      void apiFetch<{ ok: boolean }>("/api/reading-progress", {
+        method: "POST",
+        body: JSON.stringify({ book_id: bookId, completed: true }),
+      }).catch(() => {});
     }
   };
 
@@ -245,22 +273,20 @@ export const HabitTracker = ({ bookId }: { bookId: string }) => {
 
 export const BookNotes = ({ bookId }: { bookId: string }) => {
   const { user } = useAuth();
-  const [notes, setNotes] = useState<any[]>([]);
+  const [notes, setNotes] = useState<Note[]>([]);
   const [content, setContent] = useState("");
   const [saving, setSaving] = useState(false);
-  const [language, setLanguage] = useState<Language>("en");
+  const language = useBookLanguage(bookId);
   const hi = language === "hi";
 
   useEffect(() => {
-    supabase.from("books").select("language").eq("id", bookId).maybeSingle()
-      .then(({ data }) => data?.language === "hi" && setLanguage("hi"));
-  }, [bookId]);
-
-  useEffect(() => {
-    if (!user) return;
-    supabase.from("book_notes").select("*").eq("user_id", user.id).eq("book_id", bookId).order("created_at", { ascending: false })
-      .then(({ data }) => setNotes(data ?? []));
-  }, [user, bookId]);
+    if (!user) { setNotes([]); return; }
+    let alive = true;
+    void apiFetch<{ data: Note[] }>(`/api/notes?book_id=${encodeURIComponent(bookId)}`)
+      .then(({ data }) => { if (alive) setNotes(data || []); })
+      .catch(() => { if (alive) toast.error(copy(hi, "Could not load notes", "नोट्स लोड नहीं हो पाए")); });
+    return () => { alive = false; };
+  }, [user, bookId, hi]);
 
   if (!user) return <p className="text-muted-foreground text-sm">{copy(hi, "Sign in to save personal notes.", "अपने नोट्स सहेजने के लिए साइन इन करें।")}</p>;
 
@@ -271,16 +297,30 @@ export const BookNotes = ({ bookId }: { bookId: string }) => {
   const add = async () => {
     if (!content.trim()) return;
     setSaving(true);
-    const { data, error } = await supabase.from("book_notes").insert({ user_id: user.id, book_id: bookId, content: content.trim() }).select().single();
-    setSaving(false);
-    if (error) { toast.error(copy(hi, "Could not save note", "नोट सेव नहीं हो पाया")); return; }
-    setNotes([data, ...notes]);
-    setContent("");
+    try {
+      const { data } = await apiFetch<{ data: Note }>("/api/notes", {
+        method: "POST",
+        body: JSON.stringify({ book_id: bookId, content: content.trim() }),
+      });
+      setNotes((current) => [data, ...current]);
+      setContent("");
+    } catch {
+      toast.error(copy(hi, "Could not save note", "नोट सेव नहीं हो पाया"));
+    } finally {
+      setSaving(false);
+    }
   };
 
   const del = async (id: string) => {
-    await supabase.from("book_notes").delete().eq("id", id);
-    setNotes(notes.filter(n => n.id !== id));
+    try {
+      await apiFetch<{ ok: boolean }>("/api/notes", {
+        method: "DELETE",
+        body: JSON.stringify({ id }),
+      });
+      setNotes((current) => current.filter((note) => note.id !== id));
+    } catch {
+      toast.error(copy(hi, "Could not delete note", "नोट हटाया नहीं जा सका"));
+    }
   };
 
   return (

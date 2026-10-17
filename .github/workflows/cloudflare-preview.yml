@@ -1,0 +1,194 @@
+name: Cloudflare Preview Smoke
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - cloudflare-full-migration
+
+permissions:
+  contents: read
+  deployments: write
+
+jobs:
+  preview:
+    if: github.event_name == 'workflow_dispatch' || contains(github.event.head_commit.message, '[cloudflare-preview]')
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+      GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
+      GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}
+      GOOGLE_SEARCH_CONSOLE_API_KEY: ${{ secrets.GOOGLE_SEARCH_CONSOLE_API_KEY }}
+      RAZORPAY_KEY_ID: ${{ secrets.RAZORPAY_KEY_ID }}
+      RAZORPAY_KEY_SECRET: ${{ secrets.RAZORPAY_KEY_SECRET }}
+      GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+      LOVABLE_API_KEY: ${{ secrets.LOVABLE_API_KEY }}
+      XAI_API_KEY: ${{ secrets.XAI_API_KEY }}
+      ELEVENLABS_API_KEY: ${{ secrets.ELEVENLABS_API_KEY }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+
+      - name: Require Preview credentials
+        shell: bash
+        run: |
+          set -euo pipefail
+          missing=0
+          for name in CLOUDFLARE_ACCOUNT_ID CLOUDFLARE_API_TOKEN GOOGLE_CLIENT_ID GOOGLE_CLIENT_SECRET; do
+            if [[ -z "${!name:-}" ]]; then
+              echo "::error::Required GitHub Actions secret is not configured: ${name}"
+              missing=1
+            fi
+          done
+          if [[ "$missing" -ne 0 ]]; then
+            exit 1
+          fi
+
+      - name: Validate browser cutover guard
+        run: node scripts/guard-no-browser-supabase.mjs
+
+      - name: Build Preview assets without Supabase browser configuration
+        run: npm run build --ignore-scripts
+        env:
+          ALLOW_STATIC_SITEMAP: 'true'
+
+      - name: Enforce Supabase-free Preview bundle
+        shell: bash
+        run: |
+          set -euo pipefail
+          if find dist/assets -maxdepth 1 -type f -name 'supabase-*.js' | grep -q .; then
+            echo '::error::Unexpected Supabase vendor chunk found in Preview assets.'
+            find dist/assets -maxdepth 1 -type f -name 'supabase-*.js' -print
+            exit 1
+          fi
+          if grep -RIlE 'pbkfewrtdgiagytmcigb\.supabase\.co|ci-preview\.supabase\.co' dist/assets --include='*.js' | grep -q .; then
+            echo '::error::Supabase project host leaked into Preview JavaScript bundle.'
+            grep -RIlE 'pbkfewrtdgiagytmcigb\.supabase\.co|ci-preview\.supabase\.co' dist/assets --include='*.js'
+            exit 1
+          fi
+          echo 'Preview browser bundle is Supabase-free.'
+
+      - name: Configure Preview Base secrets
+        shell: bash
+        run: |
+          set -euo pipefail
+          put_secret() {
+            local name="$1"
+            local value="${!name:-}"
+            if [[ -z "$value" ]]; then
+              echo "Skipping optional Preview secret: $name"
+              return 0
+            fi
+            printf '%s' "$value" | npx --yes wrangler@4.136.3 preview base-config secret put "$name"
+          }
+          put_secret GOOGLE_CLIENT_ID
+          put_secret GOOGLE_CLIENT_SECRET
+          put_secret GOOGLE_SEARCH_CONSOLE_API_KEY
+          put_secret RAZORPAY_KEY_ID
+          put_secret RAZORPAY_KEY_SECRET
+          put_secret GEMINI_API_KEY
+          put_secret LOVABLE_API_KEY
+          put_secret XAI_API_KEY
+          put_secret ELEVENLABS_API_KEY
+
+      - name: Deploy Cloudflare Worker Preview
+        id: deploy
+        uses: cloudflare/wrangler-action@v4
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          wranglerVersion: '4.136.3'
+          command: preview --name migration-pr-46
+          gitHubToken: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Smoke test Preview
+        shell: bash
+        env:
+          PREVIEW_URL: ${{ steps.deploy.outputs.preview-url }}
+        run: |
+          set -euo pipefail
+          if [[ -z "${PREVIEW_URL:-}" ]]; then
+            echo "::error::Wrangler did not return a Preview URL"
+            exit 1
+          fi
+          echo "Preview: $PREVIEW_URL"
+
+          curl --fail --silent --show-error "$PREVIEW_URL/" -o /tmp/home.html
+          grep -qi '<html' /tmp/home.html
+
+          curl --fail --silent --show-error "$PREVIEW_URL/api/catalog/books?limit=1" -o /tmp/catalog.json
+          node - <<'NODE'
+          const fs = require('fs');
+          const data = JSON.parse(fs.readFileSync('/tmp/catalog.json', 'utf8'));
+          if (!Array.isArray(data.data) || data.data.length < 1 || Number(data.count || 0) < 1) {
+            throw new Error('Catalog Preview smoke test returned no published books');
+          }
+          console.log(`Catalog smoke OK: ${data.count} published/indexable rows visible`);
+          NODE
+
+          curl --fail --silent --show-error "$PREVIEW_URL/.well-known/oauth-authorization-server" -o /tmp/oauth.json
+          node - <<'NODE'
+          const fs = require('fs');
+          const data = JSON.parse(fs.readFileSync('/tmp/oauth.json', 'utf8'));
+          for (const field of ['issuer', 'authorization_endpoint', 'token_endpoint', 'registration_endpoint']) {
+            if (!data[field]) throw new Error(`OAuth metadata missing ${field}`);
+          }
+          if (!Array.isArray(data.code_challenge_methods_supported) || !data.code_challenge_methods_supported.includes('S256')) {
+            throw new Error('OAuth metadata does not advertise PKCE S256');
+          }
+          console.log('OAuth metadata smoke OK');
+          NODE
+
+          curl --fail --silent --show-error "$PREVIEW_URL/.well-known/oauth-protected-resource" -o /tmp/resource.json
+          node - <<'NODE'
+          const fs = require('fs');
+          const data = JSON.parse(fs.readFileSync('/tmp/resource.json', 'utf8'));
+          if (!data.resource || !Array.isArray(data.authorization_servers) || data.authorization_servers.length < 1) {
+            throw new Error('Protected Resource metadata is incomplete');
+          }
+          console.log('Protected Resource metadata smoke OK');
+          NODE
+
+          status=$(curl --silent --show-error --output /tmp/mcp.json --dump-header /tmp/mcp.headers --write-out '%{http_code}' \
+            -X POST "$PREVIEW_URL/mcp" \
+            -H 'content-type: application/json' \
+            --data '{"jsonrpc":"2.0","id":1,"method":"initialize","params":{"protocolVersion":"2025-06-18","capabilities":{},"clientInfo":{"name":"booknomics-smoke","version":"1"}}}')
+          if [[ "$status" != "401" ]]; then
+            echo "::error::Unauthenticated MCP request should return 401, got $status"
+            cat /tmp/mcp.json
+            exit 1
+          fi
+          grep -qi 'www-authenticate:.*resource_metadata=' /tmp/mcp.headers
+          echo 'MCP authentication gate smoke OK'
+
+          google_status=$(curl --silent --show-error --output /dev/null --write-out '%{http_code}' \
+            "$PREVIEW_URL/api/auth/google/start?return_to=%2F")
+          if [[ "$google_status" != "302" && "$google_status" != "303" ]]; then
+            echo "::error::Google OAuth start should redirect, got $google_status"
+            exit 1
+          fi
+          echo 'Google OAuth start smoke OK'
+
+      - name: Write Preview summary
+        if: always()
+        env:
+          PREVIEW_URL: ${{ steps.deploy.outputs.preview-url }}
+          PREVIEW_DEPLOYMENT_URL: ${{ steps.deploy.outputs.preview-deployment-url }}
+        run: |
+          {
+            echo '## Cloudflare Preview'
+            echo
+            echo "Stable URL: ${PREVIEW_URL:-not-created}"
+            echo "Deployment URL: ${PREVIEW_DEPLOYMENT_URL:-not-created}"
+            echo
+            echo 'Production DNS is unchanged by this workflow.'
+          } >> "$GITHUB_STEP_SUMMARY"

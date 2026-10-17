@@ -10,19 +10,31 @@ import { CATEGORY_CONTENT } from "../src/content/categoryContent";
 Object.assign(process.env, { ...loadEnv(process.env.NODE_ENV || "production", process.cwd(), ""), ...process.env });
 
 const BASE_URL = "https://www.booknomics.com";
+const DATA_BACKEND = (process.env.VITE_DATA_BACKEND || "supabase").trim().toLowerCase();
 const SUPABASE_URL = process.env.VITE_SUPABASE_URL?.trim();
 const SUPABASE_KEY = process.env.VITE_SUPABASE_PUBLISHABLE_KEY?.trim();
-if (!SUPABASE_URL || !SUPABASE_KEY) throw new Error("Set VITE_SUPABASE_URL and VITE_SUPABASE_PUBLISHABLE_KEY before building.");
+const rawApiBase = (process.env.CLOUDFLARE_API_BASE || process.env.VITE_API_BASE || BASE_URL).trim();
+const API_BASE = (rawApiBase.startsWith("/") ? new URL(rawApiBase, BASE_URL).toString() : rawApiBase).replace(/\/$/, "");
+
+if (DATA_BACKEND === "supabase" && (!SUPABASE_URL || !SUPABASE_KEY)) {
+  throw new Error("Set VITE_SUPABASE_URL and VITE_SUPABASE_PUBLISHABLE_KEY before a Supabase-backed build.");
+}
+if (!new Set(["supabase", "cloudflare"]).has(DATA_BACKEND)) {
+  throw new Error(`Unsupported VITE_DATA_BACKEND: ${DATA_BACKEND}`);
+}
 
 const configuredMinBooks = Number(process.env.SITEMAP_MIN_BOOKS || "50");
 const safeConfiguredMinBooks = Number.isFinite(configuredMinBooks) ? Math.max(0, configuredMinBooks) : 50;
-const MIN_EXPECTED_BOOKS = process.env.VERCEL_ENV === "production" ? Math.max(50, safeConfiguredMinBooks) : safeConfiguredMinBooks;
+const isProductionBuild = process.env.VERCEL_ENV === "production" || process.env.CLOUDFLARE_ENV === "production" || process.env.CF_PAGES_BRANCH === "main";
+const MIN_EXPECTED_BOOKS = isProductionBuild ? Math.max(50, safeConfiguredMinBooks) : safeConfiguredMinBooks;
 const staticPreview = process.env.ALLOW_STATIC_SITEMAP === "true";
-if (staticPreview && process.env.VERCEL_ENV === "production") throw new Error("Static-only sitemap is forbidden in production.");
+if (staticPreview && isProductionBuild) throw new Error("Static-only sitemap is forbidden in production.");
 
-const db = createClient(SUPABASE_URL, SUPABASE_KEY, {
-  global: { fetch: (url, init) => fetch(url, { ...init, signal: AbortSignal.timeout(20000) }) },
-});
+const db = DATA_BACKEND === "supabase"
+  ? createClient(SUPABASE_URL!, SUPABASE_KEY!, {
+      global: { fetch: (url, init) => fetch(url, { ...init, signal: AbortSignal.timeout(20000) }) },
+    })
+  : null;
 
 type BookRow = {
   id: string; slug: string | null; seo_slug: string | null; old_slugs: string[] | null;
@@ -31,8 +43,25 @@ type BookRow = {
 };
 type Entry = { path: string; lastmod?: string; changefreq?: "daily"|"weekly"|"monthly"|"yearly"; priority?: string };
 
+async function fetchBooksFromCloudflare(): Promise<BookRow[]> {
+  const rows: BookRow[] = [];
+  for (let offset = 0; ; offset += 500) {
+    const endpoint = `${API_BASE}/api/seo/sitemap-books?limit=500&offset=${offset}`;
+    const response = await fetch(endpoint, { headers: { accept: "application/json" }, signal: AbortSignal.timeout(20000) });
+    if (!response.ok) throw new Error(`Cloudflare sitemap fetch failed (${response.status}) from ${endpoint}`);
+    const payload = await response.json() as { data?: BookRow[] };
+    const batch = Array.isArray(payload.data) ? payload.data : [];
+    rows.push(...batch);
+    if (batch.length < 500) break;
+  }
+  return rows;
+}
+
 async function fetchBooks(): Promise<BookRow[]> {
   if (staticPreview) return [];
+  if (DATA_BACKEND === "cloudflare") return fetchBooksFromCloudflare();
+  if (!db) throw new Error("Supabase client unavailable for sitemap build");
+
   const rows: BookRow[] = [];
   for (let offset = 0; ; offset += 500) {
     const { data, error } = await db.from("books")
@@ -76,7 +105,7 @@ function renderRedirects(bookRedirects: Array<{from:string;to:string}>) {
   try {
     const books = await fetchBooks();
     if (!staticPreview && books.length < MIN_EXPECTED_BOOKS) throw new Error(`Only ${books.length} published books returned (expected >= ${MIN_EXPECTED_BOOKS}). Refusing stale sitemap.`);
-    console.log(`[sitemap-v2] published books fetched: ${books.length}`);
+    console.log(`[sitemap-v2] backend ${DATA_BACKEND} · published books fetched: ${books.length}`);
 
     const entries: Entry[] = [
       {path:"/",changefreq:"weekly",priority:"1.0"},{path:"/browse",changefreq:"daily",priority:"0.9"},{path:"/english",changefreq:"weekly",priority:"0.9"},
@@ -87,7 +116,6 @@ function renderRedirects(bookRedirects: Array<{from:string;to:string}>) {
       {path:"/blog",changefreq:"weekly",priority:"0.8"},{path:"/privacy",changefreq:"yearly",priority:"0.3"},{path:"/terms",changefreq:"yearly",priority:"0.3"},
     ];
     try { const { BLOG_POSTS } = await import("../src/content/blog"); for (const p of BLOG_POSTS) entries.push({path:`/blog/${p.slug}`,lastmod:p.publishedAt,changefreq:"monthly",priority:"0.7"}); } catch {}
-    const staticCount = entries.length;
 
     let skippedBroken = 0;
     for (const b of books) {

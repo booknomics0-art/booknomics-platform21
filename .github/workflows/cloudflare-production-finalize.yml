@@ -1,0 +1,174 @@
+name: Cloudflare Production Finalize
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - cloudflare-full-migration
+
+permissions:
+  contents: read
+
+jobs:
+  finalize:
+    if: github.event_name == 'workflow_dispatch' || contains(github.event.head_commit.message, '[cloudflare-production-finalize]')
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      ZONE_NAME: booknomics.com
+      WORKER_NAME: booknomics
+      CANDIDATE_VERSION_ID: 9dac9084-53ea-42c1-b38d-5af2beba7174
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Verify exact deployed Worker version
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -n "${CLOUDFLARE_API_TOKEN:-}"
+          npx --yes wrangler@4.136.3 deployments list --name "$WORKER_NAME" > /tmp/deployments.txt
+          grep -Fq "$CANDIDATE_VERSION_ID" /tmp/deployments.txt || {
+            echo "::error::Expected Worker version $CANDIDATE_VERSION_ID is not deployed"
+            exit 1
+          }
+
+      - name: Activate routes, wait for propagation, and verify production
+        shell: bash
+        run: |
+          set -euo pipefail
+          AUTH=(-H "Authorization: Bearer ${CLOUDFLARE_API_TOKEN}" -H 'Content-Type: application/json')
+          ZONES=$(curl --fail --silent --show-error "${AUTH[@]}" "https://api.cloudflare.com/client/v4/zones?name=${ZONE_NAME}&status=active")
+          ZONE_ID=$(node -e 'const d=JSON.parse(process.argv[1]); process.stdout.write((d.result&&d.result[0]&&d.result[0].id)||"")' "$ZONES")
+          test -n "$ZONE_ID" || { echo '::error::Active zone not found'; exit 1; }
+          : > /tmp/created-route-ids
+
+          rollback_routes() {
+            echo 'ROLLBACK: removing routes created by this finalizer...'
+            while IFS= read -r id; do
+              [[ -n "$id" ]] || continue
+              curl --silent --show-error -X DELETE "${AUTH[@]}" \
+                "https://api.cloudflare.com/client/v4/zones/${ZONE_ID}/workers/routes/${id}" >/dev/null || true
+            done < /tmp/created-route-ids
+          }
+          trap 'rc=$?; if [[ $rc -ne 0 ]]; then rollback_routes; fi; exit $rc' EXIT
+
+          ROUTES=$(curl --fail --silent --show-error "${AUTH[@]}" "https://api.cloudflare.com/client/v4/zones/${ZONE_ID}/workers/routes")
+          node - "$ROUTES" <<'NODE'
+          const d=JSON.parse(process.argv[2]);
+          const conflicts=(d.result||[]).filter(r => ['booknomics.com/*','www.booknomics.com/*'].includes(r.pattern) && r.script!=='booknomics');
+          if (conflicts.length) { console.error(conflicts); process.exit(1); }
+          NODE
+
+          for pattern in 'booknomics.com/*' 'www.booknomics.com/*'; do
+            ROUTES=$(curl --fail --silent --show-error "${AUTH[@]}" "https://api.cloudflare.com/client/v4/zones/${ZONE_ID}/workers/routes")
+            EXISTING_ID=$(node - "$ROUTES" "$pattern" <<'NODE'
+          const d=JSON.parse(process.argv[2]);
+          const pattern=process.argv[3];
+          const r=(d.result||[]).find(x => x.pattern===pattern && x.script==='booknomics');
+          process.stdout.write(r?.id||'');
+          NODE
+            )
+            if [[ -n "$EXISTING_ID" ]]; then
+              echo "Route already active: $pattern ($EXISTING_ID)"
+              continue
+            fi
+            BODY=$(node -e 'process.stdout.write(JSON.stringify({pattern:process.argv[1],script:"booknomics"}))' "$pattern")
+            CODE=$(curl --silent --show-error -o /tmp/create.json -w '%{http_code}' -X POST "${AUTH[@]}" --data "$BODY" \
+              "https://api.cloudflare.com/client/v4/zones/${ZONE_ID}/workers/routes" || true)
+            [[ "$CODE" -ge 200 && "$CODE" -lt 300 ]] || { cat /tmp/create.json; exit 1; }
+            ID=$(node -e 'const d=require("/tmp/create.json"); process.stdout.write(d.result?.id||"")')
+            test -n "$ID"
+            echo "$ID" >> /tmp/created-route-ids
+            echo "Created route: $pattern ($ID)"
+          done
+
+          echo 'Waiting for Worker route propagation across edges...'
+          sleep 15
+
+          # Apex redirect: retry because Worker route propagation can be edge-dependent.
+          apex_ok=0
+          for attempt in $(seq 1 12); do
+            status=$(curl --silent --show-error -H 'Cache-Control: no-cache' -o /dev/null -D /tmp/apex.headers \
+              -w '%{http_code}' --max-redirs 0 "https://booknomics.com/?cf_cutover_probe=${GITHUB_RUN_ID}-${attempt}" || true)
+            location=$(tr -d '\r' < /tmp/apex.headers | awk 'tolower($1)=="location:" {print $2}' | tail -1)
+            echo "Apex attempt ${attempt}: status=${status} location=${location}"
+            if [[ "$status" == '308' && "$location" == https://www.booknomics.com/* ]]; then apex_ok=1; break; fi
+            sleep 5
+          done
+          [[ "$apex_ok" == '1' ]] || { echo '::error::Apex redirect did not converge'; exit 1; }
+
+          # www home: require Cloudflare response without Vercel origin markers.
+          home_ok=0
+          for attempt in $(seq 1 12); do
+            status=$(curl --silent --show-error -H 'Cache-Control: no-cache' -o /tmp/home.html -D /tmp/home.headers \
+              -w '%{http_code}' "https://www.booknomics.com/?cf_cutover_probe=${GITHUB_RUN_ID}-${attempt}" || true)
+            vercel=$(grep -Eic '^x-vercel-(id|cache):' /tmp/home.headers || true)
+            html=$(grep -Eic '<html' /tmp/home.html || true)
+            echo "Home attempt ${attempt}: status=${status} vercel_headers=${vercel} html=${html}"
+            if [[ "$status" == '200' && "$vercel" == '0' && "$html" -gt 0 ]]; then home_ok=1; break; fi
+            sleep 5
+          done
+          [[ "$home_ok" == '1' ]] || { echo '::error::www home did not converge to Cloudflare'; cat /tmp/home.headers; exit 1; }
+
+          retry_get() {
+            local url="$1" out="$2" ok=0
+            for attempt in $(seq 1 8); do
+              code=$(curl --silent --show-error -H 'Cache-Control: no-cache' -o "$out" -w '%{http_code}' "$url" || true)
+              echo "GET ${url} attempt ${attempt}: ${code}"
+              if [[ "$code" == '200' ]]; then ok=1; break; fi
+              sleep 4
+            done
+            [[ "$ok" == '1' ]]
+          }
+
+          retry_get 'https://www.booknomics.com/api/health' /tmp/health.json
+          node -e 'const d=require("/tmp/health.json"); if(d.ok!==true||d.platform!=="cloudflare"||!d.bindings?.d1||!d.bindings?.coversR2||!d.bindings?.assetsR2) process.exit(1)'
+
+          retry_get 'https://www.booknomics.com/api/catalog/books?limit=1' /tmp/catalog.json
+          BOOK_SLUG=$(node - <<'NODE'
+          const d=require('/tmp/catalog.json');
+          if(!Array.isArray(d.data)||d.data.length<1||Number(d.count||0)!==5027) throw new Error(`Unexpected catalog count ${d.count}`);
+          const slug=d.data[0].slug||d.data[0].seo_slug; if(!slug) throw new Error('Missing slug'); process.stdout.write(String(slug));
+          NODE
+          )
+
+          retry_get "https://www.booknomics.com/books/${BOOK_SLUG}" /tmp/book.html
+          grep -qi '<html' /tmp/book.html
+
+          retry_get 'https://www.booknomics.com/api/auth/session' /tmp/session.json
+          node -e 'const d=require("/tmp/session.json"); if(!("user" in d)) process.exit(1)'
+
+          google_ok=0
+          for attempt in $(seq 1 8); do
+            code=$(curl --silent --show-error -o /dev/null -D /tmp/google.headers -w '%{http_code}' --max-redirs 0 \
+              'https://www.booknomics.com/api/auth/google/start?return_to=%2F' || true)
+            echo "Google start attempt ${attempt}: ${code}"
+            if [[ "$code" == '302' ]]; then google_ok=1; break; fi
+            sleep 4
+          done
+          [[ "$google_ok" == '1' ]]
+          GOOGLE_LOCATION=$(tr -d '\r' < /tmp/google.headers | awk 'tolower($1)=="location:" {print $2}' | tail -1)
+          node - "$GOOGLE_LOCATION" <<'NODE'
+          const u=new URL(process.argv[2]);
+          if(u.origin!=='https://accounts.google.com') throw new Error('Not Google');
+          if(u.searchParams.get('redirect_uri')!=='https://www.booknomics.com/api/auth/google/callback') throw new Error('Wrong redirect URI');
+          NODE
+
+          retry_get 'https://www.booknomics.com/.well-known/oauth-authorization-server' /tmp/oauth.json
+          node -e 'const d=require("/tmp/oauth.json"); for(const k of ["issuer","authorization_endpoint","token_endpoint","registration_endpoint"]) if(!d[k]) process.exit(1)'
+
+          for path in /browse /hindi; do
+            retry_get "https://www.booknomics.com${path}" /tmp/page.html
+            grep -qi '<html' /tmp/page.html
+          done
+
+          ROUTES=$(curl --fail --silent --show-error "${AUTH[@]}" "https://api.cloudflare.com/client/v4/zones/${ZONE_ID}/workers/routes")
+          node - "$ROUTES" <<'NODE'
+          const d=JSON.parse(process.argv[2]);
+          const map=new Map((d.result||[]).map(r=>[r.pattern,r.script]));
+          for(const p of ['booknomics.com/*','www.booknomics.com/*']) if(map.get(p)!=='booknomics') throw new Error(`Missing final route ${p}`);
+          NODE
+
+          trap - EXIT
+          echo 'BOOKNOMICS CLOUDFLARE PRODUCTION FINALIZE PASSED. Routes remain active; Worker/D1/R2 are serving public traffic.'

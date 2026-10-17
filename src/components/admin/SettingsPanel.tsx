@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
-import { supabase } from "@/integrations/supabase/client";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
+import { apiFetch } from "@/lib/cloudflareApi";
 import { toast } from "sonner";
 import { Webhook } from "lucide-react";
 
@@ -13,22 +13,25 @@ export function SettingsPanel() {
   const [saving, setSaving] = useState(false);
 
   useEffect(() => {
-    supabase.from("app_settings").select("value").eq("key", "n8n_webhook_url").maybeSingle()
-      .then(({ data }) => {
-        setUrl((data?.value as any)?.url ?? "");
-        setLoading(false);
-      });
+    apiFetch<{ data: { value?: { url?: string } } | null }>("/api/admin/settings/n8n")
+      .then(({ data }) => setUrl(data?.value?.url ?? ""))
+      .catch((error) => toast.error(error instanceof Error ? error.message : "Failed to load settings"))
+      .finally(() => setLoading(false));
   }, []);
 
   const save = async () => {
     setSaving(true);
-    const { error } = await supabase.from("app_settings").upsert({
-      key: "n8n_webhook_url",
-      value: { url } as any,
-    });
-    setSaving(false);
-    if (error) toast.error(error.message);
-    else toast.success("Saved");
+    try {
+      await apiFetch("/api/admin/settings/n8n", {
+        method: "PUT",
+        body: JSON.stringify({ url }),
+      });
+      toast.success("Saved");
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Failed to save");
+    } finally {
+      setSaving(false);
+    }
   };
 
   const test = async () => {

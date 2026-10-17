@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Card } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { supabase } from "@/integrations/supabase/client";
+import { apiFetch } from "@/lib/cloudflareApi";
 import { useAuth } from "@/hooks/useAuth";
 import { toast } from "sonner";
 import { formatDistanceToNow } from "date-fns";
@@ -20,6 +20,7 @@ type Review = {
   created_at: string;
 };
 
+type ReviewApi = Review & { display_name?: string | null; avatar_url?: string | null };
 type Profile = { id: string; display_name: string | null; avatar_url: string | null };
 
 function Stars({
@@ -66,33 +67,22 @@ export function BookReviews({ bookId }: { bookId: string }) {
   const load = async () => {
     setLoading(true);
     try {
-      const { data, error } = await supabase
-        .from("book_reviews")
-        .select("*")
-        .eq("book_id", bookId)
-        .order("upvote_count", { ascending: false })
-        .order("created_at", { ascending: false })
-        .limit(100);
-      if (error) throw error;
-      const list = (data as Review[]) || [];
+      const payload = await apiFetch<{ data: ReviewApi[]; upvoted: string[] }>(
+        `/api/social/reviews?book_id=${encodeURIComponent(bookId)}`,
+      );
+      const list = payload.data || [];
       setReviews(list);
 
-      const ids = Array.from(new Set(list.map((r) => r.user_id)));
-      if (ids.length) {
-        const { data: ps } = await supabase.from("profiles").select("id,display_name,avatar_url").in("id", ids);
-        const pm: Record<string, Profile> = {};
-        (ps || []).forEach((p: any) => { pm[p.id] = p; });
-        setProfiles(pm);
-      } else setProfiles({});
-
-      if (user && list.length) {
-        const { data: ups } = await supabase
-          .from("review_upvotes")
-          .select("review_id")
-          .eq("user_id", user.id)
-          .in("review_id", list.map((r) => r.id));
-        setUpvoted(new Set((ups || []).map((u: any) => u.review_id)));
-      } else setUpvoted(new Set());
+      const pm: Record<string, Profile> = {};
+      for (const row of list) {
+        pm[row.user_id] = {
+          id: row.user_id,
+          display_name: row.display_name ?? null,
+          avatar_url: row.avatar_url ?? null,
+        };
+      }
+      setProfiles(pm);
+      setUpvoted(new Set(payload.upvoted || []));
     } catch {
       toast.error("Could not load reviews");
     } finally {
@@ -114,14 +104,13 @@ export function BookReviews({ bookId }: { bookId: string }) {
     if (rating < 1) { toast.error("Pick a rating"); return; }
     setPosting(true);
     try {
-      const payload = { book_id: bookId, user_id: user.id, rating, content: content.trim() };
-      const { error } = await supabase
-        .from("book_reviews")
-        .upsert(payload, { onConflict: "book_id,user_id" });
-      if (error) throw error;
+      await apiFetch<{ data: Review }>("/api/social/reviews", {
+        method: "POST",
+        body: JSON.stringify({ book_id: bookId, rating, content: content.trim() }),
+      });
       toast.success(myReview ? "Review updated" : "Review posted");
       setEditing(false);
-      load();
+      await load();
     } catch (e: any) {
       toast.error(e.message || "Could not save review");
     } finally {
@@ -132,28 +121,35 @@ export function BookReviews({ bookId }: { bookId: string }) {
   const remove = async () => {
     if (!user || !myReview) return;
     if (!confirm("Delete your review?")) return;
-    const { error } = await supabase.from("book_reviews").delete().eq("id", myReview.id);
-    if (error) { toast.error("Delete failed"); return; }
-    setRating(0); setContent(""); setEditing(false); load();
+    try {
+      await apiFetch<{ ok: boolean }>("/api/social/reviews", {
+        method: "DELETE",
+        body: JSON.stringify({ id: myReview.id }),
+      });
+      setRating(0); setContent(""); setEditing(false); await load();
+    } catch {
+      toast.error("Delete failed");
+    }
   };
 
   const toggleUpvote = async (r: Review) => {
     if (!user) { navigate("/auth"); return; }
     if (r.user_id === user.id) { toast.info("Apni review upvote nahi kar sakte"); return; }
     const has = upvoted.has(r.id);
-    // optimistic
     setUpvoted((p) => { const n = new Set(p); has ? n.delete(r.id) : n.add(r.id); return n; });
     setReviews((p) => p.map((x) => x.id === r.id ? { ...x, upvote_count: Math.max(0, x.upvote_count + (has ? -1 : 1)) } : x));
     try {
-      if (has) {
-        const { error } = await supabase.from("review_upvotes").delete().eq("review_id", r.id).eq("user_id", user.id);
-        if (error) throw error;
-      } else {
-        const { error } = await supabase.from("review_upvotes").insert({ review_id: r.id, user_id: user.id });
-        if (error) throw error;
-      }
+      const result = await apiFetch<{ active: boolean; count: number }>("/api/social/review-upvote", {
+        method: "POST",
+        body: JSON.stringify({ review_id: r.id, active: !has }),
+      });
+      setUpvoted((p) => {
+        const n = new Set(p);
+        result.active ? n.add(r.id) : n.delete(r.id);
+        return n;
+      });
+      setReviews((p) => p.map((x) => x.id === r.id ? { ...x, upvote_count: result.count } : x));
     } catch {
-      // revert
       setUpvoted((p) => { const n = new Set(p); has ? n.add(r.id) : n.delete(r.id); return n; });
       setReviews((p) => p.map((x) => x.id === r.id ? { ...x, upvote_count: Math.max(0, x.upvote_count + (has ? 1 : -1)) } : x));
       toast.error("Upvote failed");

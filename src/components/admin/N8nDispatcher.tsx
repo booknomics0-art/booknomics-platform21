@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
-import { supabase } from "@/integrations/supabase/client";
+import { apiFetch } from "@/lib/cloudflareApi";
+import { adminGetBook, adminGetBookAssets } from "@/lib/adminApi";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
@@ -28,14 +29,21 @@ export function N8nDispatcher({ bookId }: { bookId: string }) {
   const [sending, setSending] = useState(false);
 
   useEffect(() => {
+    let active = true;
     (async () => {
-      const [{ data: b }, { data: a }] = await Promise.all([
-        supabase.from("books").select("id,title,author,slug,tagline,overview,meta_title,meta_description").eq("id", bookId).maybeSingle(),
-        supabase.from("book_assets").select("audio_url,mindmap_url").eq("book_id", bookId).maybeSingle(),
-      ]);
-      setBook(b);
-      setAssets(a);
+      try {
+        const [b, a] = await Promise.all([
+          adminGetBook<any>(bookId),
+          adminGetBookAssets<any>(bookId),
+        ]);
+        if (!active) return;
+        setBook(b);
+        setAssets(a);
+      } catch (error) {
+        if (active) toast.error(error instanceof Error ? error.message : "Could not load distribution data");
+      }
     })();
+    return () => { active = false; };
   }, [bookId]);
 
   const toggle = (id: string) =>
@@ -43,17 +51,23 @@ export function N8nDispatcher({ bookId }: { bookId: string }) {
 
   const generateCaptions = async () => {
     setAiBusy(true);
-    const { data, error } = await supabase.functions.invoke("seo-marketing", {
-      body: { book_id: bookId, mode: "captions" },
-    });
-    setAiBusy(false);
-    if (error || data?.error) return toast.error(error?.message || data?.error);
-    setCaptions({
-      linkedin: data?.linkedin ?? "",
-      instagram: data?.instagram ?? "",
-      twitter: data?.twitter ?? "",
-    });
-    toast.success("Captions generated");
+    try {
+      const data = await apiFetch<{ linkedin?: string; instagram?: string; twitter?: string; error?: string }>("/api/admin/ai/seo-marketing", {
+        method: "POST",
+        body: JSON.stringify({ book_id: bookId, mode: "captions" }),
+      });
+      if (data?.error) return toast.error(data.error);
+      setCaptions({
+        linkedin: data?.linkedin ?? "",
+        instagram: data?.instagram ?? "",
+        twitter: data?.twitter ?? "",
+      });
+      toast.success("Captions generated");
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Caption generation failed");
+    } finally {
+      setAiBusy(false);
+    }
   };
 
   const publish = async () => {
@@ -75,13 +89,10 @@ export function N8nDispatcher({ bookId }: { bookId: string }) {
     };
 
     try {
-      const { data, error } = await supabase.functions.invoke("dispatch-n8n", {
-        body: { book_id: book.id, book_title: book.title, platforms: selected, payload },
+      const data = await apiFetch<{ ok?: boolean; status?: number; error?: string }>("/api/admin/dispatch-n8n", {
+        method: "POST",
+        body: JSON.stringify({ book_id: book.id, book_title: book.title, platforms: selected, payload }),
       });
-      if (error) {
-        toast.error(error.message || "Dispatch failed");
-        return;
-      }
       if (data?.error) {
         toast.error(data.error);
         return;

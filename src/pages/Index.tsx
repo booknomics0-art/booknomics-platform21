@@ -6,7 +6,7 @@ import { BookCard, BookCover, type BookCardData } from "@/components/BookCard";
 import { Button } from "@/components/ui/button";
 import { SEO } from "@/components/SEO";
 import { GlobalSearch } from "@/components/GlobalSearch";
-import { supabase } from "@/integrations/supabase/client";
+import { apiFetch } from "@/lib/cloudflareApi";
 import { SocialConnect } from "@/components/SocialConnect";
 import { HomepageHero } from "@/components/HomepageHero";
 
@@ -30,6 +30,25 @@ const MOST_READABLE_SLUGS = [
   "how-to-win-friends-and-influence-people-dale-carnegie-summary",
   "the-power-of-habit-charles-duhigg-summary",
 ] as const;
+
+type ApiBook = BookCardData & { seo_slug?: string | null; created_at?: string };
+
+const normalizeBook = (book: ApiBook): BookCardData => ({
+  ...book,
+  slug: book.seo_slug || book.slug,
+});
+
+const fetchBookBySlug = async (slug: string): Promise<BookCardData | null> => {
+  try {
+    const payload = await apiFetch<{ data: ApiBook[] }>(
+      `/api/books?q=${encodeURIComponent(slug)}&limit=20&offset=0&sort=az`,
+    );
+    const match = (payload.data ?? []).find((row) => row.slug === slug || row.seo_slug === slug);
+    return match ? normalizeBook(match) : null;
+  } catch {
+    return null;
+  }
+};
 
 const Index = () => {
   const [heroBooks, setHeroBooks] = useState<BookCardData[]>([]);
@@ -56,46 +75,20 @@ const Index = () => {
 
   useEffect(() => {
     let cancelled = false;
-    (async () => {
-      const fields = "id,slug,title,author,category,cover_color,cover_url,tagline,rating,reading_time";
 
-      const [{ data: hero }, { data: feat }, { data: pop }] = await Promise.all([
-        supabase
-          .from("books")
-          .select(fields)
-          .eq("is_draft", false)
-          .eq("status", "published")
-          .in("slug", [...HERO_SLUGS]),
-        supabase
-          .from("books")
-          .select(fields)
-          .eq("is_draft", false)
-          .eq("status", "published")
-          .not("cover_url", "is", null)
-          .in("slug", [...MOST_READABLE_SLUGS]),
-        supabase
-          .from("books")
-          .select(fields)
-          .eq("is_draft", false)
-          .eq("status", "published")
-          .not("cover_url", "is", null)
-          .order("created_at", { ascending: false })
-          .limit(8),
+    (async () => {
+      const [hero, feat, pop] = await Promise.all([
+        Promise.all(HERO_SLUGS.map((slug) => fetchBookBySlug(slug))),
+        Promise.all(MOST_READABLE_SLUGS.map((slug) => fetchBookBySlug(slug))),
+        apiFetch<{ data: ApiBook[] }>("/api/books?sort=latest&limit=8&offset=0").catch(() => ({ data: [] })),
       ]);
 
       if (cancelled) return;
-      const heroRows = (hero ?? []) as BookCardData[];
-      const heroOrder = new Map<string, number>(HERO_SLUGS.map((slug, index) => [slug, index]));
-      heroRows.sort((a, b) => (heroOrder.get(a.slug) ?? 99) - (heroOrder.get(b.slug) ?? 99));
-
-      const featuredRows = (feat ?? []) as BookCardData[];
-      const featuredOrder = new Map<string, number>(MOST_READABLE_SLUGS.map((slug, index) => [slug, index]));
-      featuredRows.sort((a, b) => (featuredOrder.get(a.slug) ?? 99) - (featuredOrder.get(b.slug) ?? 99));
-
-      setHeroBooks(heroRows);
-      setFeatured(featuredRows);
-      setPopular((pop ?? []) as BookCardData[]);
+      setHeroBooks(hero.filter((book): book is BookCardData => Boolean(book)));
+      setFeatured(feat.filter((book): book is BookCardData => Boolean(book)));
+      setPopular((pop.data ?? []).map(normalizeBook));
     })();
+
     return () => { cancelled = true; };
   }, []);
 

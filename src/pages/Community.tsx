@@ -3,22 +3,19 @@ import { Link } from "react-router-dom";
 import { Layout } from "@/components/Layout";
 import { Card } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { MessageSquare, ThumbsUp, Trophy, Flame, TrendingUp, Sparkles, Loader2 } from "lucide-react";
+import { MessageSquare, ThumbsUp, Trophy, Sparkles, Loader2 } from "lucide-react";
 import { SEO } from "@/components/SEO";
-import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
+import { apiFetch } from "@/lib/cloudflareApi";
 
 type Top = { user_id: string; display_name: string | null; avatar_url: string | null; total_points: number; books_completed: number; comments_count: number; streak_count: number };
 type FeedItem = { id: string; kind: "question" | "reply" | "completed"; user_id: string; created_at: string; question?: string; content?: string; book?: { slug: string; title: string } | null };
 type Trending = { id: string; question: string; helpful_count: number; reply_count: number; book_id: string; book?: { slug: string; title: string } | null };
-
-const since = (range: "today" | "week" | "month" | "all") => {
-  const d = new Date();
-  if (range === "today") d.setHours(0, 0, 0, 0);
-  else if (range === "week") d.setDate(d.getDate() - 7);
-  else if (range === "month") d.setDate(d.getDate() - 30);
-  else return null;
-  return d.toISOString();
+type CommunityPayload = {
+  feed: FeedItem[];
+  leaders: Top[];
+  trending: Trending[];
+  mine: { questions: any[]; replies: any[]; rank: number | null };
 };
 
 const Community = () => {
@@ -31,70 +28,30 @@ const Community = () => {
   const [mine, setMine] = useState<{ questions: any[]; replies: any[]; rank: number | null }>({ questions: [], replies: [], rank: null });
   const [loading, setLoading] = useState(true);
 
-  // page title handled via SEO component below
-
   useEffect(() => {
+    let cancelled = false;
+    setLoading(true);
     (async () => {
-      setLoading(true);
-      const [{ data: q }, { data: r }, { data: c }] = await Promise.all([
-        supabase.from("discussions").select("id,user_id,created_at,question,book_id,books(slug,title)").order("created_at", { ascending: false }).limit(10),
-        supabase.from("discussion_replies").select("id,user_id,created_at,content,discussion_id,discussions(book_id,books(slug,title))").order("created_at", { ascending: false }).limit(10),
-        supabase.from("reading_progress").select("user_id,book_id,last_read_at,books(slug,title)").eq("completed", true).order("last_read_at", { ascending: false }).limit(10),
-      ]);
-      const items: FeedItem[] = [
-        ...((q || []) as any[]).map((x) => ({ id: x.id, kind: "question" as const, user_id: x.user_id, created_at: x.created_at, question: x.question, book: x.books })),
-        ...((r || []) as any[]).map((x) => ({ id: x.id, kind: "reply" as const, user_id: x.user_id, created_at: x.created_at, content: x.content, book: x.discussions?.books })),
-        ...((c || []) as any[]).map((x) => ({ id: `${x.user_id}-${x.book_id}`, kind: "completed" as const, user_id: x.user_id, created_at: x.last_read_at, book: x.books })),
-      ].sort((a, b) => +new Date(b.created_at) - +new Date(a.created_at)).slice(0, 25);
-      setFeed(items);
-      setLoading(false);
-    })();
-  }, []);
-
-  useEffect(() => {
-    (async () => {
-      const cutoff = since(range);
-      let query = (supabase as any).from("leaderboard_view").select("*").order("total_points", { ascending: false }).limit(20);
-      if (cutoff) {
-        // Period-scoped totals
-        const { data: pts } = await supabase.from("community_points").select("user_id, points").gte("created_at", cutoff);
-        const totals = new Map<string, number>();
-        (pts || []).forEach((p: any) => totals.set(p.user_id, (totals.get(p.user_id) || 0) + p.points));
-        const ids = [...totals.keys()];
-        if (ids.length === 0) { setLeaders([]); return; }
-        const { data: users } = await (supabase as any).from("leaderboard_view").select("*").in("user_id", ids);
-        const ranked = ((users || []) as Top[])
-          .map((u) => ({ ...u, total_points: totals.get(u.user_id) || 0 }))
-          .sort((a, b) => b.total_points - a.total_points).slice(0, 20);
-        setLeaders(ranked);
-        return;
+      try {
+        const payload = await apiFetch<CommunityPayload>(`/api/community?range=${encodeURIComponent(range)}`);
+        if (cancelled) return;
+        setFeed(payload.feed ?? []);
+        setLeaders(payload.leaders ?? []);
+        setTrending(payload.trending ?? []);
+        setMine(payload.mine ?? { questions: [], replies: [], rank: null });
+      } catch (error) {
+        if (cancelled) return;
+        console.error("[Community] Cloudflare data load failed", error);
+        setFeed([]);
+        setLeaders([]);
+        setTrending([]);
+        setMine({ questions: [], replies: [], rank: null });
+      } finally {
+        if (!cancelled) setLoading(false);
       }
-      const { data } = await query;
-      setLeaders((data as Top[]) || []);
     })();
-  }, [range]);
-
-  useEffect(() => {
-    (async () => {
-      const { data } = await supabase
-        .from("discussions").select("id,question,helpful_count,reply_count,book_id,books(slug,title)")
-        .order("helpful_count", { ascending: false }).limit(10);
-      setTrending((data as any) || []);
-    })();
-  }, []);
-
-  useEffect(() => {
-    if (!user) return;
-    (async () => {
-      const [{ data: qs }, { data: rps }, { data: lb }] = await Promise.all([
-        supabase.from("discussions").select("id,question,created_at,book_id,books(slug,title)").eq("user_id", user.id).order("created_at", { ascending: false }).limit(10),
-        supabase.from("discussion_replies").select("id,content,created_at,discussion_id").eq("user_id", user.id).order("created_at", { ascending: false }).limit(10),
-        (supabase as any).from("leaderboard_view").select("user_id,total_points").order("total_points", { ascending: false }).limit(500),
-      ]);
-      const idx = (lb as any[] || []).findIndex((u) => u.user_id === user.id);
-      setMine({ questions: qs || [], replies: rps || [], rank: idx >= 0 ? idx + 1 : null });
-    })();
-  }, [user]);
+    return () => { cancelled = true; };
+  }, [range, user?.id]);
 
   return (
     <Layout>
@@ -151,7 +108,7 @@ const Community = () => {
                 </button>
               ))}
             </div>
-            {leaders.length === 0 ? <Empty msg="No rankings for this period yet." /> : (
+            {loading ? <Loader2 className="w-5 h-5 animate-spin mx-auto" /> : leaders.length === 0 ? <Empty msg="No rankings for this period yet." /> : (
               <Card className="divide-y divide-border">
                 {leaders.map((u, i) => (
                   <div key={u.user_id} className="flex items-center gap-4 p-4">
@@ -168,7 +125,7 @@ const Community = () => {
           </TabsContent>
 
           <TabsContent value="trending" className="mt-6 space-y-3">
-            {trending.length === 0 ? <Empty msg="No trending discussions yet." /> :
+            {loading ? <Loader2 className="w-5 h-5 animate-spin mx-auto" /> : trending.length === 0 ? <Empty msg="No trending discussions yet." /> :
               trending.map((t) => (
                 <Card key={t.id} className="p-4">
                   <h3 className="font-serif text-lg font-semibold leading-snug mb-1">{t.question}</h3>
@@ -183,7 +140,7 @@ const Community = () => {
           </TabsContent>
 
           <TabsContent value="mine" className="mt-6">
-            {!user ? <Empty msg="Sign in to see your activity." /> : (
+            {!user ? <Empty msg="Sign in to see your activity." /> : loading ? <Loader2 className="w-5 h-5 animate-spin mx-auto" /> : (
               <div className="space-y-6">
                 <Card className="p-5 bg-gradient-to-br from-primary/5 to-amber-100/20">
                   <div className="text-[10px] tracking-[0.2em] uppercase text-primary font-semibold mb-1">Your Rank</div>

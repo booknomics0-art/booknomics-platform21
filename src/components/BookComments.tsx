@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Card } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { supabase } from "@/integrations/supabase/client";
+import { apiFetch } from "@/lib/cloudflareApi";
 import { useAuth } from "@/hooks/useAuth";
 import { toast } from "sonner";
 import { formatDistanceToNow } from "date-fns";
@@ -29,11 +29,24 @@ type Comment = {
   created_at: string;
 };
 
+type ApiComment = Comment & { display_name?: string | null; avatar_url?: string | null };
+type ReactionRow = { comment_id: string | null; type: string; user_id: string };
 type Profile = { id: string; display_name: string | null; avatar_url: string | null };
-
 type Sort = "latest" | "top" | "helpful";
 
 const MAX_DEPTH = 3;
+
+const normalizeComment = (row: ApiComment): Comment => ({
+  id: row.id,
+  book_id: row.book_id,
+  user_id: row.user_id,
+  parent_comment_id: row.parent_comment_id,
+  content: row.content,
+  helpful_count: Number(row.helpful_count || 0),
+  is_pinned: Boolean(row.is_pinned),
+  is_solved: Boolean(row.is_solved),
+  created_at: row.created_at,
+});
 
 export const BookComments = ({ bookId }: { bookId: string }) => {
   const { user } = useAuth();
@@ -44,55 +57,43 @@ export const BookComments = ({ bookId }: { bookId: string }) => {
   const [text, setText] = useState("");
   const [posting, setPosting] = useState(false);
   const [sort, setSort] = useState<Sort>("latest");
-  // reactionCounts[commentId][type] = count
   const [reactionCounts, setReactionCounts] = useState<Record<string, Record<string, number>>>({});
   const [myReactions, setMyReactions] = useState<Record<string, Set<string>>>({});
 
   const load = async () => {
     setLoading(true);
     try {
-      const { data: cs, error } = await supabase
-        .from("comments")
-        .select("*")
-        .eq("book_id", bookId)
-        .order("created_at", { ascending: false })
-        .limit(200);
-      if (error) throw error;
-      const list = (cs as Comment[]) || [];
+      const payload = await apiFetch<{ data: ApiComment[]; reactions: ReactionRow[] }>(
+        `/api/social/comments?book_id=${encodeURIComponent(bookId)}`,
+      );
+      const rows = payload.data || [];
+      const list = rows.map(normalizeComment);
       setComments(list);
 
-      const userIds = Array.from(new Set(list.map((c) => c.user_id)));
-      if (userIds.length) {
-        const { data: ps } = await supabase.from("profiles").select("id,display_name,avatar_url").in("id", userIds);
-        const pmap: Record<string, Profile> = {};
-        (ps || []).forEach((p: any) => { pmap[p.id] = p; });
-        setProfiles(pmap);
+      const pmap: Record<string, Profile> = {};
+      for (const row of rows) {
+        pmap[row.user_id] = {
+          id: row.user_id,
+          display_name: row.display_name ?? null,
+          avatar_url: row.avatar_url ?? null,
+        };
       }
+      setProfiles(pmap);
 
-      const ids = list.map((c) => c.id);
-      if (ids.length) {
-        const { data: rx } = await supabase
-          .from("reactions")
-          .select("comment_id,type,user_id")
-          .in("comment_id", ids);
-        const counts: Record<string, Record<string, number>> = {};
-        const mine: Record<string, Set<string>> = {};
-        (rx || []).forEach((r: any) => {
-          if (!r.comment_id) return;
-          counts[r.comment_id] = counts[r.comment_id] || {};
-          counts[r.comment_id][r.type] = (counts[r.comment_id][r.type] || 0) + 1;
-          if (user && r.user_id === user.id) {
-            mine[r.comment_id] = mine[r.comment_id] || new Set();
-            mine[r.comment_id].add(r.type);
-          }
-        });
-        setReactionCounts(counts);
-        setMyReactions(mine);
-      } else {
-        setReactionCounts({});
-        setMyReactions({});
+      const counts: Record<string, Record<string, number>> = {};
+      const mine: Record<string, Set<string>> = {};
+      for (const reaction of payload.reactions || []) {
+        if (!reaction.comment_id) continue;
+        counts[reaction.comment_id] = counts[reaction.comment_id] || {};
+        counts[reaction.comment_id][reaction.type] = (counts[reaction.comment_id][reaction.type] || 0) + 1;
+        if (user && reaction.user_id === user.id) {
+          mine[reaction.comment_id] = mine[reaction.comment_id] || new Set();
+          mine[reaction.comment_id].add(reaction.type);
+        }
       }
-    } catch (e: any) {
+      setReactionCounts(counts);
+      setMyReactions(mine);
+    } catch {
       toast.error("Could not load discussions");
     } finally {
       setLoading(false);
@@ -106,19 +107,18 @@ export const BookComments = ({ bookId }: { bookId: string }) => {
     if (content.trim().length < 2) { toast.error("Thoda aur likho"); return; }
     if (parentId === null) setPosting(true);
     try {
-      const { data, error } = await supabase
-        .from("comments")
-        .insert({ book_id: bookId, user_id: user.id, parent_comment_id: parentId, content: content.trim() })
-        .select("*")
-        .single();
-      if (error) throw error;
-      setComments((p) => [data as Comment, ...p]);
+      const result = await apiFetch<{ data: ApiComment }>("/api/social/comments", {
+        method: "POST",
+        body: JSON.stringify({ book_id: bookId, parent_comment_id: parentId, content: content.trim() }),
+      });
+      setComments((p) => [normalizeComment(result.data), ...p]);
       if (!profiles[user.id]) {
-        const { data: p } = await supabase.from("profiles").select("id,display_name,avatar_url").eq("id", user.id).maybeSingle();
-        if (p) setProfiles((prev) => ({ ...prev, [user.id]: p as Profile }));
+        const profilePayload = await apiFetch<{ data: Profile[] }>(`/api/social/profiles?id=${encodeURIComponent(user.id)}`);
+        const profile = profilePayload.data?.[0];
+        if (profile) setProfiles((prev) => ({ ...prev, [user.id]: profile }));
       }
       onDone?.();
-    } catch (e: any) {
+    } catch {
       toast.error("Comment could not be posted");
     } finally {
       if (parentId === null) setPosting(false);
@@ -129,7 +129,6 @@ export const BookComments = ({ bookId }: { bookId: string }) => {
     if (!user) { navigate("/auth"); return; }
     const has = myReactions[commentId]?.has(type) || false;
 
-    // Optimistic
     setMyReactions((p) => {
       const next = { ...p };
       const set = new Set(next[commentId] || []);
@@ -148,19 +147,25 @@ export const BookComments = ({ bookId }: { bookId: string }) => {
     }
 
     try {
-      if (has) {
-        const { error } = await supabase
-          .from("reactions").delete()
-          .eq("user_id", user.id).eq("comment_id", commentId).eq("type", type);
-        if (error) throw error;
-      } else {
-        // book_id is required NOT NULL on the table
-        const { error } = await supabase
-          .from("reactions").insert({ user_id: user.id, book_id: bookId, comment_id: commentId, type });
-        if (error) throw error;
+      const result = await apiFetch<{ active: boolean; count: number }>("/api/social/comment-reaction", {
+        method: "POST",
+        body: JSON.stringify({ book_id: bookId, comment_id: commentId, type, active: !has }),
+      });
+      setMyReactions((p) => {
+        const next = { ...p };
+        const set = new Set(next[commentId] || []);
+        result.active ? set.add(type) : set.delete(type);
+        next[commentId] = set;
+        return next;
+      });
+      setReactionCounts((p) => ({
+        ...p,
+        [commentId]: { ...(p[commentId] || {}), [type]: result.count },
+      }));
+      if (type === "helpful") {
+        setComments((p) => p.map((c) => c.id === commentId ? { ...c, helpful_count: result.count } : c));
       }
-    } catch (e: any) {
-      // Revert
+    } catch {
       setMyReactions((p) => {
         const next = { ...p };
         const set = new Set(next[commentId] || []);
@@ -181,7 +186,6 @@ export const BookComments = ({ bookId }: { bookId: string }) => {
     }
   };
 
-  // Build tree
   const { roots, childrenMap } = useMemo(() => {
     const childrenMap: Record<string, Comment[]> = {};
     const roots: Comment[] = [];
@@ -192,14 +196,11 @@ export const BookComments = ({ bookId }: { bookId: string }) => {
         roots.push(c);
       }
     });
-    // Sort children oldest-first for natural reading
     Object.keys(childrenMap).forEach((k) => childrenMap[k].sort((a, b) => +new Date(a.created_at) - +new Date(b.created_at)));
-    // Sort roots
     const sorter = (a: Comment, b: Comment) => {
       if (a.is_pinned !== b.is_pinned) return a.is_pinned ? -1 : 1;
       if (sort === "latest") return +new Date(b.created_at) - +new Date(a.created_at);
       if (sort === "helpful") return b.helpful_count - a.helpful_count;
-      // top: helpful + replies
       const ar = (childrenMap[a.id]?.length || 0) + a.helpful_count;
       const br = (childrenMap[b.id]?.length || 0) + b.helpful_count;
       return br - ar;

@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
-import { supabase } from "@/integrations/supabase/client";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { apiFetch } from "@/lib/cloudflareApi";
 import { RefreshCw } from "lucide-react";
 
 type Row = {
@@ -22,13 +22,14 @@ export function PromotionHistory() {
 
   const load = async () => {
     setLoading(true);
-    const { data } = await supabase
-      .from("promotion_logs")
-      .select("id,book_id,book_title,platforms,status,http_status,response,created_at")
-      .order("created_at", { ascending: false })
-      .limit(100);
-    setRows((data as Row[]) ?? []);
-    setLoading(false);
+    try {
+      const payload = await apiFetch<{ data: Row[] }>("/api/admin/promotions?limit=100");
+      setRows(payload.data ?? []);
+    } catch {
+      setRows([]);
+    } finally {
+      setLoading(false);
+    }
   };
 
   useEffect(() => { load(); }, []);

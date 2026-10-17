@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { AdminGuard } from "@/components/admin/AdminGuard";
 import { AdminShell } from "@/components/admin/AdminShell";
-import { supabase } from "@/integrations/supabase/client";
+import { adminListBooks } from "@/lib/adminApi";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -31,23 +31,22 @@ function Inner() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    let active = true;
     (async () => {
       const pageSize = 500;
       const rows: Row[] = [];
-      for (let from = 0; ; from += pageSize) {
-        const { data, error } = await supabase
-          .from("books_admin")
-          .select("id,slug,title,author,category,language,is_draft,status,created_at,meta_title,meta_description,og_image,cover_url,tagline,overview,key_ideas,deep_analysis,daily_application,action_system,reflection_questions,affiliate_link")
-          .order("created_at", { ascending: false })
-          .range(from, from + pageSize - 1);
-        if (error) break;
-        const batch = (data ?? []) as unknown as Row[];
-        rows.push(...batch);
-        if (batch.length < pageSize) break;
+      try {
+        for (let from = 0; ; from += pageSize) {
+          const batch = await adminListBooks<Row>({ view: "full", limit: pageSize, offset: from });
+          rows.push(...batch);
+          if (batch.length < pageSize) break;
+        }
+        if (active) setBooks(rows);
+      } finally {
+        if (active) setLoading(false);
       }
-      setBooks(rows);
-      setLoading(false);
     })();
+    return () => { active = false; };
   }, []);
 
   const scored = useMemo(() => books.map(b => {

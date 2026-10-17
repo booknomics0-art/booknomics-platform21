@@ -5,7 +5,7 @@ import { AdminShell } from "@/components/admin/AdminShell";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { supabase } from "@/integrations/supabase/client";
+import { adminListBookRequests, adminUpdateBookRequestStatus } from "@/lib/adminApi";
 import { toast } from "sonner";
 
 type Row = {
@@ -51,22 +51,18 @@ function DemandInner() {
     setLoading(true);
     const out: Row[] = [];
     const pageSize = 500;
-    for (let from = 0; ; from += pageSize) {
-      const { data, error } = await supabase
-        .from("book_requests")
-        .select("id,title,author,language,reason,status,created_at")
-        .order("created_at", { ascending: false })
-        .range(from, from + pageSize - 1);
-      if (error) {
-        setLoading(false);
-        return toast.error(error.message);
+    try {
+      for (let from = 0; ; from += pageSize) {
+        const batch = await adminListBookRequests<Row>(pageSize, from);
+        out.push(...batch);
+        if (batch.length < pageSize) break;
       }
-      const batch = (data ?? []) as Row[];
-      out.push(...batch);
-      if (batch.length < pageSize) break;
+      setRows(out);
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Could not load reader demand");
+    } finally {
+      setLoading(false);
     }
-    setRows(out);
-    setLoading(false);
   };
 
   useEffect(() => { void load(); }, []);
@@ -99,11 +95,15 @@ function DemandInner() {
 
   const setStatus = async (g: Group, status: "planned" | "in_progress" | "published") => {
     setBusyKey(g.key);
-    const { error } = await supabase.from("book_requests").update({ status }).in("id", g.ids);
-    setBusyKey(null);
-    if (error) return toast.error(error.message);
-    toast.success(`${g.title}: ${status.replace("_", " ")}`);
-    await load();
+    try {
+      await adminUpdateBookRequestStatus(g.ids, status);
+      toast.success(`${g.title}: ${status.replace("_", " ")}`);
+      await load();
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Could not update demand status");
+    } finally {
+      setBusyKey(null);
+    }
   };
 
   const unique = groups.length;

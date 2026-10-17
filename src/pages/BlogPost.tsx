@@ -5,7 +5,7 @@ import remarkGfm from "remark-gfm";
 import { Layout } from "@/components/Layout";
 import { SEO } from "@/components/SEO";
 import { getBlogPost, BLOG_POSTS } from "@/content/blog";
-import { supabase } from "@/integrations/supabase/client";
+import { apiFetch } from "@/lib/cloudflareApi";
 import { BookCard, type BookCardData } from "@/components/BookCard";
 import { Clock, ArrowLeft } from "lucide-react";
 
@@ -18,13 +18,9 @@ const BlogPost = () => {
 
   useEffect(() => {
     if (!post) return;
-    supabase
-      .from("books")
-      .select("id,slug,title,author,category,cover_color,cover_url,tagline,rating,reading_time")
-      .eq("is_draft", false)
-      .ilike("category", post.category)
-      .limit(3)
-      .then(({ data }) => setRelated((data ?? []) as any));
+    apiFetch<{ data: BookCardData[] }>(`/api/catalog/books?category=${encodeURIComponent(post.category)}&limit=3`)
+      .then(({ data }) => setRelated(data ?? []))
+      .catch(() => setRelated([]));
   }, [post]);
 
   if (!post) return <Navigate to="/blog" replace />;

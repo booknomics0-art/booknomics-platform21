@@ -1,6 +1,6 @@
 import { useEffect, useState, useCallback } from "react";
-import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
+import { apiFetch } from "@/lib/cloudflareApi";
 
 export type Tier = "free" | "weekly" | "monthly" | "quarterly";
 
@@ -32,10 +32,19 @@ export function useTier() {
   const [loading, setLoading] = useState(true);
 
   const refresh = useCallback(async () => {
-    if (!user) { setDbTier("free"); setLoading(false); return; }
-    const { data } = await supabase.rpc("my_active_tier");
-    setDbTier(((data as Tier) ?? "free") as Tier);
-    setLoading(false);
+    if (!user) {
+      setDbTier("free");
+      setLoading(false);
+      return;
+    }
+    try {
+      const data = await apiFetch<{ tier: Tier }>("/api/me/tier");
+      setDbTier(data.tier || "free");
+    } catch {
+      setDbTier("free");
+    } finally {
+      setLoading(false);
+    }
   }, [user]);
 
   useEffect(() => {
