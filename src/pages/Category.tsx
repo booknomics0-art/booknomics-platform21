@@ -28,6 +28,7 @@ const CATEGORY_INTROS: Record<string, string> = {
 };
 
 const SITE = "https://www.booknomics.com";
+const CATALOG_BATCH_SIZE = 500;
 
 const CATEGORY_ALIASES: Record<string, string> = {
   "self-help": "Personal Development",
@@ -35,6 +36,7 @@ const CATEGORY_ALIASES: Record<string, string> = {
 };
 
 type CatalogRow = {
+  id: string;
   category: string | null;
   status: string | null;
   title: string | null;
@@ -77,39 +79,64 @@ const Category = () => {
 
   useEffect(() => {
     if (!category) return;
+    let cancelled = false;
+    setResolved(undefined);
+    setCount(0);
     setPickTargets({});
 
-    supabase.from("books").select("category,status,title,slug,seo_slug")
-      .eq("is_draft", false)
-      .in("status", ["published", "published_noindex"])
-      .then(({ data }) => {
-        const rows = (data ?? []) as CatalogRow[];
-        const all = rows.map((r) => r.category).filter(Boolean) as string[];
-        const cats = Array.from(new Set(all));
-        const requestedSlug = category.toLowerCase();
-        const alias = CATEGORY_ALIASES[requestedSlug];
-        const match = alias && cats.includes(alias)
-          ? alias
-          : cats.find((c) => slugifyCategory(String(c)) === requestedSlug);
+    (async () => {
+      const rows: CatalogRow[] = [];
 
-        setResolved(match ?? null);
-        if (match) {
-          setCount(rows.filter((r) => r.category === match && r.status === "published").length);
-        } else {
-          setCount(0);
+      // Supabase/PostgREST caps a single response, while Booknomics has a
+      // multi-thousand-book catalog. Fetch in deterministic batches so every
+      // category can resolve instead of only categories present in the first
+      // response window.
+      for (let from = 0; ; from += CATALOG_BATCH_SIZE) {
+        const { data, error } = await supabase
+          .from("books")
+          .select("id,category,status,title,slug,seo_slug")
+          .eq("is_draft", false)
+          .in("status", ["published", "published_noindex"])
+          .order("id")
+          .range(from, from + CATALOG_BATCH_SIZE - 1);
+
+        if (cancelled) return;
+        if (error) {
+          console.error("Category catalog fetch failed", error);
+          setResolved(null);
+          return;
         }
 
-        // categoryContent stores editorial labels, not permanent database IDs.
-        // Resolve every curated pick to today's indexable seo_slug at runtime so
-        // slug migrations cannot silently turn high-authority category links into 404s.
-        const editorial = getCategoryContent(requestedSlug);
-        const nextTargets: Record<string, string> = {};
-        for (const pick of editorial?.picks ?? []) {
-          const target = resolvePublishedPick(pick.label, rows);
-          if (target) nextTargets[pick.slug] = target;
-        }
-        setPickTargets(nextTargets);
-      });
+        const batch = (data ?? []) as CatalogRow[];
+        rows.push(...batch);
+        if (batch.length < CATALOG_BATCH_SIZE) break;
+      }
+
+      if (cancelled) return;
+
+      const cats = Array.from(new Set(rows.map((r) => r.category).filter(Boolean) as string[]));
+      const requestedSlug = category.toLowerCase();
+      const alias = CATEGORY_ALIASES[requestedSlug];
+      const match = alias && cats.includes(alias)
+        ? alias
+        : cats.find((c) => slugifyCategory(String(c)) === requestedSlug);
+
+      setResolved(match ?? null);
+      setCount(match ? rows.filter((r) => r.category === match && r.status === "published").length : 0);
+
+      // categoryContent stores editorial labels, not permanent database IDs.
+      // Resolve every curated pick against the complete published catalog so a
+      // result cannot disappear just because it lives after the API row cap.
+      const editorial = getCategoryContent(requestedSlug);
+      const nextTargets: Record<string, string> = {};
+      for (const pick of editorial?.picks ?? []) {
+        const target = resolvePublishedPick(pick.label, rows);
+        if (target) nextTargets[pick.slug] = target;
+      }
+      setPickTargets(nextTargets);
+    })();
+
+    return () => { cancelled = true; };
   }, [category]);
 
   if (!category) return <Navigate to="/browse" replace />;
@@ -133,8 +160,8 @@ const Category = () => {
     : `${resolved} Book Summaries — Best Books on ${resolved} | Booknomics`;
   const rawDesc = content?.description ?? intro;
   const description = rawDesc.length > 160 ? rawDesc.slice(0, 157) + "…" : rawDesc;
-  const canonical = `${SITE}/category/${slug}`;
-  const isHindi = slug === "hindi" || slug === "hindi-literature" || slug === "spiritual";
+  const canonical = `${SITE}/category/${encodeURI(slug)}`;
+  const isHindi = /[\u0900-\u097F]/.test(resolved) || slug === "hindi" || slug === "hindi-literature";
 
   const collectionLd = {
     "@context": "https://schema.org",
