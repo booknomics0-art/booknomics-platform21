@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { SEO } from "@/components/SEO";
 import { supabase } from "@/integrations/supabase/client";
+import { getPublicCategoryInfo } from "@/lib/publicCategoryDirectory";
 import { trackSearch } from "@/lib/analytics";
 
 const FEATURED_HINDI_BOOKS = [
@@ -33,28 +34,12 @@ const Hindi = () => {
   const [debouncedQuery, setDebouncedQuery] = useState(query);
   const category = params.get("category") ?? "सभी";
 
+  // Fetch unique Hindi categories as a compact directory, not 4 serial pages.
   useEffect(() => {
     let cancelled = false;
-    (async () => {
-      const values = new Set<string>();
-      const batchSize = 500;
-      for (let from = 0; ; from += batchSize) {
-        const { data, error } = await supabase
-          .from("books")
-          .select("category")
-          .eq("language", "hi")
-          .eq("is_draft", false)
-          .eq("status", "published")
-          .order("category")
-          .range(from, from + batchSize - 1);
-        if (error || cancelled) return;
-        const batch = data ?? [];
-        batch.forEach((row: any) => { if (row.category) values.add(row.category); });
-        if (batch.length < batchSize) break;
-      }
-      if (!cancelled) setCategories(Array.from(values).sort());
-    })();
-
+    getPublicCategoryInfo({ language: "hi", publishedOnly: true })
+      .then((result) => { if (!cancelled) setCategories(result.categories); })
+      .catch((error) => { if (!cancelled) console.error("Hindi category filters unavailable", error); });
     return () => { cancelled = true; };
   }, []);
 

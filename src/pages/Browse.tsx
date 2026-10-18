@@ -9,6 +9,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { SEO } from "@/components/SEO";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { supabase } from "@/integrations/supabase/client";
+import { getPublicCategoryInfo } from "@/lib/publicCategoryDirectory";
 import { trackSearch } from "@/lib/analytics";
 import { slugifyCategory } from "@/lib/categorySlug";
 import { AdBanner } from "@/components/AdBanner";
@@ -58,29 +59,13 @@ const Browse = ({ categoryFilter, titleOverride, introText, skipSeo, aboveConten
   const sort = (params.get("sort") as SortKey) || "az";
   const page = Math.max(1, parseInt(params.get("page") ?? "1", 10) || 1);
 
-  // Fetch only the small category column in batches. This keeps the filter
-  // complete even after the catalog grows beyond Supabase's 1,000-row cap.
+  // One compact public RPC instead of 11 sequential 500-row catalog reads.
   useEffect(() => {
     if (categoryFilter) return;
     let cancelled = false;
-    (async () => {
-      const values = new Set<string>();
-      const batchSize = 500;
-      for (let from = 0; ; from += batchSize) {
-        const { data, error } = await supabase
-          .from("books")
-          .select("category")
-          .eq("is_draft", false)
-          .in("status", ["published", "published_noindex"])
-          .order("category")
-          .range(from, from + batchSize - 1);
-        if (error || cancelled) return;
-        const batch = data ?? [];
-        batch.forEach((row: any) => { if (row.category) values.add(row.category); });
-        if (batch.length < batchSize) break;
-      }
-      if (!cancelled) setCategories(Array.from(values).sort());
-    })();
+    getPublicCategoryInfo()
+      .then((result) => { if (!cancelled) setCategories(result.categories); })
+      .catch((error) => { if (!cancelled) console.error("Browse category filters unavailable", error); });
     return () => { cancelled = true; };
   }, [categoryFilter]);
 
