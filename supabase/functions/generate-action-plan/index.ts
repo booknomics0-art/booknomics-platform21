@@ -89,6 +89,12 @@ Deno.serve(async (req) => {
       return new Response(JSON.stringify({ error: "Book not found" }), { status: 404, headers: { ...corsHeaders(req), "Content-Type": "application/json" } });
     }
 
+    // Shared atomic limiter: applies across warm instances after premium checks.
+    const { data: sharedAllowed, error: sharedLimitError } = await supabase.rpc("consume_security_rate_limit",
+      { _key: `action-plan:${userId}`, _max_requests: 10, _window_seconds: 3600 });
+    if (sharedLimitError) console.error("Shared action-plan limiter unavailable", sharedLimitError.message);
+    else if (sharedAllowed !== true) return rateLimitedResponse(req, 3600);
+
     const isHindi = book.language === "hi";
 
     if (!force && book.action_system && book.practice_tracker && book.reflection_questions && (!isHindi || book.real_life_example)) {

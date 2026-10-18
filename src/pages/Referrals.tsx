@@ -24,11 +24,9 @@ export default function Referrals() {
     if (!user) { navigate("/auth"); return; }
     (async () => {
       setLoading(true);
-      const { data: p } = await supabase
-        .from("profiles")
-        .select("referral_code")
-        .eq("id", user.id)
-        .maybeSingle();
+      // Referral codes are no longer readable from the public profiles table.
+      // The RPC returns private attributes only for the logged-in account.
+      const { data: p } = await (supabase as any).rpc("get_my_profile_extras");
       setCode((p as any)?.referral_code || null);
       const { count: c } = await supabase
         .from("referrals")
