@@ -222,14 +222,9 @@ const BookDetail = () => {
           return;
         }
 
+        // Publish the public summary immediately; a premium RPC should never
+        // keep the entire book stuck on the loading screen.
         setBook(data as unknown as Book);
-        // Public summary sections are fetched above for every visible book.
-        // Premium-only interactive/action fields may still be merged below.
-        const { data: prem, error: premError } = await supabase.rpc("get_premium_summary", { p_book_id: (data as any).id });
-        if (!premError) {
-          const row = Array.isArray(prem) ? prem[0] : prem;
-          if (row) setBook((prev) => (prev ? ({ ...prev, ...row } as Book) : prev));
-        }
       } catch (error) {
         console.error("[BookDetail] load failed", error);
         setBookError(error instanceof Error ? error.message : "Unable to load this book");
@@ -238,6 +233,27 @@ const BookDetail = () => {
       }
     })();
   }, [slug, navigate]);
+
+  useEffect(() => {
+    if (!book?.id) return;
+    const bookId = book.id;
+    let cancelled = false;
+    // Premium sections enhance the page asynchronously; public reading remains
+    // usable even if this optional call is slow or fails.
+    void (async () => {
+      try {
+        const { data: premium, error } = await supabase.rpc("get_premium_summary", { p_book_id: bookId });
+        if (cancelled || error) return;
+        const row = Array.isArray(premium) ? premium[0] : premium;
+        if (row) {
+          setBook((current) => current?.id === bookId ? ({ ...current, ...row } as Book) : current);
+        }
+      } catch (error) {
+        if (!cancelled) console.error("Optional premium summary load failed", error);
+      }
+    })();
+    return () => { cancelled = true; };
+  }, [book?.id]);
 
   useEffect(() => {
     if (!book) return;
