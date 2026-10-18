@@ -6,7 +6,7 @@ const INDEX = resolve(DIST, "index.html");
 const BASE = "https://www.booknomics.com";
 const SUPABASE_URL = process.env.VITE_SUPABASE_URL?.trim();
 const SUPABASE_KEY = process.env.VITE_SUPABASE_PUBLISHABLE_KEY?.trim();
-const PAGE_SIZE = 250;
+const PAGE_SIZE = 100;
 
 if (!SUPABASE_URL || !SUPABASE_KEY) {
   throw new Error("prerender-en-crawl: missing VITE_SUPABASE_URL or VITE_SUPABASE_PUBLISHABLE_KEY");
@@ -88,43 +88,64 @@ function writeRoute(pathname, html) {
 }
 
 async function api(path) {
-  const response = await fetch(`${SUPABASE_URL}/rest/v1/${path}`, {
-    headers: {
-      apikey: SUPABASE_KEY,
-      Authorization: `Bearer ${SUPABASE_KEY}`,
-      Accept: "application/json",
-    },
-    signal: AbortSignal.timeout(20000),
-  });
-  if (!response.ok) throw new Error(`prerender-en-crawl: Supabase ${response.status} ${await response.text()}`);
-  return response.json();
+  // Transient Supabase timeouts should not abort the entire SEO deployment.
+  let lastError;
+  for (let attempt = 0; attempt < 3; attempt++) {
+    try {
+      const response = await fetch(`${SUPABASE_URL}/rest/v1/${path}`, {
+        headers: {
+          apikey: SUPABASE_KEY,
+          Authorization: `Bearer ${SUPABASE_KEY}`,
+          Accept: "application/json",
+        },
+        signal: AbortSignal.timeout(20000),
+      });
+      if (!response.ok) {
+        const detail = await response.text();
+        const err = new Error(`prerender-en-crawl: Supabase ${response.status} ${detail}`);
+        if (response.status !== 500 && response.status !== 502 && response.status !== 503 && response.status !== 504 && response.status !== 429) throw err;
+        lastError = err;
+      } else {
+        return response.json();
+      }
+    } catch (error) {
+      lastError = error;
+      if (String(error?.message || "").includes("Supabase 4")) throw error;
+    }
+    if (attempt < 2) await new Promise(resolve => setTimeout(resolve, 800 * (attempt + 1)));
+  }
+  throw lastError;
 }
 
-async function fetchPaged({ language, statuses }) {
+async function fetchPaged({ language, statuses, select }) {
   const rows = [];
-  const select = "id,slug,seo_slug,title,author,category,cover_url,og_image,tagline,overview,key_ideas,deep_analysis,daily_application,meta_title,meta_description,reading_time,rating,year,status,language";
-  for (let offset = 0; ; offset += PAGE_SIZE) {
+  let lastId = "";
+  // UUID keyset pagination avoids increasingly expensive offsets and title-sorts.
+  for (;;) {
     const filters = [
       `select=${select}`,
       "is_draft=eq.false",
       `status=in.(${statuses.join(",")})`,
       language ? `language=eq.${language}` : "",
-      "order=title.asc",
+      "order=id.asc",
       `limit=${PAGE_SIZE}`,
-      `offset=${offset}`,
+      lastId ? `id=gt.${lastId}` : "",
     ].filter(Boolean).join("&");
     const page = await api(`books?${filters}`);
     if (!Array.isArray(page)) throw new Error("prerender-en-crawl: catalog response is not an array");
     rows.push(...page);
     if (page.length < PAGE_SIZE) break;
+    lastId = page[page.length - 1]?.id;
+    if (!lastId) throw new Error("prerender-en-crawl: missing ID in paginated catalog");
   }
-  return rows;
+  return rows.sort((a, b) => String(a.title || "").localeCompare(String(b.title || "")));
 }
 
-const [englishPublic, publishedAll] = await Promise.all([
-  fetchPaged({ language: "en", statuses: ["published", "published_noindex"] }),
-  fetchPaged({ language: null, statuses: ["published"] }),
-]);
+const CATALOG_FIELDS = "id,slug,seo_slug,title,author,category,cover_url,og_image,tagline,meta_title,meta_description,reading_time,rating,year,status,language";
+const ENGLISH_FIELDS = CATALOG_FIELDS + ",overview,key_ideas,deep_analysis,daily_application";
+// Sequential catalog queries reduce pressure on the free Supabase database.
+const publishedAll = await fetchPaged({ language: null, statuses: ["published"], select: CATALOG_FIELDS });
+const englishPublic = await fetchPaged({ language: "en", statuses: ["published", "published_noindex"], select: ENGLISH_FIELDS });
 
 const publishedEnglish = englishPublic.filter((book) => book.status === "published");
 if (publishedEnglish.length < 100) {
