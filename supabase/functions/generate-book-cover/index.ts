@@ -27,6 +27,11 @@ Deno.serve(async (req) => {
     if (!book_id || typeof book_id !== "string" || book_id.length > 64) return new Response(JSON.stringify({ error: "book_id required" }), { status: 400, headers: { ...corsHeaders(req), "Content-Type": "application/json" } });
 
     const admin = createClient(Deno.env.get("SUPABASE_URL")!, Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!);
+    // Shared atomic limiter across all Edge Function instances (after admin auth).
+    const { data: sharedAllowed, error: sharedLimitError } = await admin.rpc("consume_security_rate_limit",
+      { _key: `cover:${user.id}`, _max_requests: 30, _window_seconds: 3600 });
+    if (sharedLimitError) console.error("Shared cover limiter unavailable", sharedLimitError.message);
+    else if (sharedAllowed !== true) return rateLimitedResponse(req, 3600);
     const { data: book, error: bErr } = await admin.from("books").select("id,title,author,category,tagline").eq("id", book_id).maybeSingle();
     if (bErr || !book) return new Response(JSON.stringify({ error: "Book not found" }), { status: 404, headers: { ...corsHeaders(req), "Content-Type": "application/json" } });
 
