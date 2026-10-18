@@ -187,6 +187,11 @@ Deno.serve(async (req) => {
 
     const rl = checkRateLimit(`generate-podcast:${user.id}`, 8, 60 * 60);
     if (!rl.ok) return rateLimitedResponse(req, rl.retryAfterSeconds);
+    // Shared atomic limiter; per-instance rate limit above remains as fast defense.
+    const { data: sharedAllowed, error: sharedLimitError } = await admin.rpc("consume_security_rate_limit",
+      { _key: `generate-podcast:${user.id}`, _max_requests: 8, _window_seconds: 3600 });
+    if (sharedLimitError) console.error("Shared podcast limiter unavailable", sharedLimitError.message);
+    else if (sharedAllowed !== true) return rateLimitedResponse(req, 3600);
 
     const { data: book, error: bookError } = await admin.from("books")
       .select("id,title,author,tagline,overview,deep_summary,key_ideas,deep_analysis,daily_application,language")
