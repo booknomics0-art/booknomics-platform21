@@ -37,10 +37,13 @@ const Dashboard = () => {
     if (!user) return;
     (async () => {
       const today = new Date().toISOString().slice(0, 10);
-      const { data: profile } = await supabase.from("profiles").select("streak_count, last_active_date").eq("id", user.id).maybeSingle();
+      const [{ data: profile }, { data: privateProfile }] = await Promise.all([
+        supabase.from("profiles").select("streak_count").eq("id", user.id).maybeSingle(),
+        (supabase as any).rpc("get_my_profile_extras"),
+      ]);
 
       let s = profile?.streak_count ?? 0;
-      const last = profile?.last_active_date;
+      const last = (privateProfile as { last_active_date?: string | null } | null)?.last_active_date;
       if (last !== today) {
         const yesterday = new Date(Date.now() - 86400000).toISOString().slice(0, 10);
         s = last === yesterday ? s + 1 : 1;
