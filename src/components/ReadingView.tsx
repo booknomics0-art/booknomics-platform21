@@ -1,7 +1,7 @@
 import { Children, useEffect, useMemo, useRef, useState } from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
-import { Sun, Moon, BookOpen, ArrowUp, Brain, X, ZoomIn, ZoomOut, Download, Maximize2 } from "lucide-react";
+import { Sun, Moon, BookOpen, ArrowUp, Brain, X, ZoomIn, ZoomOut, Download, Maximize2, ListTree } from "lucide-react";
 
 type ThemeKey = "light" | "sepia" | "dark";
 type SizeKey = "sm" | "md" | "lg" | "xl";
@@ -97,32 +97,23 @@ const HINDI_COPY_REPLACEMENTS: Array<[RegExp, string]> = [
   [/\bidea\b/gi, "विचार"],
 ];
 
-const normalizeHindiMarkdown = (input: string) => {
-  const withRealLineBreaks = input.replace(/\\n/g, "\n");
-  let text = HINDI_COPY_REPLACEMENTS.reduce((acc, [pattern, replacement]) => acc.replace(pattern, replacement), withRealLineBreaks);
+// Preserve all intentional **bold** emphasis. The old formatter silently stripped
+// it after two occurrences in a paragraph, hiding character names and theme labels.
+const normalizeHindiMarkdown = (input: string) =>
+  HINDI_COPY_REPLACEMENTS.reduce(
+    (acc, [pattern, replacement]) => acc.replace(pattern, replacement),
+    input.replace(/\\n/g, "\n"),
+  );
 
-  text = text
-    .split("\n")
-    .map((line) => {
-      const heading = line.match(/^\s*\*\*([^*\n]{3,80})\*\*\s*$/);
-      return heading ? `### ${heading[1].trim().replace(/[।.:]+$/, "")}` : line;
-    })
-    .join("\n");
-
-  return text
-    .split(/\n{2,}/)
-    .map((block) => {
-      let kept = 0;
-      return block.replace(/\*\*([^*\n]+)\*\*/g, (_full, inner: string) => {
-        const clean = inner.trim();
-        const words = clean.split(/\s+/).filter(Boolean).length;
-        if (clean.length > 52 || words > 7 || kept >= 2) return clean;
-        kept += 1;
-        return `**${clean}**`;
-      });
-    })
-    .join("\n\n");
-};
+const promoteEditorialSubheads = (input: string) =>
+  input.replace(
+    /(###\s*(?:\d+\.\s*)?(?:प्रमुख विषय|प्रमुख पात्र|मुख्य विषय|Major Themes|Key Themes|Characters)[^\n]*\n)([\s\S]*?)(?=\n###\s|\n##\s|$)/gu,
+    (_all, heading: string, body: string) => heading + body.replace(
+      /(^|\n\n)([\p{L}][\p{L}\p{M}\s\-–/]{3,48})\n(?=[\p{L}])/gu,
+      (_match, prefix: string, label: string) =>
+        /[।.!?:]$/.test(label.trim()) ? `${prefix}${label}\n` : `${prefix}**${label.trim()}**\n`,
+    ),
+  );
 
 const stripKeyMarker = (children: React.ReactNode) =>
   Children.map(children, (child) =>
@@ -182,13 +173,21 @@ const ReadingView = ({
   const processed = useMemo(() => {
     if (!content) return "";
     const refined = refineSectionHeadings(content, language);
-    const normalized = language === "hi" ? normalizeHindiMarkdown(refined) : refined;
+    const normalized = promoteEditorialSubheads(language === "hi" ? normalizeHindiMarkdown(refined) : refined);
     return normalized.split("\n").map((ln) => {
       const m = ln.match(/^\s*★\s*(.*)$/);
       return m ? `> ★KEY★ ${m[1]}` : ln;
     }).join("\n");
   }, [content, language]);
 
+  // Extract actual markdown headings for a collapsible, accessible table of contents.
+  const headingOutline = useMemo(() => processed.split("\n").flatMap((line) => {
+    const match = line.match(/^(#{2,3})\s+(.+?)\s*$/);
+    return match ? [{ level: match[1].length, text: match[2].replace(/\*\*/g, "") }] : [];
+  }), [processed]);
+
+  const headingCounter = useRef(0);
+  headingCounter.current = 0;
   const chapterCounter = useRef(0);
   const lastHeadingKey = useRef<string | null>(null);
   chapterCounter.current = 0;
@@ -276,14 +275,14 @@ const ReadingView = ({
               return (
                 <div className="rv-chapter">
                   <div className="rv-eyebrow">{cue}</div>
-                  <h2 {...props} className="rv-h2" style={{ fontFamily: "var(--rv-heading-font)", color: "var(--rv-heading)", fontWeight: 700, lineHeight: 1.3, margin: 0 }}>
+                  <h2 {...props} id={`rv-chapter-${++headingCounter.current}`} className="rv-h2" style={{ fontFamily: "var(--rv-heading-font)", color: "var(--rv-heading)", fontWeight: 700, lineHeight: 1.3, margin: 0 }}>
                     {children}
                   </h2>
                 </div>
               );
             },
             h3: ({ children, ...props }) => (
-              <h3 {...props} className="rv-h3" style={{ fontFamily: "var(--rv-heading-font)", color: "var(--rv-heading)", fontWeight: 600, lineHeight: 1.35 }}>
+              <h3 {...props} id={`rv-chapter-${++headingCounter.current}`} className="rv-h3" style={{ fontFamily: "var(--rv-heading-font)", color: "var(--rv-heading)", fontWeight: 600, lineHeight: 1.35 }}>
                 {children}
               </h3>
             ),
@@ -295,7 +294,7 @@ const ReadingView = ({
               if (isKey) return <span className="rv-key-text">{cleanedChildren}</span>;
               return <p className={isDrop ? "rv-p rv-dropcap" : "rv-p"} style={{ color: "var(--rv-text)" }}>{cleanedChildren}</p>;
             },
-            strong: ({ children }) => <strong className="rv-bold" style={{ color: "var(--rv-heading)", fontWeight: 600 }}>{children}</strong>,
+            strong: ({ children }) => <strong className="rv-bold" style={{ color: "var(--rv-heading)", fontWeight: 700 }}>{children}</strong>,
             em: ({ children }) => <em style={{ fontStyle: "italic" }}>{children}</em>,
             hr: () => <div aria-hidden className="rv-divider">✦ ✦ ✦</div>,
             blockquote: ({ children }) => {
@@ -358,6 +357,26 @@ const ReadingView = ({
 
       {Toolbar}
 
+      {headingOutline.length > 0 && (
+        <details className="rv-toc">
+          <summary className="rv-toc-trigger">
+            <ListTree className="h-4 w-4" aria-hidden />
+            {isHindi ? "विषय-सूची · मनचाहा भाग पढ़ें" : "Table of contents · Jump to a section"}
+          </summary>
+          <nav aria-label={isHindi ? "पढ़ने की विषय-सूची" : "Reading table of contents"}>
+            <ol className="rv-toc-list">
+              {headingOutline.map((heading, index) => (
+                <li key={index} className={heading.level === 3 ? "rv-toc-subitem" : ""}>
+                  <a href={`#rv-chapter-${index + 1}`}>
+                    {heading.text}
+                  </a>
+                </li>
+              ))}
+            </ol>
+          </nav>
+        </details>
+      )}
+
       {sideBySide ? (
         <div className="rv-grid">
           <div className="min-w-0">{Article}</div>
@@ -398,6 +417,14 @@ const ReadingView = ({
         }
         .rv-progress-wrap { position: sticky; top: 0; left: 0; height: 3px; background: transparent; margin-bottom: 8px; z-index: 5; }
         .rv-progress { height: 100%; background: var(--rv-accent); border-radius: 2px; transition: width 120ms linear; }
+        .rv-toc { max-width: 680px; margin: 0 auto 24px; border: 1px solid var(--rv-divider); border-radius: 12px; padding: 12px 16px; background: var(--rv-quote-bg); }
+        .rv-toc-trigger { display: flex; align-items: center; gap: 10px; cursor: pointer; font: 700 14px var(--rv-heading-font); color: var(--rv-heading); }
+        .rv-toc-list { margin: 12px 0 0; padding-left: 20px; list-style: decimal; }
+        .rv-toc-list li { margin: 6px 0; font-size: 14px; line-height: 1.6; }
+        .rv-toc-list a { color: var(--rv-text); text-decoration: none; }
+        .rv-toc-list a:hover, .rv-toc-list a:focus-visible { color: var(--rv-accent); text-decoration: underline; }
+        .rv-toc-subitem { margin-left: 15px !important; opacity: 0.9; }
+        .rv-h2, .rv-h3 { scroll-margin-top: 90px; }
         .rv-article { max-width: calc(680px + (var(--rv-scale) - 1) * 120px); transition: max-width .3s ease; }
         .rv-h1 { font-size: calc(30px * var(--rv-scale)); }
         .rv-reading-intent { max-width: 560px; margin: 14px auto 0; color: var(--rv-muted); font-size: calc(14px * var(--rv-scale)); line-height: 1.6; }
