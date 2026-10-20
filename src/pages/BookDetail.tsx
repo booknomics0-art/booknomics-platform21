@@ -118,44 +118,24 @@ const isLowSignalHindiText = (text: string) => {
   return boilerplate.some((marker) => normalized.includes(marker)) || repeated >= 4;
 };
 
-const extractReaderTakeaways = (
-  primary: string,
-  overview: string,
-  analysis: string,
-  max = 5,
-) => {
+// The reader must never manufacture "lessons" from story exposition.
+// Only the book's explicitly edited key_ideas field may supply takeaways.
+const extractReaderTakeaways = (primary: string, max = 5): string[] => {
+  if (!primary.trim() || isLowSignalHindiText(primary)) return [];
+  const blocks = primary.replace(/\\n/g, "\n").split(/\n\s*(?=[-*•]\s)|\n{2,}/g);
   const result: string[] = [];
   const seen = new Set<string>();
-
-  const add = (raw: string) => {
-    const clean = stripMarkdown(raw)
-      .replace(/\\n/g, " ")
-      .replace(/^[-*•\d.)\s]+/, "")
-      .replace(/\s+/g, " ")
-      .trim();
-    if (clean.length < 28 || isLowSignalHindiText(clean)) return;
-    const first = clean.split(/(?<=[.!?।])\s+/)[0]?.trim() || clean;
-    const takeaway = first.length > 210 ? `${first.slice(0, 207).trimEnd()}…` : first;
-    const key = takeaway.toLowerCase().replace(/[^\p{L}\p{N}]+/gu, " ").trim();
-    if (!key || seen.has(key)) return;
+  for (const block of blocks) {
+    const candidate = block.trim().replace(/^[-*•]\s+/, "").trim();
+    const plain = stripMarkdown(candidate).replace(/\s+/g, " ").trim();
+    if (plain.length < 32 || isLowSignalHindiText(plain)) continue;
+    const key = plain.toLowerCase().replace(/[^\p{L}\p{N}]+/gu, " ").trim();
+    if (!key || seen.has(key)) continue;
     seen.add(key);
-    result.push(takeaway);
-  };
-
-  const addBlocks = (text: string) => {
-    text
-      .replace(/\\n/g, "\n")
-      .split(/\n{2,}|(?=^###\s+)/m)
-      .map((block) => block.replace(/^#{1,6}\s+.*$/m, "").trim())
-      .filter(Boolean)
-      .forEach(add);
-  };
-
-  if (primary && !isLowSignalHindiText(primary)) addBlocks(primary);
-  if (result.length < max && overview) addBlocks(overview);
-  if (result.length < max && analysis) addBlocks(analysis);
-
-  return result.slice(0, max);
+    result.push(candidate);
+    if (result.length >= max) break;
+  }
+  return result;
 };
 
 const BookDetail = () => {
@@ -662,25 +642,9 @@ const BookDetail = () => {
                 const derivedAnalysis = !src.deep_summary && analysisSections.length > 1
                   ? analysisSections.slice(splitAt).join("\n\n")
                   : rawAnalysis;
-                const derivedIdeas = !src.key_ideas && analysisSections.length
-                  ? analysisSections.slice(0, 8).map((section) => {
-                      const heading = section.match(/^###\s+(.+)$/m)?.[1]?.trim();
-                      const body = section.replace(/^###\s+.+$/m, "").trim();
-                      const firstSentence = body
-                        .split(/(?<=[.!?।])\s+/)
-                        .find((sentence) => !isLowSignalHindiText(sentence))
-                        ?.trim();
-                      return heading ? `- **${heading}**${firstSentence ? ` — ${firstSentence}` : ""}` : "";
-                    }).filter(Boolean).join("\n")
-                  : "";
                 const keyIdeasAreLowSignal = readerIsHi && isLowSignalHindiText(src.key_ideas || "");
-                const effectiveKeyIdeas = keyIdeasAreLowSignal ? "" : (src.key_ideas || derivedIdeas);
-                const takeaways = extractReaderTakeaways(
-                  effectiveKeyIdeas,
-                  src.overview || "",
-                  rawAnalysis,
-                  5,
-                );
+                const effectiveKeyIdeas = keyIdeasAreLowSignal ? "" : (src.key_ideas || "");
+                const takeaways = extractReaderTakeaways(effectiveKeyIdeas, 5);
                 const takeawayMarkdown = takeaways.map((takeaway) => `★ ${takeaway}`).join("\n\n");
                 const derivedApplication = !src.daily_application
                   ? [
@@ -694,7 +658,7 @@ const BookDetail = () => {
 
                 const sections = [
                   { label: labels[0], text: src.overview },
-                  { label: labels[1], text: takeawayMarkdown },
+                  { label: takeaways.length === 5 ? labels[1] : (readerIsHi ? `${takeaways.length} मुख्य सीख` : `${takeaways.length} key takeaways`), text: takeawayMarkdown },
                   { label: labels[2], text: src.deep_summary || derivedSummary },
                   { label: labels[3], text: effectiveKeyIdeas },
                   { label: labels[4], text: src.deep_summary ? rawAnalysis : derivedAnalysis },
