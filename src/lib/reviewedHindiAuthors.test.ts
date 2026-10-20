@@ -14,6 +14,9 @@ describe("reviewed Hindi author biographies", () => {
     ["Bibhutibhushan Bandyopadhyay", "अपराजितो"],
     ["Tarashankar Bandyopadhyay", "आरोग्य निकेतन"],
     ["Joseph Macwan", "आंगलियात"],
+    ["Satyajit Ray", "बादशाही अंगूठी"],
+    ["Bindu Bhatt", "अखेपातर"],
+    ["Dhruv Bhatt", "अकूपार"],
   ];
   it.each(cases)("%s has a sourced, book-specific biography", (name, notableWork) => {
     const profile = findReviewedAuthorProfile(name);
