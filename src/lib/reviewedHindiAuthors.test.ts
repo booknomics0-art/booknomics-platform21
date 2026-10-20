@@ -17,6 +17,9 @@ describe("reviewed Hindi author biographies", () => {
     ["Satyajit Ray", "बादशाही अंगूठी"],
     ["Bindu Bhatt", "अखेपातर"],
     ["Dhruv Bhatt", "अकूपार"],
+    ["महात्मा गांधी", "सत्य के प्रयोग"],
+    ["हेलेन केलर", "मेरी जीवन-कथा"],
+    ["निकोला टेस्ला", "मेरे आविष्कार"],
   ];
   it.each(cases)("%s has a sourced, book-specific biography", (name, notableWork) => {
     const profile = findReviewedAuthorProfile(name);
