@@ -56,7 +56,7 @@ export const AuthorBio = ({ author, category, title, isHindi = false }: Props) =
           <p className="text-sm text-foreground/85 leading-relaxed">
             {reviewed ? (isHindi ? premchandBio.hi : premchandBio.en) : (
               isHindi
-                ? `**${author}** इस पुस्तक के रचनाकार हैं। यह कृति ${category} विधा से संबंधित है। लेखक के जीवन, साहित्यिक योगदान और अन्य रचनाओं का तथ्य-जाँचा हुआ विस्तृत परिचय अभी संपादकीय समीक्षा में है।`
+                ? `${author} इस पुस्तक के रचनाकार हैं। यह कृति ${category} विधा से संबंधित है। लेखक के जीवन, साहित्यिक योगदान और अन्य रचनाओं का तथ्य-जाँचा हुआ विस्तृत परिचय अभी संपादकीय समीक्षा में है।`
                 : `${author} wrote the original work, ${title || "this book"}, in the ${category} category. A source-checked account of their life, literary contribution, and bibliography is pending editorial review.`
             )}
           </p>
