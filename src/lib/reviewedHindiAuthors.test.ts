@@ -23,6 +23,9 @@ describe("reviewed Hindi author biographies", () => {
     ["निकोला टेस्ला", "मेरे आविष्कार"],
     ["Rabindranath Tagore", "नौकाडूबी"],
     ["रवीन्द्रनाथ ठाकुर", "चतुरंग"],
+    ["Sarah Joseph", "बुधिनी"],
+    ["Ramanbhai Neelkanth", "भद्रंभद्र"],
+    ["Raghuveer Chaudhari", "अमृता"],
   ];
   it.each(cases)("%s has a sourced, book-specific biography", (name, notableWork) => {
     const profile = findReviewedAuthorProfile(name);
