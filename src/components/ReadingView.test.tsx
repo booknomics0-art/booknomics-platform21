@@ -12,6 +12,42 @@ describe("bilingual editorial reader", () => {
     expect(bold).toEqual(expect.arrayContaining(["होरी", "धनिया", "गोबर", "झुनिया"]));
   });
 
+  it("renders every Godan प्रमुख विषय #### subheading boldly as a semantic h4, not a paragraph", () => {
+    const content = [
+      "## गहन विश्लेषण",
+      "### 10. प्रमुख विषय",
+      "#### कर्ज़ और महाजनी व्यवस्था",
+      "कर्ज़ उपन्यास में एक घटना नहीं, स्थायी संरचना है।",
+      "",
+      "#### जाति और पंचायत",
+      "सामाजिक व्यवस्था गरीब परिवार पर नैतिक अनुशासन लागू करती है।",
+      "",
+      "#### किसान और श्रम",
+      "होरी मेहनती है, फिर भी मेहनत आर्थिक सुरक्षा की गारंटी नहीं देती।",
+      "",
+      "#### स्त्री और निर्णय",
+      "धनिया और झुनिया अपने फैसले स्वयं लेने वाली नैतिक शक्तियाँ हैं।",
+    ].join("\n");
+    const { container } = render(<ReadingView language="hi" content={content} />);
+    const names = ["कर्ज़ और महाजनी व्यवस्था", "जाति और पंचायत", "किसान और श्रम", "स्त्री और निर्णय"];
+    for (const name of names) {
+      const h4 = screen.getByRole("heading", { name, level: 4 });
+      expect(h4.classList.contains("rv-h4")).toBe(true);
+      expect(h4.style.fontWeight).toBe("800");
+      expect(h4.id).toMatch(/^rv-chapter-\d+$/);
+      expect(container.querySelector(`a[href="#${h4.id}"]`)).toHaveTextContent(name);
+    }
+    expect(container.querySelectorAll(".rv-prose h4.rv-h4")).toHaveLength(4);
+    expect(screen.getByText(/कर्ज़ उपन्यास में एक घटना नहीं/).tagName).toBe("P");
+  });
+
+  it("applies bold h4 headings and section anchors to English books too", () => {
+    const { container } = render(<ReadingView language="en" content={"## Deeper analysis\n\n### Major themes\n\n#### Debt and labor\n\nThe story explores structural debt."} />);
+    const heading = screen.getByRole("heading", { name: "Debt and labor", level: 4 });
+    expect(heading.style.fontWeight).toBe("800");
+    expect(container.querySelector(`a[href="#${heading.id}"]`)).toBeTruthy();
+  });
+
   it("offers a collapsible Hindi contents with anchors for chapters and subheadings", () => {
     const { container } = render(
       <ReadingView language="hi" content={"## विस्तृत सारांश\n\nकहानी का संदर्भ।\n\n### प्रमुख पात्र\n\nहोरी और धनिया।\n\n## गहन विश्लेषण\n\nवर्ग और न्याय की जाँच।"} />,

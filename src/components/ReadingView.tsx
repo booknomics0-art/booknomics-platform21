@@ -191,7 +191,7 @@ const ReadingView = ({
 
   // Extract actual markdown headings for a collapsible, accessible table of contents.
   const headingOutline = useMemo(() => processed.split("\n").flatMap((line) => {
-    const match = line.match(/^(#{2,3})\s+(.+?)\s*$/);
+    const match = line.match(/^(#{2,4})\s+(.+?)\s*$/);
     return match ? [{ level: match[1].length, text: match[2].replace(/\*\*/g, "") }] : [];
   }), [processed]);
 
@@ -291,9 +291,17 @@ const ReadingView = ({
               );
             },
             h3: ({ children, ...props }) => (
-              <h3 {...props} id={`rv-chapter-${++headingCounter.current}`} className="rv-h3" style={{ fontFamily: "var(--rv-heading-font)", color: "var(--rv-heading)", fontWeight: 600, lineHeight: 1.35 }}>
+              <h3 {...props} id={`rv-chapter-${++headingCounter.current}`} className="rv-h3" style={{ fontFamily: "var(--rv-heading-font)", color: "var(--rv-heading)", fontWeight: 700, lineHeight: 1.35 }}>
                 {children}
               </h3>
+            ),
+            // These are real #### Markdown headings in the book source, not plain
+            // paragraphs. Tailwind's preflight strips browser-default h4 boldness,
+            // so give them an explicit readable style for Hindi and English.
+            h4: ({ children, ...props }) => (
+              <h4 {...props} id={`rv-chapter-${++headingCounter.current}`} className="rv-h4" style={{ fontFamily: "var(--rv-heading-font)", color: "var(--rv-heading)", fontWeight: 800, lineHeight: 1.45 }}>
+                {children}
+              </h4>
             ),
             p: ({ children }) => {
               const isKey = containsKeyMarker(children);
@@ -374,7 +382,7 @@ const ReadingView = ({
           <nav aria-label={isHindi ? "पढ़ने की विषय-सूची" : "Reading table of contents"}>
             <ol className="rv-toc-list">
               {headingOutline.map((heading, index) => (
-                <li key={index} className={heading.level === 3 ? "rv-toc-subitem" : ""}>
+                <li key={index} className={heading.level >= 3 ? (heading.level === 4 ? "rv-toc-subitem rv-toc-subsubitem" : "rv-toc-subitem") : ""}>
                   <a href={`#rv-chapter-${index + 1}`}>
                     {heading.text}
                   </a>
@@ -432,7 +440,8 @@ const ReadingView = ({
         .rv-toc-list a { color: var(--rv-text); text-decoration: none; }
         .rv-toc-list a:hover, .rv-toc-list a:focus-visible { color: var(--rv-accent); text-decoration: underline; }
         .rv-toc-subitem { margin-left: 15px !important; opacity: 0.9; }
-        .rv-h2, .rv-h3 { scroll-margin-top: 90px; }
+        .rv-toc-subsubitem { margin-left: 26px !important; font-size: 13px !important; }
+        .rv-h2, .rv-h3, .rv-h4 { scroll-margin-top: 90px; }
         .rv-article { max-width: calc(680px + (var(--rv-scale) - 1) * 120px); transition: max-width .3s ease; }
         .rv-h1 { font-size: calc(30px * var(--rv-scale)); }
         .rv-reading-intent { max-width: 560px; margin: 14px auto 0; color: var(--rv-muted); font-size: calc(14px * var(--rv-scale)); line-height: 1.6; }
@@ -440,6 +449,7 @@ const ReadingView = ({
         .rv-eyebrow { color: var(--rv-accent); font-size: 12px; letter-spacing: .2em; text-transform: uppercase; font-weight: 700; margin-bottom: 6px; }
         .rv-h2 { font-size: calc(26px * var(--rv-scale)); }
         .rv-h3 { font-size: calc(20px * var(--rv-scale)); margin-top: calc(32px * var(--rv-scale)); margin-bottom: calc(10px * var(--rv-scale)); }
+        .rv-h4 { font-size: calc(18px * var(--rv-scale)); margin-top: calc(26px * var(--rv-scale)); margin-bottom: calc(10px * var(--rv-scale)); font-weight: 800; }
         .rv-prose { font-size: calc(18px * var(--rv-scale)); line-height: calc(1.85 - (var(--rv-scale) - 1) * 0.25); transition: font-size .3s ease, line-height .3s ease; }
         .rv-prose p, .rv-prose li { font-family: var(--rv-body-font); }
         .rv-p { margin-bottom: calc(20px * var(--rv-scale)); }
@@ -480,7 +490,7 @@ const ReadingView = ({
         .rv-hi .rv-eyebrow { letter-spacing: 0; text-transform: none; font-size: 13px; }
         .rv-hi .rv-prose { line-height: 1.9; }
         .rv-hi .rv-p { margin-bottom: calc(22px * var(--rv-scale)); }
-        .rv-hi .rv-h1, .rv-hi .rv-h2, .rv-hi .rv-h3 { letter-spacing: 0; }
+        .rv-hi .rv-h1, .rv-hi .rv-h2, .rv-hi .rv-h3, .rv-hi .rv-h4 { letter-spacing: 0; }
         .rv-ul, .rv-ol { padding-left: 22px; margin: 12px 0 calc(20px * var(--rv-scale)); }
         .rv-ul { list-style: disc; } .rv-ol { list-style: decimal; }
         .rv-li { margin-bottom: 6px; }
