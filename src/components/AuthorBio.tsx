@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { BookOpen, ShieldCheck } from "lucide-react";
 import { Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
+import { findReviewedAuthorProfile } from "@/lib/reviewedHindiAuthors";
 
 interface Props { author: string; category: string; title?: string; isHindi?: boolean }
 interface OtherWork { title: string; slug: string; seo_slug: string | null }
@@ -38,7 +39,8 @@ export const AuthorBio = ({ author, category, title, isHindi = false }: Props) =
     return () => { active = false; };
   }, [author, title]);
 
-  const reviewed = isPremchand(author);
+  const reviewedProfile = isPremchand(author) ? premchandBio : findReviewedAuthorProfile(author);
+  const reviewed = Boolean(reviewedProfile);
   return (
     <section className="mt-12 pt-8 border-t border-border" aria-labelledby="author-bio">
       <div className="text-xs tracking-[0.14em] text-primary font-semibold mb-3">
@@ -54,14 +56,14 @@ export const AuthorBio = ({ author, category, title, isHindi = false }: Props) =
             <span className="text-sm font-semibold">{isHindi ? "लेखक और प्रमुख कृतियाँ" : "The author and their works"}</span>
           </div>
           <p className="text-sm text-foreground/85 leading-relaxed">
-            {reviewed ? (isHindi ? premchandBio.hi : premchandBio.en) : (
+            {reviewed ? (isHindi ? reviewedProfile!.hi : reviewedProfile!.en) : (
               isHindi
                 ? `${author} इस पुस्तक के रचनाकार हैं। यह कृति ${category} विधा से संबंधित है। लेखक के जीवन, साहित्यिक योगदान और अन्य रचनाओं का तथ्य-जाँचा हुआ विस्तृत परिचय अभी संपादकीय समीक्षा में है।`
                 : `${author} wrote the original work, ${title || "this book"}, in the ${category} category. A source-checked account of their life, literary contribution, and bibliography is pending editorial review.`
             )}
           </p>
           {reviewed && (
-            <a className="text-xs text-primary underline mt-3 inline-block" href={premchandBio.source} target="_blank" rel="noopener noreferrer">
+            <a className="text-xs text-primary underline mt-3 inline-block" href={reviewedProfile!.source} target="_blank" rel="noopener noreferrer">
               {isHindi ? "जीवनी व रचनाओं के लिए स्रोत" : "Biographical source"}
             </a>
           )}
