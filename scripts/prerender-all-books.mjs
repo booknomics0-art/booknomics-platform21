@@ -26,7 +26,39 @@ function head(html,{lang,title,description,canonical,image,jsonLd}){let out=html
 function writeRoute(pathname,html){const file=resolve(DIST,pathname.replace(/^\//,""),"index.html");mkdirSync(dirname(file),{recursive:true});writeFileSync(file,html)}
 function writeFallbackCover(book){const dir=resolve(DIST,"seo-cover");mkdirSync(dir,{recursive:true});const hue=hashHue(book.id);const hue2=(hue+42)%360;const lines=wrap(book.title,26);const start=300-(lines.length-1)*30;const title=lines.map((l,i)=>`<text x="300" y="${start+i*60}" text-anchor="middle" font-family="Georgia,serif" font-size="42" font-weight="700" fill="#fff">${esc(l)}</text>`).join("");const svg=`<svg xmlns="http://www.w3.org/2000/svg" width="600" height="900" viewBox="0 0 600 900"><defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="hsl(${hue} 54% 26%)"/><stop offset="1" stop-color="hsl(${hue2} 62% 14%)"/></linearGradient></defs><rect width="600" height="900" fill="url(#g)"/><path d="M90 180h420M90 720h420" stroke="rgba(255,255,255,.3)" stroke-width="2"/><text x="300" y="125" text-anchor="middle" font-family="Arial,sans-serif" font-size="17" letter-spacing="4" fill="rgba(255,255,255,.78)">${esc((book.category||"Book Summary").toUpperCase())}</text>${title}<text x="300" y="640" text-anchor="middle" font-family="Arial,sans-serif" font-size="24" fill="#fff">${esc(book.author||"Booknomics")}</text><text x="300" y="820" text-anchor="middle" font-family="Arial,sans-serif" font-size="18" letter-spacing="5" fill="rgba(255,255,255,.72)">BOOKNOMICS</text></svg>`;writeFileSync(resolve(dir,`${book.id}.svg`),svg)}
 
-async function api(path){const r=await fetch(`${SUPABASE_URL}/rest/v1/${path}`,{headers:{apikey:SUPABASE_KEY,Authorization:`Bearer ${SUPABASE_KEY}`,Accept:"application/json"},signal:AbortSignal.timeout(30000)});if(!r.ok)throw new Error(`Supabase ${r.status}: ${await r.text()}`);return r.json()}
+// An occasional PostgREST statement timeout (57014) must not invalidate all 5k+
+ // already-indexable book pages. Retry only transient failures; never mask 4xx
+ // authentication errors or silently accept an incomplete catalogue.
+const RETRY_ATTEMPTS = 4;
+const pause = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+async function api(path) {
+  for (let attempt = 0; attempt < RETRY_ATTEMPTS; attempt++) {
+    try {
+      const r = await fetch(`${SUPABASE_URL}/rest/v1/${path}`, {
+        headers: {
+          apikey: SUPABASE_KEY,
+          Authorization: `Bearer ${SUPABASE_KEY}`,
+          Accept: "application/json",
+        },
+        signal: AbortSignal.timeout(30000),
+      });
+      if (r.ok) return r.json();
+      const body = (await r.text()).slice(0, 300);
+      const retryable = [408, 429, 502, 503, 504].includes(r.status) ||
+        (r.status === 500 && /57014|statement timeout/i.test(body));
+      if (!retryable || attempt === RETRY_ATTEMPTS - 1) {
+        throw new Error(`Supabase ${r.status}: ${body}`);
+      }
+      console.warn(`[prerender-all-books] transient Supabase ${r.status}; retry ${attempt + 1}/${RETRY_ATTEMPTS - 1}`);
+    } catch (err) {
+      const transient = /TimeoutError|AbortError|fetch failed|network error/i.test(String(err?.name || "") + " " + String(err?.message || ""));
+      if (!transient || attempt === RETRY_ATTEMPTS - 1) throw err;
+      console.warn(`[prerender-all-books] transient fetch timeout; retry ${attempt + 1}/${RETRY_ATTEMPTS - 1}`);
+    }
+    await pause(750 * (2 ** attempt));
+  }
+  throw new Error("prerender-all-books: retry attempts exhausted");
+}
 
 const books=[];
 for(let offset=0;;offset+=PAGE_SIZE){
