@@ -840,7 +840,7 @@ const BookDetail = () => {
             </div>
           </Suspense>
 
-          <AuthorBio author={book.author} category={book.category} />
+          <AuthorBio author={book.author} category={book.category} title={book.title} isHindi={isHi} />
 
           {/* AI/LLM-friendly summary text */}
           <section className="mt-12 pt-8 border-t border-border" aria-labelledby="ai-summary">
