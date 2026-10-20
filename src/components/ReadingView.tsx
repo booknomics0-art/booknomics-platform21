@@ -109,7 +109,7 @@ const promoteEditorialSubheads = (input: string) =>
   input.replace(
     /(###\s*(?:\d+\.\s*)?(?:प्रमुख विषय|प्रमुख पात्र|मुख्य विषय|Major Themes|Key Themes|Characters)[^\n]*\n)([\s\S]*?)(?=\n###\s|\n##\s|$)/gu,
     (_all, heading: string, body: string) => heading + body.replace(
-      /(^|\n\n)([\p{L}][\p{L}\p{M}\s\-–/]{3,48})\n(?=[\p{L}])/gu,
+      /(^|\n\n)([\p{L}][\p{L}\p{M}\s\-–\/]{3,48})\n(?=[\p{L}])/gu,
       (_match, prefix: string, label: string) =>
         /[।.!?:]$/.test(label.trim()) ? `${prefix}${label}\n` : `${prefix}**${label.trim()}**\n`,
     ),
