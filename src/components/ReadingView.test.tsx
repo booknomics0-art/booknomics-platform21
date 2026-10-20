@@ -28,7 +28,7 @@ describe("bilingual editorial reader", () => {
 
   it("keeps an actual analytical paragraph under the deeper-analysis heading", () => {
     render(<ReadingView language="hi" content={"## गहन विश्लेषण\n\nश्रम और संपत्ति का असंतुलन व्यक्ति के चुनाव सीमित करता है।"} />);
-    expect(screen.getByText("जो पहली नज़र में छूट जाता है")).toBeTruthy();
+    expect(screen.getByRole("heading", { name: "जो पहली नज़र में छूट जाता है" })).toBeTruthy();
     expect(screen.getByText(/श्रम और संपत्ति का असंतुलन/)).toBeTruthy();
   });
 
