@@ -1,4 +1,4 @@
-import { Children, useEffect, useMemo, useRef, useState } from "react";
+import { Children, isValidElement, useEffect, useMemo, useRef, useState } from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { Sun, Moon, BookOpen, ArrowUp, Brain, X, ZoomIn, ZoomOut, Download, Maximize2, ListTree } from "lucide-react";
@@ -114,6 +114,15 @@ const promoteEditorialSubheads = (input: string) =>
         /[।.!?:]$/.test(label.trim()) ? `${prefix}${label}\n` : `${prefix}**${label.trim()}**\n`,
     ),
   );
+
+const containsKeyMarker = (children: React.ReactNode): boolean => {
+  if (typeof children === "string") return children.includes("★KEY★");
+  if (Array.isArray(children)) return children.some(containsKeyMarker);
+  if (isValidElement<{ children?: React.ReactNode }>(children)) {
+    return containsKeyMarker(children.props.children);
+  }
+  return false;
+};
 
 const stripKeyMarker = (children: React.ReactNode) =>
   Children.map(children, (child) =>
@@ -287,7 +296,7 @@ const ReadingView = ({
               </h3>
             ),
             p: ({ children }) => {
-              const isKey = JSON.stringify(children).includes("★KEY★");
+              const isKey = containsKeyMarker(children);
               const cleanedChildren = isKey ? stripKeyMarker(children) : children;
               const isDrop = !isHindi && lastHeadingKey.current !== null;
               if (lastHeadingKey.current !== null) lastHeadingKey.current = null;
@@ -298,8 +307,7 @@ const ReadingView = ({
             em: ({ children }) => <em style={{ fontStyle: "italic" }}>{children}</em>,
             hr: () => <div aria-hidden className="rv-divider">✦ ✦ ✦</div>,
             blockquote: ({ children }) => {
-              const raw = JSON.stringify(children);
-              if (raw.includes("★KEY★")) {
+              if (containsKeyMarker(children)) {
                 return (
                   <div className="rv-key-card">
                     <span style={{ fontSize: "1.35em", lineHeight: 1 }} aria-hidden>💡</span>
