@@ -10,6 +10,10 @@ describe("reviewed Hindi author biographies", () => {
     ["रामधारी सिंह दिनकर", "रश्मिरथी"],
     ["फणीश्वर नाथ 'रेणु'", "मैला आँचल"],
     ["धर्मवीर भारती", "गुनाहों का देवता"],
+    ["Bankim Chandra Chattopadhyay", "आनंदमठ"],
+    ["Bibhutibhushan Bandyopadhyay", "अपराजितो"],
+    ["Tarashankar Bandyopadhyay", "आरोग्य निकेतन"],
+    ["Joseph Macwan", "आंगलियात"],
   ];
   it.each(cases)("%s has a sourced, book-specific biography", (name, notableWork) => {
     const profile = findReviewedAuthorProfile(name);
