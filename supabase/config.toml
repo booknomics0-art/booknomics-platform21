@@ -15,3 +15,7 @@ verify_jwt = false
 
 [functions.generate-sitemap]
 verify_jwt = false
+
+# Razorpay signs the raw webhook body, so platform JWT checks must be disabled.
+[functions.razorpay-subscription-webhook]
+verify_jwt = false

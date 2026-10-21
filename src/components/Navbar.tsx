@@ -36,6 +36,7 @@ export const Navbar = () => {
           <NavLink to="/hindi" className={linkCls}>हिंदी</NavLink>
           {user && <NavLink to="/library" className={linkCls}>Library</NavLink>}
           <NavLink to="/community" className={linkCls}>Community</NavLink>
+          <NavLink to="/pricing" className={linkCls}>Premium</NavLink>
           {user && <NavLink to="/dashboard" className={linkCls}>Dashboard</NavLink>}
           {showAdmin && <NavLink to="/admin" className={linkCls}>Admin</NavLink>}
         </nav>
