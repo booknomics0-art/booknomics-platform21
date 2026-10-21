@@ -45,6 +45,7 @@ const BookReviews = lazy(() => import("@/components/BookReviews").then(m => ({ d
 const BookComments = lazy(() => import("@/components/BookComments").then(m => ({ default: m.BookComments })));
 const CommunitySidebar = lazy(() => import("@/components/CommunitySidebar").then(m => ({ default: m.CommunitySidebar })));
 const MasteryTab = lazy(() => import("@/components/MasteryTab"));
+const SubjectiveMastery = lazy(() => import("@/components/SubjectiveMastery"));
 const StickyAudioPlayer = lazy(() => import("@/components/StickyAudioPlayer").then(m => ({ default: m.StickyAudioPlayer })));
 const CommunityFallback = () => <div className="h-32 rounded-xl bg-muted/40 animate-pulse" />;
 
@@ -153,6 +154,7 @@ const BookDetail = () => {
   const [lang, setLang] = useState<"en" | "hi">("en");
   const [translatedContent, setTranslatedContent] = useState<Partial<Book> | null>(null);
   const [translating, setTranslating] = useState(false);
+  const [activeBookTab, setActiveBookTab] = useState("summary");
   const [reviewStats, setReviewStats] = useState<{ count: number; avg: number; top: { rating: number; content: string; created_at: string } | null }>({ count: 0, avg: 0, top: null });
   const [linkTargets, setLinkTargets] = useState<LinkTarget[]>([]);
   const [podcastOpen, setPodcastOpen] = useState(false);
@@ -310,6 +312,7 @@ const BookDetail = () => {
   useEffect(() => {
     setLang(book?.language === "hi" ? "hi" : "en");
     setTranslatedContent(null);
+    setActiveBookTab("summary");
   }, [book?.id]);
 
   const switchLang = async (next: "en" | "hi") => {
@@ -336,7 +339,24 @@ const BookDetail = () => {
       const { data, error } = await supabase.functions.invoke("translate-to-hindi", {
         body: { bookId: book.id, sourceLanguage: originalLanguage, targetLanguage: next, sections },
       });
-      if (error || data?.error) throw new Error(data?.error ?? error?.message);
+      if (error) {
+        // The generic FunctionsHttpError hides the actual HTTP error and response JSON.
+        const context = (error as { context?: unknown }).context;
+        let message = error.message;
+        let status = 0;
+        if (context instanceof Response) {
+          status = context.status;
+          const payload = await context.clone().json().catch(() => null);
+          if (payload && typeof payload === "object" && typeof payload.error === "string") {
+            message = payload.error;
+          }
+        }
+        if (status === 401 || status === 403) throw new Error("Translation requires a fresh sign-in. Your original text is safe.");
+        if (status === 503) throw new Error("Translation provider unavailable or not configured. Original text preserved.");
+        if (status === 429) throw new Error("Translation limit reached. Please retry later.");
+        throw new Error(message || "Translation failed. Original text preserved.");
+      }
+      if (data?.error) throw new Error(data.error);
       const translated = data?.sections as Record<string, unknown> | undefined;
       if (!translated || Object.keys(sections).some((key) =>
         typeof translated[key] !== "string" || !(translated[key] as string).trim())) {
@@ -626,7 +646,7 @@ const BookDetail = () => {
 
       <div className="container py-6 md:py-10 grid lg:grid-cols-[1fr,320px] gap-10 items-start">
         <article className="max-w-4xl w-full min-w-0">
-          <Tabs defaultValue="summary" className="w-full" id="book-tabs">
+          <Tabs value={activeBookTab} onValueChange={setActiveBookTab} className="w-full" id="book-tabs">
             <div className="-mx-4 md:mx-0 mb-6 md:mb-8 overflow-x-auto scrollbar-none">
               <TabsList className={`inline-flex w-max lg:flex lg:w-full px-4 md:px-0 gap-1`}>
                 <TabsTrigger value="summary" className="flex-1 text-xs md:text-sm">{isHi ? "सार" : "Summary"}</TabsTrigger>
@@ -693,11 +713,16 @@ const BookDetail = () => {
                         author={book.author}
                         category={(book as any).category || undefined}
                         language={lang}
+                        onAuthorIntroClick={() => {
+                          setActiveBookTab("mastery");
+                          window.setTimeout(() => document.getElementById("author-bio")?.scrollIntoView({ behavior: "smooth", block: "start" }), 0);
+                        }}
                       />
                     </Suspense>
                   </section>
                   <ShareInsight quotesSource={(src.key_ideas as string) || (src.overview as string)} bookTitle={book.title} bookAuthor={book.author} bookSlug={book.slug} />
                   <AffiliateCTA bookId={book.id} link={book.affiliate_link} title={`${book.title} ${book.author}`} placement="summary-end" />
+                   <BookMindmapSection title={book.title} mindmapUrl={assets?.mindmap_url} loading={assetsLoading} isHindi={lang === "hi"} book={book} />
                 </>;
               })()}
             </TabsContent>
@@ -824,8 +849,11 @@ const BookDetail = () => {
             </TabsContent>
 
             <TabsContent value="mastery">
+              <AuthorBio author={book.author} category={book.category} title={book.title} isHindi={lang === "hi"} />
+              <BookMindmapSection title={book.title} mindmapUrl={assets?.mindmap_url} loading={assetsLoading} isHindi={lang === "hi"} book={book} />
               <Suspense fallback={<CommunityFallback />}>
                 <MasteryTab bookId={book.id} quiz={assets?.quiz_data ?? []} flashcards={assets?.flashcard_data ?? []} />
+                <SubjectiveMastery key={book.id} bookId={book.id} language={lang} />
               </Suspense>
             </TabsContent>
 
@@ -838,16 +866,6 @@ const BookDetail = () => {
             </TabsContent>
           </Tabs>
 
-          <div id="book-mindmap">
-            <BookMindmapSection
-              title={book.title}
-              mindmapUrl={assets?.mindmap_url}
-              loading={assetsLoading}
-              isHindi={isHi}
-              book={book}
-            />
-          </div>
-
 
           <Suspense fallback={<CommunityFallback />}>
             <div className="hidden lg:block mt-12 pt-12 border-t border-border">
@@ -857,8 +875,6 @@ const BookDetail = () => {
               <BookComments bookId={book.id} />
             </div>
           </Suspense>
-
-          <AuthorBio author={book.author} category={book.category} title={book.title} isHindi={isHi} />
 
           {/* AI/LLM-friendly summary text */}
           <section className="mt-12 pt-8 border-t border-border" aria-labelledby="ai-summary">
