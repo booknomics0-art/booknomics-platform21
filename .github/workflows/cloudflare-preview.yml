@@ -178,6 +178,11 @@ jobs:
           fi
           echo 'Google OAuth start smoke OK'
 
+      - name: Enforce Cloudflare frontend/session consistency on Preview
+        env:
+          AUTH_SMOKE_BASE_URL: ${{ steps.deploy.outputs.preview-url }}
+        run: node scripts/verify-cloudflare-auth-cutover.mjs
+
       - name: Write Preview summary
         if: always()
         env:
