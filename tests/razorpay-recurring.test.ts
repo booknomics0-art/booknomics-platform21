@@ -99,6 +99,12 @@ describe("Razorpay recurring webhooks", () => {
     expect((await handler(request("subscription.charged", paid))).status).toBe(200);
     expect(updates).toHaveBeenCalledTimes(calls);
   });
+  it("accepts a late captured charge even after a newer status notification", async () => {
+    row.last_provider_event_at = new Date((now + 60) * 1000).toISOString();
+    const paid = { id: "pay_late", status: "captured", amount: 4900, currency: "INR" };
+    expect((await handler(request("subscription.charged", paid, "evt_late1234"))).status).toBe(200);
+    expect(row.status).toBe("active");
+  });
   it("does not extend access for failed, underpaid, or mismatched charges", async () => {
     const payment = { id: "pay_test", status: "failed", amount: 4900, currency: "INR" };
     await handler(request("subscription.charged", payment, "evt_failed123"));

@@ -36,6 +36,8 @@ Deno.serve(async (req) => {
     const pending = (current || []).find((s: any) => s.status === "pending");
     if (pending) {
       if (pending.plan !== plan) return json(req, { error: "Finish or cancel your pending mandate before changing plans. Contact billing support if it is stuck." }, 409);
+      const remotePending = await provider("subscriptions/" + pending.razorpay_subscription_id);
+      if (remotePending.status !== "created") return json(req, { error: "Your mandate is being processed. Check My Subscription before trying another payment." }, 409);
       return json(req, { subscription_id: pending.razorpay_subscription_id, key_id: key, plan, amount: cfg.amount });
     }
 

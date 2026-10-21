@@ -21,6 +21,12 @@ Deno.serve(async (req) => {
     if (row.cancel_at_cycle_end) return json(req, { ok: true, scheduled: true });
     if (action === "cancel_at_period_end" && row.status !== "active") return json(req, { error: "Only active subscriptions can schedule cancellation" }, 409);
     if (action === "cancel_pending" && row.status !== "pending") return json(req, { error: "Only pending mandates can be cancelled immediately" }, 409);
+    if (action === "cancel_pending") {
+      const actual = await provider("subscriptions/" + subscription_id);
+      if (Number(actual.paid_count) > 0 || actual.status === "active") {
+        return json(req, { error: "A payment may have succeeded. Contact billing support before cancelling." }, 409);
+      }
+    }
     // API must succeed before changing the local database; do not truncate paid access.
     const remote = await provider("subscriptions/" + subscription_id + "/cancel", {
       method: "POST", body: JSON.stringify({ cancel_at_cycle_end: action === "cancel_pending" ? 0 : 1 }),
