@@ -46,3 +46,8 @@ __pycache__/
 *.pyc
 tools/mindmap-engine/.venv/
 tools/mindmap-engine/_selftest.png
+
+# Next.js build output
+.next/
+**/.next/
+*.tsbuildinfo
