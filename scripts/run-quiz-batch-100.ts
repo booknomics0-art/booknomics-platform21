@@ -16,10 +16,11 @@ const db=createClient(process.env.SUPABASE_URL!,process.env.SUPABASE_SERVICE_ROL
 const report:any[]=[];
 const tiers=['Basic','Basic','Basic','Medium','Medium','Medium','Medium','Advanced','Advanced','Advanced'];
 for (const item of batch) {
+  try {
   const {data:existing,error:assetError}=await db.from('book_assets').select('quiz_data,status').eq('book_id',item.id).maybeSingle();
   if (assetError) throw new Error('Asset lookup failed');
   if (existing?.quiz_data?.length) { report.push({...item,status:'existing_preserved',questions:existing.quiz_data.length}); continue; }
-  if (existing && existing.status !== 'draft') throw new Error('Non-draft asset requires separate editorial publish review');
+  if (existing && existing.status !== 'draft') { report.push({...item,status:'skipped_non_draft_asset',asset_status:existing.status,questions:0}); continue; }
   const {data:b,error}=await db.from('books').select('title,author,language,overview,deep_summary,key_ideas,deep_analysis').eq('id',item.id).single();
   if (error) throw new Error('Book lookup failed');
   const source=[b.overview,b.deep_summary,b.key_ideas,b.deep_analysis].filter(Boolean).join('\n\n');
@@ -51,6 +52,17 @@ for (const item of batch) {
   }
   report.push({...item,status:'draft_structural_and_excerpt_checks_passed',questions:10,asset_status:verified.status});
   console.log('QUIZ_BATCH_PROGRESS',report.length,'of',batch.length,item.title);
+  } catch (error) {
+    const reason = error instanceof Error ? error.message : 'Unknown batch failure';
+    const isProviderLimit = /Provider HTTP (429|402|403)|GEMINI_API_KEY|required|rate limit|quota/i.test(reason);
+    report.push({...item,status:isProviderLimit?'blocked_provider':'failed_validation_or_write',questions:0,error:reason.slice(0,180)});
+    console.error('QUIZ_BATCH_ERROR',report.length,'of',batch.length,item.title,reason.slice(0,180));
+    writeFileSync('reports/quiz-batch-100-result.json',JSON.stringify(report,null,2));
+    if (isProviderLimit) {
+      for (const pending of batch.slice(report.length)) report.push({...pending,status:'not_attempted_provider_block',questions:0});
+      break;
+    }
+  }
 }
 writeFileSync('reports/quiz-batch-100-result.json',JSON.stringify(report,null,2));
 console.log('QUIZ_BATCH_RESULT',JSON.stringify(report));
