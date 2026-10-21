@@ -190,10 +190,31 @@ const ReadingView = ({
   }, [content, language]);
 
   // Extract actual markdown headings for a collapsible, accessible table of contents.
-  const headingOutline = useMemo(() => processed.split("\n").flatMap((line) => {
-    const match = line.match(/^(#{2,4})\s+(.+?)\s*$/);
-    return match ? [{ level: match[1].length, text: match[2].replace(/\*\*/g, "") }] : [];
-  }), [processed]);
+  const headingOutline = useMemo(() => {
+    let chapter = 0;
+    let subpoint = 0;
+    let detail = 0;
+    const toLetters = (value: number) => {
+      let n = value;
+      let letters = "";
+      while (n > 0) {
+        n--;
+        letters = String.fromCharCode(65 + (n % 26)) + letters;
+        n = Math.floor(n / 26);
+      }
+      return letters;
+    };
+    return processed.split("\n").flatMap((line) => {
+      const match = line.match(/^(#{2,4})\s+(.+?)\s*$/);
+      if (!match) return [];
+      const level = match[1].length;
+      if (level === 2) { chapter++; subpoint = 0; detail = 0; }
+      else if (level === 3) { subpoint++; detail = 0; }
+      else detail++;
+      const marker = level === 2 ? String(chapter) : toLetters(level === 3 ? subpoint : detail);
+      return [{ level, marker, text: match[2].replace(/\*\*/g, "") }];
+    });
+  }, [processed]);
 
   const headingCounter = useRef(0);
   headingCounter.current = 0;
@@ -382,9 +403,10 @@ const ReadingView = ({
           <nav aria-label={isHindi ? "पढ़ने की विषय-सूची" : "Reading table of contents"}>
             <ol className="rv-toc-list">
               {headingOutline.map((heading, index) => (
-                <li key={index} className={heading.level >= 3 ? (heading.level === 4 ? "rv-toc-subitem rv-toc-subsubitem" : "rv-toc-subitem") : ""}>
+                <li key={index} className={heading.level >= 3 ? (heading.level === 4 ? "rv-toc-subitem rv-toc-subsubitem" : "rv-toc-subitem") : "rv-toc-main"}>
                   <a href={`#rv-chapter-${index + 1}`}>
-                    {heading.text}
+                    <span className="rv-toc-number" aria-hidden="true">{heading.marker}.</span>
+                    <span>{heading.text}</span>
                   </a>
                 </li>
               ))}
@@ -435,12 +457,15 @@ const ReadingView = ({
         .rv-progress { height: 100%; background: var(--rv-accent); border-radius: 2px; transition: width 120ms linear; }
         .rv-toc { max-width: 680px; margin: 0 auto 24px; border: 1px solid var(--rv-divider); border-radius: 12px; padding: 12px 16px; background: var(--rv-quote-bg); }
         .rv-toc-trigger { display: flex; align-items: center; gap: 10px; cursor: pointer; font: 700 14px var(--rv-heading-font); color: var(--rv-heading); }
-        .rv-toc-list { margin: 12px 0 0; padding-left: 20px; list-style: decimal; }
+        .rv-toc-list { margin: 12px 0 0; padding: 0; list-style: none; }
         .rv-toc-list li { margin: 6px 0; font-size: 14px; line-height: 1.6; }
-        .rv-toc-list a { color: var(--rv-text); text-decoration: none; }
+        .rv-toc-list a { display: flex; align-items: baseline; gap: 8px; color: var(--rv-text); text-decoration: none; }
+        .rv-toc-number { flex: none; min-width: 2ch; color: var(--rv-heading); font-weight: 800; font-variant-numeric: tabular-nums; }
+        .rv-toc-main a { color: var(--rv-heading); font-weight: 800; }
         .rv-toc-list a:hover, .rv-toc-list a:focus-visible { color: var(--rv-accent); text-decoration: underline; }
-        .rv-toc-subitem { margin-left: 15px !important; opacity: 0.9; }
-        .rv-toc-subsubitem { margin-left: 26px !important; font-size: 13px !important; }
+        .rv-toc-subitem { margin-left: 16px !important; }
+        .rv-toc-subitem a { font-weight: 550; }
+        .rv-toc-subsubitem { margin-left: 32px !important; font-size: 13px !important; }
         .rv-h2, .rv-h3, .rv-h4 { scroll-margin-top: 90px; }
         .rv-article { max-width: calc(680px + (var(--rv-scale) - 1) * 120px); transition: max-width .3s ease; }
         .rv-h1 { font-size: calc(30px * var(--rv-scale)); }
