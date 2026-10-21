@@ -45,6 +45,7 @@ const BookReviews = lazy(() => import("@/components/BookReviews").then(m => ({ d
 const BookComments = lazy(() => import("@/components/BookComments").then(m => ({ default: m.BookComments })));
 const CommunitySidebar = lazy(() => import("@/components/CommunitySidebar").then(m => ({ default: m.CommunitySidebar })));
 const MasteryTab = lazy(() => import("@/components/MasteryTab"));
+const SubjectiveMastery = lazy(() => import("@/components/SubjectiveMastery"));
 const StickyAudioPlayer = lazy(() => import("@/components/StickyAudioPlayer").then(m => ({ default: m.StickyAudioPlayer })));
 const CommunityFallback = () => <div className="h-32 rounded-xl bg-muted/40 animate-pulse" />;
 
@@ -852,6 +853,7 @@ const BookDetail = () => {
               <BookMindmapSection title={book.title} mindmapUrl={assets?.mindmap_url} loading={assetsLoading} isHindi={lang === "hi"} book={book} />
               <Suspense fallback={<CommunityFallback />}>
                 <MasteryTab bookId={book.id} quiz={assets?.quiz_data ?? []} flashcards={assets?.flashcard_data ?? []} />
+                <SubjectiveMastery key={book.id} bookId={book.id} language={lang} />
               </Suspense>
             </TabsContent>
 
