@@ -5,8 +5,6 @@ const MODEL = "google/gemini-2.5-flash";
 const reply = (req: Request, status: number, data: Record<string, unknown>) =>
   new Response(JSON.stringify(data), { status, headers: { ...corsHeaders(req), "Content-Type": "application/json" } });
 
-type AssessmentError = { error: string };
-
 async function requestAI(key: string, system: string, input: Record<string, unknown>) {
   const r = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
     method: "POST",
