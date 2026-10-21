@@ -75,4 +75,32 @@ describe("bilingual editorial reader", () => {
     expect(screen.getByText(/Table of contents/)).toBeTruthy();
     expect(container.querySelectorAll("a[href^='#rv-chapter-']")).toHaveLength(3);
   });
+
+  it("numbers fourteen chapters and marks nested sections alphabetically", () => {
+    const chapters = Array.from({ length: 14 }, (_, i) =>
+      `## Chapter ${i + 1}\n\nDistinct chapter text ${i + 1}.`
+    ).join("\n\n");
+    const content = `${chapters}\n\n### First point\n\nDetails.\n\n### Second point\n\nMore details.`;
+    const { container } = render(<ReadingView content={content} language="en" title="Example" />);
+    const links = [...container.querySelectorAll(".rv-toc-list a")];
+    expect(links).toHaveLength(16);
+    expect(links[0].textContent).toContain("1.Chapter 1");
+    expect(links[13].textContent).toContain("14.Chapter 14");
+    expect(links[14].textContent).toContain("A.First point");
+    expect(links[15].textContent).toContain("B.Second point");
+    expect(links[13].closest("li")?.classList.contains("rv-toc-main")).toBe(true);
+    for (const link of links) {
+      const target = link.getAttribute("href");
+      expect(target?.startsWith("#rv-chapter-")).toBe(true);
+      expect(container.querySelector(target!)).toBeTruthy();
+    }
+  });
+
+  it("uses A/B subpoints under a Hindi chapter", () => {
+    const { container } = render(
+      <ReadingView content={"## कहानी\n\nकथा।\n\n### पात्र\n\nएक पात्र।\n\n### विचार\n\nएक विचार।"} language="hi" />,
+    );
+    const labels = [...container.querySelectorAll(".rv-toc-list a")].map(x => x.textContent);
+    expect(labels).toEqual(["1.कहानी", "A.पात्र", "B.विचार"]);
+  });
 });
