@@ -92,7 +92,7 @@ export default function SubjectiveMastery({ bookId, language }: { bookId: string
               <Textarea
                 aria-label={label("Your answer to question " + (index + 1), "प्रश्न " + (index + 1) + " का उत्तर")}
                 value={answers[index]}
-                onChange={(value) => { setAnswers((a) => a.map((v, i) => i === index ? value : v)); setFeedback((old) => { const next = { ...old }; delete next[index]; return next; }); }}
+                onChange={(event) => { const value = event.target.value; setAnswers((a) => a.map((v, i) => i === index ? value : v)); setFeedback((old) => { const next = { ...old }; delete next[index]; return next; }); }}
                 placeholder={label("Explain your reasoning using specific concepts or examples from the book...", "किताब के विचारों, उदाहरणों और अपने तर्क के साथ उत्तर लिखें...")}
                 rows={7}
                 disabled={busy !== null}
