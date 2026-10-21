@@ -42,7 +42,7 @@ export const AuthorBio = ({ author, category, title, isHindi = false }: Props) =
   const reviewedProfile = isPremchand(author) ? premchandBio : findReviewedAuthorProfile(author);
   const reviewed = Boolean(reviewedProfile);
   return (
-    <section className="mt-12 pt-8 border-t border-border" aria-labelledby="author-bio">
+    <section className="pt-2 pb-6 scroll-mt-28" aria-labelledby="author-bio">
       <div className="text-xs tracking-[0.14em] text-primary font-semibold mb-3">
         {isHindi ? "रचना और रचनाकार" : "About the author"}
       </div>
