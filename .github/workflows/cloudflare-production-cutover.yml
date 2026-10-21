@@ -189,6 +189,9 @@ jobs:
 
           curl --fail --silent --show-error 'https://www.booknomics.com/api/auth/session' -o /tmp/session.json
           node -e 'const d=require("/tmp/session.json"); if (!("user" in d)) process.exit(1)'
+
+          # Never accept a Cloudflare API with a legacy Supabase login frontend.
+          AUTH_SMOKE_BASE_URL='https://www.booknomics.com' node scripts/verify-cloudflare-auth-cutover.mjs
           GOOGLE_STATUS=$(curl --silent --show-error --output /dev/null --dump-header /tmp/google.headers \
             --write-out '%{http_code}' --max-redirs 0 \
             'https://www.booknomics.com/api/auth/google/start?return_to=%2F' || true)
