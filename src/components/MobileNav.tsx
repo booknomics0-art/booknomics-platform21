@@ -1,11 +1,12 @@
 import { NavLink } from "react-router-dom";
-import { Home, BookOpen, Library, User as UserIcon, Route } from "lucide-react";
+import { Home, BookOpen, Library, User as UserIcon, Route, Crown } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 
 const items = [
   { to: "/", label: "Home", icon: Home, end: true },
   { to: "/browse", label: "Browse", icon: BookOpen },
   { to: "/paths", label: "Paths", icon: Route },
+  { to: "/pricing", label: "Premium", icon: Crown },
   { to: "/library", label: "Library", icon: Library, auth: true },
   { to: "/dashboard", label: "Profile", icon: UserIcon, auth: true },
 ];
@@ -17,7 +18,7 @@ export const MobileNav = () => {
       className="md:hidden fixed bottom-0 inset-x-0 z-40 border-t border-border bg-background/95 backdrop-blur-md pb-[env(safe-area-inset-bottom)]"
       aria-label="Primary mobile"
     >
-      <ul className="grid grid-cols-5">
+      <ul className="grid grid-cols-6">
         {items.map(({ to, label, icon: Icon, end, auth }) => {
           const target = auth && !user ? "/auth" : to;
           return (

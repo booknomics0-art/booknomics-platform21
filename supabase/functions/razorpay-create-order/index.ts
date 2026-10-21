@@ -3,8 +3,8 @@ import { corsHeaders, checkRateLimit, maybePruneRateLimits, rateLimitedResponse 
 
 const PLANS: Record<string, { amount: number; days: number }> = {
   weekly:    { amount: 1900,  days: 7 },
-  monthly:   { amount: 6900,  days: 30 },
-  quarterly: { amount: 19900, days: 90 },
+  monthly:   { amount: 4900,  days: 30 },
+  // Quarterly remains honoured for existing paid members, not sold in the new UI.
 };
 
 Deno.serve(async (req) => {

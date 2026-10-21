@@ -31,7 +31,7 @@ const Dashboard = () => {
   const [categoryMap, setCategoryMap] = useState<{ category: string; count: number }[]>([]);
   const [badges, setBadges] = useState<MasteryRow[]>([]);
 
-  useEffect(() => { document.title = "Dashboard — BookInsight"; }, []);
+  useEffect(() => { document.title = "Dashboard — Booknomics"; }, []);
 
   useEffect(() => {
     if (!user) return;
@@ -202,7 +202,7 @@ const Dashboard = () => {
         {!isPremium && (
           <div className="bg-gold rounded-3xl p-10 md:p-14 text-center shadow-cover">
             <h2 className="font-serif text-3xl md:text-4xl font-bold text-primary-foreground mb-3">Don't just read. Transform.</h2>
-            <p className="text-primary-foreground/80 max-w-lg mx-auto mb-6">Unlock action systems, weekly trackers and AI reflection — from ₹49/month.</p>
+            <p className="text-primary-foreground/80 max-w-lg mx-auto mb-6">Unlock action systems, weekly trackers and learning tools — from ₹49/month.</p>
             <Button asChild variant="secondary" size="lg" className="rounded-full"><Link to="/pricing">See plans</Link></Button>
           </div>
         )}
