@@ -11,6 +11,7 @@ Tabs:
 - **7-Day Tracker QA** — separate rows for the same 5,027 book IDs, individual extracted Day 1–7 first-line tasks, number detected, identical-task warning, human review and evidence.
 - **Exact Duplicate QA** — per-book full-text fingerprints and exact-copy group sizes for the tracker, action plan, ideas and overview.
 - **QA Criteria** — 24 check areas, including all seven days separately, metadata, factual accuracy, takeaways, application, story, font, hierarchy, TOC, translation, release safety.
+- **Editorial Signoff** — 5,027 source-aligned rows with 24 *independent* PASS/FAIL/N/A review columns and owner, evidence, decision, date. All rows start `HUMAN_PENDING`; no automated signoff. Dashboard checks confirm 5,027 unique IDs in each data tab and zero row mismatches.
 
 **Important:** This is 100% published-catalogue **structural screening**, not a 100% source-verified human editorial audit. Every row remains `HUMAN_PENDING` until a reviewer checks the book against trustworthy original material and records evidence. Text length alone is never a final quality judgment. Absent explicit "Day N" markers can be an alternate formatting convention rather than missing content.
 
@@ -19,12 +20,12 @@ Tabs:
 | Priority | Count | Definition |
 |---|---:|---|
 | P0 | 291 | Overview or key ideas or dedicated deep-summary field below 100 characters |
-| P1 | 1,684 | No P0, but application or action plan or tracker below 70 characters |
-| P2 | 2,566 | No P0/P1, but day-marker, example, reflection, template, or heading review signal |
-| P3 | 486 | No listed automated flag; **NOT a certified pass** |
+| P1 | 2,382 | No P0, but automated application/action/tracker deficits or escalated repeat signals; editorial review required |
+| P2 | 1,858 | No P0/P1, but day-marker, example, reflection, template, or heading review signal |
+| P3 | 496 | No listed automated flag; **NOT a certified pass** |
 | Total | **5,027** | Exactly one priority per published book |
 
-Other overlapping signals: **2,742** have fewer than seven explicitly detected unique Day 1–7 markers; **1,306** have a narrowly defined repeat-template phrase indicator; **10** have no scanned Markdown `###` signal. These flags are heuristic and **must not** be added together as disjoint counts.
+Other overlapping signals: **2,078** have fewer than seven explicitly detected unique Day 1–7 markers under the revised structural detector; **246** have a narrowly defined phrase-template indicator; **10** have no scanned Markdown `###` signal. The day-marker screen recognizes additional layouts but remains a heuristic. More generic passages may be detected through the independently verified exact-copy analysis below. These flags are heuristic and **must not** be added together as disjoint counts.
 
 ### Confirmed exact-copy evidence (separate from structural priority)
 
