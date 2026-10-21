@@ -1,0 +1,802 @@
+[
+  {
+    "id": "cbec904d-f2e0-41bc-b3be-76f24571be23",
+    "title": "Crime and Punishment",
+    "author": "Fyodor Dostoevsky",
+    "language": "en",
+    "seo_slug": "crime-and-punishment-dostoevsky-summary",
+    "slug": "crime-and-punishment-dostoevsky-en"
+  },
+  {
+    "id": "5df443b8-4e06-4918-990c-fd4028ff01b9",
+    "title": "Frankenstein; or, The Modern Prometheus",
+    "author": "Mary Shelley",
+    "language": "en",
+    "seo_slug": "frankenstein-mary-shelley-summary",
+    "slug": "frankenstein-mary-shelley-en"
+  },
+  {
+    "id": "c70c2ebb-8d7d-4d0d-b5cb-75c075b9962a",
+    "title": "Middlemarch",
+    "author": "George Eliot",
+    "language": "en",
+    "seo_slug": "middlemarch-george-eliot-summary",
+    "slug": "middlemarch-george-eliot-en"
+  },
+  {
+    "id": "99631c73-b610-4d41-9b2c-3118da5fa263",
+    "title": "Pride and Prejudice",
+    "author": "Jane Austen",
+    "language": "en",
+    "seo_slug": "pride-and-prejudice-jane-austen-summary",
+    "slug": "pride-and-prejudice-jane-austen-en"
+  },
+  {
+    "id": "626ffdc1-1e71-4c5b-bfeb-132ed1c2c9ab",
+    "title": "The Count of Monte Cristo",
+    "author": "Alexandre Dumas",
+    "language": "en",
+    "seo_slug": "count-of-monte-cristo-alexandre-dumas-summary",
+    "slug": "count-of-monte-cristo-alexandre-dumas-en"
+  },
+  {
+    "id": "b94e3f25-05e0-4c6a-a195-0e938fc7db4e",
+    "title": "कर्मभूमि",
+    "author": "मुंशी प्रेमचंद",
+    "language": "hi",
+    "seo_slug": "karmabhoomi-premchand-saransh",
+    "slug": "karmabhoomi-premchand-saransh"
+  },
+  {
+    "id": "6c430c83-4400-4ede-a792-5f18c2a3edef",
+    "title": "कायाकल्प",
+    "author": "मुंशी प्रेमचंद",
+    "language": "hi",
+    "seo_slug": "kayakalp-premchand-saransh",
+    "slug": "kayakalp-premchand-saransh"
+  },
+  {
+    "id": "59bc4712-6bca-436a-bee9-4b6335823052",
+    "title": "गबन",
+    "author": "मुंशी प्रेमचंद",
+    "language": "hi",
+    "seo_slug": "gaban-munshi-premchand-saransh",
+    "slug": "gaban-munshi-premchand-saransh"
+  },
+  {
+    "id": "a7f748e6-c54b-41eb-b918-0faff8db0ddc",
+    "title": "प्रतिज्ञा",
+    "author": "मुंशी प्रेमचंद",
+    "language": "hi",
+    "seo_slug": "pratigya-premchand-saransh",
+    "slug": "pratigya-premchand-saransh"
+  },
+  {
+    "id": "6b74f52f-54a0-465b-8e02-58f628359508",
+    "title": "प्रेमाश्रम",
+    "author": "मुंशी प्रेमचंद",
+    "language": "hi",
+    "seo_slug": "premashram-premchand-saransh",
+    "slug": "premashram-premchand-saransh"
+  },
+  {
+    "id": "5a6b38c1-157b-4a3d-82c9-63f313ba974a",
+    "title": "मानसरोवर",
+    "author": "मुंशी प्रेमचंद",
+    "language": "hi",
+    "seo_slug": "manasrovar-premchand-saransh",
+    "slug": "manasrovar-premchand-saransh"
+  },
+  {
+    "id": "e19bf759-5854-458a-bed1-d5b67c61740c",
+    "title": "रक्तकरबी",
+    "author": "रवींद्रनाथ ठाकुर",
+    "language": "hi",
+    "seo_slug": "रक्तकरबी",
+    "slug": "रक्तकरबी"
+  },
+  {
+    "id": "567693f2-e622-41b2-afeb-135497282d94",
+    "title": "रंगभूमि",
+    "author": "मुंशी प्रेमचंद",
+    "language": "hi",
+    "seo_slug": "rangbhoomi-premchand-saransh",
+    "slug": "rangbhoomi-premchand-saransh"
+  },
+  {
+    "id": "377afb77-5d5a-4738-9cfe-1413756cfd41",
+    "title": "सेवासदन",
+    "author": "मुंशी प्रेमचंद",
+    "language": "hi",
+    "seo_slug": "sevasadan-premchand-saransh",
+    "slug": "sevasadan-premchand-saransh"
+  },
+  {
+    "id": "01400c5e-655d-48d7-9b5a-0d7335baa3e1",
+    "title": "A Brief History of Time",
+    "author": "Stephen Hawking",
+    "language": "en",
+    "seo_slug": "a-brief-history-of-time-stephen-hawking-summary",
+    "slug": "a-brief-history-of-time-stephen-hawking-summary"
+  },
+  {
+    "id": "9ae2200d-327a-4e71-8b2d-03de7c00aff3",
+    "title": "A Random Walk Down Wall Street",
+    "author": "Burton G. Malkiel",
+    "language": "en",
+    "seo_slug": "a-random-walk-down-wall-street-burton-g-malkiel-summary",
+    "slug": "a-random-walk-down-wall-street-burton-g-malkiel-summary"
+  },
+  {
+    "id": "6b01db80-2c84-4aa8-9c61-6c320827d8f2",
+    "title": "A Wealth of Common Sense",
+    "author": "Ben Carlson",
+    "language": "en",
+    "seo_slug": "a-wealth-of-common-sense-ben-carlson-summary",
+    "slug": "a-wealth-of-common-sense-ben-carlson-summary"
+  },
+  {
+    "id": "61a0a58c-0ab7-4a2f-a63e-c7cafcede941",
+    "title": "Algorithms to Live By",
+    "author": "Brian Christian and Tom Griffiths",
+    "language": "en",
+    "seo_slug": "algorithms-to-live-by-brian-christian-and-tom-griffiths-summary",
+    "slug": "algorithms-to-live-by-brian-christian-and-tom-griffiths-summary"
+  },
+  {
+    "id": "ec21a092-da50-4687-a90d-f691a4884afa",
+    "title": "Alice's Adventures in Wonderland",
+    "author": "Lewis Carroll",
+    "language": "en",
+    "seo_slug": "alices-adventures-in-wonderland-lewis-carroll-summary",
+    "slug": "alices-adventures-in-wonderland-lewis-carroll-en"
+  },
+  {
+    "id": "7f30efb5-7706-4a80-aad3-ed8514340cb3",
+    "title": "Amp It Up",
+    "author": "Frank Slootman",
+    "language": "en",
+    "seo_slug": "amp-it-up-frank-slootman-summary",
+    "slug": "amp-it-up-frank-slootman-summary"
+  },
+  {
+    "id": "b49bf80d-9cde-4e4f-a561-059f758b8556",
+    "title": "Antifragile: Things That Gain from Disorder",
+    "author": "Nassim Nicholas Taleb",
+    "language": "en",
+    "seo_slug": "antifragile-things-that-gain-from-disorder-nassim-nicholas-taleb-summary",
+    "slug": "antifragile-things-that-gain-from-disorder-nassim-nicholas-taleb-summary"
+  },
+  {
+    "id": "04f671a7-7444-4a23-a65c-2ef2533a30d5",
+    "title": "Attached",
+    "author": "Amir Levine and Rachel Heller",
+    "language": "en",
+    "seo_slug": "attached-amir-levine-and-rachel-heller-summary",
+    "slug": "attached-amir-levine-and-rachel-heller-summary"
+  },
+  {
+    "id": "4fca0d7b-2574-4294-9fbd-97e2707e0780",
+    "title": "Bad Blood",
+    "author": "John Carreyrou",
+    "language": "en",
+    "seo_slug": "bad-blood-john-carreyrou-summary",
+    "slug": "bad-blood-john-carreyrou-summary"
+  },
+  {
+    "id": "2a4fc20e-869f-458a-b34a-4a7946f978c7",
+    "title": "Behave",
+    "author": "Robert M. Sapolsky",
+    "language": "en",
+    "seo_slug": "behave-robert-m-sapolsky-summary",
+    "slug": "behave-robert-m-sapolsky-summary"
+  },
+  {
+    "id": "7a5e60c2-0916-44bb-a76c-b511e66beb5f",
+    "title": "Blitzscaling",
+    "author": "Reid Hoffman and Chris Yeh",
+    "language": "en",
+    "seo_slug": "blitzscaling-reid-hoffman-and-chris-yeh-summary",
+    "slug": "blitzscaling-reid-hoffman-and-chris-yeh-summary"
+  },
+  {
+    "id": "28ed6521-c661-4ab4-83e4-ffaa69fde8a4",
+    "title": "Blue Ocean Strategy",
+    "author": "W. Chan Kim and Renée Mauborgne",
+    "language": "en",
+    "seo_slug": "blue-ocean-strategy-w-chan-kim-and-renee-mauborgne-summary",
+    "slug": "blue-ocean-strategy-w-chan-kim-and-renee-mauborgne-summary"
+  },
+  {
+    "id": "75f7aeea-6aee-40ee-922e-d09d8d3e2c30",
+    "title": "Building a StoryBrand",
+    "author": "Donald Miller",
+    "language": "en",
+    "seo_slug": "building-a-storybrand-donald-miller-summary",
+    "slug": "building-a-storybrand-donald-miller-summary"
+  },
+  {
+    "id": "22d3f0b0-5c87-410b-b4f4-cff31857fb14",
+    "title": "Built to Last",
+    "author": "Jim Collins and Jerry I. Porras",
+    "language": "en",
+    "seo_slug": "built-to-last-jim-collins-and-jerry-i-porras-summary",
+    "slug": "built-to-last-jim-collins-and-jerry-i-porras-summary"
+  },
+  {
+    "id": "4c7b29d0-feaf-40d5-b641-e663a321eb54",
+    "title": "Common Stocks and Uncommon Profits",
+    "author": "Philip A. Fisher",
+    "language": "en",
+    "seo_slug": "common-stocks-and-uncommon-profits-philip-a-fisher-summary",
+    "slug": "common-stocks-and-uncommon-profits-philip-a-fisher-summary"
+  },
+  {
+    "id": "0a403b95-86fc-4d5b-a328-d979536a53b4",
+    "title": "Competing Against Luck",
+    "author": "Clayton M. Christensen, Taddy Hall, Karen Dillon, and David S. Duncan",
+    "language": "en",
+    "seo_slug": "competing-against-luck-clayton-m-christensen-taddy-hall-karen-dillon-and-david-s-duncan-summary",
+    "slug": "competing-against-luck-clayton-m-christensen-taddy-hall-karen-dillon-and-david-s-duncan-summary"
+  },
+  {
+    "id": "2f8e5025-bd01-41d0-95a5-a36032f5542f",
+    "title": "Contagious",
+    "author": "Jonah Berger",
+    "language": "en",
+    "seo_slug": "contagious-jonah-berger-summary",
+    "slug": "contagious-jonah-berger-summary"
+  },
+  {
+    "id": "b515a078-b65b-4dfe-9788-2a8ced0140ca",
+    "title": "Creativity, Inc.",
+    "author": "Ed Catmull with Amy Wallace",
+    "language": "en",
+    "seo_slug": "creativity-inc-ed-catmull-with-amy-wallace-summary",
+    "slug": "creativity-inc-ed-catmull-with-amy-wallace-summary"
+  },
+  {
+    "id": "294ebac5-35ac-4e3b-9325-2ea94516b3ca",
+    "title": "Crossing the Chasm",
+    "author": "Geoffrey A. Moore",
+    "language": "en",
+    "seo_slug": "crossing-the-chasm-geoffrey-a-moore-summary",
+    "slug": "crossing-the-chasm-geoffrey-a-moore-summary"
+  },
+  {
+    "id": "147f6e35-9304-4213-88ef-85200115f396",
+    "title": "Crucial Conversations",
+    "author": "Kerry Patterson, Joseph Grenny, Ron McMillan, and Al Switzler",
+    "language": "en",
+    "seo_slug": "crucial-conversations-kerry-patterson-joseph-grenny-ron-mcmillan-and-al-switzler-summary",
+    "slug": "crucial-conversations-kerry-patterson-joseph-grenny-ron-mcmillan-and-al-switzler-summary"
+  },
+  {
+    "id": "fba076f1-f398-41f1-954e-4b13609e9999",
+    "title": "Dare to Lead",
+    "author": "Brené Brown",
+    "language": "en",
+    "seo_slug": "dare-to-lead-brene-brown-summary",
+    "slug": "dare-to-lead-brene-brown-summary"
+  },
+  {
+    "id": "d13863cb-26c9-4ba3-81d3-d2a1dd069674",
+    "title": "Daring Greatly",
+    "author": "Brené Brown",
+    "language": "en",
+    "seo_slug": "daring-greatly-brene-brown-summary",
+    "slug": "daring-greatly-brene-brown-summary"
+  },
+  {
+    "id": "e5123023-0319-4a52-9b21-e82b9b865bbe",
+    "title": "Decisive",
+    "author": "Chip Heath and Dan Heath",
+    "language": "en",
+    "seo_slug": "decisive-chip-heath-and-dan-heath-summary",
+    "slug": "decisive-chip-heath-and-dan-heath-summary"
+  },
+  {
+    "id": "fc32255b-5cdb-4f28-b788-6091eeb9d2fb",
+    "title": "Deep Work",
+    "author": "Cal Newport",
+    "language": "en",
+    "seo_slug": "deep-work-cal-newport-summary",
+    "slug": "deep-work-cal-newport-summary"
+  },
+  {
+    "id": "3e6ff448-4672-4d7d-ae45-64707ef9aa48",
+    "title": "Determined",
+    "author": "Robert M. Sapolsky",
+    "language": "en",
+    "seo_slug": "determined-robert-m-sapolsky-summary",
+    "slug": "determined-robert-m-sapolsky-summary"
+  },
+  {
+    "id": "76b54854-6608-4bea-8a7d-2f21800331c3",
+    "title": "Die With Zero",
+    "author": "Bill Perkins",
+    "language": "en",
+    "seo_slug": "die-with-zero-bill-perkins-summary",
+    "slug": "die-with-zero-bill-perkins-summary"
+  },
+  {
+    "id": "aa5c2aff-a36b-4fd7-9c2c-392fd59bee00",
+    "title": "Difficult Conversations",
+    "author": "Douglas Stone, Bruce Patton, and Sheila Heen",
+    "language": "en",
+    "seo_slug": "difficult-conversations-douglas-stone-bruce-patton-and-sheila-heen-summary",
+    "slug": "difficult-conversations-douglas-stone-bruce-patton-and-sheila-heen-summary"
+  },
+  {
+    "id": "a0f67b4c-e3ae-44d3-9b37-9ec156b10ec6",
+    "title": "Digital Minimalism",
+    "author": "Cal Newport",
+    "language": "en",
+    "seo_slug": "digital-minimalism-cal-newport-summary",
+    "slug": "digital-minimalism-cal-newport-summary"
+  },
+  {
+    "id": "1ed31232-6452-492f-9891-71f166ef825b",
+    "title": "Disciplined Entrepreneurship",
+    "author": "Bill Aulet",
+    "language": "en",
+    "seo_slug": "disciplined-entrepreneurship-bill-aulet-summary",
+    "slug": "disciplined-entrepreneurship-bill-aulet-summary"
+  },
+  {
+    "id": "d787affc-3c3e-48f2-b170-68af48f4c548",
+    "title": "Don't Make Me Think",
+    "author": "Steve Krug",
+    "language": "en",
+    "seo_slug": "don-t-make-me-think-steve-krug-summary",
+    "slug": "don-t-make-me-think-steve-krug-summary"
+  },
+  {
+    "id": "ac6c4426-4b84-44b1-8e26-2621bf6717fe",
+    "title": "Dopamine Nation",
+    "author": "Anna Lembke",
+    "language": "en",
+    "seo_slug": "dopamine-nation-anna-lembke-summary",
+    "slug": "dopamine-nation-anna-lembke-summary"
+  },
+  {
+    "id": "19b2e6c6-fe98-4245-82e6-7485b62d8e34",
+    "title": "Drive: The Surprising Truth About What Motivates Us",
+    "author": "Daniel H. Pink",
+    "language": "en",
+    "seo_slug": "drive-the-surprising-truth-about-what-motivates-us-daniel-h-pink-summary",
+    "slug": "drive-the-surprising-truth-about-what-motivates-us-daniel-h-pink-summary"
+  },
+  {
+    "id": "6c869bb2-2657-43a9-91ee-66811ce2e9e2",
+    "title": "Eat That Frog!",
+    "author": "Brian Tracy",
+    "language": "en",
+    "seo_slug": "eat-that-frog-brian-tracy-summary",
+    "slug": "eat-that-frog-brian-tracy-summary"
+  },
+  {
+    "id": "a89e19a6-d43c-4fa6-aa27-9f2819103004",
+    "title": "Emotional Intelligence",
+    "author": "Daniel Goleman",
+    "language": "en",
+    "seo_slug": "emotional-intelligence-daniel-goleman-summary",
+    "slug": "emotional-intelligence-daniel-goleman-summary"
+  },
+  {
+    "id": "41e90b52-837f-45a6-bf1b-2629f6ca3cef",
+    "title": "Empowered",
+    "author": "Marty Cagan and Chris Jones",
+    "language": "en",
+    "seo_slug": "empowered-marty-cagan-and-chris-jones-summary",
+    "slug": "empowered-marty-cagan-and-chris-jones-summary"
+  },
+  {
+    "id": "e866da3e-1634-4f85-be29-0f41b9df8e88",
+    "title": "Essentialism",
+    "author": "Greg McKeown",
+    "language": "en",
+    "seo_slug": "essentialism-greg-mckeown-summary",
+    "slug": "essentialism-greg-mckeown-summary"
+  },
+  {
+    "id": "45882b7b-3870-4d48-8bcf-be83655dec8e",
+    "title": "Extreme Ownership",
+    "author": "Jocko Willink and Leif Babin",
+    "language": "en",
+    "seo_slug": "extreme-ownership-jocko-willink-and-leif-babin-summary",
+    "slug": "extreme-ownership-jocko-willink-and-leif-babin-summary"
+  },
+  {
+    "id": "30ec7c1f-2ca9-4559-a5d9-9e5f31f3eba5",
+    "title": "Factfulness",
+    "author": "Hans Rosling, Ola Rosling, and Anna Rosling Rönnlund",
+    "language": "en",
+    "seo_slug": "factfulness-hans-rosling-ola-rosling-and-anna-rosling-ronnlund-summary",
+    "slug": "factfulness-hans-rosling-ola-rosling-and-anna-rosling-ronnlund-summary"
+  },
+  {
+    "id": "78c8ed08-c775-4561-a813-335a4c85a2c5",
+    "title": "First, Break All the Rules",
+    "author": "Marcus Buckingham and Curt Coffman",
+    "language": "en",
+    "seo_slug": "first-break-all-the-rules-marcus-buckingham-and-curt-coffman-summary",
+    "slug": "first-break-all-the-rules-marcus-buckingham-and-curt-coffman-summary"
+  },
+  {
+    "id": "3d7923c6-024c-44d2-951c-0c244762053b",
+    "title": "Flow: The Psychology of Optimal Experience",
+    "author": "Mihaly Csikszentmihalyi",
+    "language": "en",
+    "seo_slug": "flow-the-psychology-of-optimal-experience-mihaly-csikszentmihalyi-summary",
+    "slug": "flow-the-psychology-of-optimal-experience-mihaly-csikszentmihalyi-summary"
+  },
+  {
+    "id": "295cd48b-ac8f-439d-9a20-cb09dea49efd",
+    "title": "Fooled by Randomness",
+    "author": "Nassim Nicholas Taleb",
+    "language": "en",
+    "seo_slug": "fooled-by-randomness-nassim-nicholas-taleb-summary",
+    "slug": "fooled-by-randomness-nassim-nicholas-taleb-summary"
+  },
+  {
+    "id": "57750c82-51c4-43aa-a526-007414b031ee",
+    "title": "Four Thousand Weeks",
+    "author": "Oliver Burkeman",
+    "language": "en",
+    "seo_slug": "four-thousand-weeks-oliver-burkeman-summary",
+    "slug": "four-thousand-weeks-oliver-burkeman-summary"
+  },
+  {
+    "id": "f9692dca-9c4a-4494-b172-a63040763e7e",
+    "title": "Getting Things Done",
+    "author": "David Allen",
+    "language": "en",
+    "seo_slug": "getting-things-done-david-allen-summary",
+    "slug": "getting-things-done-david-allen-summary"
+  },
+  {
+    "id": "82ae3d93-7845-44be-b1a6-01e524cd0483",
+    "title": "Good to Great",
+    "author": "Jim Collins",
+    "language": "en",
+    "seo_slug": "good-to-great-jim-collins-summary",
+    "slug": "good-to-great-jim-collins-summary"
+  },
+  {
+    "id": "cedc62e1-b93e-426a-93d6-37662173ec9d",
+    "title": "Great by Choice",
+    "author": "Jim Collins and Morten T. Hansen",
+    "language": "en",
+    "seo_slug": "great-by-choice-jim-collins-and-morten-t-hansen-summary",
+    "slug": "great-by-choice-jim-collins-and-morten-t-hansen-summary"
+  },
+  {
+    "id": "fa9c7579-9728-4535-992a-44ef1a355518",
+    "title": "Grit",
+    "author": "Angela Duckworth",
+    "language": "en",
+    "seo_slug": "grit-angela-duckworth-summary",
+    "slug": "grit-angela-duckworth-summary"
+  },
+  {
+    "id": "362a7b01-aff8-4717-8169-754c404c4854",
+    "title": "Hacking Growth",
+    "author": "Sean Ellis and Morgan Brown",
+    "language": "en",
+    "seo_slug": "hacking-growth-sean-ellis-and-morgan-brown-summary",
+    "slug": "hacking-growth-sean-ellis-and-morgan-brown-summary"
+  },
+  {
+    "id": "e44b861a-3369-4265-bc8e-f1de7dd657cb",
+    "title": "High Output Management",
+    "author": "Andrew S. Grove",
+    "language": "en",
+    "seo_slug": "high-output-management-andrew-s-grove-summary",
+    "slug": "high-output-management-andrew-s-grove-summary"
+  },
+  {
+    "id": "d2d9b49f-2cd3-4297-a5e3-f392c300870d",
+    "title": "Hooked",
+    "author": "Nir Eyal with Ryan Hoover",
+    "language": "en",
+    "seo_slug": "hooked-nir-eyal-with-ryan-hoover-summary",
+    "slug": "hooked-nir-eyal-with-ryan-hoover-summary"
+  },
+  {
+    "id": "3965aa59-73e8-4696-8314-7688de5a2108",
+    "title": "How Emotions Are Made",
+    "author": "Lisa Feldman Barrett",
+    "language": "en",
+    "seo_slug": "how-emotions-are-made-lisa-feldman-barrett-summary",
+    "slug": "how-emotions-are-made-lisa-feldman-barrett-summary"
+  },
+  {
+    "id": "28bb5d42-bebf-4fc1-8a99-e4232db750b0",
+    "title": "How to Decide",
+    "author": "Annie Duke",
+    "language": "en",
+    "seo_slug": "how-to-decide-annie-duke-summary",
+    "slug": "how-to-decide-annie-duke-summary"
+  },
+  {
+    "id": "72b71ca7-358a-40b0-944c-7e23a2a3abf4",
+    "title": "How to Win Friends and Influence People",
+    "author": "Dale Carnegie",
+    "language": "en",
+    "seo_slug": "how-to-win-friends-and-influence-people-dale-carnegie-summary",
+    "slug": "how-to-win-friends-and-influence-people-dale-carnegie-summary"
+  },
+  {
+    "id": "06943f65-4e22-4d1d-a62f-f10ab90aa760",
+    "title": "Hyperfocus",
+    "author": "Chris Bailey",
+    "language": "en",
+    "seo_slug": "hyperfocus-chris-bailey-summary",
+    "slug": "hyperfocus-chris-bailey-summary"
+  },
+  {
+    "id": "7e1ada3c-dbe3-4422-87ba-02e0fe252cdd",
+    "title": "I Will Teach You to Be Rich",
+    "author": "Ramit Sethi",
+    "language": "en",
+    "seo_slug": "i-will-teach-you-to-be-rich-ramit-sethi-summary",
+    "slug": "i-will-teach-you-to-be-rich-ramit-sethi-summary"
+  },
+  {
+    "id": "c53ce35b-bc8b-4ea7-bbf8-ea2b47c7464a",
+    "title": "Incognito",
+    "author": "David Eagleman",
+    "language": "en",
+    "seo_slug": "incognito-david-eagleman-summary",
+    "slug": "incognito-david-eagleman-summary"
+  },
+  {
+    "id": "c42e2836-ad44-4ff4-876f-759cefc20892",
+    "title": "Indistractable",
+    "author": "Nir Eyal with Julie Li",
+    "language": "en",
+    "seo_slug": "indistractable-nir-eyal-with-julie-li-summary",
+    "slug": "indistractable-nir-eyal-with-julie-li-summary"
+  },
+  {
+    "id": "27a5113d-fafb-425b-9a4b-eb4bf859b8ec",
+    "title": "Influence: The Psychology of Persuasion",
+    "author": "Robert B. Cialdini",
+    "language": "en",
+    "seo_slug": "influence-the-psychology-of-persuasion-robert-b-cialdini-summary",
+    "slug": "influence-the-psychology-of-persuasion-robert-b-cialdini-summary"
+  },
+  {
+    "id": "ae44761e-b243-41e8-90dd-c7e626a9b726",
+    "title": "Inspired",
+    "author": "Marty Cagan",
+    "language": "en",
+    "seo_slug": "inspired-marty-cagan-summary",
+    "slug": "inspired-marty-cagan-summary"
+  },
+  {
+    "id": "6a9a32c2-e018-4d7e-ae9a-5111234d44a0",
+    "title": "Just Keep Buying",
+    "author": "Nick Maggiulli",
+    "language": "en",
+    "seo_slug": "just-keep-buying-nick-maggiulli-summary",
+    "slug": "just-keep-buying-nick-maggiulli-summary"
+  },
+  {
+    "id": "d905cb44-e900-4a21-908d-301d8e077fb1",
+    "title": "Leaders Eat Last",
+    "author": "Simon Sinek",
+    "language": "en",
+    "seo_slug": "leaders-eat-last-simon-sinek-summary",
+    "slug": "leaders-eat-last-simon-sinek-summary"
+  },
+  {
+    "id": "5a545307-7b3a-4031-9f59-6626fb4e06a0",
+    "title": "Leadership and Self-Deception",
+    "author": "The Arbinger Institute",
+    "language": "en",
+    "seo_slug": "leadership-and-self-deception-the-arbinger-institute-summary",
+    "slug": "leadership-and-self-deception-the-arbinger-institute-summary"
+  },
+  {
+    "id": "0d700b3a-f1e2-486b-800c-f143670a106d",
+    "title": "Lean Analytics",
+    "author": "Alistair Croll and Benjamin Yoskovitz",
+    "language": "en",
+    "seo_slug": "lean-analytics-alistair-croll-and-benjamin-yoskovitz-summary",
+    "slug": "lean-analytics-alistair-croll-and-benjamin-yoskovitz-summary"
+  },
+  {
+    "id": "5fcc14af-b595-4ec4-8716-6953cc20f3ac",
+    "title": "Livewired",
+    "author": "David Eagleman",
+    "language": "en",
+    "seo_slug": "livewired-david-eagleman-summary",
+    "slug": "livewired-david-eagleman-summary"
+  },
+  {
+    "id": "f5c74e6b-57ce-4df9-9602-ac8518c6295c",
+    "title": "Made to Stick",
+    "author": "Chip Heath and Dan Heath",
+    "language": "en",
+    "seo_slug": "made-to-stick-chip-heath-and-dan-heath-summary",
+    "slug": "made-to-stick-chip-heath-and-dan-heath-summary"
+  },
+  {
+    "id": "1e13ab14-4613-4797-a6ca-822607e43aed",
+    "title": "Make Time",
+    "author": "Jake Knapp and John Zeratsky",
+    "language": "en",
+    "seo_slug": "make-time-jake-knapp-and-john-zeratsky-summary",
+    "slug": "make-time-jake-knapp-and-john-zeratsky-summary"
+  },
+  {
+    "id": "68919601-6367-41dd-9677-2f1342120f49",
+    "title": "Man's Search for Meaning",
+    "author": "Viktor E. Frankl",
+    "language": "en",
+    "seo_slug": "man-s-search-for-meaning-viktor-e-frankl-summary",
+    "slug": "man-s-search-for-meaning-viktor-e-frankl-summary"
+  },
+  {
+    "id": "14a14d88-ca6d-4ea5-94a3-2ec20a0e2303",
+    "title": "Measure What Matters",
+    "author": "John Doerr",
+    "language": "en",
+    "seo_slug": "measure-what-matters-john-doerr-summary",
+    "slug": "measure-what-matters-john-doerr-summary"
+  },
+  {
+    "id": "56289257-3e11-4b17-9f28-5b68053f12ca",
+    "title": "Mindset",
+    "author": "Carol S. Dweck",
+    "language": "en",
+    "seo_slug": "mindset-carol-s-dweck-summary",
+    "slug": "mindset-carol-s-dweck-summary"
+  },
+  {
+    "id": "df3c6748-9976-4fe8-a313-dc703b857c50",
+    "title": "Misbehaving",
+    "author": "Richard H. Thaler",
+    "language": "en",
+    "seo_slug": "misbehaving-richard-h-thaler-summary",
+    "slug": "misbehaving-richard-h-thaler-summary"
+  },
+  {
+    "id": "2dd9874b-63d9-4bf6-ade6-ca12bead80f9",
+    "title": "Mistakes Were Made (But Not by Me)",
+    "author": "Carol Tavris and Elliot Aronson",
+    "language": "en",
+    "seo_slug": "mistakes-were-made-but-not-by-me-carol-tavris-and-elliot-aronson-summary",
+    "slug": "mistakes-were-made-but-not-by-me-carol-tavris-and-elliot-aronson-summary"
+  },
+  {
+    "id": "e872cf4e-67d1-4575-854a-15f1ba57a70f",
+    "title": "Moby-Dick; or, The Whale",
+    "author": "Herman Melville",
+    "language": "en",
+    "seo_slug": "moby-dick-herman-melville-book-summary",
+    "slug": "moby-dick-herman-melville-en"
+  },
+  {
+    "id": "7a7618a8-779f-4104-81ce-38dc5c100c4a",
+    "title": "Multipliers",
+    "author": "Liz Wiseman with Greg McKeown",
+    "language": "en",
+    "seo_slug": "multipliers-liz-wiseman-with-greg-mckeown-summary",
+    "slug": "multipliers-liz-wiseman-with-greg-mckeown-summary"
+  },
+  {
+    "id": "ec92ef4b-0e52-48a8-b97c-3c5ae8bfa705",
+    "title": "Never Split the Difference",
+    "author": "Chris Voss with Tahl Raz",
+    "language": "en",
+    "seo_slug": "never-split-the-difference-chris-voss-with-tahl-raz-summary",
+    "slug": "never-split-the-difference-chris-voss-with-tahl-raz-summary"
+  },
+  {
+    "id": "dd6a0895-ebae-4117-81d0-613b4484ac91",
+    "title": "No Rules Rules",
+    "author": "Reed Hastings and Erin Meyer",
+    "language": "en",
+    "seo_slug": "no-rules-rules-reed-hastings-and-erin-meyer-summary",
+    "slug": "no-rules-rules-reed-hastings-and-erin-meyer-summary"
+  },
+  {
+    "id": "625d83dc-5745-44d2-a979-d35477108be2",
+    "title": "Noise",
+    "author": "Daniel Kahneman, Olivier Sibony, and Cass R. Sunstein",
+    "language": "en",
+    "seo_slug": "noise-daniel-kahneman-olivier-sibony-and-cass-r-sunstein-summary",
+    "slug": "noise-daniel-kahneman-olivier-sibony-and-cass-r-sunstein-summary"
+  },
+  {
+    "id": "41cacf55-68fb-4b00-be1f-763c9c8b76d8",
+    "title": "Nonviolent Communication",
+    "author": "Marshall B. Rosenberg",
+    "language": "en",
+    "seo_slug": "nonviolent-communication-marshall-b-rosenberg-summary",
+    "slug": "nonviolent-communication-marshall-b-rosenberg-summary"
+  },
+  {
+    "id": "6200c8ea-a838-4b0f-aad2-c9d45b0930b9",
+    "title": "Nudge",
+    "author": "Richard H. Thaler and Cass R. Sunstein",
+    "language": "en",
+    "seo_slug": "nudge-richard-h-thaler-and-cass-r-sunstein-summary",
+    "slug": "nudge-richard-h-thaler-and-cass-r-sunstein-summary"
+  },
+  {
+    "id": "db749345-19be-49f2-a816-811ab4014b60",
+    "title": "Obviously Awesome",
+    "author": "April Dunford",
+    "language": "en",
+    "seo_slug": "obviously-awesome-april-dunford-summary",
+    "slug": "obviously-awesome-april-dunford-summary"
+  },
+  {
+    "id": "803fc634-f63d-4b4a-8953-8787ae362e61",
+    "title": "One Up On Wall Street",
+    "author": "Peter Lynch with John Rothchild",
+    "language": "en",
+    "seo_slug": "one-up-on-wall-street-peter-lynch-with-john-rothchild-summary",
+    "slug": "one-up-on-wall-street-peter-lynch-with-john-rothchild-summary"
+  },
+  {
+    "id": "128f5fee-3799-4dae-bcc7-023fdb0de589",
+    "title": "Outliers: The Story of Success",
+    "author": "Malcolm Gladwell",
+    "language": "en",
+    "seo_slug": "outliers-the-story-of-success-malcolm-gladwell-summary",
+    "slug": "outliers-the-story-of-success-malcolm-gladwell-summary"
+  },
+  {
+    "id": "b79ba8e5-bafd-4933-806f-bcd62a3cca47",
+    "title": "Peak: Secrets from the New Science of Expertise",
+    "author": "Anders Ericsson and Robert Pool",
+    "language": "en",
+    "seo_slug": "peak-secrets-from-the-new-science-of-expertise-anders-ericsson-and-robert-pool-summary",
+    "slug": "peak-secrets-from-the-new-science-of-expertise-anders-ericsson-and-robert-pool-summary"
+  },
+  {
+    "id": "7b2b28e7-a507-4a58-a1ef-a4eef2f7bafd",
+    "title": "Playing to Win",
+    "author": "A.G. Lafley and Roger L. Martin",
+    "language": "en",
+    "seo_slug": "playing-to-win-a-g-lafley-and-roger-l-martin-summary",
+    "slug": "playing-to-win-a-g-lafley-and-roger-l-martin-summary"
+  },
+  {
+    "id": "628e3108-146e-40aa-99b8-df0976274519",
+    "title": "Positioning: The Battle for Your Mind",
+    "author": "Al Ries and Jack Trout",
+    "language": "en",
+    "seo_slug": "positioning-the-battle-for-your-mind-al-ries-and-jack-trout-summary",
+    "slug": "positioning-the-battle-for-your-mind-al-ries-and-jack-trout-summary"
+  },
+  {
+    "id": "39593aab-2b4e-4d40-88d6-ba0fdd94d1a7",
+    "title": "Predictably Irrational",
+    "author": "Dan Ariely",
+    "language": "en",
+    "seo_slug": "predictably-irrational-dan-ariely-summary",
+    "slug": "predictably-irrational-dan-ariely-summary"
+  },
+  {
+    "id": "aa808f91-c118-46a2-81e7-ad7c6c6fbca5",
+    "title": "Principles: Life and Work",
+    "author": "Ray Dalio",
+    "language": "en",
+    "seo_slug": "principles-life-and-work-ray-dalio-summary",
+    "slug": "principles-life-and-work-ray-dalio-summary"
+  },
+  {
+    "id": "9b2b12f7-f64a-4548-bb73-af9b63ad9ee4",
+    "title": "Purple Cow",
+    "author": "Seth Godin",
+    "language": "en",
+    "seo_slug": "purple-cow-seth-godin-summary",
+    "slug": "purple-cow-seth-godin-summary"
+  }
+]
