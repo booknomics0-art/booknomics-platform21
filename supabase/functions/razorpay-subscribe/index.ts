@@ -26,13 +26,18 @@ Deno.serve(async (req) => {
       .eq("user_id", user.id).not("razorpay_subscription_id", "is", null)
       .order("created_at", { ascending: false }).limit(10);
     if (currentError) throw currentError;
-    const active = (current || []).find((s: any) => s.status === "active" && s.expires_at && new Date(s.expires_at) > new Date());
+    // Also respect existing one-time / quarterly memberships when protecting from double billing.
+    const { data: legacy, error: legacyError } = await db.from("subscriptions")
+      .select("id,expires_at").eq("user_id", user.id).eq("status", "active")
+      .gt("expires_at", new Date().toISOString()).limit(1);
+    if (legacyError) throw legacyError;
+    const active = (legacy || []).length > 0;
     if (active) return json(req, { error: "You already have a Premium subscription. Manage it from your account." }, 409);
-    const pending = (current || []).find((s: any) =>
-      s.plan === plan && s.status === "pending" &&
-      Date.now() - new Date(s.created_at).getTime() < 45 * 60 * 1000
-    );
-    if (pending) return json(req, { subscription_id: pending.razorpay_subscription_id, key_id: key, plan, amount: cfg.amount });
+    const pending = (current || []).find((s: any) => s.status === "pending");
+    if (pending) {
+      if (pending.plan !== plan) return json(req, { error: "Finish or cancel your pending mandate before changing plans. Contact billing support if it is stuck." }, 409);
+      return json(req, { subscription_id: pending.razorpay_subscription_id, key_id: key, plan, amount: cfg.amount });
+    }
 
     // Do not trust an environment plan id to charge the correct price or cycle.
     const remotePlan = await provider("plans/" + planId);

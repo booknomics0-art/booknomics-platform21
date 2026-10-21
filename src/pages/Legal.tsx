@@ -1,6 +1,6 @@
 import { DocPage } from "@/components/DocPage";
 
-const UPDATED = "1 June 2026";
+const UPDATED = "22 October 2026";
 const PRIVACY_UPDATED = "August 11, 2026";
 
 export const Privacy = () => (
@@ -204,7 +204,9 @@ export const Terms = () => (
         title: "Subscriptions & Payments",
         body: (
           <>
-            <p>Premium plans are billed monthly or annually through our payment provider. You can cancel anytime — access continues to the end of the paid period. Subscriptions are non-refundable except where required by law.</p>
+            <p>Booknomics offers recurring Premium plans of ₹19 per week or ₹49 per month (inclusive of applicable taxes). The selected price and recurrence are shown again before checkout. By expressly authorising the Razorpay mandate, you agree to automatic renewals for up to 52 weekly or 12 monthly billing cycles unless cancelled sooner. Available payment methods depend on your bank and Razorpay.</p>
+            <p>Use <a href="/account/subscription">My Subscription</a> to cancel future renewals before the next charge. Already-paid access continues through its paid expiry. An earlier cancellation does not automatically refund the current period. For refund requests or disputed charges, contact us; statutory refund and consumer rights remain unaffected.</p>
+            <p>Older one-time subscriptions do not automatically renew. Prices may change for future new mandates, but an existing mandate will not be silently charged at a new price without appropriate customer authorisation.</p>
             <p>The site may display third-party advertisements, including ads served by Google AdSense. Advertisements are clearly marked and never influence our editorial choices or book recommendations.</p>
           </>
         ),

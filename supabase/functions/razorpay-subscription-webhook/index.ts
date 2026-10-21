@@ -33,11 +33,13 @@ Deno.serve(async (req) => {
     // A webhook for an unknown subscription cannot grant access.
     if (!row || !PRICE[row.plan]) return new Response("Untracked subscription", { status: 404 });
 
-    const { data: eventRow, error: eventError } = await db.from("razorpay_webhook_events")
-      .upsert({ event_id: eventId, event_name: event.event }, { onConflict: "event_id", ignoreDuplicates: true })
-      .select("processed_at").maybeSingle();
+    const { data: knownEvent } = await db.from("razorpay_webhook_events")
+      .select("processed_at").eq("event_id", eventId).maybeSingle();
+    if (knownEvent?.processed_at) return new Response("ok");
+    const { error: eventError } = await db.from("razorpay_webhook_events")
+      .upsert({ event_id: eventId, event_name: event.event }, { onConflict: "event_id", ignoreDuplicates: true });
     if (eventError) throw eventError;
-    if (eventRow?.processed_at) return new Response("ok");
+
     const happened = time(event.created_at);
     const newer = happened && (!row.last_provider_event_at || happened >= row.last_provider_event_at);
     const updates: Record<string, unknown> = {};

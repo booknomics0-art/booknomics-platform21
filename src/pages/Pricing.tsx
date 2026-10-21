@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import { ArrowRight, BookOpen, Check, Crown, Headphones, ShieldCheck, Sparkles } from "lucide-react";
+import { ArrowRight, BookOpen, Check, Crown, Headphones, ShieldCheck } from "lucide-react";
 import { Layout } from "@/components/Layout";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -163,7 +163,7 @@ export default function Pricing() {
             <span>I authorise Booknomics / Razorpay to automatically charge <strong>₹{plan.price} every {selected === "weekly" ? "week" : "month"}</strong> (taxes included), for up to {selected === "weekly" ? "52 weekly" : "12 monthly"} billing cycles unless I cancel earlier. I can cancel future renewals from My Subscription before the next charge. I agree to the <Link className="underline text-primary" to="/terms" onClick={(e) => e.stopPropagation()}>Terms</Link>.</span>
           </label>
           <Button className="w-full mt-5 h-12 rounded-full bg-primary text-primary-foreground text-base" onClick={subscribe}
-            disabled={paying || authLoading || !consent}>
+            disabled={paying || authLoading || (!consent && !isPremium)}>
             {paying ? "Opening secure checkout..." : isPremium ? "Manage your membership" : "Continue with ₹" + plan.price + " " + plan.label}
             {!paying && <ArrowRight className="ml-2 w-4 h-4" />}
           </Button>
