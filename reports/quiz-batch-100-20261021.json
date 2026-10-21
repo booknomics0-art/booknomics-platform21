@@ -8,28 +8,12 @@
     "slug": "crime-and-punishment-dostoevsky-en"
   },
   {
-    "id": "5df443b8-4e06-4918-990c-fd4028ff01b9",
-    "title": "Frankenstein; or, The Modern Prometheus",
-    "author": "Mary Shelley",
-    "language": "en",
-    "seo_slug": "frankenstein-mary-shelley-summary",
-    "slug": "frankenstein-mary-shelley-en"
-  },
-  {
     "id": "c70c2ebb-8d7d-4d0d-b5cb-75c075b9962a",
     "title": "Middlemarch",
     "author": "George Eliot",
     "language": "en",
     "seo_slug": "middlemarch-george-eliot-summary",
     "slug": "middlemarch-george-eliot-en"
-  },
-  {
-    "id": "99631c73-b610-4d41-9b2c-3118da5fa263",
-    "title": "Pride and Prejudice",
-    "author": "Jane Austen",
-    "language": "en",
-    "seo_slug": "pride-and-prejudice-jane-austen-summary",
-    "slug": "pride-and-prejudice-jane-austen-en"
   },
   {
     "id": "626ffdc1-1e71-4c5b-bfeb-132ed1c2c9ab",
@@ -142,14 +126,6 @@
     "language": "en",
     "seo_slug": "algorithms-to-live-by-brian-christian-and-tom-griffiths-summary",
     "slug": "algorithms-to-live-by-brian-christian-and-tom-griffiths-summary"
-  },
-  {
-    "id": "ec21a092-da50-4687-a90d-f691a4884afa",
-    "title": "Alice's Adventures in Wonderland",
-    "author": "Lewis Carroll",
-    "language": "en",
-    "seo_slug": "alices-adventures-in-wonderland-lewis-carroll-summary",
-    "slug": "alices-adventures-in-wonderland-lewis-carroll-en"
   },
   {
     "id": "7f30efb5-7706-4a80-aad3-ed8514340cb3",
@@ -672,14 +648,6 @@
     "slug": "mistakes-were-made-but-not-by-me-carol-tavris-and-elliot-aronson-summary"
   },
   {
-    "id": "e872cf4e-67d1-4575-854a-15f1ba57a70f",
-    "title": "Moby-Dick; or, The Whale",
-    "author": "Herman Melville",
-    "language": "en",
-    "seo_slug": "moby-dick-herman-melville-book-summary",
-    "slug": "moby-dick-herman-melville-en"
-  },
-  {
     "id": "7a7618a8-779f-4104-81ce-38dc5c100c4a",
     "title": "Multipliers",
     "author": "Liz Wiseman with Greg McKeown",
@@ -798,5 +766,37 @@
     "language": "en",
     "seo_slug": "purple-cow-seth-godin-summary",
     "slug": "purple-cow-seth-godin-summary"
+  },
+  {
+    "id": "f6802bff-fc5a-4ced-8c5c-29de0a322629",
+    "title": "Quiet: The Power of Introverts in a World That Can't Stop Talking",
+    "author": "Susan Cain",
+    "language": "en",
+    "seo_slug": "quiet-the-power-of-introverts-in-a-world-that-can-t-stop-talking-susan-cain-summary",
+    "slug": "quiet-the-power-of-introverts-in-a-world-that-can-t-stop-talking-susan-cain-summary"
+  },
+  {
+    "id": "a21bc768-8eab-434b-91f8-502b24e839f7",
+    "title": "Radical Candor",
+    "author": "Kim Scott",
+    "language": "en",
+    "seo_slug": "radical-candor-kim-scott-summary",
+    "slug": "radical-candor-kim-scott-summary"
+  },
+  {
+    "id": "f934c05c-ff6b-4933-97a6-e0de231b05fa",
+    "title": "Range: Why Generalists Triumph in a Specialized World",
+    "author": "David Epstein",
+    "language": "en",
+    "seo_slug": "range-why-generalists-triumph-in-a-specialized-world-david-epstein-summary",
+    "slug": "range-why-generalists-triumph-in-a-specialized-world-david-epstein-summary"
+  },
+  {
+    "id": "b4dce235-d700-4932-940e-006ef9bbfa18",
+    "title": "Rework",
+    "author": "Jason Fried and David Heinemeier Hansson",
+    "language": "en",
+    "seo_slug": "rework-jason-fried-and-david-heinemeier-hansson-summary",
+    "slug": "rework-jason-fried-and-david-heinemeier-hansson-summary"
   }
 ]
