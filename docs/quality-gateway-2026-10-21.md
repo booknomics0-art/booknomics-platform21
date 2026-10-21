@@ -9,6 +9,7 @@ Tabs:
 - **Dashboard** — live counts and priority, no misleading automatic certification.
 - **Book Audit** — one row per published book, immutable ID, language, title, genre, canonical-route candidate, section lengths, four-section reading word proxy, day-marker count, heading signal, generic-template signal, per-book issue flags, editor evidence, status.
 - **7-Day Tracker QA** — separate rows for the same 5,027 book IDs, individual extracted Day 1–7 first-line tasks, number detected, identical-task warning, human review and evidence.
+- **Exact Duplicate QA** — per-book full-text fingerprints and exact-copy group sizes for the tracker, action plan, ideas and overview.
 - **QA Criteria** — 24 check areas, including all seven days separately, metadata, factual accuracy, takeaways, application, story, font, hierarchy, TOC, translation, release safety.
 
 **Important:** This is 100% published-catalogue **structural screening**, not a 100% source-verified human editorial audit. Every row remains `HUMAN_PENDING` until a reviewer checks the book against trustworthy original material and records evidence. Text length alone is never a final quality judgment. Absent explicit "Day N" markers can be an alternate formatting convention rather than missing content.
@@ -24,6 +25,21 @@ Tabs:
 | Total | **5,027** | Exactly one priority per published book |
 
 Other overlapping signals: **2,742** have fewer than seven explicitly detected unique Day 1–7 markers; **1,306** have a narrowly defined repeat-template phrase indicator; **10** have no scanned Markdown `###` signal. These flags are heuristic and **must not** be added together as disjoint counts.
+
+### Confirmed exact-copy evidence (separate from structural priority)
+
+A full-catalogue, same-language comparison was performed using normalized complete text (case and whitespace normalized) for published book records, only counting non-empty fields with more than 100 characters. These are **actual exact text matches**, not fuzzy LLM judgments.
+
+| Same-language complete text repeated | English books | Hindi books |
+|---|---:|---:|
+| Practice tracker | **2,387** | 2 |
+| Action system | **1,065** | 2 |
+| Key ideas | **21** | 0 |
+| Overview | **2** | 0 |
+
+The largest exact tracker template appears in **1,060 distinct English books**. For English books, **2,618 unique book records** have an exactly shared tracker or action system (834 have both); Hindi has two such records. Counts overlap with structural flags and each other: never sum them.
+
+Additional **Exact Duplicate QA** tab gives all 5,027 IDs, exact same-language copy counts, fingerprint group IDs, sample passages, and a separate escalation priority (`P0 - REPEATED IDEAS / OVERVIEW`, `P1 - REPEATED TRACKER / ACTION`). Do not infer all other prose is unique from these exact-copy checks; near-duplicates and semantic generic text require expert review. Duplicate book title/edition and public-domain boilerplate need separate attention, but identical trackers attached to hundreds of unrelated titles violate personalization standards.
 
 The day-by-day sheet extracts short first-line tasks by common `Day 1` / `दिन 1` / `दिवस 1` conventions; missing/undetected text is labeled for review. Day uniqueness and personalization have **not** been independently verified.
 
