@@ -29,7 +29,7 @@ Deno.serve(async (req) => {
     // Also respect existing one-time / quarterly memberships when protecting from double billing.
     const { data: legacy, error: legacyError } = await db.from("subscriptions")
       .select("id,expires_at").eq("user_id", user.id).eq("status", "active")
-      .gt("expires_at", new Date().toISOString()).limit(1);
+      .or("expires_at.is.null,expires_at.gt." + new Date().toISOString()).limit(1);
     if (legacyError) throw legacyError;
     const active = (legacy || []).length > 0;
     if (active) return json(req, { error: "You already have a Premium subscription. Manage it from your account." }, 409);
