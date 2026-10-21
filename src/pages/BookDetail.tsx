@@ -151,7 +151,7 @@ const BookDetail = () => {
   const [inLibrary, setInLibrary] = useState(false);
   const [generating, setGenerating] = useState(false);
   const [lang, setLang] = useState<"en" | "hi">("en");
-  const [hiContent, setHiContent] = useState<Partial<Book> | null>(null);
+  const [translatedContent, setTranslatedContent] = useState<Partial<Book> | null>(null);
   const [translating, setTranslating] = useState(false);
   const [reviewStats, setReviewStats] = useState<{ count: number; avg: number; top: { rating: number; content: string; created_at: string } | null }>({ count: 0, avg: 0, top: null });
   const [linkTargets, setLinkTargets] = useState<LinkTarget[]>([]);
@@ -305,23 +305,49 @@ const BookDetail = () => {
   }, [book]);
 
 
+  // A translation belongs to one book only; never show the previous book's text
+  // after navigating to a different title.
+  useEffect(() => {
+    setLang(book?.language === "hi" ? "hi" : "en");
+    setTranslatedContent(null);
+  }, [book?.id]);
+
   const switchLang = async (next: "en" | "hi") => {
-    setLang(next);
-    if (next === "hi" && !hiContent && book) {
-      setTranslating(true);
-      try {
-        const { data, error } = await supabase.functions.invoke("translate-to-hindi", {
-          body: { sections: {
-            overview: book.overview, key_ideas: book.key_ideas,
-            deep_analysis: book.deep_analysis, daily_application: book.daily_application,
-          }},
-        });
-        if (error || data?.error) throw new Error(data?.error ?? error?.message);
-        setHiContent(data);
-      } catch (e: any) {
-        toast.error(e.message ?? "Translation failed");
-        setLang("en");
-      } finally { setTranslating(false); }
+    if (!book || translating) return;
+    const originalLanguage = book.language === "hi" ? "hi" : "en";
+    if (next === originalLanguage || translatedContent) {
+      setLang(next);
+      return;
+    }
+    if (!user) {
+      toast.error(next === "hi" ? "हिंदी अनुवाद के लिए साइन इन करें।" : "Sign in to translate this book to English.");
+      return;
+    }
+
+    const keys = ["overview", "deep_summary", "key_ideas", "deep_analysis",
+      "daily_application", "action_system", "practice_tracker",
+      "reflection_questions", "real_life_example"] as const;
+    const sections = Object.fromEntries(keys
+      .filter((key) => typeof book[key] === "string" && !!book[key]?.trim())
+      .map((key) => [key, book[key]]));
+
+    setTranslating(true);
+    try {
+      const { data, error } = await supabase.functions.invoke("translate-to-hindi", {
+        body: { bookId: book.id, sourceLanguage: originalLanguage, targetLanguage: next, sections },
+      });
+      if (error || data?.error) throw new Error(data?.error ?? error?.message);
+      const translated = data?.sections as Record<string, unknown> | undefined;
+      if (!translated || Object.keys(sections).some((key) =>
+        typeof translated[key] !== "string" || !(translated[key] as string).trim())) {
+        throw new Error("Translation was incomplete. Original content has been preserved.");
+      }
+      setTranslatedContent(translated as Partial<Book>);
+      setLang(next);
+    } catch (e: any) {
+      toast.error(e?.message || "Translation unavailable. Please try again.");
+    } finally {
+      setTranslating(false);
     }
   };
 
@@ -561,22 +587,14 @@ const BookDetail = () => {
                 {book.year && <span className="flex items-center gap-1.5"><Calendar className="h-4 w-4" />{book.year}</span>}
               </div>
 
-              {!isHi && (
-                <div className="mt-6 flex items-center gap-3 flex-wrap">
-                  <div className="inline-flex rounded-full border border-border p-1 bg-background/60 backdrop-blur">
-                    <button onClick={() => switchLang("en")} className={`px-4 py-1.5 text-sm rounded-full transition ${lang === "en" ? "bg-gold text-primary-foreground font-semibold" : "text-muted-foreground"}`}>EN</button>
-                    <button onClick={() => switchLang("hi")} disabled={translating} className={`px-4 py-1.5 text-sm rounded-full transition ${lang === "hi" ? "bg-gold text-primary-foreground font-semibold" : "text-muted-foreground"}`}>
-                      {translating ? <Loader2 className="h-3 w-3 animate-spin inline" /> : "हिंदी"}
-                    </button>
-                  </div>
-                  <AudioInsightButton bookId={book.id} lang={lang} />
+              <div className="mt-6 flex items-center gap-3 flex-wrap">
+                <div className="inline-flex rounded-full border border-border p-1 bg-background/60 backdrop-blur" role="group" aria-label="Reading language">
+                  <button type="button" onClick={() => switchLang("en")} disabled={translating} aria-pressed={lang === "en"} className={`px-4 py-1.5 text-sm rounded-full transition ${lang === "en" ? "bg-gold text-primary-foreground font-semibold" : "text-foreground"}`}>English</button>
+                  <button type="button" onClick={() => switchLang("hi")} disabled={translating} aria-pressed={lang === "hi"} className={`px-4 py-1.5 text-sm rounded-full transition ${lang === "hi" ? "bg-gold text-primary-foreground font-semibold" : "text-foreground"}`}>हिंदी</button>
                 </div>
-              )}
-              {isHi && (
-                <div className="mt-6">
-                  <AudioInsightButton bookId={book.id} lang="hi" />
-                </div>
-              )}
+                {translating && <span role="status" className="flex items-center gap-1 text-xs text-foreground"><Loader2 className="h-3 w-3 animate-spin" /> {isHi ? "अनुवाद तैयार हो रहा है…" : "Translating the full book…"}</span>}
+                <AudioInsightButton bookId={book.id} lang={lang} />
+              </div>
 
               <div className="mt-8 flex flex-wrap gap-3">
                 <Button onClick={toggleLibrary} size="lg" className="bg-gold text-primary-foreground hover:opacity-90 rounded-full gap-2">
@@ -622,8 +640,8 @@ const BookDetail = () => {
 
             <TabsContent value="summary">
               {(() => {
-                const src = lang === "hi" && hiContent ? hiContent : book;
-                const readerIsHi = isHi || lang === "hi";
+                const src = lang !== book.language && translatedContent ? translatedContent : book;
+                const readerIsHi = lang === "hi";
                 const labels = readerIsHi
                   ? ["किताब एक नज़र में", "5 मुख्य सीख", "विस्तृत सारांश", "मुख्य विचार", "गहन विश्लेषण", "जीवन में कैसे लागू करें"]
                   : ["The book at a glance", "5 key takeaways", "Detailed summary", "The core concepts", "Deeper analysis", "Living with the ideas"];
@@ -674,7 +692,7 @@ const BookDetail = () => {
                         title={book.title}
                         author={book.author}
                         category={(book as any).category || undefined}
-                        language={(isHi || lang === "hi") ? "hi" : "en"}
+                        language={lang}
                       />
                     </Suspense>
                   </section>
@@ -715,7 +733,7 @@ const BookDetail = () => {
                 <section className="py-4">
                   <div className="text-xs tracking-[0.2em] uppercase text-primary font-semibold mb-3">Action System</div>
                   <h2 className="font-serif text-3xl md:text-4xl font-bold tracking-tight mb-6">Step-by-step plan</h2>
-                  <MD>{linkifyMarkdown(book.action_system, linkTargets, 1)}</MD>
+                  <MD>{linkifyMarkdown((lang !== book.language ? translatedContent?.action_system : book.action_system) || book.action_system, linkTargets, 1)}</MD>
                   <AffiliateCTA bookId={book.id} link={book.affiliate_link} title={`${book.title} ${book.author}`} placement="action-end" label="Get the full book" />
                 </section>
               ) : <EmptyState onGenerate={generateActionPlan} loading={generating} label="Build your Action System" />}
@@ -774,7 +792,7 @@ const BookDetail = () => {
                   {book.practice_tracker ? (
                     <div>
                       <h3 className="font-serif text-2xl font-bold mb-4">Suggested weekly plan</h3>
-                      <MD>{book.practice_tracker}</MD>
+                      <MD>{(lang !== book.language ? translatedContent?.practice_tracker : book.practice_tracker) || book.practice_tracker}</MD>
                     </div>
                   ) : <EmptyState onGenerate={generateActionPlan} loading={generating} label="Generate suggested plan" />}
                 </section>
