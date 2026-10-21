@@ -1,5 +1,5 @@
 import { createClient } from '@supabase/supabase-js';
-import { FIELDS, chunks, translateChunk, TranslationError } from '../server/translation';
+import { FIELDS, chunks, translateChunk, TranslationError } from '../server/translation.js';
 export const maxDuration = 300;
 const reply = (status: number, body: unknown) => Response.json(body, {status,headers:{'Cache-Control':'no-store'}});
 export async function POST(req: Request) {
