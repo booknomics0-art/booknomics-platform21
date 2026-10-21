@@ -51,7 +51,9 @@ Deno.serve(async (req) => {
       const payment = event.payload?.payment?.entity;
       const until = time(providerSub.current_end);
       const since = time(providerSub.current_start);
-      // A delayed signed charge still proves a new paid period even when a newer\n      // non-financial status notification has already arrived.\n      if (payment?.status === "captured" && (!payment.subscription_id || payment.subscription_id === id) &&
+      // A delayed signed charge still proves a new paid period even when a newer
+      // non-financial status notification has already arrived.
+      if (payment?.status === "captured" && (!payment.subscription_id || payment.subscription_id === id) &&
           payment.amount === row.amount && payment.currency === "INR" &&
           until && new Date(until) > new Date() &&
           (!row.expires_at || until >= row.expires_at)) {
