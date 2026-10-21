@@ -31,7 +31,7 @@ Deno.serve(async (req) => {
   maybePruneRateLimits();
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders(req) });
   try {
-    const { book_id, action, count, difficulty, source_text } = await req.json();
+    const { book_id, action, count, source_text } = await req.json();
     if (!book_id || typeof book_id !== "string" || book_id.length > 64 || !action || typeof action !== "string") {
       return new Response(JSON.stringify({ error: "book_id and action required" }), { status: 400, headers: { ...corsHeaders(req), "Content-Type": "application/json" } });
     }
