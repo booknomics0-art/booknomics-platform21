@@ -25,10 +25,14 @@ const Auth = () => {
   // Same-origin relative path to return to after auth (used by the OAuth consent flow).
   const rawNext = params.get("next") ?? "";
   const next = safeRedirectPath(rawNext);
-  const afterAuth = next || "/";
+  // Send normal sign-ins to the personal dashboard while preserving explicit
+  // non-root return paths (for example OAuth consent and protected pages).
+  const afterAuth = next === "/" ? "/dashboard" : next;
   // Always return through the auth page so OAuth/email-confirmation callbacks
   // are completed in one predictable place before continuing to the target page.
-  const returnUrl = `${window.location.origin}/auth?next=${encodeURIComponent(afterAuth)}`;
+  // Preserve the existing OAuth callback URL for the default "/" route;
+  // changing its query string can invalidate an exact redirect allowlist.
+  const returnUrl = `${window.location.origin}/auth?next=${encodeURIComponent(next)}`;
 
   useEffect(() => {
     document.title = "Sign in — Booknomics";
@@ -119,8 +123,8 @@ const Auth = () => {
           await recordReferralIfPending(data.user.id);
         }
         toast.success("Welcome back");
-        if (next) window.location.href = next;
-        else navigate("/");
+        if (next !== "/") window.location.href = next;
+        else navigate("/dashboard", { replace: true });
       }
     }
     setLoading(false);
