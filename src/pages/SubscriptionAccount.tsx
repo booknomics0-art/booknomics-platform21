@@ -37,15 +37,16 @@ export default function SubscriptionAccount() {
   const current = rows.find((r) => r.status === "active" && r.expires_at && new Date(r.expires_at) > new Date()) || rows[0];
   const active = !!current && current.status === "active" && !!current.expires_at && new Date(current.expires_at) > new Date();
   const cancel = async () => {
-    if (!current?.razorpay_subscription_id || !active || current.cancel_at_cycle_end) return;
-    if (!window.confirm("Stop future automatic renewals? You will retain access through the already-paid period.")) return;
+    if (!current?.razorpay_subscription_id || !(active || current.status === "pending") || current.cancel_at_cycle_end) return;
+    const pending = current.status === "pending";
+    if (!window.confirm(pending ? "Cancel this unconfirmed mandate so you can select a plan again?" : "Stop future automatic renewals? You will retain access through the already-paid period.")) return;
     setCancelling(true);
     try {
       const { data, error } = await supabase.functions.invoke("razorpay-manage-subscription", {
-        body: { action: "cancel_at_period_end", subscription_id: current.razorpay_subscription_id },
+        body: { action: pending ? "cancel_pending" : "cancel_at_period_end", subscription_id: current.razorpay_subscription_id },
       });
       if (error || !data?.ok) throw new Error(data?.error || "Could not cancel subscription");
-      toast.success("Future renewals cancelled. Current paid access remains.");
+      toast.success(pending ? "Pending mandate cancelled. You can select a new plan." : "Future renewals cancelled. Current paid access remains.");
       await load();
       await refresh();
     } catch (error: any) {
@@ -74,7 +75,7 @@ export default function SubscriptionAccount() {
               {current.cancel_at_cycle_end ? "Auto-renewal is scheduled to stop." : "This membership renews automatically unless you cancel."}
             </div>
             {!current.cancel_at_cycle_end && <Button variant="outline" disabled={cancelling} onClick={cancel}>{cancelling ? "Cancelling..." : "Cancel future renewals"}</Button>}
-          </div> : <p className="text-sm text-muted-foreground pt-6">{current.status === "pending" ? "Razorpay is processing your mandate/payment. If you paid, do not pay again until support has checked the payment." : "This membership is not currently active."}</p>}
+          </div> : <div className="pt-6 space-y-3"><p className="text-sm text-muted-foreground">{current.status === "pending" ? "Razorpay is processing your mandate/payment. If you paid, check your payment status with support before cancelling or paying again." : "This membership is not currently active."}</p>{current.status === "pending" && current.razorpay_subscription_id && !current.cancel_at_cycle_end && <Button variant="outline" disabled={cancelling} onClick={cancel}>{cancelling ? "Cancelling..." : "Cancel pending mandate"}</Button>}</div>}
           <div className="flex items-start gap-2 text-xs text-muted-foreground pt-6"><ShieldCheck className="w-4 h-4 shrink-0" /> Billing is verified on the server. Previous one-time plans keep their original validity and do not auto-renew.</div>
         </div>}
       <div className="flex gap-5 mt-8 text-sm"><Link to="/pricing" className="underline text-primary">View pricing</Link><Link to="/contact" className="underline text-primary">Billing support</Link><Link to="/terms" className="underline text-primary">Terms</Link></div>

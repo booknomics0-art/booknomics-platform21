@@ -10,7 +10,7 @@ Deno.serve(async (req) => {
   const rl = checkRateLimit("rzp-manage:" + user.id, 6, 60 * 60);
   if (!rl.ok) return rateLimitedResponse(req, rl.retryAfterSeconds);
   const { action, subscription_id } = await req.json().catch(() => ({}));
-  if (action !== "cancel_at_period_end" || typeof subscription_id !== "string" ||
+  if (!["cancel_at_period_end", "cancel_pending"].includes(action) || typeof subscription_id !== "string" ||
     !/^sub_[A-Za-z0-9]+$/.test(subscription_id))
     return json(req, { error: "Invalid request" }, 400);
   try {
@@ -19,15 +19,17 @@ Deno.serve(async (req) => {
       .eq("razorpay_subscription_id", subscription_id).eq("user_id", user.id).maybeSingle();
     if (error || !row) return json(req, { error: "Subscription not found" }, 404);
     if (row.cancel_at_cycle_end) return json(req, { ok: true, scheduled: true });
-    if (row.status !== "active") return json(req, { error: "Only active subscriptions can be cancelled here" }, 409);
+    if (action === "cancel_at_period_end" && row.status !== "active") return json(req, { error: "Only active subscriptions can schedule cancellation" }, 409);
+    if (action === "cancel_pending" && row.status !== "pending") return json(req, { error: "Only pending mandates can be cancelled immediately" }, 409);
     // API must succeed before changing the local database; do not truncate paid access.
     const remote = await provider("subscriptions/" + subscription_id + "/cancel", {
-      method: "POST", body: JSON.stringify({ cancel_at_cycle_end: 1 }),
+      method: "POST", body: JSON.stringify({ cancel_at_cycle_end: action === "cancel_pending" ? 0 : 1 }),
     });
     if (!["active", "cancelled"].includes(remote?.status))
       return json(req, { error: "Unable to confirm cancellation with the payment provider" }, 503);
     const { error: updateError } = await db.from("subscriptions")
-      .update({ cancel_at_cycle_end: true, provider_status: remote.status })
+      .update({ cancel_at_cycle_end: true, provider_status: remote.status,
+        ...(action === "cancel_pending" ? { status: "cancelled" } : {}) })
       .eq("id", row.id);
     if (updateError) throw updateError;
     return json(req, { ok: true, scheduled: true });

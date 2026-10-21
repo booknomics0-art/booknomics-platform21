@@ -22,6 +22,7 @@
 - Real captured recurring charge -> webhook sets `active`, sets `expires_at` to Razorpay's `current_end`, and `my_active_tier()` returns correct weekly/monthly tier.
 - Replay the same event ID -> no duplicate benefit. A forged signature -> HTTP 401. A failed/paused charge -> no additional paid period.
 - Cancel via My Subscription -> API schedules cancellation, user retains access to paid expiry, future renewals stop. Refresh page and verify.
+- Abandoned pending authorisation -> cancel pending mandate immediately, then choose a different plan (do not retry while payment capture is uncertain).
 - Old single-purchase subscriptions continue working and cannot accidentally start an overlapping new mandate.
 - Test both hostname variations, Hindi pages, mobile layout, currency, invoice/receipt receipt access with Razorpay, webhook delivery logs, and browser sign-out / sign-in.
 - After test success, create separate live keys and plan IDs, configure a live webhook with its own secret and conduct one supervised low-value live transaction.
