@@ -220,3 +220,19 @@ All gates must pass before DNS changes:
 6. Monitor errors and request volume.
 7. Keep Supabase online as rollback until the Cloudflare production path is stable.
 8. Only then pause/remove the old Supabase/Vercel production dependencies.
+
+## Google sign-in session incident (2026-10-21)
+
+**Observed:** A Google account can complete consent, but Booknomics subsequently appears signed out and the personal dashboard is unavailable. The `main` branch still imports Supabase Auth in `src/pages/Auth.tsx`, `src/hooks/useAuth.ts`, and `src/lib/oauthCallback.ts`. In contrast, this branch uses Cloudflare's `/api/auth/google/start`, `/api/auth/google/callback`, and `/api/auth/session` endpoints backed by D1 sessions. Redirecting to `/dashboard` without switching the whole auth/backend would not fix this incident.
+
+**Read-only cutover audit required before production changes:**
+
+1. Confirm Worker route ownership for apex and www; identify whether the live document comes from the Cloudflare Worker or Vercel. Never infer runtime ownership from DNS alone.
+2. Confirm deployed Worker version, D1 binding, `GOOGLE_CLIENT_ID` and `GOOGLE_CLIENT_SECRET` presence (names only; never log secret values).
+3. Verify `/api/health` reports `platform: cloudflare`, `bindings.d1: true`, `bindings.googleOAuth: true`, and expected R2 bindings.
+4. Verify anonymous `GET /api/auth/session` returns JSON `{\"user\":null}` with HTTP 200 and no cache; verify `GET /api/auth/google/start` returns a Google 302 with `redirect_uri=https://www.booknomics.com/api/auth/google/callback`.
+5. With an existing test account and a new test account, complete Google consent; verify callback 302 sets host-specific `bn_session` cookie with `HttpOnly; Secure; SameSite=Lax; Path=/`, then `GET /api/auth/session` returns the matching user. Refresh the page and visit Dashboard/Library: same user must remain logged in. Check sign-out explicitly invalidates session.
+6. Verify D1 user/Google-sub mapping and imported progress/library data without changing old Supabase user IDs; require full catalog and media parity from migration gates.
+7. Only after all tests pass, activate the matched Cloudflare Worker **and** its Supabase-free frontend together. Keep Supabase/Vercel intact as rollback until production login is verified.
+
+**Do not** merge the old redirect-only workaround, remove Supabase credentials, or flip production DNS/routes to mask this bug while session/parity verification is incomplete.
