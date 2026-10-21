@@ -139,6 +139,10 @@ jobs:
           retry_get 'https://www.booknomics.com/api/auth/session' /tmp/session.json
           node -e 'const d=require("/tmp/session.json"); if(!("user" in d)) process.exit(1)'
 
+          # A 200 homepage + healthy Cloudflare API can still serve the OLD
+          # Vercel/Supabase auth JS. Fail cutover and rollback newly added routes.
+          AUTH_SMOKE_BASE_URL='https://www.booknomics.com' node scripts/verify-cloudflare-auth-cutover.mjs
+
           google_ok=0
           for attempt in $(seq 1 8); do
             code=$(curl --silent --show-error -o /dev/null -D /tmp/google.headers -w '%{http_code}' --max-redirs 0 \
