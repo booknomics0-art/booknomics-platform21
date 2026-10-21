@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import { ArrowRight, BookOpen, Check, Crown, Headphones, ShieldCheck } from "lucide-react";
+import { ArrowRight, BookOpen, Check, Crown, Headphones, ShieldCheck, Sparkles } from "lucide-react";
 import { Layout } from "@/components/Layout";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
