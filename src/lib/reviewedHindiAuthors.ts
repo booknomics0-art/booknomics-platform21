@@ -1,3 +1,4 @@
+import expandedProfiles from "@/data/author-batch-20261021.json";
 // Verified editorial profiles. Each author is written and sourced individually.
 // No synthetic descriptions or inferred publication facts for unmatched authors.
 export interface ReviewedAuthorProfile {
@@ -33,5 +34,9 @@ const reviewedAuthorProfiles: ReviewedAuthorProfile[] = [
   { matches: /ramanbhai\s*(?:neelkanth|nilkanth)|रमणभाई\s*(?:नीलकंठ|निलकंठ)/i, hi: "रमणभाई महिपतराम नीलकंठ (1868–1928) गुजराती उपन्यासकार, निबंधकार और आलोचक थे। उन्होंने सामाजिक सुधार तथा रूढ़िवाद पर साहित्यिक व्यंग्य लिखा। 1900 में प्रकाशित उनका उपन्यास ‘भद्रंभद्र’ भाषा की अति-शुद्धतावादी जिद और सामाजिक कट्टरता की हास्यपूर्ण आलोचना करता है। उनका नाटक ‘राईनो पर्वत’ और हास्य-निबंध-संग्रह ‘हास्यमंदिर’ भी उल्लेखनीय हैं।", en: "Ramanbhai Mahipatram Neelkanth (1868–1928) was a Gujarati novelist, essayist and critic engaged in debates on social reform. His 1900 satirical novel Bhadrambhadra critiques doctrinaire orthodoxy and the display of linguistic purity. His other works include the play Raino Parvat and the humour collection Hasyamandir.", source: "https://books.google.com/books/about/Bhadrambhadra.html?id=4hCzswEACAAJ" },
   { matches: /raghuv(?:eer|ir)\s*chaudh(?:ari|ary)|रघुवीर\s*चौधरी/i, hi: "रघुवीर चौधरी (जन्म 1938) गुजराती कवि, उपन्यासकार और आलोचक हैं। उनका 1965 का उपन्यास ‘अमृता’ अस्तित्व, व्यक्तित्व और प्रेम के दार्शनिक प्रश्नों को अमृता, उदयन तथा अनिकेत के संबंधों के माध्यम से देखता है। उनकी अन्य प्रमुख कृतियों में ‘उपरवास कथात्रयी’ और ‘सोमतीर्थ’ शामिल हैं। ‘उपरवास कथात्रयी’ को 1977 का साहित्य अकादेमी पुरस्कार मिला।", en: "Raghuveer Chaudhari (born 1938) is a Gujarati novelist, poet and critic. His 1965 novel Amrita explores existential identity and relationships through Amrita, Udayan and Aniket. Other works include Uparvas Kathatrayi, which received the 1977 Sahitya Akademi Award, and Somtirth.", source: "https://www.sahitya-akademi.gov.in/awards/akademi%20samman_suchi.jsp" },
 ];
+for (const expanded of expandedProfiles) {
+  const profile = reviewedAuthorProfiles.find(p => p.matches.test(expanded.name));
+  if (profile) Object.assign(profile, { hi: expanded.hi, en: expanded.en, source: expanded.source });
+}
 export const findReviewedAuthorProfile = (name: string): ReviewedAuthorProfile | undefined =>
   reviewedAuthorProfiles.find(profile => profile.matches.test(name.trim()));

@@ -336,26 +336,16 @@ const BookDetail = () => {
 
     setTranslating(true);
     try {
-      const { data, error } = await supabase.functions.invoke("translate-to-hindi", {
-        body: { bookId: book.id, sourceLanguage: originalLanguage, targetLanguage: next, sections },
+      const { data: sessionData } = await supabase.auth.getSession();
+      const token = sessionData.session?.access_token;
+      if (!token) throw new Error("Sign in again to translate this book.");
+      const response = await fetch("/api/translate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+        body: JSON.stringify({ bookId: book.id, targetLanguage: next }),
       });
-      if (error) {
-        // The generic FunctionsHttpError hides the actual HTTP error and response JSON.
-        const context = (error as { context?: unknown }).context;
-        let message = error.message;
-        let status = 0;
-        if (context instanceof Response) {
-          status = context.status;
-          const payload = await context.clone().json().catch(() => null);
-          if (payload && typeof payload === "object" && typeof payload.error === "string") {
-            message = payload.error;
-          }
-        }
-        if (status === 401 || status === 403) throw new Error("Translation requires a fresh sign-in. Your original text is safe.");
-        if (status === 503) throw new Error("Translation provider unavailable or not configured. Original text preserved.");
-        if (status === 429) throw new Error("Translation limit reached. Please retry later.");
-        throw new Error(message || "Translation failed. Original text preserved.");
-      }
+      const data = await response.json().catch(() => null);
+      if (!response.ok) throw new Error(data?.error || "Translation unavailable. Original text preserved.");
       if (data?.error) throw new Error(data.error);
       const translated = data?.sections as Record<string, unknown> | undefined;
       if (!translated || Object.keys(sections).some((key) =>
