@@ -51,7 +51,7 @@ Deno.serve(async (req) => {
       const payment = event.payload?.payment?.entity;
       const until = time(providerSub.current_end);
       const since = time(providerSub.current_start);
-      if (newer && payment?.status === "captured" && payment.subscription_id === id &&
+      if (newer && payment?.status === "captured" && (!payment.subscription_id || payment.subscription_id === id) &&
           payment.amount === row.amount && payment.currency === "INR" &&
           until && new Date(until) > new Date() &&
           (!row.expires_at || until >= row.expires_at)) {

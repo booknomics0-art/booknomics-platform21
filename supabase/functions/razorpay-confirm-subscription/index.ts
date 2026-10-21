@@ -28,7 +28,7 @@ Deno.serve(async (req) => {
       provider("subscriptions/" + id), provider("payments/" + payId),
     ]);
     // Mandate authorisation alone is not proof of a paid billing period.
-    const paid = payment.status === "captured" && payment.subscription_id === id &&
+    const paid = payment.status === "captured" && (!payment.subscription_id || payment.subscription_id === id) &&
       payment.amount === PRICE[row.plan].amount && payment.currency === "INR" &&
       subscription.paid_count > 0 && !!time(subscription.current_end);
     if (!paid) return json(req, { ok: true, activated: false, message: "Mandate authorised. Waiting for the first subscription charge." });
