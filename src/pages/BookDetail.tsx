@@ -338,7 +338,24 @@ const BookDetail = () => {
       const { data, error } = await supabase.functions.invoke("translate-to-hindi", {
         body: { bookId: book.id, sourceLanguage: originalLanguage, targetLanguage: next, sections },
       });
-      if (error || data?.error) throw new Error(data?.error ?? error?.message);
+      if (error) {
+        // The generic FunctionsHttpError hides the actual HTTP error and response JSON.
+        const context = (error as { context?: unknown }).context;
+        let message = error.message;
+        let status = 0;
+        if (context instanceof Response) {
+          status = context.status;
+          const payload = await context.clone().json().catch(() => null);
+          if (payload && typeof payload === "object" && typeof payload.error === "string") {
+            message = payload.error;
+          }
+        }
+        if (status === 401 || status === 403) throw new Error("Translation requires a fresh sign-in. Your original text is safe.");
+        if (status === 503) throw new Error("Translation provider unavailable or not configured. Original text preserved.");
+        if (status === 429) throw new Error("Translation limit reached. Please retry later.");
+        throw new Error(message || "Translation failed. Original text preserved.");
+      }
+      if (data?.error) throw new Error(data.error);
       const translated = data?.sections as Record<string, unknown> | undefined;
       if (!translated || Object.keys(sections).some((key) =>
         typeof translated[key] !== "string" || !(translated[key] as string).trim())) {
