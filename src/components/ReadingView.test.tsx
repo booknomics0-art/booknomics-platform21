@@ -1,5 +1,5 @@
 // Reader regression coverage: never lose author/character emphasis when text is Hindi.
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import { fireEvent, render, screen } from "@testing-library/react";
 import ReadingView from "./ReadingView";
 
@@ -94,6 +94,15 @@ describe("bilingual editorial reader", () => {
       expect(target?.startsWith("#rv-chapter-")).toBe(true);
       expect(container.querySelector(target!)).toBeTruthy();
     }
+  });
+
+  it("shows author introduction next to the contents and invokes its callback", () => {
+    const onAuthorIntroClick = vi.fn();
+    render(<ReadingView language="hi" content={"## गहन विश्लेषण\\n\\nकिताब का अर्थ।"} onAuthorIntroClick={onAuthorIntroClick} />);
+    const trigger = screen.getByRole("button", { name: "लेखक का परिचय महारत में पढ़ें" });
+    expect(trigger).toBeTruthy();
+    fireEvent.click(trigger);
+    expect(onAuthorIntroClick).toHaveBeenCalledTimes(1);
   });
 
   it("uses A/B subpoints under a Hindi chapter", () => {
