@@ -84,6 +84,8 @@ class OfflineBatchTest(unittest.TestCase):
         result = module.process_book(self.book, output, engine)
         doc = json.loads(output.read_text(encoding="utf-8"))
         self.assertFalse(doc["approved"])
+        self.assertIs(doc["qualityChecks"]["semanticVerified"], False)
+        self.assertIs(doc["qualityChecks"]["requiresHumanEditorialApproval"], True)
         self.assertEqual(set(doc["sourceSections"]), set(doc["translatedSections"]))
         self.assertIn("offline_machine_draft", result["status"])
         prior_calls = engine.calls
@@ -97,6 +99,15 @@ class OfflineBatchTest(unittest.TestCase):
                                   device="cpu", model_batch_size=8, max_chars=340, pending_only=True)
         result = module.run(args)
         self.assertEqual(result["counts"], {"source_validated_dry_run": 1})
+        self.assertTrue((args.out_dir / "report.json").exists())
+
+    def test_empty_pending_shard_is_a_successful_noop(self):
+        args = argparse.Namespace(manifest=self.manifest, source_jsonl=None,
+                                  out_dir=self.root / "empty", offset=25, limit=25,
+                                  pending_only=True)
+        result = module.run(args)
+        self.assertEqual(result["size"], 0)
+        self.assertEqual(result["counts"], {})
         self.assertTrue((args.out_dir / "report.json").exists())
 
 
