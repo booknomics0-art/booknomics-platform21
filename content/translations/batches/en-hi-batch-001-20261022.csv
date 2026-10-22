@@ -1,6 +1,6 @@
 batch_index,book_id,slug,title,author,source_language,target_language,source_database,source_status,translation_status,overview_chars,deep_summary_chars,key_ideas_chars,deep_analysis_chars,daily_application_chars,action_system_chars,practice_tracker_chars,reflection_questions_chars,real_life_example_chars
-1,6c70c888-5dc1-4ae1-87be-8504b32e993c,atomic-habits-james-clear-summary,Atomic Habits,James Clear,en,hi,Supabase,published,partial_3_of_9,1281,26082,2448,19426,642,864,727,856,670
-2,132084bd-122f-483f-974c-7dcb60ece79f,the-psychology-of-money-morgan-housel-summary,The Psychology of Money,Morgan Housel,en,hi,Supabase,published,partial_3_of_9,1310,26258,2240,19667,632,889,737,901,680
+1,6c70c888-5dc1-4ae1-87be-8504b32e993c,atomic-habits-james-clear-summary,Atomic Habits,James Clear,en,hi,Supabase,published,partial_7_of_9,1281,26082,2448,19426,642,864,727,856,670
+2,132084bd-122f-483f-974c-7dcb60ece79f,the-psychology-of-money-morgan-housel-summary,The Psychology of Money,Morgan Housel,en,hi,Supabase,published,partial_7_of_9,1310,26258,2240,19667,632,889,737,901,680
 3,c1fbbe00-9186-405f-9045-03242d7800d5,trotzdem-ja-zum-leben-sagen-viktor-emil-frankl-summary,... Trotzdem Ja zum Leben sagen,Viktor Emil Frankl,en,hi,Supabase,published,pending_translation,742,4634,3014,9499,0,688,224,689,256
 4,176b3e49-c7a8-462a-95cb-9c756bbf4c1b,100m-leads-alex-hormozi-summary,$100M Leads,Alex Hormozi,en,hi,Supabase,published,pending_translation,814,2600,1249,4283,349,289,411,626,265
 5,9fe4f3ec-4fca-4c79-b5b5-e5269f8bb938,100m-offers-alex-hormozi-summary,$100M Offers,Alex Hormozi,en,hi,Supabase,published,pending_translation,912,1351,1666,9130,417,486,563,667,276
