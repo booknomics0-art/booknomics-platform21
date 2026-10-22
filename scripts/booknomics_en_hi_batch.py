@@ -372,6 +372,7 @@ def process_book(book: dict, output: Path, engine: Translator, max_chars: int = 
     problems = quality_checks(sections, translated)
     doc["completedFields"] = list(translated)
     doc["qualityChecks"] = {"structuralPassed": not problems, "problems": problems,
+                            "semanticVerified": False,
                             "requiresHumanEditorialApproval": True, "requiresCloudflareD1SourceParity": True}
     doc["status"] = "offline_machine_draft_needs_editorial_review" if not problems else "offline_machine_draft_needs_rework"
     doc["approved"] = False
@@ -385,7 +386,12 @@ def run(args: argparse.Namespace, engine: Translator | None = None) -> dict:
         manifest = [row for row in manifest if row.get("translation_status") == "pending_translation"]
     records = manifest[args.offset : args.offset + args.limit]
     if not records:
-        raise ValueError("Empty shard, check offset/limit")
+        # Shards may be empty after excluding already authored Hindi drafts.
+        report = {"manifest": str(args.manifest), "offset": args.offset, "size": 0,
+                  "counts": {}, "items": [],
+                  "warning": "Machine drafts are never approved or published automatically."}
+        atomic_json(args.out_dir / "report.json", report)
+        return report
     if args.source_jsonl:
         sources = source_from_jsonl(args.source_jsonl)
     else:
