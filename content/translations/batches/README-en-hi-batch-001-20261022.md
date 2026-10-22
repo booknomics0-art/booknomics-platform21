@@ -2,7 +2,7 @@
 
 ## Scope
 - Source: **Supabase** project `pbkfewrtdgiagytmcigb`, `public.books`.
-- Selection: 500 non-draft published/noindex English rows; Atomic Habits and The Psychology of Money first, then deterministic case-insensitive title + ID ordering.
+- Selection: 500 non-draft published English rows; Atomic Habits and The Psychology of Money first, then deterministic case-insensitive title + ID ordering.
 - Original English rows remain unchanged.
 - 500 exact IDs, slugs, titles, authors, status and field character counts: [manifest](./en-hi-batch-001-20261022.csv).
 - Total source length across the 9 toggle sections: **8,386,591 characters**. These are source characters, not translated words or completed content.
@@ -10,8 +10,8 @@
 ## Progress
 | Book | Authored Hindi fields | Status |
 | --- | --- | --- |
-| Atomic Habits — James Clear | overview, key_ideas, daily_application | Partial editorial draft (3/9) |
-| The Psychology of Money — Morgan Housel | overview, key_ideas, daily_application | Partial editorial draft (3/9) |
+| Atomic Habits — James Clear | overview, key_ideas, daily_application, action_system, practice_tracker, reflection_questions, real_life_example | Partial editorial draft (7/9); full deep_summary and deep_analysis pending |
+| The Psychology of Money — Morgan Housel | overview, key_ideas, daily_application, action_system, practice_tracker, reflection_questions, real_life_example | Partial editorial draft (7/9); full deep_summary and deep_analysis pending |
 | Animal Farm — George Orwell | All nine toggle fields | Complete Hindi draft; awaits editorial approval and D1 parity |
 | 100 Ways to Improve Your Writing — Gary Provost | All five nonempty toggle fields | Complete Hindi draft; awaits editorial approval and D1 parity |
 | Remaining 496 | None in this batch | Pending |
