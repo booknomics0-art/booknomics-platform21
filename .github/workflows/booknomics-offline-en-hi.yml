@@ -108,7 +108,7 @@ jobs:
             python scripts/booknomics_en_hi_batch.py \
               --manifest content/translations/batches/en-hi-batch-${BATCH}-20261022.csv \
               --out-dir output/en-hi-${BATCH}-shard-${SHARD} \
-              --offset "$offset" --limit 25
+              --pending-only --offset "$offset" --limit 25
           fi
       - uses: actions/upload-artifact@v4
         if: always()
