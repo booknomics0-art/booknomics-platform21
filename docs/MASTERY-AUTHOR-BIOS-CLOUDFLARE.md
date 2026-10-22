@@ -1,7 +1,9 @@
 # Mastery author biographies — Cloudflare D1 publishing
 
-This feature loads **individually written, reviewed ~400-word author essays per book**
+This feature loads **individually written, reviewed author essays per book**
 from the existing same-origin Cloudflare Worker route `GET /api/books/:slug`.
+The initial 15 profiles were approximately 400 words; the next editorial
+cohort is approximately 200 words without changing the already reviewed text.
 The Worker is already routed for `/api/*` on booknomics.com and selects the
 complete D1 `books` row for that endpoint. No public write route is added.
 
@@ -37,7 +39,7 @@ Use the importer with a JSON array of actually authored entries:
     "title": "Exact book title",
     "author": "Exact credited author",
     "language": "en",
-    "text": "The complete, independently written ~400-word author essay...",
+    "text": "The complete, independently written ~200-word author essay...",
     "sources": ["https://publisher.example/source", "https://archive.example/source"]
   }
 ]
@@ -65,7 +67,8 @@ the script stops and can be resumed only after inspection.
 
 The Mastery tab fetches `/api/books/:slug` only on its author-section mount.
 It checks book ID, slug, title, author, published status, reviewed status,
-source URLs, language, and 350–460 words. It renders text as plain React text
+source URLs, language, and either 180–240 words (new cohorts) or 350–460 words
+(legacy approved text). It renders text as plain React text
 with `whitespace-pre-line`, not injected HTML. Links are HTTPS-only and open
 with `noopener noreferrer`. If D1 is unavailable, it preserves the existing
 reviewed book-specific static bio, then the existing vetted author profile,
@@ -75,8 +78,10 @@ then an explicitly pending placeholder. No automatic generic writing occurs.
 
 The 500-book cohort file registers identities but **does not contain 500
 biographies**. Its pending records must not be imported or counted as complete.
-The ten reviewed profiles previously written in PR #90 are the only completed
-book-specific essays until further editorial work is delivered and verified.
+As of 22 October 2026, exactly **35** book-specific essays are reviewed in
+production D1: 15 approximately 400-word essays, and 20 newly authored
+approximately 200-word essays (10 English and 10 Hindi). This does not mean
+the requested 200-new-book cohort is complete; **180 new essays remain**.
 
 ### Rollback
 
