@@ -183,7 +183,7 @@ batch_index,book_id,slug,title,author,source_language,target_language,source_dat
 182,ceeeb349-cf8f-4226-8353-09abe34ea4dd,angela-s-ashes-frank-mccourt-summary,Angela's Ashes,Frank McCourt,en,hi,Supabase,published,pending_translation,695,4364,2870,9783,0,649,224,650,239
 183,90db8b9d-d907-4c1d-a40a-375aef9449ff,angels-demons-dan-brown-summary,Angels & Demons,Dan Brown,en,hi,Supabase,published,pending_translation,570,3645,2416,16396,0,650,224,560,233
 184,8fe5f531-f8cf-48b0-b4b8-82b4b8c1b94a,aniara-harry-martinson-summary,Aniara,Harry Martinson,en,hi,Supabase,published,pending_translation,738,7051,1245,6362,191,189,179,253,221
-185,5b8fd1e9-c6b6-4e7c-8bf2-a96e816078dd,animal-farm-george-orwell-summary,Animal Farm,George Orwell,en,hi,Supabase,published,pending_translation,1044,2324,1137,3487,785,518,589,536,280
+185,5b8fd1e9-c6b6-4e7c-8bf2-a96e816078dd,animal-farm-george-orwell-summary,Animal Farm,George Orwell,en,hi,Supabase,published,complete_draft_9_of_9_pending_review,1044,2324,1137,3487,785,518,589,536,280
 186,6fc1b262-3087-4859-adc4-667981204396,anna-edes-dezso-kosztolanyi-summary,Anna Édes,Dezső Kosztolányi,en,hi,Supabase,published,pending_translation,733,7084,1274,6677,194,189,179,256,224
 187,a25e38c8-9214-4b19-ac0d-977fc59f778a,anna-karenina-leo-tolstoy-summary,Anna Karenina,Leo Tolstoy,en,hi,Supabase,published,pending_translation,445,6893,1323,11253,219,189,128,275,173
 188,86b47149-3fb5-46e0-b939-6b831ad0c93d,anne-of-green-gables-l-m-montgomery-summary,Anne of Green Gables,L. M. Montgomery,en,hi,Supabase,published,pending_translation,670,2186,811,4237,309,240,440,709,274
