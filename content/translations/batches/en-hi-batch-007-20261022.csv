@@ -408,7 +408,7 @@ batch_index,book_id,slug,title,author,source_language,target_language,source_dat
 3407,7bffba6a-0787-4c23-aa52-aa77d5ee1a9f,yuktibhasa-summary,Yuktibhasa,Jyesthadeva,en,hi,Supabase,published,pending_translation,678,560,1437,7068,125,32,32,0,0
 3408,3f9a33ea-e302-4872-8f78-35b7496d58de,z-vassilis-vassilikos-summary,Z,Vassilis Vassilikos,en,hi,Supabase,published,pending_translation,648,7269,1581,8652,168,159,158,253,163
 3409,118e22a2-aa0b-4d87-a1d4-a03a5f0d3655,zadig-voltaire-summary,Zadig,Voltaire,en,hi,Supabase,published,pending_translation,648,6717,959,4968,158,145,128,329,202
-3410,ecd6124d-05c8-4d63-8992-edcde17c7cef,zag-marty-neumeier-summary,Zag,Marty Neumeier,en,hi,Supabase,published,pending_translation,685,1333,802,4500,304,0,0,0,0
+3410,ecd6124d-05c8-4d63-8992-edcde17c7cef,zag-marty-neumeier-summary,Zag,Marty Neumeier,en,hi,Supabase,published,complete_draft_5_of_5_pending_review,685,1333,802,4500,304,0,0,0,0
 3411,bf29e733-6a4c-4244-8b41-0104e97428cb,zarguzasht-mushtaq-ahmed-yusufi-summary,Zarguzasht,Mushtaq Ahmed Yusufi,en,hi,Supabase,published,pending_translation,326,5837,546,5664,127,154,120,210,151
 3412,b0ce81ee-21cf-4362-829c-5e6dbe979330,zavia-ashfaq-ahmed-summary,Zavia,Ashfaq Ahmed,en,hi,Supabase,published,pending_translation,335,5894,563,5821,135,174,120,238,151
 3413,7a27313f-d71f-4dad-954b-7253292e851d,zen-and-the-art-of-motorcycle-maintenance-robert-m-pirsig-summary,Zen and the Art of Motorcycle Maintenance,Robert M. Pirsig,en,hi,Supabase,published,pending_translation,574,3469,2530,10748,0,682,224,592,259
