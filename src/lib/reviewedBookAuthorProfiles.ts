@@ -124,6 +124,82 @@ For this Mastery reading, pay attention to the author's architecture: delayed re
 
 इस पाठ में नंदिनी के संवादों और मजदूरों की पहचान के बीच अंतर को चिह्नित करें। देखें कि किस क्षण कोई पात्र संख्या या भूमिका से आगे बढ़कर अपनी आवाज़ पाता है। साथ ही लेखक की कविता और नाटक के फर्क को समझें: यहाँ विचारों को पात्रों के टकराव, मौन, संगीत और मंचीय प्रतीकों से अनुभव कराया जाता है। इस तरह ‘रक्तकरबी’ ठाकुर के मानवतावाद को सुंदर आदर्श की जगह कठिन नाटकीय प्रश्न बना देती है।`,
   },
+  {
+    bookId: "567693f2-e622-41b2-afeb-135497282d94",
+    title: "रंगभूमि",
+    author: "मुंशी प्रेमचंद",
+    language: "hi",
+    sources: [
+      "https://india.oup.com/product/rangbhumi-the-arena-of-life-9780195667127/",
+      "https://www.rekhta.org/artists/premchand/profile",
+    ],
+    text: `मुंशी प्रेमचंद (1880–1936) का साहित्य भारतीय समाज में सत्ता, गरीबी और मानवीय गरिमा की पड़ताल करता है। लमही में जन्मे धनपत राय ने उर्दू में ‘नवाब राय’ नाम से लिखना शुरू किया और बाद में प्रेमचंद के रूप में हिंदी-उर्दू कथा-जगत में व्यापक पहचान बनाई। उन्होंने अध्यापक तथा शिक्षा विभाग के कर्मचारी के रूप में काम किया। उनके जीवनकाल में औपनिवेशिक शासन, राष्ट्रीय आंदोलन और समाज-सुधार की बहसें तेज थीं। ‘रंगभूमि’ में इन सभी प्रश्नों की छाया है, लेकिन उपन्यास की शक्ति किसी राजनीतिक वक्तव्य को दोहराने में नहीं, बल्कि संघर्षरत मनुष्यों को पूरी जटिलता से दिखाने में है।
+
+‘रंगभूमि’ का केंद्रीय पात्र सूरदास एक दृष्टिहीन भिक्षुक है, जिसके पास ऐसी भूमि है जिस पर प्रभावशाली लोग अधिकार चाहते हैं। प्रेमचंद इस स्थिति को संपत्ति के साधारण विवाद की तरह प्रस्तुत नहीं करते। भूमि यहाँ रोज़गार, समुदाय, निजी अस्तित्व और निर्णय की स्वतंत्रता का प्रश्न बन जाती है। औद्योगिक विकास तथा सार्वजनिक हित का दावा करने वाले पात्र भी कहानी में मौजूद हैं। पाठक के लिए जरूरी है कि वह उनके तर्कों को सुनकर पूछे कि प्रस्तावित लाभ किसे मिलेगा और जोखिम किसके हिस्से आएगा।
+
+सूरदास का चरित्र लेखक के नैतिक साहस की कल्पना को सामने लाता है, फिर भी उसे निर्दोष प्रतीक समझ लेना उपन्यास को सरल बना देगा। प्रेमचंद मानवीय संबंधों, धार्मिक पहचान, प्रशासनिक शक्ति और सामाजिक पदानुक्रम के बीच उसकी सीमाएँ तथा दृढ़ता दोनों दिखाते हैं। उपन्यास का विस्तृत आकार भी उद्देश्यपूर्ण है: अलग वर्गों और संस्थाओं के लोग एक ही संघर्ष को अलग हितों से देखते हैं। इस तरह ‘रंगभूमि’ बताती है कि अन्याय केवल किसी एक खलनायक की इच्छाशक्ति से नहीं, बल्कि कई सामान्य दिखाई देने वाली प्रक्रियाओं से भी बनता है।
+
+प्रेमचंद की अन्य रचनाओं से तुलना इस पुस्तक की विशिष्टता स्पष्ट करती है। ‘गबन’ में प्रतिष्ठा और आर्थिक छल का दबाव सामने है, ‘कर्मभूमि’ में जन-आंदोलन तथा नागरिक आचरण का प्रश्न, और ‘गोदान’ में किसान के श्रम, कर्ज़ तथा सम्मान का संघर्ष। ‘रंगभूमि’ में निजी भूमि पर बाहरी अधिकार की कोशिश सामाजिक-राजनीतिक व्यवस्था की व्यापक आलोचना में बदल जाती है। लेखक की सहानुभूति वंचित के साथ है, पर वे विरोधी तर्कों को भी कथा से पूरी तरह गायब नहीं करते।
+
+इस पुस्तक को पढ़ते समय सूरदास की बातों को उसके कार्यों के साथ मिलाएँ। विकास के दावों में छिपी आर्थिक भाषा को पहचानें और अलग-अलग पात्रों की शक्ति की तुलना करें। साथ ही विचार करें कि दृष्टिहीनता लेखक के लिए संवेदना जगाने का साधन भर है या सूरदास की स्वतंत्र नैतिक दृष्टि को सामने लाने का एक विरोधाभासी साहित्यिक तरीका। यही प्रश्न प्रेमचंद के यथार्थवाद को आज के भूमि, विस्थापन और न्याय संबंधी विमर्श से जोड़ते हैं।`,
+  },
+  {
+    bookId: "377afb77-5d5a-4738-9cfe-1413756cfd41",
+    title: "सेवासदन",
+    author: "मुंशी प्रेमचंद",
+    language: "hi",
+    sources: [
+      "https://india.oup.com/product/sevasadan-9780195696585/",
+      "https://fingerprintpublishing.com/book-details/sevasadan-hindi",
+    ],
+    text: `मुंशी प्रेमचंद (1880–1936) ने अपने कथा-साहित्य में उन सामाजिक नियमों की जाँच की जिन्हें अक्सर परिवार और समुदाय स्वाभाविक मान लेते हैं। उनका जन्म वाराणसी के निकट लमही में हुआ था और मूल नाम धनपत राय था। वे हिंदी तथा उर्दू में लिखते थे; आरंभिक लेखन ‘नवाब राय’ नाम से प्रकाशित हुआ। अध्यापन, आर्थिक संघर्ष और सामाजिक परिवर्तन के अनुभवों ने उन्हें यह देखने की दृष्टि दी कि नैतिकता के सार्वजनिक नियम कई बार स्त्रियों और गरीब परिवारों पर असमान बोझ डालते हैं। ‘सेवासदन’ में यह चिंता उनके प्रारंभिक उपन्यासकार रूप को विशेष पहचान देती है।
+
+‘सेवासदन’ की नायिका सुमन के जीवन के माध्यम से प्रेमचंद विवाह, दहेज, सम्मान, यौन नैतिकता और स्त्री की स्वतंत्रता पर गंभीर प्रश्न उठाते हैं। कथा उस समाज को देखती है जहाँ किसी महिला के निर्णयों पर कठोर फैसला सुनाना आसान है, लेकिन उसके सामने उपलब्ध विकल्पों को समझना कठिन। प्रेमचंद का साहस इसी दूसरे प्रश्न को मुख्य बनाना है। पाठक को सुमन की स्थिति पर केवल दया करने के बजाय यह जाँचना चाहिए कि आर्थिक निर्भरता, घर की अपेक्षाएँ और सामाजिक प्रतिष्ठा उसकी इच्छाओं को कैसे सीमित करती हैं।
+
+यह उपन्यास सामाजिक सुधार के आग्रह से जुड़ा है, पर इसे सीधे नीति-पत्र की तरह पढ़ना ठीक नहीं होगा। कथा में मनुष्यों की आकांक्षाएँ, ईर्ष्या, अपमान, भ्रम और निर्णय मौजूद हैं। प्रेमचंद सार्वजनिक सदाचार की भाषा और निजी व्यवहार के बीच का अंतर उजागर करते हैं। वही समाज जो स्त्री के जीवन पर निगरानी रखता है, उसके लिए सुरक्षित और गरिमापूर्ण रास्ते बनाने में अक्सर असफल होता है। इस विरोधाभास को समझना लेखक की आलोचना का महत्वपूर्ण हिस्सा है।
+
+प्रेमचंद की साहित्यिक यात्रा में ‘सेवासदन’ उस बिंदु पर आता है जहाँ सामाजिक प्रश्न उपन्यास की संरचना के केंद्र में हैं। ‘निर्मला’ में विवाह और अविश्वास की त्रासदी एक दूसरे कोण से सामने आती है; ‘गबन’ में मध्यवर्गीय दिखावा और आर्थिक नैतिकता प्रमुख होते हैं। ‘गोदान’ में श्रम तथा ऋण के दबाव व्यापक ग्रामीण संसार को रचते हैं। इन पुस्तकों में विषय अलग हैं, पर लेखक बार-बार पूछते हैं कि व्यक्ति को दोष देने से पहले उसकी परिस्थितियों को कितना समझना चाहिए।
+
+‘सेवासदन’ को पढ़ते समय सुमन के बारे में दूसरे पात्र जो निर्णय देते हैं, उन्हें उसके वास्तविक अनुभवों से अलग लिखें। देखें कि कथानक में आर्थिक स्वतंत्रता और सामाजिक सम्मान कभी साथ चलते हैं या एक-दूसरे के विरुद्ध हो जाते हैं। उपन्यास के ऐतिहासिक संदर्भ और आज के सामाजिक प्रश्नों के बीच समानताएँ पहचानते समय अंतर भी ध्यान में रखें। इस सावधानी से प्रेमचंद का लेखक-परिचय मात्र प्रशंसा नहीं रहता; वह स्त्री की गरिमा, सामाजिक दोहरे मानदंड और सुधार की सीमाओं पर गंभीर विचार का आरंभ बनता है।`,
+  },
+  {
+    bookId: "01400c5e-655d-48d7-9b5a-0d7335baa3e1",
+    title: "A Brief History of Time",
+    author: "Stephen Hawking",
+    language: "en",
+    sources: [
+      "https://www.penguinrandomhouse.com/books/77010/a-brief-history-of-time-by-stephen-hawking/",
+      "https://www.penguinrandomhouse.com/books/77019/the-illustrated-a-brief-history-of-time-by-stephen-hawking/",
+    ],
+    text: `Stephen Hawking (1942–2018) was a British theoretical physicist whose research and public writing changed how many non-specialists encountered cosmology. Educated at Oxford and Cambridge, he investigated gravity, black holes and the behaviour of the universe on the largest scales. His scientific work connected general relativity with quantum ideas, most famously through the prediction that black holes can emit radiation. Living for decades with motor neurone disease, he also became a highly visible public intellectual. Neither his medical history nor his celebrity should overshadow the mathematical and conceptual work behind his contributions.
+
+A Brief History of Time was first published in 1988. Its central ambition is remarkable: to guide a curious general reader through questions about the origin, structure and possible fate of the universe without relying heavily on equations. Hawking explains why scientists developed models of cosmic expansion, what a black hole is, why time appears to have a direction, and where familiar descriptions become inadequate. He presents not a finished account of everything but a map of questions that physics was still struggling to answer.
+
+The author's voice combines confidence in scientific inquiry with awareness of its limitations. A theory can organize observations and make predictions, yet it is not identical with the universe itself. Hawking moves between established results, active hypotheses and philosophical questions about explanation. Readers should preserve those distinctions. In particular, discussions of singularities, the beginning of time and a possible unified theory depend on assumptions that scientists may revise as evidence and mathematical understanding improve.
+
+Hawking later wrote The Universe in a Nutshell, Black Holes and Baby Universes, and, with collaborators, books intended to make complex science more approachable. A Brief History of Time remains his most influential popular introduction because it joins difficult physics to basic human curiosity. Its accessible analogies have great teaching value, but analogies are not substitutes for precise claims; they are stepping stones toward better questions.
+
+For Mastery, study the book as both a scientific explanation and an artifact of its era. Note which claims describe observation, which describe mathematical models, and which express open problems in 1988. Contemporary cosmology has continued to develop, so do not treat the book as an up-to-date textbook in every detail. The enduring lesson from Hawking's writing is methodological: even the largest questions become more useful when framed so that reasoning and evidence can challenge our first intuitions.`,
+  },
+  {
+    bookId: "b49bf80d-9cde-4e4f-a561-059f758b8556",
+    title: "Antifragile: Things That Gain from Disorder",
+    author: "Nassim Nicholas Taleb",
+    language: "en",
+    sources: [
+      "https://www.penguinrandomhouse.com/books/176227/antifragile-by-nassim-nicholas-taleb/",
+      "https://www.penguin.co.uk/books/56655/antifragile-by-taleb-nassim-nicholas/9780718197902",
+    ],
+    text: `Nassim Nicholas Taleb is a writer and former options trader whose work examines uncertainty, chance, risk and the limits of prediction. His books ask why people become confident in explanations built from incomplete evidence, particularly when rare events can have enormous consequences. Before Antifragile, Fooled by Randomness explored our tendency to mistake luck for skill, while The Black Swan examined unexpected events and the stories invented after they occur. These books belong to his broader Incerto project, an interconnected investigation rather than a set of simple motivational formulas.
+
+Antifragile: Things That Gain from Disorder develops a distinction that is easy to repeat but harder to apply. The fragile suffers when subjected to certain stresses; the robust withstands them; the antifragile can benefit from some variation, shocks or volatility. Taleb uses examples from biology, business, finance and everyday decisions to suggest that systems may improve through exposure to limited stress. Yet the argument is not that every crisis is beneficial. The size of the shock, the distribution of risk and the possibility of irreversible ruin all matter.
+
+Taleb's style is deliberately provocative. He mixes mathematical intuition, historical anecdotes, polemic and practical rules, often challenging credentialed experts who underestimate uncertainty. This makes the book stimulating but also demands an alert reader. Distinguish an illustrative story from evidence that an intervention actually works. Test whether a supposed antifragile arrangement benefits the people taking the risks or merely protects a powerful decision-maker who can transfer losses to others.
+
+One recurring concern in the author's work is asymmetry: gaining from favourable outcomes while limiting exposure to catastrophic ones. Optionality, small experiments and avoiding ruin connect the theoretical idea with practical choice. His discussion of skin in the game raises a related ethical question about who bears consequences. Readers need not accept every example or rhetorical attack to appreciate the discipline of looking closely at payoff structures rather than trusting a single forecast.
+
+When studying this particular book, make three columns for fragile, robust and antifragile responses in a real situation. Specify the stress involved and ask what happens at both modest and extreme levels. Do not confuse survivorship with proof that disorder creates progress. Taleb's lasting contribution here is a vocabulary for judging exposure to uncertainty and recognizing situations where excessive efforts to remove all variation may create a deeper, less visible vulnerability.`,
+  },
 ];
 
 export function findReviewedBookAuthorProfile(bookId: string): ReviewedBookAuthorProfile | undefined {
