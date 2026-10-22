@@ -90,6 +90,12 @@ Actions artifacts, **not** automatic commits or deployments. GitHub Actions
 minutes, artifact storage, model downloads, and compute may have cost/limits;
 we have **not** run these jobs or measured cost/runtime.
 
+The full workflow also produces `500-book-summary.json`: it compares every
+`pending_translation` ID in the manifest against all shard reports. Missing,
+duplicate, or unexpected IDs make the coverage step fail. The summary separates
+machine drafts from source-rework failures and explicitly reports zero editorial
+approvals/publications.
+
 ## Publishing gate (mandatory)
 
 1. Review each book's translation side-by-side with all its exact English fields.
