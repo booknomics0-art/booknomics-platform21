@@ -12,6 +12,13 @@ all translation inference runs locally using a downloaded model.
 - Importantly, the model has limited English→Hindi accuracy on its published
   benchmarks. It cannot guarantee natural, faithful literary translations.
   **Every generated book is unapproved until human editorial review.**
+- **Observed pilot (22 October 2026):** a genuine offline run on *$100M Leads*
+  translated all nine source fields, but made serious errors in names and
+  business terminology despite passing structural checks. This is **not
+  publishable Hindi**. Do not enable a full production cohort or claim its
+  summaries are ready solely on the basis of this generator. A demonstrably
+  higher-quality translation/revision process and human acceptance test are
+  required before deployment.
 - Do **not** replace this with NLLB-200-distilled-600M for a commercial website:
   that model is licensed CC-BY-NC and says it is not released for production.
 
@@ -59,7 +66,7 @@ Then, **only after measuring pilot quality and runtime**, process an entire
 ```bash
 python scripts/booknomics_en_hi_batch.py \
   --manifest content/translations/batches/en-hi-batch-001-20261022.csv \
-  --out-dir output/en-hi-batch-001 --limit 500
+  --out-dir output/en-hi-batch-001 --pending-only --limit 500
 ```
 
 Run again with the same arguments to resume after an interruption. Drafts are
@@ -68,7 +75,9 @@ represented in `content/translations/drafts/`, including manually authored
 partial drafts, so a machine cannot overwrite the assistant's reviewed work.
 It flags stale Supabase source lengths/IDs, generic placeholder headings,
 missing sections, suspiciously short text, insufficient Devanagari, and changed
-Markdown heading/list counts. A failure is reported rather than auto-published.
+Markdown heading/list counts. Passing these checks does not establish semantic
+quality (`qualityChecks.semanticVerified` is always `false`). A failure is
+reported rather than auto-published.
 
 ## One-click GitHub batch
 
