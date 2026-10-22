@@ -80,8 +80,19 @@ The 500-book cohort file registers identities but **does not contain 500
 biographies**. Its pending records must not be imported or counted as complete.
 As of 22 October 2026, exactly **55** book-specific essays are reviewed in
 production D1: 15 approximately 400-word essays, and 40 newly authored
-approximately 200-word essays (20 English and 20 Hindi). This does not mean
-the requested 200-new-book cohort is complete; **160 new essays remain**.
+approximately 200-word essays (20 English and 20 Hindi). A further **10 new
+English essays** are written and preserved in GitHub's
+`src/data/masteryAuthorEditorial200Batch05English.ts`, but **are not in D1**.
+Thus the 200-new-book cohort is **50 written / 40 published to D1 / 150 still
+unwritten**, rather than complete.
+
+Attempted D1 publishing for the fifth editorial set stopped when Cloudflare
+returned `7500: Your account has exceeded D1's free tier daily row read
+limit`. No fifth-set D1 writes succeeded. Do not retry reads or writes until
+the allowance resets at midnight UTC or the account owner changes the plan.
+Before importing these ten, recheck their exact published IDs and ensure their
+`author_bio` and `author_bio_status` are still null; use only conditional
+single-record updates to avoid overwriting any new work.
 
 ### Rollback
 
