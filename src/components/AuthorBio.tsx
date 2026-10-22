@@ -78,7 +78,7 @@ export const AuthorBio = ({ bookId, author, category, title, isHindi = false }: 
                 </a>
               ))}
             </div>
-          )
+          )}
           {otherWorks.length > 0 && (
             <div className="mt-4">
               <h3 className="text-sm font-bold mb-2">{isHindi ? "Booknomics पर अन्य कृतियाँ" : "More works on Booknomics"}</h3>
