@@ -30,7 +30,7 @@ The manifest paths above are relative to `content/translations/batches/`; draft 
 ## Progress (honest editorial status)
 
 - **8** complete but **unapproved** Hindi drafts of all nonempty source sections (two in cohort 001, one each in 002–007).
-- **2** partial 3/9-section drafts: `Atomic Habits`, `The Psychology of Money` (cohort 001).
+- **2** partial 7/9-section drafts: `Atomic Habits`, `The Psychology of Money` (cohort 001).
 - **1** previously approved five-section translation exists for `The Old Man and the Sea` (cohort 006), but the eligible Supabase English record has nine source sections. This is flagged `preexisting_approved_5_of_9_requires_completion_and_parity`, not counted as fully translated. Existing translation must be reverified against the Cloudflare D1 source and have missing sections completed before full-toggle coverage.
 - **3,448** further records are marked `pending_translation`.
 - **0** of the eight new complete drafts are approved or verified as deployed to the live Cloudflare D1 translation store.
@@ -51,7 +51,7 @@ At the time the translation branch was prepared, the `book_translations` Worker 
 
 ## Next work, priority order
 
-1. Complete remaining six source sections for `Atomic Habits` and `The Psychology of Money` before considering them ready.
+1. Complete the two remaining very long sections (`deep_summary` and `deep_analysis`) for each of `Atomic Habits` and `The Psychology of Money` before considering them ready. The other seven sections are now authored in Hindi.
 2. Continue manual faithful translation cohort by cohort, maintaining per-book status and source snapshot.
 3. Recheck previously approved `The Old Man and the Sea` five-field version and complete missing source fields.
 4. Run the complete D1 parity/editorial/import/toggle acceptance gate. Batch import only after the gate passes.
