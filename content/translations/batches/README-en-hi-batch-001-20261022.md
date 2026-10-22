@@ -13,9 +13,10 @@
 | Atomic Habits — James Clear | overview, key_ideas, daily_application | Partial editorial draft (3/9) |
 | The Psychology of Money — Morgan Housel | overview, key_ideas, daily_application | Partial editorial draft (3/9) |
 | Animal Farm — George Orwell | All nine toggle fields | Complete Hindi draft; awaits editorial approval and D1 parity |
-| Remaining 497 | None in this batch | Pending |
+| 100 Ways to Improve Your Writing — Gary Provost | All five nonempty toggle fields | Complete Hindi draft; awaits editorial approval and D1 parity |
+| Remaining 496 | None in this batch | Pending |
 
-Drafts: [Atomic Habits](../drafts/en-hi-batch-001/atomic-habits.partial.hi.json), [The Psychology of Money](../drafts/en-hi-batch-001/psychology-of-money.partial.hi.json), [Animal Farm](../drafts/en-hi-batch-001/animal-farm.complete-draft.hi.json).
+Drafts: [Atomic Habits](../drafts/en-hi-batch-001/atomic-habits.partial.hi.json), [The Psychology of Money](../drafts/en-hi-batch-001/psychology-of-money.partial.hi.json), [Animal Farm](../drafts/en-hi-batch-001/animal-farm.complete-draft.hi.json), [100 Ways to Improve Your Writing](../drafts/en-hi-batch-001/100-ways-to-improve-your-writing.complete-draft.hi.json).
 
 ## Import gates
 1. Complete the exact nonempty source fields for each book (`overview`, `deep_summary`, `key_ideas`, `deep_analysis`, `daily_application`, `action_system`, `practice_tracker`, `reflection_questions`, `real_life_example`). Do not shorten long sections into overviews.
