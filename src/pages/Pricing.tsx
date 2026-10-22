@@ -8,7 +8,7 @@ import { toast } from "sonner";
 import { apiFetch } from "@/lib/cloudflareApi";
 import { useAuth } from "@/hooks/useAuth";
 import { useTier } from "@/hooks/useTier";
-import { PLANS, SELLABLE_PLANS, type SellablePlan } from "@/lib/plans";
+import { FEATURES, PLANS, SELLABLE_PLANS, type SellablePlan } from "@/lib/plans";
 
 function loadRazorpay(): Promise<boolean> {
   return new Promise((resolve) => {
@@ -129,35 +129,68 @@ export default function Pricing() {
           </p>
         </div>
 
-        <div className="grid md:grid-cols-2 gap-5 max-w-4xl mx-auto">
-          {SELLABLE_PLANS.map((key) => {
-            const entry = PLANS[key];
-            const active = selected === key;
-            return (
-              <button type="button" key={key} onClick={() => { setSelected(key); setConsent(false); }}
-                aria-pressed={active}
-                className={"relative text-left border-2 rounded-3xl p-6 md:p-8 transition-all focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-primary " +
-                  (active ? "border-primary bg-primary/5 shadow-xl" : "border-border bg-card hover:border-primary/40")}>
-                {key === "monthly" && <span className="absolute -top-3 left-6 rounded-full px-4 py-1 bg-primary text-primary-foreground text-xs font-bold tracking-wide">MOST POPULAR</span>}
-                <div className="flex justify-between items-center">
-                  <h2 className="font-serif font-bold text-2xl">{entry.label} Premium</h2>
-                  <div className={"w-6 h-6 rounded-full grid place-items-center border-2 " + (active ? "border-primary bg-primary text-primary-foreground" : "border-muted-foreground")}>
-                    {active && <Check className="w-4 h-4" />}
-                  </div>
-                </div>
-                <div className="flex items-end gap-2 my-5">
-                  <span className="text-5xl font-extrabold tracking-tight">₹{entry.price}</span>
-                  <span className="text-muted-foreground pb-2">/{key === "weekly" ? "week" : "month"}</span>
-                </div>
-                <div className="text-sm text-muted-foreground">{key === "monthly" ? "Just ₹1.63 per day on average. Save compared with weekly." : "A flexible way to try Premium."}</div>
-                <div className="mt-5 pt-5 border-t text-sm font-medium flex items-center gap-2">
-                  <ShieldCheck className="w-4 h-4 text-emerald-600" /> Automatically renews. Cancel anytime.
-                </div>
+
+        <div className="mx-auto mb-8 flex w-fit flex-col items-center gap-3">
+          <span className="text-xs font-bold uppercase tracking-[0.2em] text-foreground/70">Choose your billing cycle</span>
+          <div className="inline-flex items-center gap-1.5 rounded-full border-2 border-border bg-muted/50 p-1.5 shadow-sm" role="tablist" aria-label="Premium subscription duration">
+            {SELLABLE_PLANS.map((key) => (
+              <button
+                key={key}
+                type="button"
+                role="tab"
+                aria-selected={selected === key}
+                onClick={() => { setSelected(key); setConsent(false); }}
+                className={"min-w-36 rounded-full px-5 py-3 text-sm font-bold transition-all focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary sm:min-w-44 " + (
+                  selected === key ? "bg-primary text-primary-foreground shadow-md" : "text-foreground/80 hover:bg-card"
+                )}
+              >
+                {key === "weekly" ? "Weekly · ₹19" : "Monthly · ₹49"}
               </button>
-            );
-          })}
+            ))}
+          </div>
+          <span className="text-xs text-muted-foreground">
+            One simple membership. Change your selection before checkout.
+          </span>
         </div>
-        <div className="max-w-4xl mx-auto mt-6 rounded-2xl bg-card border p-5 md:p-7">
+
+        <section className="mx-auto max-w-3xl overflow-hidden rounded-[2rem] border border-border bg-card shadow-lg" aria-live="polite">
+          <div className="border-b border-border bg-primary/5 px-7 py-7 sm:px-10 sm:py-9">
+            <div className="flex flex-wrap items-center justify-between gap-3">
+              <p className="flex items-center gap-2 text-sm font-bold text-primary">
+                <Crown className="h-4 w-4" /> {plan.label} Premium
+              </p>
+              {selected === "monthly" && <span className="rounded-full bg-primary px-3 py-1.5 text-xs font-bold text-primary-foreground">Most popular</span>}
+            </div>
+            <div className="mt-5 flex items-end gap-3">
+              <strong className="text-6xl font-extrabold tracking-tight text-foreground sm:text-7xl">₹{plan.price}</strong>
+              <span className="pb-2 text-base font-semibold text-foreground/70">/ {selected === "weekly" ? "week" : "month"}</span>
+            </div>
+            <p className="mt-3 max-w-xl text-sm leading-relaxed text-foreground/75">
+              {selected === "weekly"
+                ? "Flexible 7-day access to the reading tools included in Weekly Premium."
+                : "Monthly access to advanced reading tools, practice trackers and supported audio."}
+            </p>
+            <p className="mt-2 text-xs text-muted-foreground">Automatically renews at ₹{plan.price} every {selected === "weekly" ? "week" : "month"} unless cancelled.</p>
+          </div>
+
+          <div className="px-7 py-7 sm:px-10 sm:py-9">
+            <h2 className="text-lg font-bold text-foreground">What your plan includes</h2>
+            <ul className="mt-5 grid gap-4 sm:grid-cols-2">
+              {FEATURES.filter((feature) => feature[selected]).map((feature) => (
+                <li key={feature.label} className="flex items-start gap-3 text-sm leading-relaxed text-foreground/90">
+                  <span className="mt-0.5 grid h-5 w-5 shrink-0 place-items-center rounded-full bg-emerald-500/10 text-emerald-700 dark:text-emerald-400">
+                    <Check className="h-3.5 w-3.5" />
+                  </span>
+                  <span>{feature.label}</span>
+                </li>
+              ))}
+            </ul>
+            <p className="mt-6 text-xs leading-relaxed text-muted-foreground">
+              Availability of audio and other learning experiences varies by book. Existing free summaries stay free.
+            </p>
+          </div>
+        </section>
+        <div className="max-w-3xl mx-auto mt-5 rounded-2xl bg-card border p-5 md:p-7">
           <label className="flex items-start gap-3 text-sm leading-relaxed cursor-pointer">
             <Checkbox checked={consent} onCheckedChange={(value) => setConsent(value === true)} className="mt-1" />
             <span>I authorise Booknomics / Razorpay to automatically charge <strong>₹{plan.price} every {selected === "weekly" ? "week" : "month"}</strong> (taxes included), for up to {selected === "weekly" ? "52 weekly" : "12 monthly"} billing cycles unless I cancel earlier. I can cancel future renewals from My Subscription before the next charge. I agree to the <Link className="underline text-primary" to="/terms" onClick={(e) => e.stopPropagation()}>Terms</Link>.</span>
@@ -171,7 +204,7 @@ export default function Pricing() {
           {isPremium && <p className="text-center mt-3"><Link to="/account/subscription" className="text-primary underline font-medium">View existing subscription</Link></p>}
         </div>
 
-        <div className="grid lg:grid-cols-2 gap-10 max-w-4xl mx-auto mt-16">
+        <div className="grid lg:grid-cols-2 gap-10 max-w-3xl mx-auto mt-16">
           <section>
             <h2 className="font-serif text-3xl font-bold mb-6">Everything you need to turn reading into action</h2>
             <ul className="space-y-4">
