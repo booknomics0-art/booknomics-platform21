@@ -40,6 +40,7 @@ const Auth = lazy(() => import("./pages/Auth.tsx"));
 const Library = lazy(() => import("./pages/Library.tsx"));
 const About = lazy(() => import("./pages/About.tsx"));
 const Dashboard = lazy(() => import("./pages/Dashboard.tsx"));
+const Pricing = lazy(() => import("./pages/Pricing.tsx"));
 const Community = lazy(() => import("./pages/Community.tsx"));
 const Category = lazy(() => import("./pages/Category.tsx"));
 const Admin = lazy(() => import("./pages/Admin.tsx"));
@@ -129,6 +130,7 @@ const App = () => (
                 <Route path="/hindi" element={<Hindi />} />
                 <Route path="/about" element={<About />} />
                 <Route path="/dashboard" element={<Dashboard />} />
+                <Route path="/pricing" element={<Pricing />} />
                 <Route path="/community" element={<Community />} />
                 <Route path="/category/:category" element={<Category />} />
                 <Route path="/admin" element={<Admin />} />
