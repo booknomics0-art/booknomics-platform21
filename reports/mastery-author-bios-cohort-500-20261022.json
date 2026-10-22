@@ -1,0 +1,5023 @@
+{
+  "project": "Booknomics",
+  "scope": "Mastery tab: original book-specific author profile",
+  "created_ist": "2026-10-22",
+  "branch": "feat/mastery-book-specific-author-profiles-20261022",
+  "pr": 90,
+  "cohort_size": 500,
+  "target_words_per_profile": 400,
+  "language_mix": {
+    "hi": 250,
+    "en": 250
+  },
+  "draft_profiles_completed": 10,
+  "pending_editorial_profiles": 490,
+  "policy": {
+    "book_identity": "Stable published D1 books.id, not title-only matching",
+    "content": "400-word individually written author background tied to book, themes, chronology, distinctive contribution",
+    "checks": "Source attribution, title/author match, specificity, factual chronology, no generic text, correct language",
+    "publication": "Do not mark as live until reviewed, tests pass, PR merged and deployment verified"
+  },
+  "books": [
+    {
+      "cohort_index": 1,
+      "book_id": "cbec904d-f2e0-41bc-b3be-76f24571be23",
+      "title": "Crime and Punishment",
+      "author": "Fyodor Dostoevsky",
+      "language": "en",
+      "slug": "crime-and-punishment-dostoevsky-en",
+      "editorial_status": "reviewed_draft_on_pr90",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 2,
+      "book_id": "c70c2ebb-8d7d-4d0d-b5cb-75c075b9962a",
+      "title": "Middlemarch",
+      "author": "George Eliot",
+      "language": "en",
+      "slug": "middlemarch-george-eliot-en",
+      "editorial_status": "reviewed_draft_on_pr90",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 3,
+      "book_id": "626ffdc1-1e71-4c5b-bfeb-132ed1c2c9ab",
+      "title": "The Count of Monte Cristo",
+      "author": "Alexandre Dumas",
+      "language": "en",
+      "slug": "count-of-monte-cristo-alexandre-dumas-en",
+      "editorial_status": "reviewed_draft_on_pr90",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 4,
+      "book_id": "b94e3f25-05e0-4c6a-a195-0e938fc7db4e",
+      "title": "कर्मभूमि",
+      "author": "मुंशी प्रेमचंद",
+      "language": "hi",
+      "slug": "karmabhoomi-premchand-saransh",
+      "editorial_status": "reviewed_draft_on_pr90",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 5,
+      "book_id": "6c430c83-4400-4ede-a792-5f18c2a3edef",
+      "title": "कायाकल्प",
+      "author": "मुंशी प्रेमचंद",
+      "language": "hi",
+      "slug": "kayakalp-premchand-saransh",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 6,
+      "book_id": "59bc4712-6bca-436a-bee9-4b6335823052",
+      "title": "गबन",
+      "author": "मुंशी प्रेमचंद",
+      "language": "hi",
+      "slug": "gaban-munshi-premchand-saransh",
+      "editorial_status": "reviewed_draft_on_pr90",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 7,
+      "book_id": "a7f748e6-c54b-41eb-b918-0faff8db0ddc",
+      "title": "प्रतिज्ञा",
+      "author": "मुंशी प्रेमचंद",
+      "language": "hi",
+      "slug": "pratigya-premchand-saransh",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 8,
+      "book_id": "6b74f52f-54a0-465b-8e02-58f628359508",
+      "title": "प्रेमाश्रम",
+      "author": "मुंशी प्रेमचंद",
+      "language": "hi",
+      "slug": "premashram-premchand-saransh",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 9,
+      "book_id": "5a6b38c1-157b-4a3d-82c9-63f313ba974a",
+      "title": "मानसरोवर",
+      "author": "मुंशी प्रेमचंद",
+      "language": "hi",
+      "slug": "manasrovar-premchand-saransh",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 10,
+      "book_id": "e19bf759-5854-458a-bed1-d5b67c61740c",
+      "title": "रक्तकरबी",
+      "author": "रवींद्रनाथ ठाकुर",
+      "language": "hi",
+      "slug": "रक्तकरबी",
+      "editorial_status": "reviewed_draft_on_pr90",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 11,
+      "book_id": "567693f2-e622-41b2-afeb-135497282d94",
+      "title": "रंगभूमि",
+      "author": "मुंशी प्रेमचंद",
+      "language": "hi",
+      "slug": "rangbhoomi-premchand-saransh",
+      "editorial_status": "reviewed_draft_on_pr90",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 12,
+      "book_id": "377afb77-5d5a-4738-9cfe-1413756cfd41",
+      "title": "सेवासदन",
+      "author": "मुंशी प्रेमचंद",
+      "language": "hi",
+      "slug": "sevasadan-premchand-saransh",
+      "editorial_status": "reviewed_draft_on_pr90",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 13,
+      "book_id": "01400c5e-655d-48d7-9b5a-0d7335baa3e1",
+      "title": "A Brief History of Time",
+      "author": "Stephen Hawking",
+      "language": "en",
+      "slug": "a-brief-history-of-time-stephen-hawking-summary",
+      "editorial_status": "reviewed_draft_on_pr90",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 14,
+      "book_id": "9ae2200d-327a-4e71-8b2d-03de7c00aff3",
+      "title": "A Random Walk Down Wall Street",
+      "author": "Burton G. Malkiel",
+      "language": "en",
+      "slug": "a-random-walk-down-wall-street-burton-g-malkiel-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 15,
+      "book_id": "6b01db80-2c84-4aa8-9c61-6c320827d8f2",
+      "title": "A Wealth of Common Sense",
+      "author": "Ben Carlson",
+      "language": "en",
+      "slug": "a-wealth-of-common-sense-ben-carlson-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 16,
+      "book_id": "61a0a58c-0ab7-4a2f-a63e-c7cafcede941",
+      "title": "Algorithms to Live By",
+      "author": "Brian Christian and Tom Griffiths",
+      "language": "en",
+      "slug": "algorithms-to-live-by-brian-christian-and-tom-griffiths-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 17,
+      "book_id": "7f30efb5-7706-4a80-aad3-ed8514340cb3",
+      "title": "Amp It Up",
+      "author": "Frank Slootman",
+      "language": "en",
+      "slug": "amp-it-up-frank-slootman-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 18,
+      "book_id": "b49bf80d-9cde-4e4f-a561-059f758b8556",
+      "title": "Antifragile: Things That Gain from Disorder",
+      "author": "Nassim Nicholas Taleb",
+      "language": "en",
+      "slug": "antifragile-things-that-gain-from-disorder-nassim-nicholas-taleb-summary",
+      "editorial_status": "reviewed_draft_on_pr90",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 19,
+      "book_id": "04f671a7-7444-4a23-a65c-2ef2533a30d5",
+      "title": "Attached",
+      "author": "Amir Levine and Rachel Heller",
+      "language": "en",
+      "slug": "attached-amir-levine-and-rachel-heller-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 20,
+      "book_id": "4fca0d7b-2574-4294-9fbd-97e2707e0780",
+      "title": "Bad Blood",
+      "author": "John Carreyrou",
+      "language": "en",
+      "slug": "bad-blood-john-carreyrou-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 21,
+      "book_id": "2a4fc20e-869f-458a-b34a-4a7946f978c7",
+      "title": "Behave",
+      "author": "Robert M. Sapolsky",
+      "language": "en",
+      "slug": "behave-robert-m-sapolsky-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 22,
+      "book_id": "7a5e60c2-0916-44bb-a76c-b511e66beb5f",
+      "title": "Blitzscaling",
+      "author": "Reid Hoffman and Chris Yeh",
+      "language": "en",
+      "slug": "blitzscaling-reid-hoffman-and-chris-yeh-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 23,
+      "book_id": "28ed6521-c661-4ab4-83e4-ffaa69fde8a4",
+      "title": "Blue Ocean Strategy",
+      "author": "W. Chan Kim and Renée Mauborgne",
+      "language": "en",
+      "slug": "blue-ocean-strategy-w-chan-kim-and-renee-mauborgne-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 24,
+      "book_id": "75f7aeea-6aee-40ee-922e-d09d8d3e2c30",
+      "title": "Building a StoryBrand",
+      "author": "Donald Miller",
+      "language": "en",
+      "slug": "building-a-storybrand-donald-miller-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 25,
+      "book_id": "22d3f0b0-5c87-410b-b4f4-cff31857fb14",
+      "title": "Built to Last",
+      "author": "Jim Collins and Jerry I. Porras",
+      "language": "en",
+      "slug": "built-to-last-jim-collins-and-jerry-i-porras-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 26,
+      "book_id": "4c7b29d0-feaf-40d5-b641-e663a321eb54",
+      "title": "Common Stocks and Uncommon Profits",
+      "author": "Philip A. Fisher",
+      "language": "en",
+      "slug": "common-stocks-and-uncommon-profits-philip-a-fisher-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 27,
+      "book_id": "0a403b95-86fc-4d5b-a328-d979536a53b4",
+      "title": "Competing Against Luck",
+      "author": "Clayton M. Christensen, Taddy Hall, Karen Dillon, and David S. Duncan",
+      "language": "en",
+      "slug": "competing-against-luck-clayton-m-christensen-taddy-hall-karen-dillon-and-david-s-duncan-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 28,
+      "book_id": "2f8e5025-bd01-41d0-95a5-a36032f5542f",
+      "title": "Contagious",
+      "author": "Jonah Berger",
+      "language": "en",
+      "slug": "contagious-jonah-berger-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 29,
+      "book_id": "b515a078-b65b-4dfe-9788-2a8ced0140ca",
+      "title": "Creativity, Inc.",
+      "author": "Ed Catmull with Amy Wallace",
+      "language": "en",
+      "slug": "creativity-inc-ed-catmull-with-amy-wallace-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 30,
+      "book_id": "294ebac5-35ac-4e3b-9325-2ea94516b3ca",
+      "title": "Crossing the Chasm",
+      "author": "Geoffrey A. Moore",
+      "language": "en",
+      "slug": "crossing-the-chasm-geoffrey-a-moore-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 31,
+      "book_id": "147f6e35-9304-4213-88ef-85200115f396",
+      "title": "Crucial Conversations",
+      "author": "Kerry Patterson, Joseph Grenny, Ron McMillan, and Al Switzler",
+      "language": "en",
+      "slug": "crucial-conversations-kerry-patterson-joseph-grenny-ron-mcmillan-and-al-switzler-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 32,
+      "book_id": "fba076f1-f398-41f1-954e-4b13609e9999",
+      "title": "Dare to Lead",
+      "author": "Brené Brown",
+      "language": "en",
+      "slug": "dare-to-lead-brene-brown-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 33,
+      "book_id": "d13863cb-26c9-4ba3-81d3-d2a1dd069674",
+      "title": "Daring Greatly",
+      "author": "Brené Brown",
+      "language": "en",
+      "slug": "daring-greatly-brene-brown-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 34,
+      "book_id": "e5123023-0319-4a52-9b21-e82b9b865bbe",
+      "title": "Decisive",
+      "author": "Chip Heath and Dan Heath",
+      "language": "en",
+      "slug": "decisive-chip-heath-and-dan-heath-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 35,
+      "book_id": "fc32255b-5cdb-4f28-b788-6091eeb9d2fb",
+      "title": "Deep Work",
+      "author": "Cal Newport",
+      "language": "en",
+      "slug": "deep-work-cal-newport-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 36,
+      "book_id": "3e6ff448-4672-4d7d-ae45-64707ef9aa48",
+      "title": "Determined",
+      "author": "Robert M. Sapolsky",
+      "language": "en",
+      "slug": "determined-robert-m-sapolsky-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 37,
+      "book_id": "76b54854-6608-4bea-8a7d-2f21800331c3",
+      "title": "Die With Zero",
+      "author": "Bill Perkins",
+      "language": "en",
+      "slug": "die-with-zero-bill-perkins-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 38,
+      "book_id": "aa5c2aff-a36b-4fd7-9c2c-392fd59bee00",
+      "title": "Difficult Conversations",
+      "author": "Douglas Stone, Bruce Patton, and Sheila Heen",
+      "language": "en",
+      "slug": "difficult-conversations-douglas-stone-bruce-patton-and-sheila-heen-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 39,
+      "book_id": "a0f67b4c-e3ae-44d3-9b37-9ec156b10ec6",
+      "title": "Digital Minimalism",
+      "author": "Cal Newport",
+      "language": "en",
+      "slug": "digital-minimalism-cal-newport-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 40,
+      "book_id": "1ed31232-6452-492f-9891-71f166ef825b",
+      "title": "Disciplined Entrepreneurship",
+      "author": "Bill Aulet",
+      "language": "en",
+      "slug": "disciplined-entrepreneurship-bill-aulet-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 41,
+      "book_id": "d787affc-3c3e-48f2-b170-68af48f4c548",
+      "title": "Don't Make Me Think",
+      "author": "Steve Krug",
+      "language": "en",
+      "slug": "don-t-make-me-think-steve-krug-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 42,
+      "book_id": "ac6c4426-4b84-44b1-8e26-2621bf6717fe",
+      "title": "Dopamine Nation",
+      "author": "Anna Lembke",
+      "language": "en",
+      "slug": "dopamine-nation-anna-lembke-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 43,
+      "book_id": "19b2e6c6-fe98-4245-82e6-7485b62d8e34",
+      "title": "Drive: The Surprising Truth About What Motivates Us",
+      "author": "Daniel H. Pink",
+      "language": "en",
+      "slug": "drive-the-surprising-truth-about-what-motivates-us-daniel-h-pink-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 44,
+      "book_id": "6c869bb2-2657-43a9-91ee-66811ce2e9e2",
+      "title": "Eat That Frog!",
+      "author": "Brian Tracy",
+      "language": "en",
+      "slug": "eat-that-frog-brian-tracy-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 45,
+      "book_id": "a89e19a6-d43c-4fa6-aa27-9f2819103004",
+      "title": "Emotional Intelligence",
+      "author": "Daniel Goleman",
+      "language": "en",
+      "slug": "emotional-intelligence-daniel-goleman-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 46,
+      "book_id": "41e90b52-837f-45a6-bf1b-2629f6ca3cef",
+      "title": "Empowered",
+      "author": "Marty Cagan and Chris Jones",
+      "language": "en",
+      "slug": "empowered-marty-cagan-and-chris-jones-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 47,
+      "book_id": "e866da3e-1634-4f85-be29-0f41b9df8e88",
+      "title": "Essentialism",
+      "author": "Greg McKeown",
+      "language": "en",
+      "slug": "essentialism-greg-mckeown-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 48,
+      "book_id": "45882b7b-3870-4d48-8bcf-be83655dec8e",
+      "title": "Extreme Ownership",
+      "author": "Jocko Willink and Leif Babin",
+      "language": "en",
+      "slug": "extreme-ownership-jocko-willink-and-leif-babin-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 49,
+      "book_id": "30ec7c1f-2ca9-4559-a5d9-9e5f31f3eba5",
+      "title": "Factfulness",
+      "author": "Hans Rosling, Ola Rosling, and Anna Rosling Rönnlund",
+      "language": "en",
+      "slug": "factfulness-hans-rosling-ola-rosling-and-anna-rosling-ronnlund-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 50,
+      "book_id": "78c8ed08-c775-4561-a813-335a4c85a2c5",
+      "title": "First, Break All the Rules",
+      "author": "Marcus Buckingham and Curt Coffman",
+      "language": "en",
+      "slug": "first-break-all-the-rules-marcus-buckingham-and-curt-coffman-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 51,
+      "book_id": "3d7923c6-024c-44d2-951c-0c244762053b",
+      "title": "Flow: The Psychology of Optimal Experience",
+      "author": "Mihaly Csikszentmihalyi",
+      "language": "en",
+      "slug": "flow-the-psychology-of-optimal-experience-mihaly-csikszentmihalyi-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 52,
+      "book_id": "295cd48b-ac8f-439d-9a20-cb09dea49efd",
+      "title": "Fooled by Randomness",
+      "author": "Nassim Nicholas Taleb",
+      "language": "en",
+      "slug": "fooled-by-randomness-nassim-nicholas-taleb-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 53,
+      "book_id": "57750c82-51c4-43aa-a526-007414b031ee",
+      "title": "Four Thousand Weeks",
+      "author": "Oliver Burkeman",
+      "language": "en",
+      "slug": "four-thousand-weeks-oliver-burkeman-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 54,
+      "book_id": "f9692dca-9c4a-4494-b172-a63040763e7e",
+      "title": "Getting Things Done",
+      "author": "David Allen",
+      "language": "en",
+      "slug": "getting-things-done-david-allen-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 55,
+      "book_id": "82ae3d93-7845-44be-b1a6-01e524cd0483",
+      "title": "Good to Great",
+      "author": "Jim Collins",
+      "language": "en",
+      "slug": "good-to-great-jim-collins-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 56,
+      "book_id": "cedc62e1-b93e-426a-93d6-37662173ec9d",
+      "title": "Great by Choice",
+      "author": "Jim Collins and Morten T. Hansen",
+      "language": "en",
+      "slug": "great-by-choice-jim-collins-and-morten-t-hansen-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 57,
+      "book_id": "fa9c7579-9728-4535-992a-44ef1a355518",
+      "title": "Grit",
+      "author": "Angela Duckworth",
+      "language": "en",
+      "slug": "grit-angela-duckworth-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 58,
+      "book_id": "362a7b01-aff8-4717-8169-754c404c4854",
+      "title": "Hacking Growth",
+      "author": "Sean Ellis and Morgan Brown",
+      "language": "en",
+      "slug": "hacking-growth-sean-ellis-and-morgan-brown-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 59,
+      "book_id": "e44b861a-3369-4265-bc8e-f1de7dd657cb",
+      "title": "High Output Management",
+      "author": "Andrew S. Grove",
+      "language": "en",
+      "slug": "high-output-management-andrew-s-grove-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 60,
+      "book_id": "d2d9b49f-2cd3-4297-a5e3-f392c300870d",
+      "title": "Hooked",
+      "author": "Nir Eyal with Ryan Hoover",
+      "language": "en",
+      "slug": "hooked-nir-eyal-with-ryan-hoover-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 61,
+      "book_id": "3965aa59-73e8-4696-8314-7688de5a2108",
+      "title": "How Emotions Are Made",
+      "author": "Lisa Feldman Barrett",
+      "language": "en",
+      "slug": "how-emotions-are-made-lisa-feldman-barrett-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 62,
+      "book_id": "28bb5d42-bebf-4fc1-8a99-e4232db750b0",
+      "title": "How to Decide",
+      "author": "Annie Duke",
+      "language": "en",
+      "slug": "how-to-decide-annie-duke-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 63,
+      "book_id": "72b71ca7-358a-40b0-944c-7e23a2a3abf4",
+      "title": "How to Win Friends and Influence People",
+      "author": "Dale Carnegie",
+      "language": "en",
+      "slug": "how-to-win-friends-and-influence-people-dale-carnegie-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 64,
+      "book_id": "06943f65-4e22-4d1d-a62f-f10ab90aa760",
+      "title": "Hyperfocus",
+      "author": "Chris Bailey",
+      "language": "en",
+      "slug": "hyperfocus-chris-bailey-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 65,
+      "book_id": "7e1ada3c-dbe3-4422-87ba-02e0fe252cdd",
+      "title": "I Will Teach You to Be Rich",
+      "author": "Ramit Sethi",
+      "language": "en",
+      "slug": "i-will-teach-you-to-be-rich-ramit-sethi-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 66,
+      "book_id": "c53ce35b-bc8b-4ea7-bbf8-ea2b47c7464a",
+      "title": "Incognito",
+      "author": "David Eagleman",
+      "language": "en",
+      "slug": "incognito-david-eagleman-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 67,
+      "book_id": "c42e2836-ad44-4ff4-876f-759cefc20892",
+      "title": "Indistractable",
+      "author": "Nir Eyal with Julie Li",
+      "language": "en",
+      "slug": "indistractable-nir-eyal-with-julie-li-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 68,
+      "book_id": "27a5113d-fafb-425b-9a4b-eb4bf859b8ec",
+      "title": "Influence: The Psychology of Persuasion",
+      "author": "Robert B. Cialdini",
+      "language": "en",
+      "slug": "influence-the-psychology-of-persuasion-robert-b-cialdini-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 69,
+      "book_id": "ae44761e-b243-41e8-90dd-c7e626a9b726",
+      "title": "Inspired",
+      "author": "Marty Cagan",
+      "language": "en",
+      "slug": "inspired-marty-cagan-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 70,
+      "book_id": "6a9a32c2-e018-4d7e-ae9a-5111234d44a0",
+      "title": "Just Keep Buying",
+      "author": "Nick Maggiulli",
+      "language": "en",
+      "slug": "just-keep-buying-nick-maggiulli-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 71,
+      "book_id": "d905cb44-e900-4a21-908d-301d8e077fb1",
+      "title": "Leaders Eat Last",
+      "author": "Simon Sinek",
+      "language": "en",
+      "slug": "leaders-eat-last-simon-sinek-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 72,
+      "book_id": "5a545307-7b3a-4031-9f59-6626fb4e06a0",
+      "title": "Leadership and Self-Deception",
+      "author": "The Arbinger Institute",
+      "language": "en",
+      "slug": "leadership-and-self-deception-the-arbinger-institute-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 73,
+      "book_id": "0d700b3a-f1e2-486b-800c-f143670a106d",
+      "title": "Lean Analytics",
+      "author": "Alistair Croll and Benjamin Yoskovitz",
+      "language": "en",
+      "slug": "lean-analytics-alistair-croll-and-benjamin-yoskovitz-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 74,
+      "book_id": "5fcc14af-b595-4ec4-8716-6953cc20f3ac",
+      "title": "Livewired",
+      "author": "David Eagleman",
+      "language": "en",
+      "slug": "livewired-david-eagleman-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 75,
+      "book_id": "f5c74e6b-57ce-4df9-9602-ac8518c6295c",
+      "title": "Made to Stick",
+      "author": "Chip Heath and Dan Heath",
+      "language": "en",
+      "slug": "made-to-stick-chip-heath-and-dan-heath-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 76,
+      "book_id": "1e13ab14-4613-4797-a6ca-822607e43aed",
+      "title": "Make Time",
+      "author": "Jake Knapp and John Zeratsky",
+      "language": "en",
+      "slug": "make-time-jake-knapp-and-john-zeratsky-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 77,
+      "book_id": "68919601-6367-41dd-9677-2f1342120f49",
+      "title": "Man's Search for Meaning",
+      "author": "Viktor E. Frankl",
+      "language": "en",
+      "slug": "man-s-search-for-meaning-viktor-e-frankl-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 78,
+      "book_id": "14a14d88-ca6d-4ea5-94a3-2ec20a0e2303",
+      "title": "Measure What Matters",
+      "author": "John Doerr",
+      "language": "en",
+      "slug": "measure-what-matters-john-doerr-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 79,
+      "book_id": "56289257-3e11-4b17-9f28-5b68053f12ca",
+      "title": "Mindset",
+      "author": "Carol S. Dweck",
+      "language": "en",
+      "slug": "mindset-carol-s-dweck-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 80,
+      "book_id": "df3c6748-9976-4fe8-a313-dc703b857c50",
+      "title": "Misbehaving",
+      "author": "Richard H. Thaler",
+      "language": "en",
+      "slug": "misbehaving-richard-h-thaler-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 81,
+      "book_id": "2dd9874b-63d9-4bf6-ade6-ca12bead80f9",
+      "title": "Mistakes Were Made (But Not by Me)",
+      "author": "Carol Tavris and Elliot Aronson",
+      "language": "en",
+      "slug": "mistakes-were-made-but-not-by-me-carol-tavris-and-elliot-aronson-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 82,
+      "book_id": "7a7618a8-779f-4104-81ce-38dc5c100c4a",
+      "title": "Multipliers",
+      "author": "Liz Wiseman with Greg McKeown",
+      "language": "en",
+      "slug": "multipliers-liz-wiseman-with-greg-mckeown-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 83,
+      "book_id": "ec92ef4b-0e52-48a8-b97c-3c5ae8bfa705",
+      "title": "Never Split the Difference",
+      "author": "Chris Voss with Tahl Raz",
+      "language": "en",
+      "slug": "never-split-the-difference-chris-voss-with-tahl-raz-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 84,
+      "book_id": "dd6a0895-ebae-4117-81d0-613b4484ac91",
+      "title": "No Rules Rules",
+      "author": "Reed Hastings and Erin Meyer",
+      "language": "en",
+      "slug": "no-rules-rules-reed-hastings-and-erin-meyer-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 85,
+      "book_id": "625d83dc-5745-44d2-a979-d35477108be2",
+      "title": "Noise",
+      "author": "Daniel Kahneman, Olivier Sibony, and Cass R. Sunstein",
+      "language": "en",
+      "slug": "noise-daniel-kahneman-olivier-sibony-and-cass-r-sunstein-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 86,
+      "book_id": "41cacf55-68fb-4b00-be1f-763c9c8b76d8",
+      "title": "Nonviolent Communication",
+      "author": "Marshall B. Rosenberg",
+      "language": "en",
+      "slug": "nonviolent-communication-marshall-b-rosenberg-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 87,
+      "book_id": "6200c8ea-a838-4b0f-aad2-c9d45b0930b9",
+      "title": "Nudge",
+      "author": "Richard H. Thaler and Cass R. Sunstein",
+      "language": "en",
+      "slug": "nudge-richard-h-thaler-and-cass-r-sunstein-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 88,
+      "book_id": "db749345-19be-49f2-a816-811ab4014b60",
+      "title": "Obviously Awesome",
+      "author": "April Dunford",
+      "language": "en",
+      "slug": "obviously-awesome-april-dunford-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 89,
+      "book_id": "803fc634-f63d-4b4a-8953-8787ae362e61",
+      "title": "One Up On Wall Street",
+      "author": "Peter Lynch with John Rothchild",
+      "language": "en",
+      "slug": "one-up-on-wall-street-peter-lynch-with-john-rothchild-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 90,
+      "book_id": "128f5fee-3799-4dae-bcc7-023fdb0de589",
+      "title": "Outliers: The Story of Success",
+      "author": "Malcolm Gladwell",
+      "language": "en",
+      "slug": "outliers-the-story-of-success-malcolm-gladwell-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 91,
+      "book_id": "b79ba8e5-bafd-4933-806f-bcd62a3cca47",
+      "title": "Peak: Secrets from the New Science of Expertise",
+      "author": "Anders Ericsson and Robert Pool",
+      "language": "en",
+      "slug": "peak-secrets-from-the-new-science-of-expertise-anders-ericsson-and-robert-pool-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 92,
+      "book_id": "7b2b28e7-a507-4a58-a1ef-a4eef2f7bafd",
+      "title": "Playing to Win",
+      "author": "A.G. Lafley and Roger L. Martin",
+      "language": "en",
+      "slug": "playing-to-win-a-g-lafley-and-roger-l-martin-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 93,
+      "book_id": "628e3108-146e-40aa-99b8-df0976274519",
+      "title": "Positioning: The Battle for Your Mind",
+      "author": "Al Ries and Jack Trout",
+      "language": "en",
+      "slug": "positioning-the-battle-for-your-mind-al-ries-and-jack-trout-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 94,
+      "book_id": "39593aab-2b4e-4d40-88d6-ba0fdd94d1a7",
+      "title": "Predictably Irrational",
+      "author": "Dan Ariely",
+      "language": "en",
+      "slug": "predictably-irrational-dan-ariely-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 95,
+      "book_id": "aa808f91-c118-46a2-81e7-ad7c6c6fbca5",
+      "title": "Principles: Life and Work",
+      "author": "Ray Dalio",
+      "language": "en",
+      "slug": "principles-life-and-work-ray-dalio-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 96,
+      "book_id": "9b2b12f7-f64a-4548-bb73-af9b63ad9ee4",
+      "title": "Purple Cow",
+      "author": "Seth Godin",
+      "language": "en",
+      "slug": "purple-cow-seth-godin-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 97,
+      "book_id": "f6802bff-fc5a-4ced-8c5c-29de0a322629",
+      "title": "Quiet: The Power of Introverts in a World That Can't Stop Talking",
+      "author": "Susan Cain",
+      "language": "en",
+      "slug": "quiet-the-power-of-introverts-in-a-world-that-can-t-stop-talking-susan-cain-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 98,
+      "book_id": "a21bc768-8eab-434b-91f8-502b24e839f7",
+      "title": "Radical Candor",
+      "author": "Kim Scott",
+      "language": "en",
+      "slug": "radical-candor-kim-scott-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 99,
+      "book_id": "f934c05c-ff6b-4933-97a6-e0de231b05fa",
+      "title": "Range: Why Generalists Triumph in a Specialized World",
+      "author": "David Epstein",
+      "language": "en",
+      "slug": "range-why-generalists-triumph-in-a-specialized-world-david-epstein-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 100,
+      "book_id": "b4dce235-d700-4932-940e-006ef9bbfa18",
+      "title": "Rework",
+      "author": "Jason Fried and David Heinemeier Hansson",
+      "language": "en",
+      "slug": "rework-jason-fried-and-david-heinemeier-hansson-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 101,
+      "book_id": "35fb5775-5311-4c33-b0d0-bb9e6e30842b",
+      "title": "गोदान",
+      "author": "मुंशी प्रेमचंद",
+      "language": "hi",
+      "slug": "godan-munshi-premchand-saransh",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 102,
+      "book_id": "2026f6f3-aa59-4049-a775-60a80ff4146a",
+      "title": "निर्मला",
+      "author": "मुंशी प्रेमचंद",
+      "language": "hi",
+      "slug": "nirmala-munshi-premchand-saransh",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 103,
+      "book_id": "716cbf06-a4b4-4780-9a49-0e4010d05437",
+      "title": "कफ़न",
+      "author": "मुंशी प्रेमचंद",
+      "language": "hi",
+      "slug": "कफ़न-मुंशी-प्रेमचंद-saransh",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 104,
+      "book_id": "815074fa-bd01-42f6-b3f6-1bc4f2a6cdac",
+      "title": "मंत्र",
+      "author": "मुंशी प्रेमचंद",
+      "language": "hi",
+      "slug": "मंत्र-मुंशी-प्रेमचंद-saransh",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 105,
+      "book_id": "8ff60112-065d-4d32-b9fc-61eee6586a28",
+      "title": "शतरंज के खिलाड़ी",
+      "author": "मुंशी प्रेमचंद",
+      "language": "hi",
+      "slug": "शतरंज-के-खिलाड़ी-मुंशी-प्रेमचंद-saransh",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 106,
+      "book_id": "a161ba36-c984-49ca-915a-991bf7960ef7",
+      "title": "Bharathipura",
+      "author": "U. R. Ananthamurthy",
+      "language": "hi",
+      "slug": "bharathipura-u-r-ananthamurthy-hindi-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 107,
+      "book_id": "11d196e3-b432-4fef-bd75-f0556cf2b4a3",
+      "title": "Chokher Bali",
+      "author": "Rabindranath Tagore",
+      "language": "hi",
+      "slug": "chokher-bali-rabindranath-tagore-hindi-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 108,
+      "book_id": "f33dc09b-0b15-4a0d-9ff0-d75a504cce80",
+      "title": "Kapalkundala",
+      "author": "Bankim Chandra Chattopadhyay",
+      "language": "hi",
+      "slug": "kapalkundala-bankim-chandra-chattopadhyay-hindi-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 109,
+      "book_id": "47564869-ec15-4c1a-a0ef-77694492eceb",
+      "title": "अँधेरे के जुगनू",
+      "author": "रांगेय राघव",
+      "language": "hi",
+      "slug": "अंधेरे-के-जुगनू-रांगेय-राघव-सारांश",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 110,
+      "book_id": "808e74ca-24a4-4f81-81af-0b6141ac0ddd",
+      "title": "अंतराल",
+      "author": "नरेन्द्र कोहली",
+      "language": "hi",
+      "slug": "अंतराल-नरेनदर-कोहली-सारांश",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 111,
+      "book_id": "ed8c8b47-0035-48d0-8781-d7c299cf2503",
+      "title": "अधिकार",
+      "author": "नरेन्द्र कोहली",
+      "language": "hi",
+      "slug": "अधिकार-नरेनदर-कोहली-सारांश",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 112,
+      "book_id": "0f85f257-b519-4c21-8ea1-74371b08ea31",
+      "title": "अपने-अपने अजनबी",
+      "author": "अज्ञेय",
+      "language": "hi",
+      "slug": "अपने-अपने-अजनबी-अज्ञेय-saransh",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 113,
+      "book_id": "2cb70fc5-8e20-4b5a-a3ff-f05160c1998b",
+      "title": "अभ्युदय",
+      "author": "नरेन्द्र कोहली",
+      "language": "hi",
+      "slug": "अभयुदय-नरेनदर-कोहली-सारांश",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 114,
+      "book_id": "6675b2a0-3e20-4094-9950-8e68ad8ff2af",
+      "title": "अर्थशास्त्र",
+      "author": "कौटिल्य",
+      "language": "hi",
+      "slug": "अर्थशास्त्र-hindi-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 115,
+      "book_id": "7d7f1155-b376-445e-83da-d4638547da53",
+      "title": "अवसर",
+      "author": "नरेन्द्र कोहली",
+      "language": "hi",
+      "slug": "अवसर-नरेनदर-कोहली-सारांश",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 116,
+      "book_id": "e5933c10-0e76-495a-b3b6-87b8cbfa7180",
+      "title": "ईदगाह",
+      "author": "मुंशी प्रेमचंद",
+      "language": "hi",
+      "slug": "ईदगाह-मुंशी-प्रेमचंद-saransh",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 117,
+      "book_id": "994aeed5-e566-4cfa-95c9-1de734aed067",
+      "title": "गुनाहों का देवता",
+      "author": "धर्मवीर भारती",
+      "language": "hi",
+      "slug": "gunahon-ka-devta-dharamvir-bharti-saransh",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 118,
+      "book_id": "974c45bd-5550-4a1f-b213-1a0523865d8e",
+      "title": "घरे-बाइरे",
+      "author": "रवींद्रनाथ ठाकुर",
+      "language": "hi",
+      "slug": "घरे-बाइरे-रवींद्रनाथ-ठाकुर-saransh",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 119,
+      "book_id": "bbb5d03b-bd80-49ac-8994-eb5ceb2e5bf9",
+      "title": "चंद्रकांता",
+      "author": "देवकीनंदन खत्री",
+      "language": "hi",
+      "slug": "chandrakanta-devakinandan-khatri-saransh",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 120,
+      "book_id": "e4010360-9041-4008-85a4-da976329fed0",
+      "title": "ज़िंदगीनामा",
+      "author": "कृष्णा सोबती",
+      "language": "hi",
+      "slug": "ज़िंदगीनामा-कृष्णा-सोबती-saransh",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 121,
+      "book_id": "dacc73a6-f6ac-465a-a9e6-b2e07e20be63",
+      "title": "त्यागपत्र",
+      "author": "जैनेंद्र कुमार",
+      "language": "hi",
+      "slug": "tyagpatra",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 122,
+      "book_id": "44b1d3e8-1cf6-4190-94fe-e8436d006cac",
+      "title": "दीक्षा",
+      "author": "नरेन्द्र कोहली",
+      "language": "hi",
+      "slug": "दीकषा-नरेनदर-कोहली-सारांश",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 123,
+      "book_id": "7a37a8ef-a0a0-4a27-98f8-bdd76863c062",
+      "title": "देवदास",
+      "author": "शरतचंद्र चट्टोपाध्याय",
+      "language": "hi",
+      "slug": "devdas-sharatchandra-saransh",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 124,
+      "book_id": "a37cfb1e-70b7-43cf-bfaa-7312ef32b645",
+      "title": "देशद्रोही",
+      "author": "यशपाल",
+      "language": "hi",
+      "slug": "देशदरोही-यशपाल-सारांश",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 125,
+      "book_id": "84144cb6-59ed-4951-a46e-58a12d75760e",
+      "title": "नमक का दारोगा",
+      "author": "मुंशी प्रेमचंद",
+      "language": "hi",
+      "slug": "नमक-का-दारोगा-मुंशी-प्रेमचंद-saransh",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 126,
+      "book_id": "9d67cb56-bddb-4b15-be16-daa51797085a",
+      "title": "नरेंद्र-मोहिनी",
+      "author": "देवकीनंदन खत्री",
+      "language": "hi",
+      "slug": "नरेंदर-मोहिनी-देवकीनंदन-खतरी-सारांश",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 127,
+      "book_id": "9bbf84bc-57c6-4bd7-a164-2883c337913c",
+      "title": "पंच परमेश्वर",
+      "author": "मुंशी प्रेमचंद",
+      "language": "hi",
+      "slug": "पंच-परमेश्वर-मुंशी-प्रेमचंद-saransh",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 128,
+      "book_id": "b5cd7632-58dc-44c7-9a5b-1f82a7542a75",
+      "title": "पद्मावत",
+      "author": "मलिक मुहम्मद जायसी",
+      "language": "hi",
+      "slug": "padmaavat-jayasi-saransh",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 129,
+      "book_id": "1b6a8fe8-a8f2-42a9-84fc-9c29feaaab06",
+      "title": "परख",
+      "author": "जैनेंद्र कुमार",
+      "language": "hi",
+      "slug": "parakh",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 130,
+      "book_id": "db4699da-14a9-4250-8d0f-5dd6ed7cf6f7",
+      "title": "पुनर्नवा",
+      "author": "हजारी प्रसाद द्विवेदी",
+      "language": "hi",
+      "slug": "पुनर्नवा-हजारी-प्रसाद-द्विवेदी-saransh",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 131,
+      "book_id": "107dfbcd-2fc8-42ae-aec4-424211b7a588",
+      "title": "बीजक",
+      "author": "कबीर",
+      "language": "hi",
+      "slug": "kabir-beejak",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 132,
+      "book_id": "5108b6ec-5b57-4a47-8665-30d50aa20138",
+      "title": "बूढ़ी काकी",
+      "author": "मुंशी प्रेमचंद",
+      "language": "hi",
+      "slug": "बूढ़ी-काकी-मुंशी-प्रेमचंद-saransh",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 133,
+      "book_id": "b2df3b5c-1213-41e6-b9a0-446eba6a9b86",
+      "title": "भारत दुर्दशा",
+      "author": "भारतेंदु हरिश्चंद्र",
+      "language": "hi",
+      "slug": "भारत-दुर्दशा-भारतेंदु-हरिश्चंद्र-saransh",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 134,
+      "book_id": "75775345-15d0-42c0-b624-caae5e30d9e1",
+      "title": "महाभोज",
+      "author": "मन्नू भंडारी",
+      "language": "hi",
+      "slug": "महाभोज-मन्नू-भंडारी-saransh",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 135,
+      "book_id": "50bd19af-9417-4345-973b-8c633c973873",
+      "title": "माधवजी सिंधिया",
+      "author": "वृंदावनलाल वर्मा",
+      "language": "hi",
+      "slug": "माधवजी-सिंधिया-वृंदावनलाल-वरमा-सारांश",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 136,
+      "book_id": "7b1145ea-0e56-42b5-ba8f-3a0ae44833a1",
+      "title": "मित्रो मरजानी",
+      "author": "कृष्णा सोबती",
+      "language": "hi",
+      "slug": "मित्रो-मरजानी-कृष्णा-सोबती-saransh",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 137,
+      "book_id": "fecaab2e-f2ae-4969-aa06-931928615ac4",
+      "title": "मैला आँचल",
+      "author": "फणीश्वर नाथ 'रेणु'",
+      "language": "hi",
+      "slug": "maila-aanchal-phanishwar-nath-renu-saransh",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 138,
+      "book_id": "040621be-3341-474c-81cf-ad6ff08f37e3",
+      "title": "यामा",
+      "author": "महादेवी वर्मा",
+      "language": "hi",
+      "slug": "yama-mahadevi-varma-saransh",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 139,
+      "book_id": "d25c96f7-98bc-4ffc-83bd-384ad1773e7d",
+      "title": "रामचरितमानस",
+      "author": "गोस्वामी तुलसीदास",
+      "language": "hi",
+      "slug": "ramcharitmanas-tulsidas-saransh",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 140,
+      "book_id": "f3546fc7-9599-4b16-ac11-8d415e79ed0d",
+      "title": "वैशाली की नगरवधू",
+      "author": "आचार्य चतुरसेन शास्त्री",
+      "language": "hi",
+      "slug": "vaishali-ki-nagarvadhu-chatursen-saransh",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 141,
+      "book_id": "1da25f74-cbc1-45c9-a25d-23549bc269e3",
+      "title": "शेखर एक जीवनी",
+      "author": "अज्ञेय",
+      "language": "hi",
+      "slug": "shekhar-ek-jivani-agyeya-saransh",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 142,
+      "book_id": "b7293fa7-945c-4931-b7bf-067369f865ef",
+      "title": "श्रीकांत",
+      "author": "शरतचंद्र चट्टोपाध्याय",
+      "language": "hi",
+      "slug": "श्रीकांत-शरतचंद्र-चट्टोपाध्याय-saransh",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 143,
+      "book_id": "480e6ba5-9247-45f9-b2ce-ca919ed386cd",
+      "title": "संघर्ष की ओर",
+      "author": "नरेन्द्र कोहली",
+      "language": "hi",
+      "slug": "संघरष-की-ओर-नरेनदर-कोहली-सारांश",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 144,
+      "book_id": "aa900185-2f49-4fc1-9392-3b9d1ea04d46",
+      "title": "स्कंदगुप्त",
+      "author": "जयशंकर प्रसाद",
+      "language": "hi",
+      "slug": "स्कंदगुप्त-जयशंकर-प्रसाद-saransh",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 145,
+      "book_id": "3f1aab77-1e6e-410d-bddd-075032f07a5b",
+      "title": "हल्दीघाटी",
+      "author": "श्याम नारायण पाण्डेय",
+      "language": "hi",
+      "slug": "haldighati-shyam-narayan-pandey-saransh",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 146,
+      "book_id": "539a346b-1d65-4d27-a1fd-e306c47ec12e",
+      "title": "अकबरनामा",
+      "author": "अबुल फ़ज़ल",
+      "language": "hi",
+      "slug": "अकबरनामा-hindi-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 147,
+      "book_id": "3b692771-3bd1-4f3b-a4ac-357824ef8b1c",
+      "title": "उर्वशी",
+      "author": "रामधारी सिंह दिनकर",
+      "language": "hi",
+      "slug": "उर्वशी-रामधारी-सिंह-दिनकर-saransh",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 148,
+      "book_id": "32de351c-fb11-44a0-9f8b-7a5bfad48c48",
+      "title": "रश्मिरथी",
+      "author": "रामधारी सिंह दिनकर",
+      "language": "hi",
+      "slug": "रश्मिरथी-रामधारी-सिंह-दिनकर-saransh",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 149,
+      "book_id": "6a34a64d-9662-46de-aabc-0fd5075df07e",
+      "title": "ढाई घर",
+      "author": "गिरिराज किशोर",
+      "language": "hi",
+      "slug": "ढाई-घर-गिरिराज-किशोर-saransh",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 150,
+      "book_id": "f0bf8070-59c0-4359-9f5d-caf568a04822",
+      "title": "नशा",
+      "author": "मुंशी प्रेमचंद",
+      "language": "hi",
+      "slug": "नशा-मुंशी-प्रेमचंद-saransh",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 151,
+      "book_id": "475c5d73-26e9-46b3-b107-48d0c59834f8",
+      "title": "प्रेमा",
+      "author": "मुंशी प्रेमचंद",
+      "language": "hi",
+      "slug": "प्रेमा-मुंशी-प्रेमचंद-saransh",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 152,
+      "book_id": "714dc63c-00f5-4825-a33e-38efc6e248e8",
+      "title": "बड़े घर की बेटी",
+      "author": "मुंशी प्रेमचंद",
+      "language": "hi",
+      "slug": "बड़े-घर-की-बेटी-मुंशी-प्रेमचंद-saransh",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 153,
+      "book_id": "d51b50a5-1bee-4acf-86a2-1a3a670a2f3f",
+      "title": "वरदान",
+      "author": "मुंशी प्रेमचंद",
+      "language": "hi",
+      "slug": "वरदान-मुंशी-प्रेमचंद-saransh",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 154,
+      "book_id": "b09cd164-ab2b-4ed4-b3cb-e9dcbd041acc",
+      "title": "सती",
+      "author": "मुंशी प्रेमचंद",
+      "language": "hi",
+      "slug": "सती-मुंशी-प्रेमचंद-saransh",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 155,
+      "book_id": "7ab2ed75-de99-425d-9285-b70a6ebbfad4",
+      "title": "सवा सेर गेहूँ",
+      "author": "मुंशी प्रेमचंद",
+      "language": "hi",
+      "slug": "सवा-सेर-गेहूँ-मुंशी-प्रेमचंद-saransh",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 156,
+      "book_id": "73cdf9c1-de0c-47d6-848c-1dc41c5444f4",
+      "title": "47 Naatkal",
+      "author": "Sivasankari",
+      "language": "hi",
+      "slug": "47-naatkal-sivasankari-hindi-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 157,
+      "book_id": "5f52b536-65f6-4938-8aae-a7de13c67ad8",
+      "title": "Aa Maratheyum Marannu Marannu Njan",
+      "author": "K. R. Meera",
+      "language": "hi",
+      "slug": "aa-maratheyum-marannu-marannu-njan-k-r-meera-hindi-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 158,
+      "book_id": "caeca70b-a108-4617-8cc1-670854d24aea",
+      "title": "Aa...!",
+      "author": "Sujatha",
+      "language": "hi",
+      "slug": "aa-sujatha-hindi-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 159,
+      "book_id": "3b71ea88-0115-4b1d-960d-4c633ade2ce7",
+      "title": "Aadhalinal Kadhal Seiveer",
+      "author": "Sujatha",
+      "language": "hi",
+      "slug": "aadhalinal-kadhal-seiveer-sujatha-hindi-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 160,
+      "book_id": "4be545c7-2c39-445d-adcd-9ce192bae64a",
+      "title": "Aadujeevitham",
+      "author": "Benyamin",
+      "language": "hi",
+      "slug": "aadujeevitham-benyamin-hindi-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 161,
+      "book_id": "25da26d1-60a8-4dcd-850a-45e5057996e2",
+      "title": "Aagamana",
+      "author": "Yaddanapudi Sulochana Rani",
+      "language": "hi",
+      "slug": "aagamana-yaddanapudi-sulochana-rani-hindi-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 162,
+      "book_id": "eae7fefa-ce2f-4574-9400-f7e3d971b3bd",
+      "title": "Aahuti",
+      "author": "Yaddanapudi Sulochana Rani",
+      "language": "hi",
+      "slug": "aahuti-yaddanapudi-sulochana-rani-hindi-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 163,
+      "book_id": "40891a24-7093-4c2e-bd49-d057ef5aad10",
+      "title": "Aakasamlo Sagam",
+      "author": "Volga",
+      "language": "hi",
+      "slug": "aakasamlo-sagam-volga-hindi-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 164,
+      "book_id": "d55259ab-e1e5-4895-9f28-ab3348c293bc",
+      "title": "Aakashra Isara",
+      "author": "Manoj Das",
+      "language": "hi",
+      "slug": "aakashra-isara-manoj-das-hindi-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 165,
+      "book_id": "1ab0113e-4408-47b0-877a-2273732c2d64",
+      "title": "Aalahayude Penmakkal",
+      "author": "Sarah Joseph",
+      "language": "hi",
+      "slug": "aalahayude-penmakkal-sarah-joseph-hindi-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 166,
+      "book_id": "7b4b8581-853e-4032-be53-e26094e2da38",
+      "title": "Aalkkoottam",
+      "author": "Anand",
+      "language": "hi",
+      "slug": "aalkkoottam-anand-hindi-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 167,
+      "book_id": "1b1e3fce-8a30-42f2-b824-7d26a5026857",
+      "title": "Aalohari Anandam",
+      "author": "Sarah Joseph",
+      "language": "hi",
+      "slug": "aalohari-anandam-sarah-joseph-hindi-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 168,
+      "book_id": "22bdfbf8-59f2-4682-83a3-e1ec9ab1110e",
+      "title": "Aanavariyum Ponkurishum",
+      "author": "Vaikom Muhammad Basheer",
+      "language": "hi",
+      "slug": "aanavariyum-ponkurishum-vaikom-muhammad-basheer-hindi-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 169,
+      "book_id": "7e62634b-5292-46da-bc00-83102310577c",
+      "title": "Aarachar",
+      "author": "K. R. Meera",
+      "language": "hi",
+      "slug": "aarachar-k-r-meera-hindi-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 170,
+      "book_id": "64e705ec-43f8-40d5-b24d-00042ac056e6",
+      "title": "Aatma Gowravam",
+      "author": "Yaddanapudi Sulochana Rani",
+      "language": "hi",
+      "slug": "aatma-gowravam-yaddanapudi-sulochana-rani-hindi-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 171,
+      "book_id": "013cca14-7769-48c2-9581-e48a0a19a5ee",
+      "title": "Aatmiyulu",
+      "author": "Yaddanapudi Sulochana Rani",
+      "language": "hi",
+      "slug": "aatmiyulu-yaddanapudi-sulochana-rani-hindi-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 172,
+      "book_id": "1f08ffb7-8ed0-4b63-b05d-912b234dd099",
+      "title": "Aavarana",
+      "author": "S. L. Bhyrappa",
+      "language": "hi",
+      "slug": "aavarana-s-l-bhyrappa-hindi-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 173,
+      "book_id": "b01d2a22-c3ae-4a5f-8950-aacf07e37697",
+      "title": "Aavilayile Sooryodayam",
+      "author": "M. Mukundan",
+      "language": "hi",
+      "slug": "aavilayile-sooryodayam-m-mukundan-hindi-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 174,
+      "book_id": "2a04ede6-feff-42ba-b14e-c11432de2a0b",
+      "title": "Abachurina Post Office",
+      "author": "Poornachandra Tejaswi",
+      "language": "hi",
+      "slug": "abachurina-post-office-poornachandra-tejaswi-hindi-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 175,
+      "book_id": "d7cbbd87-eb12-4815-bfaa-bdb6af9e18b2",
+      "title": "Abhayarthikal",
+      "author": "Anand",
+      "language": "hi",
+      "slug": "abhayarthikal-anand-hindi-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 176,
+      "book_id": "c162ff03-cd91-4493-97e2-796e82a4271b",
+      "title": "Abhijata",
+      "author": "Yaddanapudi Sulochana Rani",
+      "language": "hi",
+      "slug": "abhijata-yaddanapudi-sulochana-rani-hindi-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 177,
+      "book_id": "5da8cafe-a3e3-4953-a89e-3aeda647ede7",
+      "title": "Abhilasha",
+      "author": "Yandamuri Veerendranath",
+      "language": "hi",
+      "slug": "abhilasha-yandamuri-veerendranath-hindi-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 178,
+      "book_id": "7164af7e-321d-4753-a199-ea17908f74fa",
+      "title": "Abhinetri",
+      "author": "Kanhucharan Mohanty",
+      "language": "hi",
+      "slug": "abhinetri-kanhucharan-mohanty-hindi-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 179,
+      "book_id": "81cd06f2-46c6-47ea-98d0-37ddfff4f589",
+      "title": "Abhisapta Gandharba",
+      "author": "Mohapatra Nilamani Sahoo",
+      "language": "hi",
+      "slug": "abhisapta-gandharba-mohapatra-nilamani-sahoo-hindi-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 180,
+      "book_id": "99de5c14-9759-4f50-adc4-bf051bf2018d",
+      "title": "Achalatana",
+      "author": "Surendra Mohanty",
+      "language": "hi",
+      "slug": "achalatana-surendra-mohanty-hindi-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 181,
+      "book_id": "96d5b329-535d-41b4-bf36-38258c08f4b6",
+      "title": "Adarsha Hindu Hotel",
+      "author": "Bibhutibhushan Bandyopadhyay",
+      "language": "hi",
+      "slug": "adarsha-hindu-hotel-bibhutibhushan-bandyopadhyay-hindi-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 182,
+      "book_id": "2329362b-dc0a-4894-9619-0687be45bd8d",
+      "title": "Adityanum Radhayum Mattu Chilarum",
+      "author": "M. Mukundan",
+      "language": "hi",
+      "slug": "adityanum-radhayum-mattu-chilarum-m-mukundan-hindi-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 183,
+      "book_id": "c4fd9549-cd89-40dd-8fb8-87c0155ae2c7",
+      "title": "Aerakkuraiya Sorkkam",
+      "author": "Sujatha",
+      "language": "hi",
+      "slug": "aerakkuraiya-sorkkam-sujatha-hindi-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 184,
+      "book_id": "8962ca67-4197-4486-8799-a6812b364afd",
+      "title": "Agantuk",
+      "author": "Dhiruben Patel",
+      "language": "hi",
+      "slug": "agantuk-dhiruben-patel-hindi-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 185,
+      "book_id": "531586b7-e5d7-4ded-900b-115c998dc014",
+      "title": "Agnaadi",
+      "author": "Poomani",
+      "language": "hi",
+      "slug": "agnaadi-poomani-hindi-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 186,
+      "book_id": "54da75a5-5436-4584-a542-9df105f292a0",
+      "title": "Agneyam",
+      "author": "P. Vatsala",
+      "language": "hi",
+      "slug": "agneyam-p-vatsala-hindi-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 187,
+      "book_id": "5c015ee4-a4ed-466e-9d11-6042c7b43d72",
+      "title": "Agni Poolu",
+      "author": "Yaddanapudi Sulochana Rani",
+      "language": "hi",
+      "slug": "agni-poolu-yaddanapudi-sulochana-rani-hindi-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 188,
+      "book_id": "74d51d58-9d12-4f5e-ac58-bcc64285fa1d",
+      "title": "Agnisakshi",
+      "author": "Lalithambika Antharjanam",
+      "language": "hi",
+      "slug": "agnisakshi-lalithambika-antharjanam-hindi-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 189,
+      "book_id": "a8fdc22b-ff9f-45f3-9842-5d31cbcb796c",
+      "title": "Agniswasa",
+      "author": "Nikhileshwar",
+      "language": "hi",
+      "slug": "agniswasa-nikhileshwar-hindi-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 190,
+      "book_id": "e8b12b53-b9ff-4a46-a176-a01a49551b0b",
+      "title": "Ajibakara Attahasa",
+      "author": "Surendra Mohanty",
+      "language": "hi",
+      "slug": "ajibakara-attahasa-surendra-mohanty-hindi-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 191,
+      "book_id": "5509fd5e-462d-4c50-a39c-0faaa0cc5b15",
+      "title": "Akhepatar",
+      "author": "Bindu Bhatt",
+      "language": "hi",
+      "slug": "akhepatar-bindu-bhatt-hindi-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 192,
+      "book_id": "80c0baa0-0db9-45f6-bdba-95a0a2066afa",
+      "title": "Akkarmashi",
+      "author": "Sharankumar Limbale",
+      "language": "hi",
+      "slug": "akkarmashi-sharankumar-limbale-hindi-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 193,
+      "book_id": "15dcad63-6b2c-47d6-9ee1-f0223d4e1db3",
+      "title": "Akoopar",
+      "author": "Dhruv Bhatt",
+      "language": "hi",
+      "slug": "akoopar-dhruv-bhatt-hindi-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 194,
+      "book_id": "d5e934b3-b1e3-48c8-801d-c1663c388ce6",
+      "title": "Alai Osai",
+      "author": "Kalki Krishnamurthy",
+      "language": "hi",
+      "slug": "alai-osai-kalki-krishnamurthy-hindi-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 195,
+      "book_id": "036d1cd8-2b1c-4dc9-81d1-4bc9bebe28a5",
+      "title": "Alaivaai Karaiyile",
+      "author": "Rajam Krishnan",
+      "language": "hi",
+      "slug": "alaivaai-karaiyile-rajam-krishnan-hindi-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 196,
+      "book_id": "2968e265-4367-411c-8388-a80b6e9ca7be",
+      "title": "Alpajeevi",
+      "author": "Rachakonda Viswanatha Sastry",
+      "language": "hi",
+      "slug": "alpajeevi-rachakonda-viswanatha-sastry-hindi-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 197,
+      "book_id": "be7a6440-3ccb-4a85-805a-df8171f5aa34",
+      "title": "Alpha",
+      "author": "T. D. Ramakrishnan",
+      "language": "hi",
+      "slug": "alpha-t-d-ramakrishnan-hindi-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 198,
+      "book_id": "d20e8917-1056-4f35-a6fa-12108f1956bc",
+      "title": "Amara Hridayam",
+      "author": "Yaddanapudi Sulochana Rani",
+      "language": "hi",
+      "slug": "amara-hridayam-yaddanapudi-sulochana-rani-hindi-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 199,
+      "book_id": "dee3e24e-35c8-4a1a-93df-c43c223e155e",
+      "title": "Ambarada Apsare",
+      "author": "M. K. Indira",
+      "language": "hi",
+      "slug": "ambarada-apsare-m-k-indira-hindi-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 200,
+      "book_id": "064fbf2a-95c0-43e5-a539-e069a70f03fc",
+      "title": "Ame Badha",
+      "author": "Jyotindra Dave and Dhansukhlal Mehta",
+      "language": "hi",
+      "slug": "ame-badha-jyotindra-dave-and-dhansukhlal-mehta-hindi-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 201,
+      "book_id": "72973fba-5ce5-45c1-83d4-bea71a514134",
+      "title": "Amma Vandhaal",
+      "author": "T. Janakiraman",
+      "language": "hi",
+      "slug": "amma-vandhaal-t-janakiraman-hindi-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 202,
+      "book_id": "2f5d409e-4962-4a35-b214-65ef67e2cfa7",
+      "title": "Amma, Please Enakkaga",
+      "author": "Sivasankari",
+      "language": "hi",
+      "slug": "amma-please-enakkaga-sivasankari-hindi-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 203,
+      "book_id": "fcd220c8-fd76-4ff7-b2ee-a4f64cfde4fb",
+      "title": "Ammachiyemba Nenapu",
+      "author": "Vaidehi",
+      "language": "hi",
+      "slug": "ammachiyemba-nenapu-vaidehi-hindi-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 204,
+      "book_id": "8574f8fe-8313-4578-bc47-1874165d00ab",
+      "title": "Ampasayya",
+      "author": "Ampasayya Naveen",
+      "language": "hi",
+      "slug": "ampasayya-ampasayya-naveen-hindi-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 205,
+      "book_id": "204ad8cb-86be-42fd-9045-148dbfd28078",
+      "title": "Amrita",
+      "author": "Raghuveer Chaudhari",
+      "language": "hi",
+      "slug": "amrita-raghuveer-chaudhari-hindi-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 206,
+      "book_id": "5e9bf928-7885-496c-a341-b1eb26fdf25c",
+      "title": "Amrita Dhara",
+      "author": "Yaddanapudi Sulochana Rani",
+      "language": "hi",
+      "slug": "amrita-dhara-yaddanapudi-sulochana-rani-hindi-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 207,
+      "book_id": "bbe256c8-bd21-4c5d-8e0e-d8d82c54790d",
+      "title": "Amruta Phala",
+      "author": "Manoj Das",
+      "language": "hi",
+      "slug": "amruta-phala-manoj-das-hindi-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 208,
+      "book_id": "1006580a-1022-4b14-ab21-b8e39d131c2e",
+      "title": "Amrutara Santana",
+      "author": "Gopinath Mohanty",
+      "language": "hi",
+      "slug": "amrutara-santana-gopinath-mohanty-hindi-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 209,
+      "book_id": "73131de8-e282-42cf-b3a3-3b95d845956b",
+      "title": "Amrutham Kurisina Ratri",
+      "author": "Devarakonda Balagangadhara Tilak",
+      "language": "hi",
+      "slug": "amrutham-kurisina-ratri-devarakonda-balagangadhara-tilak-hindi-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 210,
+      "book_id": "865e0302-c4c1-4361-ba6d-4d3ec8e8ee06",
+      "title": "Anandamath",
+      "author": "Bankim Chandra Chattopadhyay",
+      "language": "hi",
+      "slug": "anandamath-bankim-chandra-chattopadhyay-hindi-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 211,
+      "book_id": "fd61b3fd-9e66-49e8-a89b-e236ec5bd6fc",
+      "title": "Andamaina Jeevitam",
+      "author": "Malladi Venkata Krishna Murthy",
+      "language": "hi",
+      "slug": "andamaina-jeevitam-malladi-venkata-krishna-murthy-hindi-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 212,
+      "book_id": "10eab4e7-2ea2-482c-88bc-73903161f3f1",
+      "title": "Andha Diganta",
+      "author": "Surendra Mohanty",
+      "language": "hi",
+      "slug": "andha-diganta-surendra-mohanty-hindi-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 213,
+      "book_id": "34347c9e-1ede-4d05-bf81-d3bef1f54edf",
+      "title": "Angaliyat",
+      "author": "Joseph Macwan",
+      "language": "hi",
+      "slug": "angaliyat-joseph-macwan-hindi-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 214,
+      "book_id": "25b1d8da-8ee6-47d1-8e0f-f4f9bc16e983",
+      "title": "Anitha Ilam Manaivi",
+      "author": "Sujatha",
+      "language": "hi",
+      "slug": "anitha-ilam-manaivi-sujatha-hindi-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 215,
+      "book_id": "51090ae7-f8b2-4077-a6cc-e45f5b791dca",
+      "title": "Anithavin Kadhalgal",
+      "author": "Sujatha",
+      "language": "hi",
+      "slug": "anithavin-kadhalgal-sujatha-hindi-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 216,
+      "book_id": "80d8008f-d93e-4c8a-9f80-eb729bf8ed47",
+      "title": "Annana Nenapu",
+      "author": "Poornachandra Tejaswi",
+      "language": "hi",
+      "slug": "annana-nenapu-poornachandra-tejaswi-hindi-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 217,
+      "book_id": "f8f57afa-cbea-40d6-b840-94433c3be883",
+      "title": "Ansar",
+      "author": "Varsha Adalja",
+      "language": "hi",
+      "slug": "ansar-varsha-adalja-hindi-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 218,
+      "book_id": "80741742-90d7-4ca6-8ea5-e92acfe5f758",
+      "title": "Antarani Vasantam",
+      "author": "G. Kalyana Rao",
+      "language": "hi",
+      "slug": "antarani-vasantam-g-kalyana-rao-hindi-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 219,
+      "book_id": "b8526a42-d32b-48df-990a-32f7f01a2203",
+      "title": "Antarmukham",
+      "author": "Yandamuri Veerendranath",
+      "language": "hi",
+      "slug": "antarmukham-yandamuri-veerendranath-hindi-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 220,
+      "book_id": "5513bc1e-8d7b-480a-aafd-0d11de529710",
+      "title": "Antasravanti",
+      "author": "Ampasayya Naveen",
+      "language": "hi",
+      "slug": "antasravanti-ampasayya-naveen-hindi-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 221,
+      "book_id": "16687cf7-4c74-45ba-9bc1-9adfcd3d7197",
+      "title": "Apahancha",
+      "author": "Gopinath Mohanty",
+      "language": "hi",
+      "slug": "apahancha-gopinath-mohanty-hindi-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 222,
+      "book_id": "d63c46bc-f4af-4b0b-ba88-f6753cec1431",
+      "title": "Apajaya",
+      "author": "Triveni",
+      "language": "hi",
+      "slug": "apajaya-triveni-hindi-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 223,
+      "book_id": "ce1b7839-95b5-4967-8c51-4f51609688c0",
+      "title": "Aparajito",
+      "author": "Bibhutibhushan Bandyopadhyay",
+      "language": "hi",
+      "slug": "aparajito-bibhutibhushan-bandyopadhyay-hindi-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 224,
+      "book_id": "4b007c33-d66f-4a95-9ae5-24944d6428e6",
+      "title": "Apaswara",
+      "author": "Triveni",
+      "language": "hi",
+      "slug": "apaswara-triveni-hindi-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 225,
+      "book_id": "264ea232-38f8-4d71-9fda-21460b84695a",
+      "title": "Apsara",
+      "author": "Sujatha",
+      "language": "hi",
+      "slug": "apsara-sujatha-hindi-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 226,
+      "book_id": "c2edabca-b762-4a66-b763-2ab909b2eed9",
+      "title": "Apurvai",
+      "author": "P. L. Deshpande",
+      "language": "hi",
+      "slug": "apurvai-p-l-deshpande-hindi-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 227,
+      "book_id": "89c8fa2f-c8db-4272-a4da-23467c40f91b",
+      "title": "Aradhana",
+      "author": "Yaddanapudi Sulochana Rani",
+      "language": "hi",
+      "slug": "aradhana-yaddanapudi-sulochana-rani-hindi-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 228,
+      "book_id": "af2f3b67-360d-4094-bde1-286a6d5603fb",
+      "title": "Aram",
+      "author": "Jeyamohan",
+      "language": "hi",
+      "slug": "aram-jeyamohan-hindi-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 229,
+      "book_id": "e7655c1c-c494-46fa-94f8-7f32cb353e9a",
+      "title": "Aramane",
+      "author": "Kum. Veerabhadrappa",
+      "language": "hi",
+      "slug": "aramane-kum-veerabhadrappa-hindi-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 230,
+      "book_id": "64757fe9-62c5-45b6-98c5-8df4f0aed205",
+      "title": "Aranyak",
+      "author": "Bibhutibhushan Bandyopadhyay",
+      "language": "hi",
+      "slug": "aranyak-bibhutibhushan-bandyopadhyay-hindi-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 231,
+      "book_id": "b9b1451d-512b-4292-87ea-00f1007c93cf",
+      "title": "Aranyer Adhikar",
+      "author": "Mahasweta Devi",
+      "language": "hi",
+      "slug": "aranyer-adhikar-mahasweta-devi-hindi-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 232,
+      "book_id": "2c7187aa-773b-4862-bc81-de857649f7c8",
+      "title": "Aranyer Din Ratri",
+      "author": "Sunil Gangopadhyay",
+      "language": "hi",
+      "slug": "aranyer-din-ratri-sunil-gangopadhyay-hindi-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 233,
+      "book_id": "d93e19c2-5436-4312-90bc-3054ea789b8b",
+      "title": "Arogyaniketan",
+      "author": "Tarashankar Bandyopadhyay",
+      "language": "hi",
+      "slug": "arogyaniketan-tarashankar-bandyopadhyay-hindi-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 234,
+      "book_id": "0b755d53-555c-4b95-92b5-6af5be3a6ff0",
+      "title": "Asa Mi Asami",
+      "author": "P. L. Deshpande",
+      "language": "hi",
+      "slug": "asa-mi-asami-p-l-deshpande-hindi-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 235,
+      "book_id": "aecf906f-eeb8-4824-b89b-f9e8dfc6ef4d",
+      "title": "Asamardhuni Jeevayatra",
+      "author": "Tripuraneni Gopichand",
+      "language": "hi",
+      "slug": "asamardhuni-jeevayatra-tripuraneni-gopichand-hindi-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 236,
+      "book_id": "988ff8fd-a61c-4572-97c1-5d4ebc098dcf",
+      "title": "Ashani Sanket",
+      "author": "Bibhutibhushan Bandyopadhyay",
+      "language": "hi",
+      "slug": "ashani-sanket-bibhutibhushan-bandyopadhyay-hindi-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 237,
+      "book_id": "093f5627-dc6a-4d12-87b6-3e190bb21c16",
+      "title": "Asuravithu",
+      "author": "M. T. Vasudevan Nair",
+      "language": "hi",
+      "slug": "asuravithu-m-t-vasudevan-nair-hindi-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 238,
+      "book_id": "f768c4a7-e6f1-4e66-be4e-3500c52a393c",
+      "title": "Athadu Adavini Jayinchadu",
+      "author": "Kesava Reddy",
+      "language": "hi",
+      "slug": "athadu-adavini-jayinchadu-kesava-reddy-hindi-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 239,
+      "book_id": "3883a66a-187f-4c0e-9d98-9e6f207104f6",
+      "title": "Avadeshwari",
+      "author": "Shankar Mokashi Punekar",
+      "language": "hi",
+      "slug": "avadeshwari-shankar-mokashi-punekar-hindi-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 240,
+      "book_id": "9dae7dba-8c40-49b1-a4b2-d9836660b2fe",
+      "title": "Avala Magalu",
+      "author": "Triveni",
+      "language": "hi",
+      "slug": "avala-magalu-triveni-hindi-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 241,
+      "book_id": "13069553-41d2-439e-a185-9d2f4f9f5160",
+      "title": "Avala Mane",
+      "author": "Triveni",
+      "language": "hi",
+      "slug": "avala-mane-triveni-hindi-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 242,
+      "book_id": "e1064ce5-c9d2-48ff-bd65-cefa150c9991",
+      "title": "Avasthe",
+      "author": "U. R. Ananthamurthy",
+      "language": "hi",
+      "slug": "avasthe-u-r-ananthamurthy-hindi-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 243,
+      "book_id": "e9ceff4c-b37d-4851-9beb-6cdb476167b7",
+      "title": "Ave Maria",
+      "author": "K. R. Meera",
+      "language": "hi",
+      "slug": "ave-maria-k-r-meera-hindi-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 244,
+      "book_id": "0cc6f566-52b1-4235-94ec-4d3c4a51153d",
+      "title": "Ayirankalathu Payir",
+      "author": "Sivasankari",
+      "language": "hi",
+      "slug": "ayirankalathu-payir-sivasankari-hindi-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 245,
+      "book_id": "3a015a04-7457-4a21-99be-cd2725d42d8e",
+      "title": "Ayiraththil Iruvar",
+      "author": "Sujatha",
+      "language": "hi",
+      "slug": "ayiraththil-iruvar-sujatha-hindi-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 246,
+      "book_id": "5f72f794-c74e-4539-be30-63eea7ab2cbc",
+      "title": "Baanu Belagitu",
+      "author": "Triveni",
+      "language": "hi",
+      "slug": "baanu-belagitu-triveni-hindi-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 247,
+      "book_id": "1bae3a0e-e139-4ded-bb0b-5e97af515b5e",
+      "title": "Badshahi Angti",
+      "author": "Satyajit Ray",
+      "language": "hi",
+      "slug": "badshahi-angti-satyajit-ray-hindi-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 248,
+      "book_id": "edd88af8-df15-409f-aae4-744fdefcdc56",
+      "title": "Baduku",
+      "author": "Geeta Nagabhushan",
+      "language": "hi",
+      "slug": "baduku-geeta-nagabhushan-hindi-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 249,
+      "book_id": "a6598bf4-95a3-4cf0-b8cf-d93ebea20d89",
+      "title": "Balipitham",
+      "author": "Muppala Ranganayakamma",
+      "language": "hi",
+      "slug": "balipitham-muppala-ranganayakamma-hindi-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 250,
+      "book_id": "6ffb29e6-ed0b-474c-b923-5e4869700975",
+      "title": "Baluta",
+      "author": "Daya Pawar",
+      "language": "hi",
+      "slug": "baluta-daya-pawar-hindi-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 251,
+      "book_id": "e668801d-3e8d-4e43-963b-4f5e57abd45d",
+      "title": "Balyakalasakhi",
+      "author": "Vaikom Muhammad Basheer",
+      "language": "hi",
+      "slug": "balyakalasakhi-vaikom-muhammad-basheer-hindi-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 252,
+      "book_id": "3671bf49-106d-4df4-bf7b-fe9d0e2cdea5",
+      "title": "Banagarwadi",
+      "author": "Venkatesh Madgulkar",
+      "language": "hi",
+      "slug": "banagarwadi-venkatesh-madgulkar-hindi-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 253,
+      "book_id": "38e75fa3-574d-4c5d-a274-a506831cd4bf",
+      "title": "Bandhu O Priya",
+      "author": "Surendra Mohanty",
+      "language": "hi",
+      "slug": "bandhu-o-priya-surendra-mohanty-hindi-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 254,
+      "book_id": "4aafa85f-1bd6-423e-8bba-ae7fa9b49958",
+      "title": "Bandighar",
+      "author": "Manubhai Pancholi 'Darshak'",
+      "language": "hi",
+      "slug": "bandighar-manubhai-pancholi-darshak-hindi-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 255,
+      "book_id": "4125ddcb-6ba1-4f26-8bb5-dfdf597313f4",
+      "title": "Bangaaru Kalalu",
+      "author": "Yaddanapudi Sulochana Rani",
+      "language": "hi",
+      "slug": "bangaaru-kalalu-yaddanapudi-sulochana-rani-hindi-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 256,
+      "book_id": "2ab942eb-dd70-490f-ba58-434621b7e8fd",
+      "title": "Baromas",
+      "author": "Sadanand Deshmukh",
+      "language": "hi",
+      "slug": "baromas-sadanand-deshmukh-hindi-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 257,
+      "book_id": "9b5b65c0-b69e-468d-8006-98673ba547b9",
+      "title": "Barrister Parvateesam",
+      "author": "Mokkapati Narasimha Sastry",
+      "language": "hi",
+      "slug": "barrister-parvateesam-mokkapati-narasimha-sastry-hindi-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 258,
+      "book_id": "9bb25135-5037-404a-9c7d-9cb4c184f9d9",
+      "title": "Barsa Basanta Baishakha",
+      "author": "Pratibha Ray",
+      "language": "hi",
+      "slug": "barsa-basanta-baishakha-pratibha-ray-hindi-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 259,
+      "book_id": "9ff37bf4-ed3b-4975-a6cc-7415b69fcc6a",
+      "title": "Batatyachi Chaal",
+      "author": "P. L. Deshpande",
+      "language": "hi",
+      "slug": "batatyachi-chaal-p-l-deshpande-hindi-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 260,
+      "book_id": "1995d397-12bd-49be-9ecf-ae0e99b5b7c5",
+      "title": "Bekkina Kannu",
+      "author": "Triveni",
+      "language": "hi",
+      "slug": "bekkina-kannu-triveni-hindi-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 261,
+      "book_id": "3da84add-e4fa-4bbb-a1fa-a93f0d788552",
+      "title": "Belli Moda",
+      "author": "Triveni",
+      "language": "hi",
+      "slug": "belli-moda-triveni-hindi-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 262,
+      "book_id": "97928c37-e9bd-45c6-9904-9b4ddd83e5f8",
+      "title": "Benkiya Bale",
+      "author": "T. R. Subba Rao",
+      "language": "hi",
+      "slug": "benkiya-bale-t-r-subba-rao-hindi-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 263,
+      "book_id": "71c43b7f-7823-4dfc-a0be-173cc87bf06f",
+      "title": "Bettada Jeeva",
+      "author": "K. Shivaram Karanth",
+      "language": "hi",
+      "slug": "bettada-jeeva-k-shivaram-karanth-hindi-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 264,
+      "book_id": "25897ceb-ca65-4b9e-a128-b843be9ce002",
+      "title": "Bhadrambhadra",
+      "author": "Ramanbhai Neelkanth",
+      "language": "hi",
+      "slug": "bhadrambhadra-ramanbhai-neelkanth-hindi-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 265,
+      "book_id": "b1853c0a-d070-45f4-994a-7815c48aa971",
+      "title": "Bhagwan Kautilya",
+      "author": "K. M. Munshi",
+      "language": "hi",
+      "slug": "bhagwan-kautilya-k-m-munshi-hindi-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 266,
+      "book_id": "f7479648-0ca6-46a3-90bb-4c0b698d9fa1",
+      "title": "Bhava",
+      "author": "U. R. Ananthamurthy",
+      "language": "hi",
+      "slug": "bhava-u-r-ananthamurthy-hindi-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 267,
+      "book_id": "73a007ec-420c-49db-a218-6c1c2c4cc200",
+      "title": "Bhujangayyana Dashavatara",
+      "author": "Srikrishna Alanahalli",
+      "language": "hi",
+      "slug": "bhujangayyana-dashavatara-srikrishna-alanahalli-hindi-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 268,
+      "book_id": "0fa79edf-af22-45ee-ad4c-00691d2a4c6a",
+      "title": "Bidhar",
+      "author": "Bhalchandra Nemade",
+      "language": "hi",
+      "slug": "bidhar-bhalchandra-nemade-hindi-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 269,
+      "book_id": "5f2f4c65-1e6b-47be-ab3a-168564fdbf5e",
+      "title": "Bidugadeya Bedi",
+      "author": "T. R. Subba Rao",
+      "language": "hi",
+      "slug": "bidugadeya-bedi-t-r-subba-rao-hindi-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 270,
+      "book_id": "52d8f709-f59d-43d9-8d65-83e21553e659",
+      "title": "Bishabriksha",
+      "author": "Bankim Chandra Chattopadhyay",
+      "language": "hi",
+      "slug": "bishabriksha-bankim-chandra-chattopadhyay-hindi-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 271,
+      "book_id": "652d0644-dbb7-4390-9b14-a0f9906f2def",
+      "title": "Budhini",
+      "author": "Sarah Joseph",
+      "language": "hi",
+      "slug": "budhini-sarah-joseph-hindi-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 272,
+      "book_id": "9dbe5bd5-4288-416f-a816-c44d8c6cd36f",
+      "title": "Chaduvu",
+      "author": "Kodavatiganti Kutumba Rao",
+      "language": "hi",
+      "slug": "chaduvu-kodavatiganti-kutumba-rao-hindi-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 273,
+      "book_id": "743450e4-48d1-47fe-9b2c-d6a980f42771",
+      "title": "Chaka Bhaunri",
+      "author": "Kanhucharan Mohanty",
+      "language": "hi",
+      "slug": "chaka-bhaunri-kanhucharan-mohanty-hindi-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 274,
+      "book_id": "6d3063af-3c47-4e7b-8165-7f4dc91b796f",
+      "title": "Chakrateertha",
+      "author": "T. R. Subba Rao",
+      "language": "hi",
+      "slug": "chakrateertha-t-r-subba-rao-hindi-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 275,
+      "book_id": "e63489ec-e7b7-422c-a1a9-3ee4f93a360b",
+      "title": "Chandanada Gombe",
+      "author": "T. R. Subba Rao",
+      "language": "hi",
+      "slug": "chandanada-gombe-t-r-subba-rao-hindi-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 276,
+      "book_id": "28d9929b-d0cf-4c3f-84bb-6ea72022ffad",
+      "title": "Chandavalliya Thota",
+      "author": "T. R. Subba Rao",
+      "language": "hi",
+      "slug": "chandavalliya-thota-t-r-subba-rao-hindi-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 277,
+      "book_id": "cf5d0614-0980-4d32-b39b-9ea6dba7a8b2",
+      "title": "Chander Pahar",
+      "author": "Bibhutibhushan Bandyopadhyay",
+      "language": "hi",
+      "slug": "chander-pahar-bibhutibhushan-bandyopadhyay-hindi-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 278,
+      "book_id": "df26a51f-5891-47c2-a5f7-cf3d6df1f3cf",
+      "title": "Chandipriya",
+      "author": "Yaddanapudi Sulochana Rani",
+      "language": "hi",
+      "slug": "chandipriya-yaddanapudi-sulochana-rani-hindi-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 279,
+      "book_id": "0cf58b28-5220-4635-9015-08ab7c18ea67",
+      "title": "Chantabbai",
+      "author": "Malladi Venkata Krishna Murthy",
+      "language": "hi",
+      "slug": "chantabbai-malladi-venkata-krishna-murthy-hindi-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 280,
+      "book_id": "f3886d4e-90b7-4bd0-ae05-25dfb43cdf2a",
+      "title": "Char Adhyay",
+      "author": "Rabindranath Tagore",
+      "language": "hi",
+      "slug": "char-adhyay-rabindranath-tagore-hindi-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 281,
+      "book_id": "54afa9da-c2a7-4d77-911c-e9a98b11bf5b",
+      "title": "Charitraheen",
+      "author": "Sarat Chandra Chattopadhyay",
+      "language": "hi",
+      "slug": "charitraheen-sarat-chandra-chattopadhyay-hindi-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 282,
+      "book_id": "da7bf560-9873-44b8-9fbd-286d5732355c",
+      "title": "Chaturanga",
+      "author": "Rabindranath Tagore",
+      "language": "hi",
+      "slug": "chaturanga-rabindranath-tagore-hindi-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 283,
+      "book_id": "e5a03767-5468-4ebd-bb7d-06ced051b671",
+      "title": "Chauladevi",
+      "author": "Dhumketu",
+      "language": "hi",
+      "slug": "chauladevi-dhumketu-hindi-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 284,
+      "book_id": "dd0eee2a-42b7-40a8-a922-287aa2a017ef",
+      "title": "Chembaruthi",
+      "author": "T. Janakiraman",
+      "language": "hi",
+      "slug": "chembaruthi-t-janakiraman-hindi-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 285,
+      "book_id": "95905483-424d-4255-bf49-e872b2cae9d8",
+      "title": "Chemmeen",
+      "author": "Thakazhi Sivasankara Pillai",
+      "language": "hi",
+      "slug": "chemmeen-thakazhi-sivasankara-pillai-hindi-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 286,
+      "book_id": "ddacb6d6-cad3-4757-89c5-5475daf84f06",
+      "title": "Chha Mana Atha Guntha",
+      "author": "Fakir Mohan Senapati",
+      "language": "hi",
+      "slug": "chha-mana-atha-guntha-fakir-mohan-senapati-hindi-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 287,
+      "book_id": "f38cb584-2611-482e-8987-5d3baf06671c",
+      "title": "Chhava",
+      "author": "Shivaji Sawant",
+      "language": "hi",
+      "slug": "chhava-shivaji-sawant-hindi-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 288,
+      "book_id": "60076ef5-fccf-46f6-ab66-7ff57db99dd4",
+      "title": "Chidambara Rahasya",
+      "author": "Poornachandra Tejaswi",
+      "language": "hi",
+      "slug": "chidambara-rahasya-poornachandra-tejaswi-hindi-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 289,
+      "book_id": "9f665d4b-2ccc-4b29-933d-ffd26995d9a8",
+      "title": "Chillara Devullu",
+      "author": "Dasarathi Rangacharya",
+      "language": "hi",
+      "slug": "chillara-devullu-dasarathi-rangacharya-hindi-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 290,
+      "book_id": "33a19795-11f9-4ada-8743-72cf0db93e02",
+      "title": "Chithira Pavai",
+      "author": "Akilan",
+      "language": "hi",
+      "slug": "chithira-pavai-akilan-hindi-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 291,
+      "book_id": "5643e0af-6c0f-4c3e-8798-96b4fcf9adc7",
+      "title": "Chivaraku Migiledi",
+      "author": "Buchi Babu",
+      "language": "hi",
+      "slug": "chivaraku-migiledi-buchi-babu-hindi-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 292,
+      "book_id": "957693d9-2f39-4943-b029-965ec06222d7",
+      "title": "Chivari Gudise",
+      "author": "Kesava Reddy",
+      "language": "hi",
+      "slug": "chivari-gudise-kesava-reddy-hindi-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 293,
+      "book_id": "ba9decfc-62d7-401f-bdfd-51a0985c2a09",
+      "title": "Chomana Dudi",
+      "author": "K. Shivaram Karanth",
+      "language": "hi",
+      "slug": "chomana-dudi-k-shivaram-karanth-hindi-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 294,
+      "book_id": "815300c4-ebd1-4243-a42e-08604e9a8c91",
+      "title": "Chotti Munda and His Arrow",
+      "author": "Mahasweta Devi",
+      "language": "hi",
+      "slug": "chotti-munda-and-his-arrow-mahasweta-devi-hindi-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 295,
+      "book_id": "cce27bec-c642-4a20-b0c2-3911eb093f03",
+      "title": "Cobalt Blue",
+      "author": "Sachin Kundalkar",
+      "language": "hi",
+      "slug": "cobalt-blue-sachin-kundalkar-hindi-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 296,
+      "book_id": "043134c0-3d99-4b26-96bc-60051193e9f0",
+      "title": "College Boy",
+      "author": "Surendra Mohanty",
+      "language": "hi",
+      "slug": "college-boy-surendra-mohanty-hindi-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 297,
+      "book_id": "7293289f-459b-4415-b876-021351f651e0",
+      "title": "Computer Gramam",
+      "author": "Sujatha",
+      "language": "hi",
+      "slug": "computer-gramam-sujatha-hindi-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 298,
+      "book_id": "8c4590ce-d11c-440f-a921-cb14c9543116",
+      "title": "Daatu",
+      "author": "S. L. Bhyrappa",
+      "language": "hi",
+      "slug": "daatu-s-l-bhyrappa-hindi-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 299,
+      "book_id": "5187eb1a-2549-4cb4-bec8-6bc39030a480",
+      "title": "Dadibudha",
+      "author": "Gopinath Mohanty",
+      "language": "hi",
+      "slug": "dadibudha-gopinath-mohanty-hindi-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 300,
+      "book_id": "d9232226-0857-492a-8e5d-1ac54835b999",
+      "title": "Daivam Ichina Bharya",
+      "author": "Chalam",
+      "language": "hi",
+      "slug": "daivam-ichina-bharya-chalam-hindi-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 301,
+      "book_id": "0879ef4f-b156-4121-9e61-4a4cb9741d3c",
+      "title": "Daivathinte Vikrithikal",
+      "author": "M. Mukundan",
+      "language": "hi",
+      "slug": "daivathinte-vikrithikal-m-mukundan-hindi-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 302,
+      "book_id": "2c9e7c80-9524-4227-8a1b-4badde8e9411",
+      "title": "Danapani",
+      "author": "Gopinath Mohanty",
+      "language": "hi",
+      "slug": "danapani-gopinath-mohanty-hindi-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 303,
+      "book_id": "b8fe5568-3aa6-4255-af05-a264a6d92a71",
+      "title": "Dargamitta Kathalu",
+      "author": "Mohammed Khadeer Babu",
+      "language": "hi",
+      "slug": "dargamitta-kathalu-mohammed-khadeer-babu-hindi-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 304,
+      "book_id": "f8a225d9-8a0c-4e8f-b22e-4068477bf4ba",
+      "title": "Dariyalal",
+      "author": "Gunvantrai Acharya",
+      "language": "hi",
+      "slug": "dariyalal-gunvantrai-acharya-hindi-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 305,
+      "book_id": "321af65b-78d3-4e47-bb30-822a4e774bc7",
+      "title": "Datta",
+      "author": "Sarat Chandra Chattopadhyay",
+      "language": "hi",
+      "slug": "datta-sarat-chandra-chattopadhyay-hindi-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 306,
+      "book_id": "d4ad58d9-f238-4737-8d5c-7896473f96de",
+      "title": "Delhi Gadhakal",
+      "author": "M. Mukundan",
+      "language": "hi",
+      "slug": "delhi-gadhakal-m-mukundan-hindi-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 307,
+      "book_id": "1356fd9b-a96b-443b-bc7a-d73b8392f7ec",
+      "title": "Devdas",
+      "author": "Sarat Chandra Chattopadhyay",
+      "language": "hi",
+      "slug": "devdas-sarat-chandra-chattopadhyay-hindi-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 308,
+      "book_id": "68a04467-d295-4ade-9ac9-2d1e90d10bf5",
+      "title": "Devi Chaudhurani",
+      "author": "Bankim Chandra Chattopadhyay",
+      "language": "hi",
+      "slug": "devi-chaudhurani-bankim-chandra-chattopadhyay-hindi-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 309,
+      "book_id": "c868ac81-07f2-493a-9f7d-c3d743c49e70",
+      "title": "Dharmapuranam",
+      "author": "O. V. Vijayan",
+      "language": "hi",
+      "slug": "dharmapuranam-o-v-vijayan-hindi-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 310,
+      "book_id": "1d3f3fbf-0349-41f0-8331-50a96baf9e6e",
+      "title": "Dharmaraja",
+      "author": "C. V. Raman Pillai",
+      "language": "hi",
+      "slug": "dharmaraja-c-v-raman-pillai-hindi-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 311,
+      "book_id": "412c52b7-6c07-4747-9617-0787c908d97e",
+      "title": "Dhumabha Diganta",
+      "author": "Manoj Das",
+      "language": "hi",
+      "slug": "dhumabha-diganta-manoj-das-hindi-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 312,
+      "book_id": "20643daf-a76a-430d-b0fc-7a82a2cb3bc8",
+      "title": "Dhundhabhari Khin",
+      "author": "Vinesh Antani",
+      "language": "hi",
+      "slug": "dhundhabhari-khin-vinesh-antani-hindi-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 313,
+      "book_id": "4164c791-ca59-43c1-a5be-439746fe77c5",
+      "title": "Dibaratrir Kabya",
+      "author": "Manik Bandyopadhyay",
+      "language": "hi",
+      "slug": "dibaratrir-kabya-manik-bandyopadhyay-hindi-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 314,
+      "book_id": "c5f515d8-7ce4-4341-a0f6-e67dd6aa5f2f",
+      "title": "Divya Chakshu",
+      "author": "Ramanlal Vasantlal Desai",
+      "language": "hi",
+      "slug": "divya-chakshu-ramanlal-vasantlal-desai-hindi-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 315,
+      "book_id": "00fd3b84-fbe9-4ca5-84c8-438c116cf55b",
+      "title": "Donga Police",
+      "author": "Malladi Venkata Krishna Murthy",
+      "language": "hi",
+      "slug": "donga-police-malladi-venkata-krishna-murthy-hindi-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 316,
+      "book_id": "8e9abd3a-e1da-480d-b74d-4bb85d5d6247",
+      "title": "Doorada Betta",
+      "author": "Triveni",
+      "language": "hi",
+      "slug": "doorada-betta-triveni-hindi-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 317,
+      "book_id": "e70226a0-1c79-4053-90b3-2f9a2b5489b1",
+      "title": "Dooram",
+      "author": "Malladi Venkata Krishna Murthy",
+      "language": "hi",
+      "slug": "dooram-malladi-venkata-krishna-murthy-hindi-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 318,
+      "book_id": "6452e303-f16e-4380-b446-93e5011be359",
+      "title": "Dui Patra",
+      "author": "Gopinath Mohanty",
+      "language": "hi",
+      "slug": "dui-patra-gopinath-mohanty-hindi-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 319,
+      "book_id": "6542d9c2-328f-4a51-82a7-735f1f3e1ecd",
+      "title": "Dui Simanta",
+      "author": "Surendra Mohanty",
+      "language": "hi",
+      "slug": "dui-simanta-surendra-mohanty-hindi-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 320,
+      "book_id": "3ad28aa1-a650-4b36-9255-021aebe3cae7",
+      "title": "Durgastamana",
+      "author": "TaRaSu",
+      "language": "hi",
+      "slug": "durgastamana-tarasu-hindi-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 321,
+      "book_id": "5279e240-c25b-4a68-a96e-a6c4da1bb44c",
+      "title": "Durgeshnandini",
+      "author": "Bankim Chandra Chattopadhyay",
+      "language": "hi",
+      "slug": "durgeshnandini-bankim-chandra-chattopadhyay-hindi-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 322,
+      "book_id": "c4d29e09-b67b-4c44-8cf5-562c56e82232",
+      "title": "Ekaveera",
+      "author": "Viswanatha Satyanarayana",
+      "language": "hi",
+      "slug": "ekaveera-viswanatha-satyanarayana-hindi-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 323,
+      "book_id": "fbacf9be-6d72-42de-8ade-cfe7816ba117",
+      "title": "En Iniya Iyanthira",
+      "author": "Sujatha",
+      "language": "hi",
+      "slug": "en-iniya-iyanthira-sujatha-hindi-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 324,
+      "book_id": "54e21532-5b3b-487c-9cd6-c9b3b52151ed",
+      "title": "Endravathu Oru Nal",
+      "author": "Sujatha",
+      "language": "hi",
+      "slug": "endravathu-oru-nal-sujatha-hindi-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 325,
+      "book_id": "fc38477d-0bc7-4a09-8742-31873115a6ce",
+      "title": "Enge Pogiroam",
+      "author": "Akilan",
+      "language": "hi",
+      "slug": "enge-pogiroam-akilan-hindi-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 326,
+      "book_id": "8b6914d7-570c-4f90-80a1-58a78be5c961",
+      "title": "Enippadikal",
+      "author": "Thakazhi Sivasankara Pillai",
+      "language": "hi",
+      "slug": "enippadikal-thakazhi-sivasankara-pillai-hindi-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 327,
+      "book_id": "1317b95d-d889-4797-ad10-6bb9cdf51fb1",
+      "title": "Eppothum Pen",
+      "author": "Sujatha",
+      "language": "hi",
+      "slug": "eppothum-pen-sujatha-hindi-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 328,
+      "book_id": "a44684e2-9c14-409c-8fcc-ec9ab7d22ddd",
+      "title": "Ethaiyum Oru Murai",
+      "author": "Sujatha",
+      "language": "hi",
+      "slug": "ethaiyum-oru-murai-sujatha-hindi-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 329,
+      "book_id": "02805565-efc0-4454-bd83-aa60f6cc3ec4",
+      "title": "Evariki Cheppaka",
+      "author": "Malladi Venkata Krishna Murthy",
+      "language": "hi",
+      "slug": "evariki-cheppaka-malladi-venkata-krishna-murthy-hindi-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 330,
+      "book_id": "ec538028-f76e-4e4f-b406-dc49c588dd1f",
+      "title": "Francis Itty Cora",
+      "author": "T. D. Ramakrishnan",
+      "language": "hi",
+      "slug": "francis-itty-cora-t-d-ramakrishnan-hindi-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 331,
+      "book_id": "b509518a-6241-4444-83b8-92745ba41338",
+      "title": "Gaali Maatu",
+      "author": "T. R. Subba Rao",
+      "language": "hi",
+      "slug": "gaali-maatu-t-r-subba-rao-hindi-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 332,
+      "book_id": "c2387c74-d6cd-47ad-885c-8892d643a24c",
+      "title": "Gabbilam",
+      "author": "Gurram Jashuva",
+      "language": "hi",
+      "slug": "gabbilam-gurram-jashuva-hindi-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 333,
+      "book_id": "37dd6ac7-54d2-4081-8e62-3ac153ffd356",
+      "title": "Ganadevata",
+      "author": "Tarashankar Bandyopadhyay",
+      "language": "hi",
+      "slug": "ganadevata-tarashankar-bandyopadhyay-hindi-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 334,
+      "book_id": "5a5f67d7-9fab-437c-bc0f-4c936bb336b0",
+      "title": "Gandhi Banda",
+      "author": "H. Nagaveni",
+      "language": "hi",
+      "slug": "gandhi-banda-h-nagaveni-hindi-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 335,
+      "book_id": "70963187-e166-415f-89ea-a7b4e75be743",
+      "title": "Ganesh X Vasanth",
+      "author": "Sujatha",
+      "language": "hi",
+      "slug": "ganesh-x-vasanth-sujatha-hindi-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 336,
+      "book_id": "abe2f020-21c1-47a6-b21e-cfc955e5b919",
+      "title": "Gangu",
+      "author": "Vattikota Alwar Swamy",
+      "language": "hi",
+      "slug": "gangu-vattikota-alwar-swamy-hindi-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 337,
+      "book_id": "72748277-ede0-4149-95c3-bcb27da8b0c1",
+      "title": "Garambicha Bapu",
+      "author": "S. N. Pendse",
+      "language": "hi",
+      "slug": "garambicha-bapu-s-n-pendse-hindi-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 338,
+      "book_id": "33fa8999-8825-4000-81f6-ccf0f56ed44e",
+      "title": "Gejje Pooje",
+      "author": "M. K. Indira",
+      "language": "hi",
+      "slug": "gejje-pooje-m-k-indira-hindi-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 339,
+      "book_id": "2a93f87b-d84f-4405-8ce6-92ff13697127",
+      "title": "Ghachar Ghochar",
+      "author": "Vivek Shanbhag",
+      "language": "hi",
+      "slug": "ghachar-ghochar-vivek-shanbhag-hindi-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 340,
+      "book_id": "26121347-025d-471c-b5cb-f1caaec43ab9",
+      "title": "Gharadiha",
+      "author": "Nityananda Mahapatra",
+      "language": "hi",
+      "slug": "gharadiha-nityananda-mahapatra-hindi-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 341,
+      "book_id": "4aa490c4-b668-4da4-801d-f5d9c9fbbd06",
+      "title": "Ghare-Baire",
+      "author": "Rabindranath Tagore",
+      "language": "hi",
+      "slug": "ghare-baire-rabindranath-tagore-hindi-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 342,
+      "book_id": "ec21a092-da50-4687-a90d-f691a4884afa",
+      "title": "Alice's Adventures in Wonderland",
+      "author": "Lewis Carroll",
+      "language": "en",
+      "slug": "alices-adventures-in-wonderland-lewis-carroll-en",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 343,
+      "book_id": "176b3e49-c7a8-462a-95cb-9c756bbf4c1b",
+      "title": "$100M Leads",
+      "author": "Alex Hormozi",
+      "language": "en",
+      "slug": "100m-leads-alex-hormozi-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 344,
+      "book_id": "c73d3497-a275-4781-820e-eed8bf811f91",
+      "title": "A Grammar of the English Tongue",
+      "author": "Samuel Johnson",
+      "language": "en",
+      "slug": "a-grammar-of-the-english-tongue-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 345,
+      "book_id": "727c3d69-e754-432f-8a36-202d7efde49b",
+      "title": "A Primer of Phonetics",
+      "author": "Henry Sweet",
+      "language": "en",
+      "slug": "a-primer-of-phonetics-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 346,
+      "book_id": "24208cf2-a49c-4a63-9c1b-c4b903148057",
+      "title": "Everybody Writes",
+      "author": "Ann Handley",
+      "language": "en",
+      "slug": "everybody-writes-ann-handley-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 347,
+      "book_id": "fb684091-c54c-4c4c-b057-af4158e1fcb3",
+      "title": "How to Teach a Foreign Language",
+      "author": "Otto Jespersen",
+      "language": "en",
+      "slug": "how-to-teach-a-foreign-language-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 348,
+      "book_id": "3c1cbbab-0d12-404d-973e-eb0d7b32a33d",
+      "title": "Introduction to the Science of Language",
+      "author": "A. H. Sayce",
+      "language": "en",
+      "slug": "introduction-to-the-science-of-language-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 349,
+      "book_id": "29f24cda-6874-49e9-bc79-365655abf6fb",
+      "title": "Marketing Made Simple",
+      "author": "Donald Miller and J. J. Peterson",
+      "language": "en",
+      "slug": "marketing-made-simple-donald-miller-and-j-j-peterson-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 350,
+      "book_id": "afe92263-0fef-43d6-89a5-77dbe7c5fe31",
+      "title": "Ogilvy on Advertising",
+      "author": "David Ogilvy",
+      "language": "en",
+      "slug": "ogilvy-on-advertising-david-ogilvy-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 351,
+      "book_id": "4ea5ea24-930e-4051-82e4-d0ac8815896b",
+      "title": "Permission Marketing",
+      "author": "Seth Godin",
+      "language": "en",
+      "slug": "permission-marketing-seth-godin-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 352,
+      "book_id": "a585e9b9-c3d6-4205-84a2-d81fc6f2cf34",
+      "title": "100 Ways to Improve Your Writing",
+      "author": "Gary Provost",
+      "language": "en",
+      "slug": "100-ways-to-improve-your-writing-gary-provost-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 353,
+      "book_id": "6d46a54f-8e9a-46d8-bfe3-95073e5a2354",
+      "title": "A Sanskrit Grammar for Students",
+      "author": "Arthur A. Macdonell",
+      "language": "en",
+      "slug": "a-sanskrit-grammar-for-students-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 354,
+      "book_id": "b0665048-f8f3-4bd8-befe-e63b1c396f72",
+      "title": "A Select Glossary of English Words",
+      "author": "Richard Chenevix Trench",
+      "language": "en",
+      "slug": "a-select-glossary-of-english-words-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 355,
+      "book_id": "796de1ce-9d37-4775-9fd7-2e4d0e0d04f5",
+      "title": "A Short Introduction to English Grammar",
+      "author": "Robert Lowth",
+      "language": "en",
+      "slug": "a-short-introduction-to-english-grammar-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 356,
+      "book_id": "acfc5706-a09f-459c-8bd8-fb1789af22ec",
+      "title": "Alchemy",
+      "author": "Rory Sutherland",
+      "language": "en",
+      "slug": "alchemy-rory-sutherland-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 357,
+      "book_id": "ce53a959-5474-4dd1-899f-14517f669558",
+      "title": "Decoded",
+      "author": "Phil Barden",
+      "language": "en",
+      "slug": "decoded-phil-barden-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 358,
+      "book_id": "8bfd87ce-ad04-41ec-8977-5c6d92100e63",
+      "title": "Differentiate or Die",
+      "author": "Jack Trout, Steve Rivkin",
+      "language": "en",
+      "slug": "differentiate-or-die-trout-rivkin-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 359,
+      "book_id": "99727e2d-089e-454c-85c8-2b3d0184b6c9",
+      "title": "Digital Marketing",
+      "author": "Dave Chaffey, Fiona Ellis-Chadwick",
+      "language": "en",
+      "slug": "digital-marketing-dave-chaffey-fiona-ellis-chadwick-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 360,
+      "book_id": "600905eb-64a8-4ebd-83dc-f8340967f6f6",
+      "title": "E-marketing",
+      "author": "Judy Strauss, Adel El-Ansary, Raymond Frost",
+      "language": "en",
+      "slug": "e-marketing-judy-strauss-adel-el-ansary-raymond-frost-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 361,
+      "book_id": "8c689042-7343-4b85-9e6e-7ca810bc4e80",
+      "title": "English Dialects from the Eighth Century to the Present Day",
+      "author": "Walter W. Skeat",
+      "language": "en",
+      "slug": "english-dialects-from-the-eighth-century-to-the-present-day-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 362,
+      "book_id": "6dc1dc04-2d02-4993-b562-e14c0310d54d",
+      "title": "English Synonyms and Antonyms",
+      "author": "James Champlin Fernald",
+      "language": "en",
+      "slug": "english-synonyms-and-antonyms-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 363,
+      "book_id": "4a3b2049-4783-4e4f-93dd-d0efc3ba97e0",
+      "title": "Growth Hacker Marketing",
+      "author": "Ryan Holiday",
+      "language": "en",
+      "slug": "growth-hacker-marketing-ryan-holiday-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 364,
+      "book_id": "c61357ce-9c5e-447d-b8a3-efffaf202ede",
+      "title": "How to Take Smart Notes",
+      "author": "Sönke Ahrens",
+      "language": "en",
+      "slug": "how-to-take-smart-notes-sonke-ahrens-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 365,
+      "book_id": "ddbc7880-0e0d-4422-9a56-52c52797f6b3",
+      "title": "Introduction to the Study of Language",
+      "author": "Leonard Bloomfield",
+      "language": "en",
+      "slug": "introduction-to-the-study-of-language-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 366,
+      "book_id": "c0be9c85-b28a-48f8-b9a2-96d93398b40c",
+      "title": "Jab, Jab, Jab, Right Hook",
+      "author": "Gary Vaynerchuk",
+      "language": "en",
+      "slug": "jab-jab-jab-right-hook-gary-vaynerchuk-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 367,
+      "book_id": "7f4bf01c-d455-4d32-a4d7-b41a38e828a4",
+      "title": "Kotler on Marketing",
+      "author": "Philip Kotler",
+      "language": "en",
+      "slug": "kotler-on-marketing-philip-kotler-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 368,
+      "book_id": "01143ed1-f7cf-4e6b-87e6-d1125ac3cd77",
+      "title": "Language and the Study of Language",
+      "author": "William Dwight Whitney",
+      "language": "en",
+      "slug": "language-and-the-study-of-language-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 369,
+      "book_id": "a9dccfe9-551c-421d-8fec-a625290ec0d8",
+      "title": "Lectures on the English Language",
+      "author": "George P. Marsh",
+      "language": "en",
+      "slug": "lectures-on-the-english-language-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 370,
+      "book_id": "a86303b4-8ba6-48fe-8534-b0111e378e82",
+      "title": "Marketing",
+      "author": "Philip Kotler, Gary Armstrong",
+      "language": "en",
+      "slug": "marketing-philip-kotler-gary-armstrong-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 371,
+      "book_id": "91b7fcb8-bd8c-4dde-b298-974541dda7d5",
+      "title": "Marketing Management",
+      "author": "Philip Kotler, Kevin Lane Keller",
+      "language": "en",
+      "slug": "marketing-management-philip-kotler-kevin-lane-keller-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 372,
+      "book_id": "caee1559-8afb-42a8-90fe-557fdad481c5",
+      "title": "Marketing Rebellion",
+      "author": "Mark W. Schaefer",
+      "language": "en",
+      "slug": "marketing-rebellion-mark-w-schaefer-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 373,
+      "book_id": "afd85846-2339-4cc2-93bf-5a6473ba9cb2",
+      "title": "Principles of English Etymology",
+      "author": "Walter W. Skeat",
+      "language": "en",
+      "slug": "principles-of-english-etymology-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 374,
+      "book_id": "e288ab70-c521-42c1-95e5-c320511d8a03",
+      "title": "Screenplay",
+      "author": "Syd Field",
+      "language": "en",
+      "slug": "screenplay-syd-field-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 375,
+      "book_id": "88ae016d-d239-4c56-8993-a2428fcc6c32",
+      "title": "Several Short Sentences About Writing",
+      "author": "Verlyn Klinkenborg",
+      "language": "en",
+      "slug": "several-short-sentences-about-writing-verlyn-klinkenborg-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 376,
+      "book_id": "e246fd2f-9c20-43ba-8cc4-024615313609",
+      "title": "Social Media Marketing",
+      "author": "Marc Oliver Opresnik, Philip Kotler, Svend Hollensen",
+      "language": "en",
+      "slug": "social-media-marketing-marc-oliver-opresnik-philip-kotler-svend-hollensen-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 377,
+      "book_id": "7e16eaec-5e7f-4207-85ac-2ea3ae816b93",
+      "title": "Story",
+      "author": "Robert McKee",
+      "language": "en",
+      "slug": "story-robert-mckee-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 378,
+      "book_id": "1ee00a1d-cb44-4905-892f-75dcb30cd363",
+      "title": "Strategic market management",
+      "author": "David A. Aaker",
+      "language": "en",
+      "slug": "strategic-market-management-david-a-aaker-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 379,
+      "book_id": "83d33caa-1701-4033-8bd0-7879ec813ce7",
+      "title": "The 1-Page Marketing Plan",
+      "author": "Allan Dib",
+      "language": "en",
+      "slug": "the-1-page-marketing-plan-allan-dib-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 380,
+      "book_id": "f5a5a4e5-ef3a-45c2-a363-c254a98eb86f",
+      "title": "The Anatomy of Buzz",
+      "author": "Emanuel Rosen",
+      "language": "en",
+      "slug": "the-anatomy-of-buzz-emanuel-rosen-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 381,
+      "book_id": "5c5b84d0-b90e-456c-b268-d365bc482e1f",
+      "title": "The Boron Letters",
+      "author": "Gary C. Halbert",
+      "language": "en",
+      "slug": "the-boron-letters-gary-c-halbert-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 382,
+      "book_id": "1de51c34-7dd3-415a-b4dc-6309bde20854",
+      "title": "The Copywriter's Handbook",
+      "author": "Robert W. Bly",
+      "language": "en",
+      "slug": "the-copywriters-handbook-robert-w-bly-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 383,
+      "book_id": "c0807361-f7f4-4a8f-b208-cc64b8e690b5",
+      "title": "The English Dialect Grammar",
+      "author": "Joseph Wright",
+      "language": "en",
+      "slug": "the-english-dialect-grammar-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 384,
+      "book_id": "6780bf70-f39d-4b87-811d-4e3a0e0e4e3c",
+      "title": "The English Language",
+      "author": "Robert Gordon Latham",
+      "language": "en",
+      "slug": "the-english-language-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 385,
+      "book_id": "5fac5294-c06a-4846-8c1b-d38cc083cdd7",
+      "title": "The Grammar of English Grammars",
+      "author": "Goold Brown",
+      "language": "en",
+      "slug": "the-grammar-of-english-grammars-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 386,
+      "book_id": "be39e079-d477-470f-b2c6-65a03b3507eb",
+      "title": "The King's English",
+      "author": "H. W. Fowler and F. G. Fowler",
+      "language": "en",
+      "slug": "the-king-s-english-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 387,
+      "book_id": "aceb04d1-25d2-4d7b-8e7d-1ba8b0982668",
+      "title": "The Long Tail",
+      "author": "Chris Anderson",
+      "language": "en",
+      "slug": "the-long-tail-chris-anderson-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 388,
+      "book_id": "925c447b-6978-4626-845b-ea3122fd29ca",
+      "title": "The Orthoepist",
+      "author": "Alfred Ayres",
+      "language": "en",
+      "slug": "the-orthoepist-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 389,
+      "book_id": "6bab2c09-6418-4092-9db7-68c228fd6a63",
+      "title": "The Philosophy of Grammar",
+      "author": "Otto Jespersen",
+      "language": "en",
+      "slug": "the-philosophy-of-grammar-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 390,
+      "book_id": "62cbd0d0-772c-402e-971f-b3f9e6c37383",
+      "title": "The Practical Study of Languages",
+      "author": "Henry Sweet",
+      "language": "en",
+      "slug": "the-practical-study-of-languages-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 391,
+      "book_id": "77933639-b617-4660-b024-4a5d2f13ce89",
+      "title": "The Sense of Style",
+      "author": "Steven Pinker, José C. Vales",
+      "language": "en",
+      "slug": "the-sense-of-style-steven-pinker-jose-c-vales-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 392,
+      "book_id": "6573359d-40f0-4662-bcc2-b9af3bae30ad",
+      "title": "The Sounds of Spoken English",
+      "author": "Walter Ripman",
+      "language": "en",
+      "slug": "the-sounds-of-spoken-english-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 393,
+      "book_id": "e17d4bcb-f7e5-48fc-8089-c086d4f8651f",
+      "title": "The brand gap",
+      "author": "Marty Neumeier",
+      "language": "en",
+      "slug": "the-brand-gap-marty-neumeier-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 394,
+      "book_id": "b12f37b9-ce02-4f77-b659-1da119343729",
+      "title": "Writing Down the Bones",
+      "author": "Natalie Goldberg",
+      "language": "en",
+      "slug": "writing-down-the-bones-natalie-goldberg-nathalie-goldberg-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 395,
+      "book_id": "f8b77b6b-e0fa-43cc-a1e6-66357ead19d8",
+      "title": "Writing better lyrics",
+      "author": "Pat Pattison",
+      "language": "en",
+      "slug": "writing-better-lyrics-pat-pattison-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 396,
+      "book_id": "ecd6124d-05c8-4d63-8992-edcde17c7cef",
+      "title": "Zag",
+      "author": "Marty Neumeier",
+      "language": "en",
+      "slug": "zag-marty-neumeier-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 397,
+      "book_id": "5df443b8-4e06-4918-990c-fd4028ff01b9",
+      "title": "Frankenstein; or, The Modern Prometheus",
+      "author": "Mary Shelley",
+      "language": "en",
+      "slug": "frankenstein-mary-shelley-en",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 398,
+      "book_id": "99631c73-b610-4d41-9b2c-3118da5fa263",
+      "title": "Pride and Prejudice",
+      "author": "Jane Austen",
+      "language": "en",
+      "slug": "pride-and-prejudice-jane-austen-en",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 399,
+      "book_id": "6c70c888-5dc1-4ae1-87be-8504b32e993c",
+      "title": "Atomic Habits",
+      "author": "James Clear",
+      "language": "en",
+      "slug": "atomic-habits-james-clear-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 400,
+      "book_id": "e872cf4e-67d1-4575-854a-15f1ba57a70f",
+      "title": "Moby-Dick; or, The Whale",
+      "author": "Herman Melville",
+      "language": "en",
+      "slug": "moby-dick-herman-melville-en",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 401,
+      "book_id": "5cd2d51d-b242-48b3-a0d6-7c97d74d0605",
+      "title": "Quit",
+      "author": "Annie Duke",
+      "language": "en",
+      "slug": "quit-annie-duke-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 402,
+      "book_id": "bc467846-069f-487e-aeae-7619f42ae839",
+      "title": "Rest: Why You Get More Done When You Work Less",
+      "author": "Alex Soojung-Kim Pang",
+      "language": "en",
+      "slug": "rest-why-you-get-more-done-when-you-work-less-alex-soojung-kim-pang-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 403,
+      "book_id": "b0ec5aab-f4b7-47ee-b55d-8aeac8a8f533",
+      "title": "Rich Dad Poor Dad",
+      "author": "Robert T. Kiyosaki with Sharon Lechter",
+      "language": "en",
+      "slug": "rich-dad-poor-dad-robert-t-kiyosaki-with-sharon-lechter-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 404,
+      "book_id": "f2629f92-76e7-4644-8ef2-40cf9ac68d09",
+      "title": "Romeo and Juliet",
+      "author": "William Shakespeare",
+      "language": "en",
+      "slug": "romeo-and-juliet-william-shakespeare-en",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 405,
+      "book_id": "c017efcf-53b6-4329-a072-1e6dba0be3f5",
+      "title": "Seven and a Half Lessons About the Brain",
+      "author": "Lisa Feldman Barrett",
+      "language": "en",
+      "slug": "seven-and-a-half-lessons-about-the-brain-lisa-feldman-barrett-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 406,
+      "book_id": "0bd2d86f-97b9-43d4-a53d-e79b52f475b2",
+      "title": "Shoe Dog",
+      "author": "Phil Knight",
+      "language": "en",
+      "slug": "shoe-dog-phil-knight-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 407,
+      "book_id": "5fd3a4ce-66eb-4188-82bd-3e592c9feb3e",
+      "title": "Show Your Work!",
+      "author": "Austin Kleon",
+      "language": "en",
+      "slug": "show-your-work-austin-kleon-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 408,
+      "book_id": "90c40e8e-5c2d-4a2f-8959-ba668ee7d1b2",
+      "title": "Skin in the Game",
+      "author": "Nassim Nicholas Taleb",
+      "language": "en",
+      "slug": "skin-in-the-game-nassim-nicholas-taleb-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 409,
+      "book_id": "e2bbf3c2-0ea5-444e-974e-e83ef3176cc1",
+      "title": "Slow Productivity",
+      "author": "Cal Newport",
+      "language": "en",
+      "slug": "slow-productivity-cal-newport-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 410,
+      "book_id": "c5f9a890-6213-43ea-b2e4-0bf9b043840b",
+      "title": "Smarter Faster Better",
+      "author": "Charles Duhigg",
+      "language": "en",
+      "slug": "smarter-faster-better-charles-duhigg-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 411,
+      "book_id": "5e368467-d066-4414-8bb0-1c92b9320b31",
+      "title": "So Good They Can't Ignore You",
+      "author": "Cal Newport",
+      "language": "en",
+      "slug": "so-good-they-cant-ignore-you-cal-newport-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 412,
+      "book_id": "0f2668e2-2209-4814-8943-0a86189a07ad",
+      "title": "Sprint",
+      "author": "Jake Knapp, John Zeratsky, and Braden Kowitz",
+      "language": "en",
+      "slug": "sprint-jake-knapp-john-zeratsky-and-braden-kowitz-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 413,
+      "book_id": "eeb531fe-7b9d-44df-98f7-187104bf984f",
+      "title": "Start with Why",
+      "author": "Simon Sinek",
+      "language": "en",
+      "slug": "start-with-why-simon-sinek-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 414,
+      "book_id": "6dcf2595-321b-4479-b2a5-b2bb8238b3f3",
+      "title": "Stumbling on Happiness",
+      "author": "Daniel Gilbert",
+      "language": "en",
+      "slug": "stumbling-on-happiness-daniel-gilbert-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 415,
+      "book_id": "31d47880-8036-47e3-91b4-a0f51c455888",
+      "title": "Superforecasting",
+      "author": "Philip E. Tetlock and Dan Gardner",
+      "language": "en",
+      "slug": "superforecasting-philip-e-tetlock-and-dan-gardner-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 416,
+      "book_id": "6012ea72-fc1b-4cac-9f6b-300a6446950e",
+      "title": "Switch",
+      "author": "Chip Heath and Dan Heath",
+      "language": "en",
+      "slug": "switch-chip-heath-and-dan-heath-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 417,
+      "book_id": "ffe569e8-8f1b-43d6-a0b2-110999e728c3",
+      "title": "Thanks for the Feedback",
+      "author": "Douglas Stone and Sheila Heen",
+      "language": "en",
+      "slug": "thanks-for-the-feedback-douglas-stone-and-sheila-heen-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 418,
+      "book_id": "991cebe6-0969-4fe0-b219-f9c4421af222",
+      "title": "The 4-Hour Workweek",
+      "author": "Timothy Ferriss",
+      "language": "en",
+      "slug": "the-4-hour-workweek-timothy-ferriss-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 419,
+      "book_id": "979971bb-fdbc-4484-9f08-68d9b03a5745",
+      "title": "The 5 AM Club",
+      "author": "Robin Sharma",
+      "language": "en",
+      "slug": "the-5-am-club-robin-sharma-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 420,
+      "book_id": "f3324485-be33-484a-8765-6cfad3617ad1",
+      "title": "The 7 Habits of Highly Effective People",
+      "author": "Stephen R. Covey",
+      "language": "en",
+      "slug": "the-7-habits-of-highly-effective-people-stephen-r-covey-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 421,
+      "book_id": "63a29aff-f64c-4a09-b5ff-d143f88ffca5",
+      "title": "The Acquirer's Multiple",
+      "author": "Tobias E. Carlisle",
+      "language": "en",
+      "slug": "the-acquirers-multiple-tobias-e-carlisle-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 422,
+      "book_id": "b5d5b28e-b9d9-491c-add9-803c9690d5b7",
+      "title": "The Advantage",
+      "author": "Patrick Lencioni",
+      "language": "en",
+      "slug": "the-advantage-patrick-lencioni-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 423,
+      "book_id": "b2160156-7507-46ab-9df8-681593a4e591",
+      "title": "The Algebra of Wealth",
+      "author": "Scott Galloway",
+      "language": "en",
+      "slug": "the-algebra-of-wealth-scott-galloway-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 424,
+      "book_id": "47986bdf-d72e-4acc-927c-d0e6840e6265",
+      "title": "The Art of Thinking Clearly",
+      "author": "Rolf Dobelli",
+      "language": "en",
+      "slug": "the-art-of-thinking-clearly-rolf-dobelli-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 425,
+      "book_id": "538510d3-6cf7-4246-8210-25678157f95c",
+      "title": "The Behavior Gap",
+      "author": "Carl Richards",
+      "language": "en",
+      "slug": "the-behavior-gap-carl-richards-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 426,
+      "book_id": "a80e958d-7f5c-4c1d-b476-65b8e202ef1d",
+      "title": "The Biggest Bluff",
+      "author": "Maria Konnikova",
+      "language": "en",
+      "slug": "the-biggest-bluff-maria-konnikova-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 427,
+      "book_id": "cecb0dfb-5dfb-4e4c-a01e-e4bf313003f3",
+      "title": "The Black Swan",
+      "author": "Nassim Nicholas Taleb",
+      "language": "en",
+      "slug": "the-black-swan-nassim-nicholas-taleb-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 428,
+      "book_id": "a72adab1-68fc-4185-abf1-ddd250a352eb",
+      "title": "The Body Keeps the Score",
+      "author": "Bessel van der Kolk",
+      "language": "en",
+      "slug": "the-body-keeps-the-score-bessel-van-der-kolk-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 429,
+      "book_id": "db83825b-20ed-4f68-8bb0-d5010e972f8a",
+      "title": "The Bogleheads' Guide to Investing",
+      "author": "Taylor Larimore, Mel Lindauer, and Michael LeBoeuf",
+      "language": "en",
+      "slug": "the-bogleheads-guide-to-investing-taylor-larimore-mel-lindauer-and-michael-leboeuf-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 430,
+      "book_id": "0584c1b2-69de-47e2-88e1-833e58cd1e47",
+      "title": "The Brain That Changes Itself",
+      "author": "Norman Doidge",
+      "language": "en",
+      "slug": "the-brain-that-changes-itself-norman-doidge-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 431,
+      "book_id": "d0f3f5a4-878f-4665-b4d7-db804fa111a8",
+      "title": "The Checklist Manifesto",
+      "author": "Atul Gawande",
+      "language": "en",
+      "slug": "the-checklist-manifesto-atul-gawande-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 432,
+      "book_id": "d832b528-8d4f-46cb-9b1a-94301ccb8f60",
+      "title": "The Coaching Habit",
+      "author": "Michael Bungay Stanier",
+      "language": "en",
+      "slug": "the-coaching-habit-michael-bungay-stanier-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 433,
+      "book_id": "23ac1468-c12a-45c2-8235-45baa9d8160e",
+      "title": "The Code Breaker",
+      "author": "Walter Isaacson",
+      "language": "en",
+      "slug": "the-code-breaker-walter-isaacson-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 434,
+      "book_id": "956a59ed-8346-4be1-8382-c87345457865",
+      "title": "The Cold Start Problem",
+      "author": "Andrew Chen",
+      "language": "en",
+      "slug": "the-cold-start-problem-andrew-chen-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 435,
+      "book_id": "3cfd0a5f-1798-4bdf-ada5-5ca77e87729f",
+      "title": "The Compound Effect",
+      "author": "Darren Hardy",
+      "language": "en",
+      "slug": "the-compound-effect-darren-hardy-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 436,
+      "book_id": "584e2ab4-a4e8-46e3-8038-96621edf32ba",
+      "title": "The Confidence Game",
+      "author": "Maria Konnikova",
+      "language": "en",
+      "slug": "the-confidence-game-maria-konnikova-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 437,
+      "book_id": "b979788b-8c75-46ec-b4ee-44f02506b9f9",
+      "title": "The Courage to Be Disliked",
+      "author": "Ichiro Kishimi and Fumitake Koga",
+      "language": "en",
+      "slug": "the-courage-to-be-disliked-ichiro-kishimi-and-fumitake-koga-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 438,
+      "book_id": "3a25ff66-7a01-45a3-881c-3e45b077f562",
+      "title": "The Culture Code",
+      "author": "Daniel Coyle",
+      "language": "en",
+      "slug": "the-culture-code-daniel-coyle-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 439,
+      "book_id": "8271c649-e2eb-4ee9-a91d-ff78215e6f4d",
+      "title": "The Design of Everyday Things",
+      "author": "Don Norman",
+      "language": "en",
+      "slug": "the-design-of-everyday-things-don-norman-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 440,
+      "book_id": "9c705c87-06a7-4ab6-ae3c-a9236fb93eed",
+      "title": "The Dhandho Investor",
+      "author": "Mohnish Pabrai",
+      "language": "en",
+      "slug": "the-dhandho-investor-mohnish-pabrai-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 441,
+      "book_id": "9bfee250-44db-4e6e-be2c-8ab8ab1ac098",
+      "title": "The E-Myth Revisited",
+      "author": "Michael E. Gerber",
+      "language": "en",
+      "slug": "the-e-myth-revisited-michael-e-gerber-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 442,
+      "book_id": "060d7245-7635-4bed-b267-b5618f9282dd",
+      "title": "The Effective Executive",
+      "author": "Peter F. Drucker",
+      "language": "en",
+      "slug": "the-effective-executive-peter-f-drucker-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 443,
+      "book_id": "d315233b-b8e9-4586-865e-2cf5e1dccb11",
+      "title": "The Emperor of All Maladies",
+      "author": "Siddhartha Mukherjee",
+      "language": "en",
+      "slug": "the-emperor-of-all-maladies-siddhartha-mukherjee-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 444,
+      "book_id": "a77de458-5a49-4e27-866e-df1776ed8554",
+      "title": "The Essays of Warren Buffett",
+      "author": "Warren E. Buffett, selected and arranged by Lawrence A. Cunningham",
+      "language": "en",
+      "slug": "the-essays-of-warren-buffett-warren-e-buffett-selected-and-arranged-by-lawrence-a-cunningham-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 445,
+      "book_id": "54c399a8-4ac1-4da8-85bd-8f05775f3a33",
+      "title": "The Everything Store",
+      "author": "Brad Stone",
+      "language": "en",
+      "slug": "the-everything-store-brad-stone-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 446,
+      "book_id": "912bd55e-74c1-46b6-b2de-e0d3d732b7be",
+      "title": "The Expectation Effect",
+      "author": "David Robson",
+      "language": "en",
+      "slug": "the-expectation-effect-david-robson-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 447,
+      "book_id": "c42f4253-d85d-40c0-8e8a-82d05357381c",
+      "title": "The First 90 Days",
+      "author": "Michael D. Watkins",
+      "language": "en",
+      "slug": "the-first-90-days-michael-d-watkins-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 448,
+      "book_id": "b5442c1f-05fc-48dd-97bb-45b8f1f24ef9",
+      "title": "The Five Dysfunctions of a Team",
+      "author": "Patrick Lencioni",
+      "language": "en",
+      "slug": "the-five-dysfunctions-of-a-team-patrick-lencioni-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 449,
+      "book_id": "ec69fe51-5a09-47c6-a843-cba4d30439a1",
+      "title": "The Four Pillars of Investing",
+      "author": "William J. Bernstein",
+      "language": "en",
+      "slug": "the-four-pillars-of-investing-william-j-bernstein-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 450,
+      "book_id": "ef5e1288-22c6-4790-9c08-40b327112351",
+      "title": "The Gene",
+      "author": "Siddhartha Mukherjee",
+      "language": "en",
+      "slug": "the-gene-siddhartha-mukherjee-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 451,
+      "book_id": "f0b072d2-d358-4e62-b2de-2d23cb8a0f31",
+      "title": "The Gifts of Imperfection",
+      "author": "Brené Brown",
+      "language": "en",
+      "slug": "the-gifts-of-imperfection-brene-brown-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 452,
+      "book_id": "7d2a1590-5c3b-4f65-a332-9a97b2c07f37",
+      "title": "The Goal",
+      "author": "Eliyahu M. Goldratt and Jeff Cox",
+      "language": "en",
+      "slug": "the-goal-eliyahu-m-goldratt-and-jeff-cox-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 453,
+      "book_id": "6b0f36c5-4e63-4e95-8c90-6730ec413aaa",
+      "title": "The Great CEO Within",
+      "author": "Matt Mochary",
+      "language": "en",
+      "slug": "the-great-ceo-within-matt-mochary-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 454,
+      "book_id": "d74cc574-2afc-4a1b-80b2-564cc0866d5b",
+      "title": "The Happiness Hypothesis",
+      "author": "Jonathan Haidt",
+      "language": "en",
+      "slug": "the-happiness-hypothesis-jonathan-haidt-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 455,
+      "book_id": "73c6b646-cfc6-438e-9360-f82ae5a8cf66",
+      "title": "The Hard Thing About Hard Things",
+      "author": "Ben Horowitz",
+      "language": "en",
+      "slug": "the-hard-thing-about-hard-things-ben-horowitz-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 456,
+      "book_id": "f623568f-ea23-4566-ad1b-10e960105ef5",
+      "title": "The Index Card",
+      "author": "Helaine Olen and Harold Pollack",
+      "language": "en",
+      "slug": "the-index-card-helaine-olen-and-harold-pollack-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 457,
+      "book_id": "37bdaf9d-665a-4bee-91dd-68b6b2de534c",
+      "title": "The Innovator's Dilemma",
+      "author": "Clayton M. Christensen",
+      "language": "en",
+      "slug": "the-innovator-s-dilemma-clayton-m-christensen-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 458,
+      "book_id": "d62fb2ae-064b-4b7b-86da-8de826268f87",
+      "title": "The Innovator's Solution",
+      "author": "Clayton M. Christensen and Michael E. Raynor",
+      "language": "en",
+      "slug": "the-innovators-solution-clayton-m-christensen-and-michael-e-raynor-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 459,
+      "book_id": "ad640afc-c06d-4c7b-9e2d-42744573c862",
+      "title": "The Intelligence Trap",
+      "author": "David Robson",
+      "language": "en",
+      "slug": "the-intelligence-trap-david-robson-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 460,
+      "book_id": "63cbdbc0-6afc-4157-a4c6-79d1e9948ddc",
+      "title": "The Intelligent Investor",
+      "author": "Benjamin Graham",
+      "language": "en",
+      "slug": "the-intelligent-investor-benjamin-graham-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 461,
+      "book_id": "7c99cd15-ca23-47b7-8bc1-b03cf5cf3981",
+      "title": "The Invisible Gorilla",
+      "author": "Christopher Chabris and Daniel Simons",
+      "language": "en",
+      "slug": "the-invisible-gorilla-christopher-chabris-and-daniel-simons-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 462,
+      "book_id": "0dc436d6-000b-459c-9cc0-0a27331cea9e",
+      "title": "The Lean Startup",
+      "author": "Eric Ries",
+      "language": "en",
+      "slug": "the-lean-startup-eric-ries-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 463,
+      "book_id": "e7ad4f10-8b61-481d-829d-acd56da59868",
+      "title": "The Little Book That Still Beats the Market",
+      "author": "Joel Greenblatt",
+      "language": "en",
+      "slug": "the-little-book-that-still-beats-the-market-joel-greenblatt-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 464,
+      "book_id": "c97bf582-8790-4775-a5b3-8a47f3b0b03c",
+      "title": "The Little Book of Behavioral Investing",
+      "author": "James Montier",
+      "language": "en",
+      "slug": "the-little-book-of-behavioral-investing-james-montier-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 465,
+      "book_id": "54270395-047e-4dbc-8676-501adf28d1bc",
+      "title": "The Little Book of Common Sense Investing",
+      "author": "John C. Bogle",
+      "language": "en",
+      "slug": "the-little-book-of-common-sense-investing-john-c-bogle-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 466,
+      "book_id": "3345e542-98ca-4ef5-8e9b-c4d98c8921b4",
+      "title": "The Little Book of Valuation",
+      "author": "Aswath Damodaran",
+      "language": "en",
+      "slug": "the-little-book-of-valuation-aswath-damodaran-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 467,
+      "book_id": "a9db3176-964c-4279-a44d-15f9f340b54c",
+      "title": "The Manager's Path",
+      "author": "Camille Fournier",
+      "language": "en",
+      "slug": "the-managers-path-camille-fournier-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 468,
+      "book_id": "e81a140d-f40c-49d5-9264-fb565892a35d",
+      "title": "The Millionaire Next Door",
+      "author": "Thomas J. Stanley and William D. Danko",
+      "language": "en",
+      "slug": "the-millionaire-next-door-thomas-j-stanley-and-william-d-danko-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 469,
+      "book_id": "5321ee51-4787-4a58-900d-9921e3573540",
+      "title": "The Molecule of More",
+      "author": "Daniel Z. Lieberman and Michael E. Long",
+      "language": "en",
+      "slug": "the-molecule-of-more-daniel-z-lieberman-and-michael-e-long-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 470,
+      "book_id": "a1248dc5-9c77-4503-aa45-4ba1fce3aac4",
+      "title": "The Mom Test",
+      "author": "Rob Fitzpatrick",
+      "language": "en",
+      "slug": "the-mom-test-rob-fitzpatrick-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 471,
+      "book_id": "62436c79-fd38-4561-af2b-c9f0887780aa",
+      "title": "The Most Important Thing",
+      "author": "Howard Marks",
+      "language": "en",
+      "slug": "the-most-important-thing-howard-marks-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 472,
+      "book_id": "90e7b84e-b5f9-452d-bcfa-3ca4a5687f22",
+      "title": "The Motive",
+      "author": "Patrick Lencioni",
+      "language": "en",
+      "slug": "the-motive-patrick-lencioni-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 473,
+      "book_id": "45b26eb4-21de-4150-81b8-2b53a1b91fe9",
+      "title": "The ONE Thing",
+      "author": "Gary Keller and Jay Papasan",
+      "language": "en",
+      "slug": "the-one-thing-gary-keller-and-jay-papasan-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 474,
+      "book_id": "005a1bab-84a1-4a63-b1e0-5fb2c5d2ff7c",
+      "title": "The Organized Mind",
+      "author": "Daniel J. Levitin",
+      "language": "en",
+      "slug": "the-organized-mind-daniel-j-levitin-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 475,
+      "book_id": "abc801d0-1561-4d8f-8c7d-883292e875e3",
+      "title": "The Outsiders",
+      "author": "William N. Thorndike",
+      "language": "en",
+      "slug": "the-outsiders-william-n-thorndike-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 476,
+      "book_id": "e291eabc-8462-49b3-996f-6d039ed67ea2",
+      "title": "The Paradox of Choice",
+      "author": "Barry Schwartz",
+      "language": "en",
+      "slug": "the-paradox-of-choice-barry-schwartz-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 477,
+      "book_id": "3158efb4-82e2-42c1-a9ef-148c00140bbb",
+      "title": "The Personal MBA",
+      "author": "Josh Kaufman",
+      "language": "en",
+      "slug": "the-personal-mba-josh-kaufman-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 478,
+      "book_id": "f85b78bd-7842-4c97-8fff-44ab30ec6cda",
+      "title": "The Power of Bad",
+      "author": "John Tierney and Roy F. Baumeister",
+      "language": "en",
+      "slug": "the-power-of-bad-john-tierney-and-roy-f-baumeister-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 479,
+      "book_id": "9e09acdb-7c9d-40bb-ab0c-75fa42a5142b",
+      "title": "The Power of Habit",
+      "author": "Charles Duhigg",
+      "language": "en",
+      "slug": "the-power-of-habit-charles-duhigg-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 480,
+      "book_id": "7bbedd8f-fe35-4be1-ab1b-608d63da7a2e",
+      "title": "The Practicing Mind",
+      "author": "Thomas M. Sterner",
+      "language": "en",
+      "slug": "the-practicing-mind-thomas-m-sterner-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 481,
+      "book_id": "79160ace-22c5-465c-84d5-1c60a78edc72",
+      "title": "The Productivity Project",
+      "author": "Chris Bailey",
+      "language": "en",
+      "slug": "the-productivity-project-chris-bailey-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 482,
+      "book_id": "132084bd-122f-483f-974c-7dcb60ece79f",
+      "title": "The Psychology of Money",
+      "author": "Morgan Housel",
+      "language": "en",
+      "slug": "the-psychology-of-money-morgan-housel-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 483,
+      "book_id": "ba7487f5-4bc5-4355-bc95-d912d1852243",
+      "title": "The Richest Man in Babylon",
+      "author": "George S. Clason",
+      "language": "en",
+      "slug": "the-richest-man-in-babylon-george-s-clason-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 484,
+      "book_id": "3e1a3af7-3bc4-4731-9c11-a899d249d868",
+      "title": "The Ride of a Lifetime",
+      "author": "Robert Iger",
+      "language": "en",
+      "slug": "the-ride-of-a-lifetime-robert-iger-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 485,
+      "book_id": "d3079ae3-9dcd-42b4-afb8-504b2f3c1b9e",
+      "title": "The Righteous Mind",
+      "author": "Jonathan Haidt",
+      "language": "en",
+      "slug": "the-righteous-mind-jonathan-haidt-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 486,
+      "book_id": "92ed6d2c-ecf2-4266-8fc0-4bb92669ef46",
+      "title": "The Scout Mindset",
+      "author": "Julia Galef",
+      "language": "en",
+      "slug": "the-scout-mindset-julia-galef-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 487,
+      "book_id": "f9496b10-b7bf-422d-a76a-889c6becda39",
+      "title": "The Selfish Gene",
+      "author": "Richard Dawkins",
+      "language": "en",
+      "slug": "the-selfish-gene-richard-dawkins-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 488,
+      "book_id": "47eb576a-9dbd-4956-ab49-c6820c58e38d",
+      "title": "The Signal and the Noise",
+      "author": "Nate Silver",
+      "language": "en",
+      "slug": "the-signal-and-the-noise-nate-silver-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 489,
+      "book_id": "92604b64-dfef-4421-b3cb-ba75ab1dd86b",
+      "title": "The Simple Path to Wealth",
+      "author": "JL Collins",
+      "language": "en",
+      "slug": "the-simple-path-to-wealth-jl-collins-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 490,
+      "book_id": "cb1622bf-245e-4f17-a47a-2392a4de1598",
+      "title": "The Slight Edge",
+      "author": "Jeff Olson",
+      "language": "en",
+      "slug": "the-slight-edge-jeff-olson-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 491,
+      "book_id": "b84286ff-49b3-4d6b-abc3-06e4cbb756b5",
+      "title": "The Startup Owner's Manual",
+      "author": "Steve Blank and Bob Dorf",
+      "language": "en",
+      "slug": "the-startup-owners-manual-steve-blank-and-bob-dorf-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 492,
+      "book_id": "47763268-14f6-48ab-ad34-cfc64caa8e12",
+      "title": "The Tipping Point",
+      "author": "Malcolm Gladwell",
+      "language": "en",
+      "slug": "the-tipping-point-malcolm-gladwell-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 493,
+      "book_id": "b02d25cf-93ff-4aa8-ab84-f518fc6971b1",
+      "title": "The Total Money Makeover",
+      "author": "Dave Ramsey",
+      "language": "en",
+      "slug": "the-total-money-makeover-dave-ramsey-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 494,
+      "book_id": "9ee2a21d-18e6-4e39-9e48-7c640406d96e",
+      "title": "The Undoing Project",
+      "author": "Michael Lewis",
+      "language": "en",
+      "slug": "the-undoing-project-michael-lewis-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 495,
+      "book_id": "7de17b87-03c6-443a-bcae-d8fc2e55165e",
+      "title": "The Upward Spiral",
+      "author": "Alex Korb",
+      "language": "en",
+      "slug": "the-upward-spiral-alex-korb-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 496,
+      "book_id": "7d5dfd45-a848-4fcb-83a7-8d50a9316011",
+      "title": "The War of Art",
+      "author": "Steven Pressfield",
+      "language": "en",
+      "slug": "the-war-of-art-steven-pressfield-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 497,
+      "book_id": "0825b288-5a70-4447-9489-a0d48cd45c68",
+      "title": "The Warren Buffett Way",
+      "author": "Robert G. Hagstrom",
+      "language": "en",
+      "slug": "the-warren-buffett-way-robert-g-hagstrom-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 498,
+      "book_id": "554dea31-67fa-4691-bd5c-3133ad7562bf",
+      "title": "Think and Grow Rich",
+      "author": "Napoleon Hill",
+      "language": "en",
+      "slug": "think-and-grow-rich-napoleon-hill-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 499,
+      "book_id": "df3ffb5a-ef9f-495f-a566-c2d7f489c9b1",
+      "title": "Thinking in Bets",
+      "author": "Annie Duke",
+      "language": "en",
+      "slug": "thinking-in-bets-annie-duke-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    },
+    {
+      "cohort_index": 500,
+      "book_id": "02004bfc-bfac-4494-9b06-4ca794ca7341",
+      "title": "Thinking, Fast and Slow",
+      "author": "Daniel Kahneman",
+      "language": "en",
+      "slug": "thinking-fast-and-slow-daniel-kahneman-summary",
+      "editorial_status": "pending_research_and_authorship",
+      "target_words": 400
+    }
+  ]
+}
