@@ -4,7 +4,7 @@ ALTER TABLE subscriptions ADD COLUMN provider_status TEXT;
 ALTER TABLE subscriptions ADD COLUMN cancel_at_cycle_end INTEGER NOT NULL DEFAULT 0;
 ALTER TABLE subscriptions ADD COLUMN last_provider_event_at TEXT;
 CREATE UNIQUE INDEX IF NOT EXISTS idx_recurring_provider_subscription_id ON subscriptions(razorpay_subscription_id) WHERE razorpay_subscription_id IS NOT NULL;
-CREATE UNIQUE INDEX IF NOT EXISTS idx_recurring_pending_per_user ON subscriptions(user_id) WHERE status IN ('creating','pending');
+CREATE UNIQUE INDEX IF NOT EXISTS idx_recurring_pending_per_user ON subscriptions(user_id) WHERE status='creating' OR (status='pending' AND razorpay_subscription_id IS NOT NULL);
 CREATE TABLE IF NOT EXISTS razorpay_webhook_events (
   event_id TEXT PRIMARY KEY,
   event_name TEXT NOT NULL,
