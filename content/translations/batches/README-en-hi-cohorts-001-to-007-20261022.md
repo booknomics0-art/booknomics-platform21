@@ -17,7 +17,7 @@ Source: connected Supabase project `pbkfewrtdgiagytmcigb`, table `public.books` 
 
 | Cohort | Books | Manifest | Current complete draft(s) |
 |---|---:|---|---|
-| 001 | 500 | `en-hi-batch-001-20261022.csv` | `drafts/en-hi-batch-001/animal-farm.complete-draft.hi.json`; `drafts/en-hi-batch-001/100-ways-to-improve-your-writing.complete-draft.hi.json` |
+| 001 | 500 | `en-hi-batch-001-20261022.csv` | `drafts/en-hi-batch-001/animal-farm.complete-draft.hi.json`; `drafts/en-hi-batch-001/100-ways-to-improve-your-writing.complete-draft.hi.json`; `drafts/en-hi-batch-001/alchemy-rory-sutherland.complete-draft.hi.json`; `drafts/en-hi-batch-001/a-short-guide-to-writing-about-literature.complete-draft.hi.json`; `drafts/en-hi-batch-001/a-sense-of-words.complete-draft.hi.json` |
 | 002 | 500 | `en-hi-batch-002-20261022.csv` | `drafts/en-hi-batch-002/differentiate-or-die.complete-draft.hi.json` |
 | 003 | 500 | `en-hi-batch-003-20261022.csv` | `drafts/en-hi-batch-003/kotler-on-marketing.complete-draft.hi.json` |
 | 004 | 500 | `en-hi-batch-004-20261022.csv` | `drafts/en-hi-batch-004/social-media-marketing.complete-draft.hi.json` |
@@ -29,11 +29,11 @@ The manifest paths above are relative to `content/translations/batches/`; draft 
 
 ## Progress (honest editorial status)
 
-- **8** complete but **unapproved** Hindi drafts of all nonempty source sections (two in cohort 001, one each in 002–007).
+- **11** complete but **unapproved** Hindi drafts of all nonempty source sections (five in cohort 001, one each in 002–007).
 - **2** partial 7/9-section drafts: `Atomic Habits`, `The Psychology of Money` (cohort 001).
 - **1** previously approved five-section translation exists for `The Old Man and the Sea` (cohort 006), but the eligible Supabase English record has nine source sections. This is flagged `preexisting_approved_5_of_9_requires_completion_and_parity`, not counted as fully translated. Existing translation must be reverified against the Cloudflare D1 source and have missing sections completed before full-toggle coverage.
-- **3,448** further records are marked `pending_translation`.
-- **0** of the eight new complete drafts are approved or verified as deployed to the live Cloudflare D1 translation store.
+- **3,445** further records are marked `pending_translation`.
+- **0** of the eleven new complete drafts are approved or verified as deployed to the live Cloudflare D1 translation store.
 - Do not interpret an enrolled book or a complete draft as an already working live Hindi toggle.
 
 ## Activation gate
