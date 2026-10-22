@@ -204,7 +204,7 @@ export const Terms = () => (
         title: "Subscriptions & Payments",
         body: (
           <>
-            <p>Premium plans are billed monthly or annually through our payment provider. You can cancel anytime — access continues to the end of the paid period. Subscriptions are non-refundable except where required by law.</p>
+            <p>Booknomics plans to offer automatic recurring Premium membership at ₹19 per week or ₹49 per month once the new secure Cloudflare checkout is active. At present, the new subscription checkout is not accepting payments. Existing one-time Premium purchases remain valid through their original expiry dates and do not automatically renew. When recurring billing becomes available, charges and the cancellation option will be clearly disclosed before the customer authorises the mandate. Refunds for existing purchases are handled according to applicable law; contact Booknomics support for billing issues.</p>
             <p>The site may display third-party advertisements, including ads served by Google AdSense. Advertisements are clearly marked and never influence our editorial choices or book recommendations.</p>
           </>
         ),
