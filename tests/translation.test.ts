@@ -1,167 +1,148 @@
 // @vitest-environment node
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { createHash } from "node:crypto";
-import { handleTranslationRoute, translationChunks } from "../worker/translationRoute";
+import { handleTranslationRoute } from "../worker/translationRoute";
+import { handleBookAiRoute } from "../worker/bookAiRoutes";
 
 const bookId = "11111111-1111-4111-8111-111111111111";
 const book = {
-  id: bookId,
-  language: "en",
-  overview: "A thoughtful overview of the original book.",
-  deep_summary: "Detailed summary.",
-  key_ideas: "One idea.",
-  deep_analysis: "Deeper analysis.",
-  daily_application: "Apply today.",
-  action_system: "Members-only action steps.",
-  practice_tracker: "Members-only week tracker.",
-  reflection_questions: "Members-only reflections.",
-  real_life_example: "Members-only example.",
+  id: bookId, language: "en",
+  overview: "The book's story and central themes.", deep_summary: "A close reading of the work.",
+  key_ideas: "An important idea.", deep_analysis: "An analysis of the source.",
+  daily_application: "A book-specific daily practice.",
+  action_system: "Premium action plan.", practice_tracker: "Premium seven-day tracker.",
+  reflection_questions: "Premium reflections.", real_life_example: "Premium example.",
 };
+const freeFields = ["overview", "deep_summary", "key_ideas", "deep_analysis", "daily_application"] as const;
+const premiumFields = ["action_system", "practice_tracker", "reflection_questions", "real_life_example"] as const;
 
-function mockDb(premium = false, cached?: { source_hash: string; content_json: string }) {
-  const calls: Array<{ sql: string; args: unknown[] }> = [];
+function reviewedTranslation(premium = false, source = "en", overrides: Record<string, unknown> = {}) {
+  const fields = premium ? [...freeFields, ...premiumFields] : [...freeFields];
+  const originals = Object.fromEntries(fields.map((key) => [key, book[key]]));
+  const translated = Object.fromEntries(fields.map((key) => [key, `हिंदी में लिखा: ${book[key]}`]));
+  return {
+    source_hash: createHash("sha256").update(JSON.stringify({ source, sections: originals })).digest("hex"),
+    content_json: JSON.stringify({ ...translated, ...overrides }),
+  };
+}
+
+function mockDb(premium = false, reviewed: { source_hash: string; content_json: string } | null = null) {
+  const queries: Array<{ sql: string; args: unknown[]; method: string }> = [];
   const db = {
     prepare(sql: string) {
       let args: unknown[] = [];
       return {
         bind(...values: unknown[]) { args = values; return this; },
         async first() {
-          calls.push({ sql, args });
+          queries.push({ sql, args, method: "first" });
           if (sql.includes("FROM books")) return book;
           if (sql.includes("FROM subscriptions")) return premium ? { ok: 1 } : null;
-          if (sql.includes("FROM book_translations")) return cached ?? null;
-          if (sql.includes("COUNT(*)")) return { total: 0 };
+          if (sql.includes("FROM book_translations")) return reviewed;
           return null;
         },
-        async run() { calls.push({ sql, args }); return { success: true }; },
+        async run() { queries.push({ sql, args, method: "run" }); return { success: true }; },
       };
     },
   };
-  return { db, calls };
+  return { db, queries };
 }
 
-const env = (db: unknown, key: string | undefined = "demo-key") => ({
-  DB: db,
-  GEMINI_API_KEY: key,
-  SUPABASE_URL: "https://auth.booknomics.example",
-  SUPABASE_ANON_KEY: "public-anon-key",
+const env = (db: unknown) => ({
+  DB: db, SUPABASE_URL: "https://auth.booknomics.example", SUPABASE_ANON_KEY: "public-anon-key",
 });
-
 const request = (body: unknown = { bookId, targetLanguage: "hi" }, token = "valid") => new Request(
   "https://www.booknomics.com/api/translate",
   { method: "POST", headers: { authorization: `Bearer ${token}`, "content-type": "application/json" }, body: JSON.stringify(body) },
 );
 
-let mockFetch: ReturnType<typeof vi.fn>;
+let authFetch: ReturnType<typeof vi.fn>;
 beforeEach(() => {
-  mockFetch = vi.fn(async (url: string | URL, init: RequestInit) => {
-    if (String(url).includes("/auth/v1/user")) {
-      if (init.headers && (init.headers as Record<string, string>).authorization === "Bearer invalid") return new Response("unauthorized", { status: 401 });
-      return Response.json({ id: "user-1", email: "reader@example.com" });
-    }
-    const payload = JSON.parse(String(init.body));
-    const prompt = payload.contents[0].parts[0].text as string;
-    const source = JSON.parse(prompt.slice(prompt.indexOf("Source: ") + 8));
-    return Response.json({ candidates: [{ finishReason: "STOP", content: { parts: [{ text: JSON.stringify({ translation: `अनुवाद ${source}` }) }] } }] });
+  authFetch = vi.fn(async (url: URL | string, init: RequestInit) => {
+    if (!String(url).endsWith("/auth/v1/user")) throw new Error("Translation API is forbidden");
+    const authorization = (init.headers as Record<string, string>)?.authorization;
+    if (authorization === "Bearer invalid") return new Response("unauthorized", { status: 401 });
+    return Response.json({ id: "user-1", email: "reader@example.com" });
   });
-  vi.stubGlobal("fetch", mockFetch);
+  vi.stubGlobal("fetch", authFetch);
 });
 afterEach(() => vi.unstubAllGlobals());
 
-describe("book language toggle Worker endpoint", () => {
-  it("preserves source text across chunk boundaries", () => {
-    const original = `${"Long paragraph. ".repeat(250)}\n\n${"Second paragraph. ".repeat(170)}`;
-    const chunks = translationChunks(original);
-    expect(chunks.length).toBeGreaterThan(1);
-    expect(chunks.every((chunk) => chunk.length <= 3500)).toBe(true);
-    expect(chunks.join("")).toBe(original);
+describe("API-free book language toggle", () => {
+  it("disables the legacy Lovable translation provider endpoint", async () => {
+    const response = await handleBookAiRoute(
+      new Request("https://www.booknomics.com/api/book-ai/translate-to-hindi", { method: "POST" }), {},
+    );
+    expect(response?.status).toBe(410);
+    expect((await response?.json())?.code).toBe("LEGACY_TRANSLATION_DISABLED");
+    expect(authFetch).not.toHaveBeenCalled();
   });
-
-  it("does not claim to handle other routes", async () => {
+  it("handles only the agreed route and method", async () => {
     expect(await handleTranslationRoute(new Request("https://www.booknomics.com/api/books"), {})).toBeNull();
-    const response = await handleTranslationRoute(new Request("https://www.booknomics.com/api/translate"), {});
-    expect(response?.status).toBe(405);
+    expect((await handleTranslationRoute(new Request("https://www.booknomics.com/api/translate"), {}))?.status).toBe(405);
   });
 
-  it("refuses unverified bearer tokens", async () => {
+  it("rejects unverified tokens and invalid book IDs", async () => {
     const { db } = mockDb();
-    const response = await handleTranslationRoute(request(undefined, "invalid"), env(db));
-    expect(response?.status).toBe(401);
-    expect(mockFetch).toHaveBeenCalledTimes(1);
+    expect((await handleTranslationRoute(request(undefined, "invalid"), env(db)))?.status).toBe(401);
+    expect((await handleTranslationRoute(request({ bookId: "invalid", targetLanguage: "hi" }), env(db)))?.status).toBe(400);
   });
 
-  it("validates inputs and never takes the book content from the client", async () => {
-    const { db } = mockDb();
-    const response = await handleTranslationRoute(request({ bookId: "bad-id", targetLanguage: "hi", overview: "attacker text" }), env(db));
-    expect(response?.status).toBe(400);
-  });
-
-  it("returns a clear configuration error before charging a rate-limit", async () => {
-    const { db, calls } = mockDb();
-    const response = await handleTranslationRoute(request(), env(db, ""));
-    expect(response?.status).toBe(503);
-    expect((await response?.json())?.code).toBe("PROVIDER_NOT_CONFIGURED");
-    expect(calls.some(({ sql }) => sql.includes("INSERT INTO admin_access_logs"))).toBe(false);
-  });
-
-  it("translates English to Hindi for a free user without revealing premium fields", async () => {
-    const { db, calls } = mockDb(false);
-    const response = await handleTranslationRoute(request(), env(db));
-    expect(response?.status).toBe(200);
-    const data = await response?.json();
-    expect(data.targetLanguage).toBe("hi");
-    expect(Object.keys(data.sections).sort()).toEqual([
-      "overview", "deep_summary", "key_ideas", "deep_analysis", "daily_application",
-    ].sort());
-    expect(data.sections.overview).toContain("अनुवाद");
-    expect(data.sections.action_system).toBeUndefined();
-    expect(calls.some(({ sql, args }) => sql.includes("INSERT INTO book_translations") && args[2] === "free")).toBe(true);
-  });
-
-  it("never leaks premium text from a pre-existing free-tier cache row", async () => {
-    const freeFields = ["overview", "deep_summary", "key_ideas", "deep_analysis", "daily_application"] as const;
-    const sections = Object.fromEntries(freeFields.map((field) => [field, book[field]]));
-    const source_hash = createHash("sha256").update(JSON.stringify({ source: "en", sections })).digest("hex");
-    const cached = { source_hash, content_json: JSON.stringify({ ...sections, action_system: book.action_system }) };
-    const { db, calls } = mockDb(false, cached);
+  it("serves exactly the approved five free fields from D1, without provider requests or writes", async () => {
+    const { db, queries } = mockDb(false, reviewedTranslation(false, "en", { action_system: "Private leaked value" }));
     const response = await handleTranslationRoute(request(), env(db));
     expect(response?.status).toBe(200);
     const data = await response?.json();
     expect(data.cached).toBe(true);
+    expect(data.sections.overview).toContain("हिंदी में लिखा");
+    expect(Object.keys(data.sections).sort()).toEqual([...freeFields].sort());
     expect(data.sections.action_system).toBeUndefined();
-    expect(calls.some(({ sql, args }) => sql.includes("FROM book_translations") && args[2] === "free")).toBe(true);
-    expect(mockFetch).toHaveBeenCalledTimes(1); // auth only; no provider call
+    expect(queries.some((q) => q.sql.includes("review_status = 'approved'") && q.args[2] === "free")).toBe(true);
+    expect(queries.some((q) => q.method === "run")).toBe(false);
+    expect(authFetch).toHaveBeenCalledTimes(1); // Auth check; zero translation API calls.
   });
 
-  it("can translate all nine fields for entitled users", async () => {
-    const { db, calls } = mockDb(true);
+  it("serves all nine approved fields only to a subscribed reader", async () => {
+    const { db, queries } = mockDb(true, reviewedTranslation(true));
     const response = await handleTranslationRoute(request(), env(db));
     expect(response?.status).toBe(200);
     const data = await response?.json();
     expect(Object.keys(data.sections)).toHaveLength(9);
-    expect(data.sections.practice_tracker).toContain("अनुवाद");
-    expect(calls.some(({ sql, args }) => sql.includes("INSERT INTO book_translations") && args[2] === "premium")).toBe(true);
+    expect(data.sections.practice_tracker).toContain("हिंदी में लिखा");
+    expect(queries.some((q) => q.sql.includes("FROM book_translations") && q.args[2] === "premium")).toBe(true);
+    expect(authFetch).toHaveBeenCalledTimes(1);
   });
 
-  it("supports Hindi-to-English reading", async () => {
-    const prior = book.language;
+  it("does not fabricate Hindi when an approved translation is missing", async () => {
+    const { db, queries } = mockDb();
+    const response = await handleTranslationRoute(request(), env(db));
+    expect(response?.status).toBe(409);
+    expect((await response?.json())?.code).toBe("TRANSLATION_NOT_READY");
+    expect(queries.some((q) => q.method === "run")).toBe(false);
+    expect(authFetch).toHaveBeenCalledTimes(1);
+  });
+
+  it("rejects stale translations after the English source changes", async () => {
+    const { db } = mockDb(false, { source_hash: "old-hash", content_json: reviewedTranslation().content_json });
+    const response = await handleTranslationRoute(request(), env(db));
+    expect(response?.status).toBe(409);
+  });
+
+  it("rejects incomplete prewritten translations", async () => {
+    const incomplete = reviewedTranslation();
+    incomplete.content_json = JSON.stringify({ overview: "हिंदी अवलोकन" });
+    const { db } = mockDb(false, incomplete);
+    expect((await handleTranslationRoute(request(), env(db)))?.status).toBe(409);
+  });
+
+  it("handles Hindi to English without changing originals or contacting a translation provider", async () => {
+    const oldLanguage = book.language;
     book.language = "hi";
     try {
-      const { db } = mockDb();
+      const { db } = mockDb(false, reviewedTranslation(false, "hi"));
       const response = await handleTranslationRoute(request({ bookId, targetLanguage: "en" }), env(db));
       expect(response?.status).toBe(200);
       expect((await response?.json())?.targetLanguage).toBe("en");
-    } finally { book.language = prior; }
-  });
-
-  it("leaves the original content intact if the provider fails", async () => {
-    mockFetch.mockImplementation(async (url: string | URL) => String(url).includes("/auth/v1/user")
-      ? Response.json({ id: "user-1", email: "reader@example.com" })
-      : new Response("limit", { status: 429 }));
-    const { db, calls } = mockDb();
-    const response = await handleTranslationRoute(request(), env(db));
-    expect(response?.status).toBe(429);
-    expect((await response?.json())?.code).toBe("PROVIDER_RATE_LIMIT");
-    expect(calls.some(({ sql }) => sql.includes("INSERT INTO book_translations"))).toBe(false);
+      expect(authFetch).toHaveBeenCalledTimes(1);
+    } finally { book.language = oldLanguage; }
   });
 });
