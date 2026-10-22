@@ -8,7 +8,7 @@ Other bindings: RAZORPAY_KEY_ID, RAZORPAY_WEEKLY_PLAN_ID, RAZORPAY_MONTHLY_PLAN_
 The checkout route demands a live key and validates the provider's weekly INR 1900 / monthly INR 4900 plans before accepting a customer.
 
 ## Data
-Run cloudflare/migrations/0008_razorpay_recurring.sql on D1 \`booknomics-production\` once, after confirming 0001_core has been applied. Never delete historical Orders or Supabase records.
+Applied on 2026-10-22 to Cloudflare production D1 via authenticated Cloudflare API (all 8 DDL statements returned success). Do NOT blindly rerun ALTER TABLE ADD COLUMN statements; first check PRAGMA table_info. The committed migration is for fresh Cloudflare environments. D1 \`booknomics-production\` once, after confirming 0001_core has been applied. Never delete historical Orders or Supabase records.
 Check \`PRAGMA table_info(subscriptions)\` and \`sqlite_master\` indexes afterwards.
 
 ## URLs
@@ -33,6 +33,6 @@ Only enable the webhook after its Cloudflare Worker endpoint is deployed, signat
 7. Keep Supabase and old Vercel production intact as rollback until Cloudflare cutover is verified. Do not promote branch or change DNS solely for billing.
 
 ## Known follow-ups
-- Old one-time /api/payments/razorpay/order route is still available for older clients. Decide on retirement before public price launch without breaking verification for outstanding historical orders.
+- Old one-time /api/payments/razorpay/order returns HTTP 410 by default; it can only be deliberately restored with LEGACY_ORDER_CHECKOUT_ENABLED=enabled. Historical /verify endpoint stays available to settle previously created Orders.
 - D1 data and Cloudflare Auth are authoritative after cutover. Do not deploy the old Supabase-centric PR #87 onto the Cloudflare runtime.
 - No automated live payment has been executed by this PR.
