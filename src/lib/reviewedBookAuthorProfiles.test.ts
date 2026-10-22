@@ -1,10 +1,26 @@
 import { describe, expect, it } from "vitest";
-import cohort from "../../reports/quiz-batch-100-20261021.json";
+import cohort from "../../reports/mastery-author-bios-cohort-500-20261022.json";
 import { findReviewedBookAuthorProfile, reviewedBookAuthorProfiles } from "./reviewedBookAuthorProfiles";
 
 describe("individually reviewed Mastery author essays", () => {
+  it("locks exactly 500 published identities with a balanced language mix", () => {
+    expect(cohort.books).toHaveLength(500);
+    expect(new Set(cohort.books.map(book => book.book_id)).size).toBe(500);
+    expect(cohort.books.filter(book => book.language === "hi")).toHaveLength(250);
+    expect(cohort.books.filter(book => book.language === "en")).toHaveLength(250);
+    expect(cohort.books.filter(book => book.editorial_status === "reviewed_draft_on_pr90")).toHaveLength(reviewedBookAuthorProfiles.length);
+    const authored = new Set(reviewedBookAuthorProfiles.map(profile => profile.bookId));
+    for (const book of cohort.books) {
+      expect(book.book_id).toBeTruthy();
+      expect(book.title).toBeTruthy();
+      expect(book.author).toBeTruthy();
+      expect(book.slug).toBeTruthy();
+      expect(book.editorial_status === "reviewed_draft_on_pr90").toBe(authored.has(book.book_id));
+    }
+  });
+
   it("uses exact published-book identities from the verified editorial cohort", () => {
-    const known = new Map(cohort.map(book => [book.id, book]));
+    const known = new Map(cohort.books.map(book => [book.book_id, book]));
     const ids = new Set<string>();
     for (const profile of reviewedBookAuthorProfiles) {
       expect(ids.has(profile.bookId)).toBe(false);
