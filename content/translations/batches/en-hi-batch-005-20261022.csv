@@ -93,7 +93,7 @@ batch_index,book_id,slug,title,author,source_language,target_language,source_dat
 2092,01dbc29f-59e5-4cdc-8c3d-89dbf6c43854,the-alloy-of-law-brandon-sanderson-summary,The Alloy of Law,Brandon Sanderson,en,hi,Supabase,published,pending_translation,1075,1959,3423,7132,0,662,223,683,372
 2093,f839f4b2-ccb9-4578-960f-24f88a56fbdf,the-american-granddaughter-inaam-kachachi-summary,The American Granddaughter,Inaam Kachachi,en,hi,Supabase,published,pending_translation,1031,7596,1263,10063,303,218,216,355,348
 2094,95d23db4-8a91-432c-a573-6933f4e4ca1a,the-american-language-summary,The American Language,H. L. Mencken,en,hi,Supabase,published,pending_translation,1204,1262,1405,4819,488,619,293,642,0
-2095,f5a5a4e5-ef3a-45c2-a363-c254a98eb86f,the-anatomy-of-buzz-emanuel-rosen-summary,The Anatomy of Buzz,Emanuel Rosen,en,hi,Supabase,published,pending_translation,625,1460,916,3963,280,0,0,0,0
+2095,f5a5a4e5-ef3a-45c2-a363-c254a98eb86f,the-anatomy-of-buzz-emanuel-rosen-summary,The Anatomy of Buzz,Emanuel Rosen,en,hi,Supabase,published,complete_draft_5_of_5_pending_review,625,1460,916,3963,280,0,0,0,0
 2096,ae7ef575-2c41-4f53-9d31-53ef713bdcd5,the-angel-experiment-james-patterson-summary,The Angel Experiment,James Patterson,en,hi,Supabase,published,pending_translation,1087,2236,3510,8976,0,673,223,692,376
 2097,f3df3cb5-6ed7-41f3-81a8-e20697ac0af6,the-angel-maker-stefan-brijs-summary,The Angel Maker,Stefan Brijs,en,hi,Supabase,published,pending_translation,672,997,1953,11507,236,285,214,304,255
 2098,1e91a625-90a5-4b9e-881d-84cf0e2fffb8,the-anthropocene-reviewed-john-green-summary,The Anthropocene Reviewed,John Green,en,hi,Supabase,published,pending_translation,703,4504,2958,10849,0,660,224,661,250
