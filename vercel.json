@@ -5,6 +5,7 @@
   "outputDirectory": "dist",
   "installCommand": "npm ci",
   "rewrites": [
+    {"source":"/pricing","destination":"/index.html"},
     {"source":"/auth","destination":"/index.html"},
     {"source":"/.lovable/oauth/consent","destination":"/index.html"},
     {"source":"/library","destination":"/index.html"},

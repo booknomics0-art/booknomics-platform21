@@ -1,12 +1,14 @@
 import type { Tier } from "@/hooks/useTier";
 
 export type PaidPlan = Exclude<Tier, "free">;
+export type SellablePlan = "weekly" | "monthly";
+export const SELLABLE_PLANS: SellablePlan[] = ["weekly", "monthly"];
 
 export const PLANS: Record<PaidPlan, {
   label: string; price: number; amountPaise: number; durationDays: number; tagline: string; highlight?: "popular" | "best";
 }> = {
   weekly:    { label: "Weekly",    price: 19,  amountPaise: 1900,  durationDays: 7,   tagline: "Perfect for a quick test drive" },
-  monthly:   { label: "Monthly",   price: 69,  amountPaise: 6900,  durationDays: 30,  tagline: "Most popular among readers", highlight: "popular" },
+  monthly:   { label: "Monthly",   price: 49,  amountPaise: 4900,  durationDays: 30,  tagline: "Affordable monthly Premium", highlight: "popular" },
   quarterly: { label: "Quarterly", price: 199, amountPaise: 19900, durationDays: 90,  tagline: "Best value — save 40%",       highlight: "best" },
 };
 
