@@ -14,9 +14,14 @@
 | The Psychology of Money — Morgan Housel | overview, key_ideas, daily_application, action_system, practice_tracker, reflection_questions, real_life_example | Partial editorial draft (7/9); full deep_summary and deep_analysis pending |
 | Animal Farm — George Orwell | All nine toggle fields | Complete Hindi draft; awaits editorial approval and D1 parity |
 | 100 Ways to Improve Your Writing — Gary Provost | All five nonempty toggle fields | Complete Hindi draft; awaits editorial approval and D1 parity |
-| Remaining 496 | None in this batch | Pending |
+| Alchemy — Rory Sutherland | All five nonempty toggle fields | Complete Hindi draft; awaits editorial approval and D1 parity |
+| A Short Guide to Writing About Literature — Sylvan Barnet / William Cain | All five nonempty toggle fields | Complete Hindi draft; awaits editorial approval and D1 parity |
+| A Sense of Words — Madeline Charlton | All five nonempty toggle fields | Complete Hindi draft; awaits editorial approval and D1 parity |
+| Remaining 493 | None in this batch | Pending |
 
-Drafts: [Atomic Habits](../drafts/en-hi-batch-001/atomic-habits.partial.hi.json), [The Psychology of Money](../drafts/en-hi-batch-001/psychology-of-money.partial.hi.json), [Animal Farm](../drafts/en-hi-batch-001/animal-farm.complete-draft.hi.json), [100 Ways to Improve Your Writing](../drafts/en-hi-batch-001/100-ways-to-improve-your-writing.complete-draft.hi.json).
+New authored drafts: [Alchemy](../drafts/en-hi-batch-001/alchemy-rory-sutherland.complete-draft.hi.json), [A Short Guide to Writing About Literature](../drafts/en-hi-batch-001/a-short-guide-to-writing-about-literature.complete-draft.hi.json), [A Sense of Words](../drafts/en-hi-batch-001/a-sense-of-words.complete-draft.hi.json).
+
+Earlier drafts: [Atomic Habits](../drafts/en-hi-batch-001/atomic-habits.partial.hi.json), [The Psychology of Money](../drafts/en-hi-batch-001/psychology-of-money.partial.hi.json), [Animal Farm](../drafts/en-hi-batch-001/animal-farm.complete-draft.hi.json), [100 Ways to Improve Your Writing](../drafts/en-hi-batch-001/100-ways-to-improve-your-writing.complete-draft.hi.json).
 
 ## Import gates
 1. Complete the exact nonempty source fields for each book (`overview`, `deep_summary`, `key_ideas`, `deep_analysis`, `daily_application`, `action_system`, `practice_tracker`, `reflection_questions`, `real_life_example`). Do not shorten long sections into overviews.
