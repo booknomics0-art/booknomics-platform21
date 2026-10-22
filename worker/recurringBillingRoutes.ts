@@ -101,7 +101,7 @@ async function createSubscription(req: Request, env: Env, user: User) {
   if (body?.plan !== "weekly" && body?.plan !== "monthly") return json({ error: "Invalid plan" }, 400);
   const plan = body.plan;
   const existing = await env.DB!.prepare(
-    "SELECT id,status FROM subscriptions WHERE user_id = ? AND (status IN ('creating','pending') OR (status = 'active' AND (expires_at IS NULL OR datetime(expires_at) > datetime('now')))) LIMIT 1"
+    "SELECT id,status FROM subscriptions WHERE user_id = ? AND ((status='creating' OR (status='pending' AND razorpay_subscription_id IS NOT NULL)) OR (status = 'active' AND (expires_at IS NULL OR datetime(expires_at) > datetime('now')))) LIMIT 1"
   ).bind(user.id).first();
   if (existing) return json({ error: "You already have an active or pending subscription. Open My Subscription before starting a new one." }, 409);
   const cfg = await verifyProviderPlan(env, plan);
