@@ -3,6 +3,7 @@ type Env = {
   DB?: D1;
   RAZORPAY_KEY_ID?: string;
   RAZORPAY_KEY_SECRET?: string;
+  LEGACY_ORDER_CHECKOUT_ENABLED?: string;
 };
 
 type SafeUser = { id: string; email: string };
@@ -12,7 +13,7 @@ const SESSION_COOKIE = "bn_session";
 const encoder = new TextEncoder();
 const PLANS: Record<Plan, { amount: number; days: number }> = {
   weekly: { amount: 1900, days: 7 },
-  monthly: { amount: 6900, days: 30 },
+  monthly: { amount: 4900, days: 30 },
   quarterly: { amount: 19900, days: 90 },
 };
 
@@ -77,6 +78,10 @@ async function rateLimited(db: D1, userId: string) {
 }
 
 async function createOrder(request: Request, env: Env) {
+  // New purchases must use recurring mandate checkout. Keep /verify working for historical Orders.
+  if (env.LEGACY_ORDER_CHECKOUT_ENABLED !== "enabled") {
+    return json({ error: "One-time checkout retired. Visit /pricing for recurring Premium." }, { status: 410 });
+  }
   const auth = await requireUser(request, env);
   if (auth.response) return auth.response;
   const user = auth.user!;
