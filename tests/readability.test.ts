@@ -31,6 +31,7 @@ const contrast = (a: Rgb, b: Rgb) => {
 };
 
 const themeCss = readFileSync(resolve(process.cwd(), "src/index.css"), "utf8");
+const pageSpeedCss = readFileSync(resolve(process.cwd(), "src/pagespeed.css"), "utf8");
 const readingView = readFileSync(resolve(process.cwd(), "src/components/ReadingView.tsx"), "utf8");
 
 const cssColor = (scope: string, variable: string): Rgb => {
@@ -58,6 +59,9 @@ describe("readable Booknomics palette", () => {
 
   it("keeps small amber labels AA-readable on paper and cards", () => {
     const accent = cssColor(light, "primary");
+    // pagespeed.css is imported after index.css and must not silently override
+    // the palette with a different color in the actual rendered site.
+    expect(cssColor(pageSpeedCss, "primary")).toEqual(accent);
     expect(contrast(accent, cssColor(light, "background"))).toBeGreaterThanOrEqual(4.5);
     expect(contrast(accent, cssColor(light, "card"))).toBeGreaterThanOrEqual(4.5);
   });

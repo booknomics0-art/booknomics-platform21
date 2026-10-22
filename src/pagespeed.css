@@ -2,7 +2,7 @@
    Keep the existing palette, but use the darker end of the same amber family
    for small text/links so it clears WCAG AA on the paper background. */
 :root {
-  --primary: 32 70% 36%;
+  --primary: 32 75% 35%;
 }
 
 /* The decorative gold gradient is intentionally bright. Dark foreground text
