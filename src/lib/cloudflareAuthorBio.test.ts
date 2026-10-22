@@ -37,6 +37,13 @@ describe("Cloudflare-backed Mastery author biographies", () => {
     });
   });
 
+  it("also accepts a reviewed, source-backed 200-word profile for the new cohort", () => {
+    const shortEssay = `${identity.author} wrote ${identity.title}. ${"Wonderland puts ordinary language and authority under playful scrutiny. ".repeat(21)}`;
+    expect(shortEssay.trim().split(/\s+/u).length).toBeGreaterThanOrEqual(180);
+    expect(shortEssay.trim().split(/\s+/u).length).toBeLessThanOrEqual(240);
+    expect(parseCloudflareAuthorBio({ data: { ...valid.data, author_bio: shortEssay } }, identity)?.text).toBe(shortEssay.trim());
+  });
+
   it("rejects draft or unreviewed text, even if it is lengthy", () => {
     expect(parseCloudflareAuthorBio({ data: { ...valid.data, author_bio_status: "draft" } }, identity)).toBeNull();
     expect(parseCloudflareAuthorBio({ data: { ...valid.data, author_bio_status: null } }, identity)).toBeNull();

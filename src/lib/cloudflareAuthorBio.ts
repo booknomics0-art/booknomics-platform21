@@ -17,8 +17,9 @@ export interface AuthorBioIdentity {
   author: string;
 }
 
-const BIO_MIN_WORDS = 350;
-const BIO_MAX_WORDS = 460;
+// Earlier reviewed profiles are ~400 words; the next editorial cohorts are
+// ~200 words. Keep both valid without rewriting already approved biographies.
+const BIO_WORD_BANDS = [[180, 240], [350, 460]] as const;
 
 export function parseCloudflareAuthorBio(payload: unknown, expected: AuthorBioIdentity): CloudflareAuthorBio | null {
   if (!payload || typeof payload !== "object" || !("data" in payload)) return null;
@@ -37,7 +38,7 @@ export function parseCloudflareAuthorBio(payload: unknown, expected: AuthorBioId
 
   const text = book.author_bio.trim();
   const wordCount = text.split(/\s+/u).length;
-  if (wordCount < BIO_MIN_WORDS || wordCount > BIO_MAX_WORDS) return null;
+  if (!BIO_WORD_BANDS.some(([min, max]) => wordCount >= min && wordCount <= max)) return null;
   if (!text.includes(expected.title) || !text.includes(expected.author)) return null;
 
   let sources: unknown = book.author_bio_sources;

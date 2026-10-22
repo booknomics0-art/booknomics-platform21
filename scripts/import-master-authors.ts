@@ -58,8 +58,9 @@ for (const item of raw) {
   if (typeof row.text !== "string") fail(`Missing biography for ${row.title}`);
   const text = row.text.trim();
   const words = text.split(/\s+/u).length;
-  if (words < 350 || words > 460 || !text.includes(row.title) || !text.includes(row.author)) {
-    fail(`${row.title}: expected 350–460 original-language words, exact author and book title; received ${words} words`);
+  const validWordCount = (words >= 180 && words <= 240) || (words >= 350 && words <= 460);
+  if (!validWordCount || !text.includes(row.title) || !text.includes(row.author)) {
+    fail(`${row.title}: expected 180–240 words (new cohort) or 350–460 (legacy), exact author and book title; received ${words} words`);
   }
   if (!Array.isArray(row.sources) || row.sources.length < 2 || row.sources.length > 12 ||
       !row.sources.every(source => typeof source === "string" && /^https:\/\/[^\s]+$/i.test(source)) ||
