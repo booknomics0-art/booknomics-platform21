@@ -224,7 +224,7 @@ batch_index,book_id,slug,title,author,source_language,target_language,source_dat
 1223,0e24d8f6-d6f2-4b85-98e9-3255edc0f2e8,konserto-terakhir-abdullah-hussain-summary,Konserto Terakhir,Abdullah Hussain,en,hi,Supabase,published,pending_translation,753,812,1290,6787,202,189,179,264,232
 1224,3bf29545-8960-453d-a148-b2a168dd2990,korban-kesuciannya-keris-mas-summary,Korban Kesuciannya,Keris Mas,en,hi,Supabase,published,pending_translation,747,806,1291,6782,203,189,179,265,233
 1225,9d5c093b-16be-4135-9a48-73f35897d0dd,kornel-esti-dezso-kosztolanyi-summary,Kornél Esti,Dezső Kosztolányi,en,hi,Supabase,published,pending_translation,735,7094,1276,6695,196,189,179,258,226
-1226,7f4bf01c-d455-4d32-a4d7-b41a38e828a4,kotler-on-marketing-philip-kotler-summary,Kotler on Marketing,Philip Kotler,en,hi,Supabase,published,pending_translation,673,1432,892,4183,248,0,0,0,0
+1226,7f4bf01c-d455-4d32-a4d7-b41a38e828a4,kotler-on-marketing-philip-kotler-summary,Kotler on Marketing,Philip Kotler,en,hi,Supabase,published,complete_draft_5_of_5_pending_review,673,1432,892,4183,248,0,0,0,0
 1227,b3672fc5-fc26-44c4-9ad3-8777c3325b11,krakatit-karel-capek-summary,Krakatit,Karel Čapek,en,hi,Supabase,published,pending_translation,664,987,1945,11428,236,285,214,297,255
 1228,69f8c180-4f24-4795-bdee-b63d636da17a,kuyucaklı-yusuf-sabahattin-ali-summary,Kuyucaklı Yusuf,Sabahattin Ali,en,hi,Supabase,published,pending_translation,891,7271,1111,9619,292,210,205,344,337
 1229,37d4fdac-1ef3-4729-bbf0-a90121adfdde,kyra-kyralina-panait-istrati-summary,Kyra Kyralina,Panait Istrati,en,hi,Supabase,published,pending_translation,678,1020,1966,11505,236,285,214,302,255
