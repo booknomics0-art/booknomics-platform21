@@ -11,7 +11,7 @@ export const Navbar = () => {
   const { user, loading, signOut, isAdmin } = useAdmin();
   const showAdmin = !loading && isAdmin;
   const navigate = useNavigate();
-  const { isPremium, tier } = useTier();
+  const { isPremium } = useTier();
 
   const linkCls = ({ isActive }: { isActive: boolean }) =>
     `bn-nav-link text-sm font-medium transition-colors ${isActive ? "text-primary" : "text-foreground/70 hover:text-foreground"}`;
@@ -43,11 +43,12 @@ export const Navbar = () => {
         <div className="flex items-center gap-2">
           <div className="hidden xl:block"><FollowMenu /></div>
           {showAdmin && <div className="hidden md:block"><TierSimulator /></div>}
-          {isPremium && (
-            <span className="hidden sm:inline-flex items-center gap-1 rounded-full bg-primary/10 text-primary border border-primary/25 px-2.5 py-1 text-[11px] font-semibold uppercase tracking-wider">
-              <Crown className="h-3 w-3" /> {tier}
-            </span>
-          )}
+          <Link to="/pricing"
+            className="inline-flex items-center gap-1 rounded-full border border-primary/25 bg-primary/10 px-2.5 py-2 text-[11px] font-semibold text-primary hover:bg-primary/15"
+            aria-label={isPremium ? "View your Premium benefits" : "See Premium plans"}>
+            <Crown className="h-4 w-4" />
+            <span className="hidden sm:inline">{isPremium ? "My Premium" : "Go Premium"}</span>
+          </Link>
           <Button variant="outline" size="icon" onClick={() => navigate("/browse")} className="rounded-full bg-card/70" aria-label="Search books">
             <Search className="h-4 w-4" />
           </Button>
