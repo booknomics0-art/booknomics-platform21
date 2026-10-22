@@ -1,3 +1,5 @@
+import { handleTranslationRoute } from "./translationRoute";
+
 type D1 = any;
 
 type Env = {
@@ -234,6 +236,8 @@ async function generateActionPlan(request: Request, env: Env) {
 export async function handleBookAiRoute(request: Request, env: Env): Promise<Response | null> {
   const pathname = new URL(request.url).pathname;
   try {
+    const translation = await handleTranslationRoute(request, env);
+    if (translation) return translation;
     if (pathname === "/api/book-ai/translate-to-hindi" && request.method === "POST") return await translateToHindi(request, env);
     if (pathname === "/api/book-ai/generate-action-plan" && request.method === "POST") return await generateActionPlan(request, env);
     return null;
