@@ -3,6 +3,7 @@ import { handleOAuthMcpRoute } from "./oauthMcpRoutes";
 import { handleSocialRoute } from "./socialRoutes";
 import { handleCompatRoute } from "./compatRoutes";
 import { handlePaymentRoute } from "./paymentRoutes";
+import { handleRecurringBillingRoute } from "./recurringBillingRoutes";
 import { handleGrowthRoute } from "./growthRoutes";
 import { handleBookAiRoute } from "./bookAiRoutes";
 import { handleBookDetailRoute } from "./bookDetailRoutes";
@@ -111,6 +112,9 @@ export default {
 
     const oauthMcp = await handleOAuthMcpRoute(request, env);
     if (oauthMcp) return oauthMcp;
+
+    const recurringPayment = await handleRecurringBillingRoute(request, env);
+    if (recurringPayment) return recurringPayment;
 
     const payment = await handlePaymentRoute(request, env);
     if (payment) return payment;
