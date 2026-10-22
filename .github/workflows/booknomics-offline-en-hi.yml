@@ -127,6 +127,12 @@ jobs:
         with:
           pattern: hindi-batch-${{ inputs.batch }}-shard-*
           path: collected/
+      - name: Reconcile every pending book ID against shard reports
+        run: |
+          python scripts/translation/aggregate_batch_reports.py \
+            --manifest content/translations/batches/en-hi-batch-${{ inputs.batch }}-20261022.csv \
+            --reports-dir collected \
+            --output collected/500-book-summary.json
       - uses: actions/upload-artifact@v4
         with:
           name: hindi-batch-${{ inputs.batch }}-all-shards-unapproved
