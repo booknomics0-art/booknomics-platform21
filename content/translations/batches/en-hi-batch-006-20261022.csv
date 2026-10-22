@@ -141,7 +141,7 @@ batch_index,book_id,slug,title,author,source_language,target_language,source_dat
 2640,a15fea3b-1540-4fb5-8de7-1bc2b04c6d17,the-long-earth-terry-pratchett-stephen-baxter-summary,The long earth,"Terry Pratchett, Stephen Baxter",en,hi,Supabase,published,pending_translation,600,4219,2404,12025,0,650,224,560,232
 2641,417f8a40-7fc5-4de9-b908-8055bb412a45,the-long-game-rachel-reid-summary,The Long Game,Rachel Reid,en,hi,Supabase,published,pending_translation,563,3190,2593,14690,0,663,224,563,231
 2642,fba46ee0-eaa2-4cfb-b727-98f25f73dad3,the-long-haul-jeff-kinney-summary,The Long Haul,Jeff Kinney,en,hi,Supabase,published,pending_translation,586,4186,2397,13422,0,653,224,563,231
-2643,aceb04d1-25d2-4d7b-8e7d-1ba8b0982668,the-long-tail-chris-anderson-summary,The Long Tail,Chris Anderson,en,hi,Supabase,published,pending_translation,641,1497,819,4323,272,0,0,0,0
+2643,aceb04d1-25d2-4d7b-8e7d-1ba8b0982668,the-long-tail-chris-anderson-summary,The Long Tail,Chris Anderson,en,hi,Supabase,published,complete_draft_5_of_5_pending_review,641,1497,819,4323,272,0,0,0,0
 2644,0af87c18-1e62-4830-9661-fb6562336ea9,the-long-walk-stephen-king-summary,The Long Walk,Stephen King,en,hi,Supabase,published,pending_translation,1076,2199,3452,8851,0,668,223,684,369
 2645,d9bd2e87-efa6-49fb-ab5d-2ac7cae7e98c,the-long-way-to-a-small-angry-planet-becky-chambers-summary,"The Long Way to a Small, Angry Planet",Becky Chambers,en,hi,Supabase,published,pending_translation,1111,2295,3604,8930,0,693,223,711,393
 2646,5fd6a804-d44d-49a4-8600-240a93d97e5b,the-lorax-dr-seuss-summary,The Lorax,Dr. Seuss,en,hi,Supabase,published,pending_translation,580,3577,2365,16782,0,649,224,559,227
