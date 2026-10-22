@@ -52,11 +52,11 @@
 }
 
 .bn-readable-heading p {
-  color: hsl(var(--background) / .64);
+  color: hsl(var(--background) / .8);
 }
 
 .bn-readable-section .bn-text-link {
-  color: hsl(var(--background) / .74);
+  color: hsl(var(--background) / .85);
 }
 
 .bn-readable-section .bn-text-link:hover {
@@ -148,7 +148,7 @@
 
 .bn-readable-copy > p {
   margin-top: .42rem;
-  color: hsl(var(--background) / .58);
+  color: hsl(var(--background) / .78);
   font-size: .82rem;
   line-height: 1.45;
   white-space: nowrap;
@@ -164,7 +164,7 @@
   margin-top: .78rem;
   padding-top: .72rem;
   border-top: 1px solid hsl(var(--background) / .11);
-  color: hsl(var(--background) / .48);
+  color: hsl(var(--background) / .76);
   font-size: .7rem;
   font-weight: 600;
 }

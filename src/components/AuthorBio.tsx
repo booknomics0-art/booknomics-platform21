@@ -55,7 +55,7 @@ export const AuthorBio = ({ author, category, title, isHindi = false }: Props) =
             <BookOpen className="h-4 w-4 text-primary" />
             <span className="text-sm font-semibold">{isHindi ? "लेखक और प्रमुख कृतियाँ" : "The author and their works"}</span>
           </div>
-          <p className="text-sm text-foreground/85 leading-relaxed whitespace-pre-line">
+          <p className="text-base text-foreground/90 leading-7 whitespace-pre-line">
             {reviewed ? (isHindi ? reviewedProfile!.hi : reviewedProfile!.en) : (
               isHindi
                 ? `${author} इस पुस्तक के रचनाकार हैं। यह कृति ${category} विधा से संबंधित है। लेखक के जीवन, साहित्यिक योगदान और अन्य रचनाओं का तथ्य-जाँचा हुआ विस्तृत परिचय अभी संपादकीय समीक्षा में है।`
@@ -63,7 +63,7 @@ export const AuthorBio = ({ author, category, title, isHindi = false }: Props) =
             )}
           </p>
           {reviewed && (
-            <a className="text-xs text-primary underline mt-3 inline-block" href={reviewedProfile!.source} target="_blank" rel="noopener noreferrer">
+            <a className="text-sm text-primary underline mt-3 inline-block" href={reviewedProfile!.source} target="_blank" rel="noopener noreferrer">
               {isHindi ? "जीवनी व रचनाओं के लिए स्रोत" : "Biographical source"}
             </a>
           )}
@@ -85,7 +85,7 @@ export const AuthorBio = ({ author, category, title, isHindi = false }: Props) =
             <ShieldCheck className="h-4 w-4 text-primary" />
             <span className="text-sm font-semibold">{isHindi ? "इस गाइड के बारे में" : "About this learning guide"}</span>
           </div>
-          <p className="text-sm text-muted-foreground leading-relaxed">
+          <p className="text-base text-muted-foreground leading-7">
             {isHindi
               ? "यह मूल पुस्तक का स्वतंत्र सारांश और आलोचनात्मक अध्ययन है, मूल लेखक की ओर से लिखा गया या उनके द्वारा समर्थित पाठ नहीं। संपूर्ण प्रसंग और भाषा के लिए मूल कृति पढ़ने की सलाह दी जाती है।"
               : "This is an independent Booknomics summary and analysis, not writing endorsed by the original author. Read the complete book for its original language, full context and nuance."}

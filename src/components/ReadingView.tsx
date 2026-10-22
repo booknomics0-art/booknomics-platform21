@@ -10,17 +10,17 @@ type LanguageKey = "en" | "hi";
 const THEMES: Record<ThemeKey, Record<string, string>> = {
   light: {
     "--rv-bg": "#FBF9F1", "--rv-text": "#2C2416", "--rv-heading": "#1A1410",
-    "--rv-muted": "#8B7355", "--rv-accent": "#B8860B", "--rv-divider": "#E8DCC8",
+    "--rv-muted": "#67523E", "--rv-accent": "#805B08", "--rv-divider": "#E8DCC8",
     "--rv-quote-bg": "#F3EFE6", "--rv-highlight-bg": "#FFF3CD",
   },
   sepia: {
     "--rv-bg": "#F4ECD8", "--rv-text": "#3A3020", "--rv-heading": "#1F1810",
-    "--rv-muted": "#7A6748", "--rv-accent": "#B8860B", "--rv-divider": "#DDCDA8",
+    "--rv-muted": "#695638", "--rv-accent": "#805B08", "--rv-divider": "#DDCDA8",
     "--rv-quote-bg": "#EDE3CC", "--rv-highlight-bg": "#F5E5B5",
   },
   dark: {
     "--rv-bg": "#1A1A1A", "--rv-text": "#D4C5B2", "--rv-heading": "#E8DCC8",
-    "--rv-muted": "#9A8C76", "--rv-accent": "#DAA520", "--rv-divider": "#2E2A24",
+    "--rv-muted": "#B8A994", "--rv-accent": "#DAA520", "--rv-divider": "#2E2A24",
     "--rv-quote-bg": "#222222", "--rv-highlight-bg": "#3A2F12",
   },
 };
@@ -109,7 +109,7 @@ const promoteEditorialSubheads = (input: string) =>
   input.replace(
     /(###\s*(?:\d+\.\s*)?(?:प्रमुख विषय|प्रमुख पात्र|मुख्य विषय|Major Themes|Key Themes|Characters)[^\n]*\n)([\s\S]*?)(?=\n###\s|\n##\s|$)/gu,
     (_all, heading: string, body: string) => heading + body.replace(
-      /(^|\n\n)([\p{L}][\p{L}\p{M}\s\-–\/]{3,48})\n(?=[\p{L}])/gu,
+      /(^|\n\n)([\p{L}][\p{L}\p{M}\s\-–/]{3,48})\n(?=[\p{L}])/gu,
       (_match, prefix: string, label: string) =>
         /[।.!?:]$/.test(label.trim()) ? `${prefix}${label}\n` : `${prefix}**${label.trim()}**\n`,
     ),
