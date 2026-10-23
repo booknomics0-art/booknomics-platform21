@@ -5,6 +5,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { findReviewedAuthorProfile } from "@/lib/reviewedHindiAuthors";
 import { findReviewedBookAuthorProfile } from "@/lib/reviewedBookAuthorProfiles";
 import { fetchCloudflareAuthorBio, type CloudflareAuthorBio } from "@/lib/cloudflareAuthorBio";
+import { findVerifiedAuthorProfile100 } from "@/lib/verifiedAuthorProfiles100";
 
 interface Props { bookId?: string; bookSlug?: string; author: string; category: string; title?: string; isHindi?: boolean }
 interface OtherWork { title: string; slug: string; seo_slug: string | null }
@@ -57,8 +58,9 @@ export const AuthorBio = ({ bookId, bookSlug, author, category, title, isHindi =
   const bookProfile = bookId ? findReviewedBookAuthorProfile(bookId) : undefined;
   const activeBookProfile = cloudflareBio ?? bookProfile;
   const reviewedProfile = isPremchand(author) ? premchandBio : findReviewedAuthorProfile(author);
-  const reviewed = Boolean(activeBookProfile || reviewedProfile);
-  const sources = activeBookProfile?.sources ?? (reviewedProfile ? [reviewedProfile.source] : []);
+  const authorProfile100 = findVerifiedAuthorProfile100(author);
+  const reviewed = Boolean(authorProfile100 || activeBookProfile || reviewedProfile);
+  const sources = authorProfile100?.sources ?? activeBookProfile?.sources ?? (reviewedProfile ? [reviewedProfile.source] : []);
   return (
     <section className="pt-2 pb-6 scroll-mt-28" aria-labelledby="author-bio">
       <div className="text-xs tracking-[0.14em] text-primary font-semibold mb-3">
@@ -74,13 +76,18 @@ export const AuthorBio = ({ bookId, bookSlug, author, category, title, isHindi =
             <span className="text-sm font-semibold">{isHindi ? "लेखक और प्रमुख कृतियाँ" : "The author and their works"}</span>
           </div>
           <p className="text-base text-foreground/90 leading-7 whitespace-pre-line">
-            {activeBookProfile?.text ?? (reviewedProfile ? (isHindi ? reviewedProfile.hi : reviewedProfile.en) : (
+            {authorProfile100?.biography ?? activeBookProfile?.text ?? (reviewedProfile ? (isHindi ? reviewedProfile.hi : reviewedProfile.en) : (
               isHindi
                 ? `${author} इस पुस्तक के रचनाकार हैं। यह कृति ${category} विधा से संबंधित है। लेखक के जीवन, साहित्यिक योगदान और अन्य रचनाओं का तथ्य-जाँचा हुआ विस्तृत परिचय अभी संपादकीय समीक्षा में है।`
                 : `${author} wrote the original work, ${title || "this book"}, in the ${category} category. A source-checked account of their life, literary contribution, and bibliography is pending editorial review.`
             ))}
           </p>
-          {activeBookProfile && activeBookProfile.language !== (isHindi ? "hi" : "en") && (
+          {authorProfile100 && authorProfile100.language !== (isHindi ? "hi" : "en") && (
+            <p className="text-xs text-muted-foreground mt-3">
+              {isHindi ? "यह सत्यापित लेखक परिचय अभी मूल भाषा में उपलब्ध है।" : "This verified author profile is currently available in its original language."}
+            </p>
+          )}
+          {!authorProfile100 && activeBookProfile && activeBookProfile.language !== (isHindi ? "hi" : "en") && (
             <p className="text-xs text-muted-foreground mt-3">
               {isHindi ? "संपादकीय सत्यापन वाला यह पुस्तक-विशिष्ट परिचय अभी मूल भाषा में उपलब्ध है।" : "This verified book-specific introduction is currently available in the book’s original language."}
             </p>
@@ -92,6 +99,14 @@ export const AuthorBio = ({ bookId, bookSlug, author, category, title, isHindi =
                   {isHindi ? `स्रोत ${index + 1}` : `Source ${index + 1}`}
                 </a>
               ))}
+            </div>
+          )}
+          {authorProfile100 && (
+            <div className="mt-4">
+              <h3 className="text-sm font-bold mb-2">{isHindi ? "प्रसिद्ध कृतियाँ" : "Notable books and works"}</h3>
+              <ul className="text-sm text-foreground/90 list-disc pl-5 space-y-1">
+                {authorProfile100.famousBooks.map((work) => <li key={work}>{work}</li>)}
+              </ul>
             </div>
           )}
           {otherWorks.length > 0 && (
