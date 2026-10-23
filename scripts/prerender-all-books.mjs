@@ -1,5 +1,6 @@
 import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, resolve } from "node:path";
+import { getGscSeoPilot } from "./gsc-seo-pilot.mjs";
 
 const DIST = resolve("dist");
 const INDEX = resolve(DIST, "index.html");
@@ -80,8 +81,9 @@ for(const book of books){
   const image=book.og_image||book.cover_url||fallbackPath;
   const absImage=image.startsWith("http")?image:`${BASE}${image.startsWith("/")?"":"/"}${image}`;
   const canonical=`${BASE}/books/${encodeURI(slug)}`;
-  const title=book.meta_title||(isHi?`${book.title} का सारांश — ${book.author} | Booknomics`:`${book.title} Summary — Key Ideas & Analysis | Booknomics`);
-  const description=book.meta_description||clamp(`${book.title} by ${book.author}. ${book.overview||book.tagline||"Key ideas, analysis and practical lessons."}`,180);
+  const gscPilot=getGscSeoPilot(slug,book);
+  const title=gscPilot?.title||book.meta_title||(isHi?`${book.title} का सारांश — ${book.author} | Booknomics`:`${book.title} Summary — Key Ideas & Analysis | Booknomics`);
+  const description=gscPilot?.description||book.meta_description||clamp(`${book.title} by ${book.author}. ${book.overview||book.tagline||"Key ideas, analysis and practical lessons."}`,180);
   const overview=clamp(book.overview||book.tagline||"",1800);
   const ideas=clamp(book.key_ideas||"",1700);
   const application=clamp(book.daily_application||"",900);
@@ -95,7 +97,7 @@ for(const book of books){
     {"@type":"Article","@id":`${canonical}#article`,headline:title,description,inLanguage:lang,mainEntityOfPage:{"@type":"WebPage","@id":canonical},publisher:{"@id":ORG_ID},author:{"@id":ORG_ID},about:{"@id":`${canonical}#book`},image:[absImage],...(publishedAt?{datePublished:publishedAt}:{})},
   ];
   const jsonLd={"@context":"https://schema.org","@graph":graph};
-  const root=`<main lang="${lang}" style="font-family:system-ui,-apple-system,sans-serif;max-width:1040px;margin:0 auto;padding:32px 20px;line-height:1.68"><nav aria-label="Breadcrumb"><a href="/">Home</a> › <a href="${hub}">${isHi?"हिंदी":"English"}</a> › ${esc(book.title)}</nav><article><header><p>${esc(book.category||"Book summary")}</p><h1>${esc(book.title)}</h1><p>${isHi?"लेखक":"by"} ${esc(book.author||"Unknown author")}</p><img src="${esc(absImage)}" alt="${esc(`${book.title} book cover`)}" width="280" loading="eager" /></header>${overview?`<section><h2>${isHi?"सारांश":`${esc(book.title)} summary`}</h2><p>${esc(overview)}</p></section>`:""}${ideas?`<section><h2>${isHi?"मुख्य विचार":"Key ideas"}</h2><p>${esc(ideas)}</p></section>`:""}${application?`<section><h2>${isHi?"व्यावहारिक उपयोग":"Practical application"}</h2><p>${esc(application)}</p></section>`:""}<section><h2>${isHi?"और पढ़ें":"Continue exploring"}</h2><p><a href="${hub}">${isHi?"और हिंदी पुस्तकें":"More English books"}</a> · <a href="/browse">Browse library</a></p></section></article></main>`;
+  const root=`<main lang="${lang}" style="font-family:system-ui,-apple-system,sans-serif;max-width:1040px;margin:0 auto;padding:32px 20px;line-height:1.68"><nav aria-label="Breadcrumb"><a href="/">Home</a> › <a href="${hub}">${isHi?"हिंदी":"English"}</a> › ${esc(book.title)}</nav><article><header><p>${esc(book.category||"Book summary")}</p><h1>${esc(gscPilot?.h1||book.title)}</h1><p>${isHi?"लेखक":"by"} ${esc(book.author||"Unknown author")}</p>${gscPilot?.intro?`<p data-seo="gsc-pilot-intro">${esc(gscPilot.intro)}</p>`:""}<img src="${esc(absImage)}" alt="${esc(`${book.title} book cover`)}" width="280" loading="eager" /></header>${overview?`<section><h2>${isHi?"सारांश":`${esc(book.title)} summary`}</h2><p>${esc(overview)}</p></section>`:""}${ideas?`<section><h2>${isHi?"मुख्य विचार":"Key ideas"}</h2><p>${esc(ideas)}</p></section>`:""}${application?`<section><h2>${isHi?"व्यावहारिक उपयोग":"Practical application"}</h2><p>${esc(application)}</p></section>`:""}<section><h2>${isHi?"और पढ़ें":"Continue exploring"}</h2><p><a href="${hub}">${isHi?"और हिंदी पुस्तकें":"More English books"}</a> · <a href="/browse">Browse library</a></p></section></article></main>`;
   let html=head(template,{lang,title,description,canonical,image:absImage,jsonLd});
   html=html.replace('<div id="root"></div>',`<div id="root">${root}</div>`);
   writeRoute(`/books/${slug}`,html);
