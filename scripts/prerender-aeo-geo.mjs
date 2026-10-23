@@ -1,5 +1,6 @@
 import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, resolve } from "node:path";
+import { getGscSeoPilot } from "./gsc-seo-pilot.mjs";
 
 const DIST = resolve("dist");
 const INDEX = resolve(DIST, "index.html");
@@ -192,15 +193,16 @@ let writtenNoindex = 0;
 for (const book of liveHindi) {
   const slug = book.seo_slug || book.slug;
   if (!slug || !book.title) continue;
+  const gscPilot = getGscSeoPilot(slug, { ...book, language: "hi" });
   const canonical = `${BASE}/books/${encodeURI(slug)}`;
-  const title = clamp(book.meta_title, 68) || `${book.title} सारांश हिंदी में | Booknomics`;
-  const description = clamp(book.meta_description, 180) || clamp(`${book.title} — ${book.author || ""}. ${book.overview || book.tagline || "हिंदी सारांश, मुख्य विचार और विश्लेषण।"}`, 180);
+  const title = gscPilot?.title || clamp(book.meta_title, 68) || `${book.title} सारांश हिंदी में | Booknomics`;
+  const description = gscPilot?.description || clamp(book.meta_description, 180) || clamp(`${book.title} — ${book.author || ""}. ${book.overview || book.tagline || "हिंदी सारांश, मुख्य विचार और विश्लेषण।"}`, 180);
   const image = book.og_image || book.cover_url || `${BASE}/og-default.svg`;
   const overview = clamp(book.overview || book.tagline || "", 1500);
   const keyIdeas = clamp(book.key_ideas || "", 1200);
   const application = clamp(book.daily_application || "", 800);
   const takeaways = extractTakeaways(book, 5);
-  const directAnswer = clamp(book.overview || book.tagline || book.deep_analysis || "", 680);
+  const directAnswer = gscPilot?.intro || clamp(book.overview || book.tagline || book.deep_analysis || "", 680);
   const isNoindex = book.status === "published_noindex";
   const bookId = `${canonical}#book`;
   const pageId = `${canonical}#webpage`;
@@ -225,7 +227,7 @@ for (const book of liveHindi) {
   ] };
 
   const staticRoot = `<main lang="hi" style="font-family:system-ui,-apple-system,sans-serif;max-width:900px;margin:0 auto;padding:32px 20px;line-height:1.75"><nav><a href="/">होम</a> › <a href="/hindi">हिंदी</a> › ${escapeHtml(book.title)}</nav><article>
-<header><p>Booknomics हिंदी अध्ययन-सारांश</p><h1>${escapeHtml(book.title)} — हिंदी सारांश</h1>${book.author ? `<p><strong>लेखक:</strong> ${escapeHtml(book.author)}</p>` : ""}${book.category ? `<p><strong>श्रेणी:</strong> ${escapeHtml(book.category)}</p>` : ""}${book.year ? `<p><strong>मूल प्रकाशन वर्ष:</strong> ${escapeHtml(String(book.year))}</p>` : ""}${book.cover_url ? `<img src="${escapeHtml(book.cover_url)}" alt="${escapeHtml(`${book.title} पुस्तक कवर`)}" width="320" height="480" loading="eager" />` : ""}</header>
+<header><p>Booknomics हिंदी अध्ययन-सारांश</p><h1>${escapeHtml(gscPilot?.h1 || `${book.title} — हिंदी सारांश`)}</h1>${book.author ? `<p><strong>लेखक:</strong> ${escapeHtml(book.author)}</p>` : ""}${book.category ? `<p><strong>श्रेणी:</strong> ${escapeHtml(book.category)}</p>` : ""}${book.year ? `<p><strong>मूल प्रकाशन वर्ष:</strong> ${escapeHtml(String(book.year))}</p>` : ""}${book.cover_url ? `<img src="${escapeHtml(book.cover_url)}" alt="${escapeHtml(`${book.title} पुस्तक कवर`)}" width="320" height="480" loading="eager" />` : ""}</header>
 ${directAnswer ? `<section><h2>${escapeHtml(book.title)} का संक्षिप्त उत्तर</h2><p>${escapeHtml(directAnswer)}</p></section>` : ""}
 ${takeaways.length ? `<section><h2>${escapeHtml(book.title)} की ${takeaways.length} मुख्य सीखें</h2><ul>${takeaways.map((item) => `<li>${renderIdea(item)}</li>`).join("")}</ul></section>` : ""}
 ${overview ? `<section><h2>पुस्तक का परिचय और सारांश</h2><p>${escapeHtml(overview)}</p></section>` : ""}${keyIdeas ? `<section><h2>मुख्य विचार</h2><p>${escapeHtml(keyIdeas)}</p></section>` : ""}${application ? `<section><h2>जीवन में कैसे लागू करें</h2><p>${escapeHtml(application)}</p></section>` : ""}

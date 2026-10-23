@@ -25,6 +25,7 @@ import { SEO } from "@/components/SEO";
 import { Helmet } from "react-helmet-async";
 import { stripMarkdown } from "@/lib/stripMarkdown";
 import { slugifyCategory } from "@/lib/categorySlug";
+import { getGscSeoPilot } from "@/lib/gscSeoPilot";
 import { Link } from "react-router-dom";
 
 import { resolveCanonicalSlug } from "@/lib/slugRedirects";
@@ -456,6 +457,9 @@ const BookDetail = () => {
     : `${book.title} Summary: Key Lessons & Analysis | Booknomics`);
   const seoDesc = bookAny.meta_description || (isHi ? fallbackDesc.slice(0, 158) : (rawDesc ? rawDesc.slice(0, 155) : fallbackDesc));
   const canonicalSlug = (bookAny.seo_slug as string | null) || book.slug;
+  const gscPilot = getGscSeoPilot(canonicalSlug, book);
+  const effectiveSeoTitle = gscPilot?.title || seoTitle;
+  const effectiveSeoDesc = gscPilot?.description || seoDesc;
   const seoPath = `/books/${canonicalSlug}`;
   const canonical = `https://www.booknomics.com${seoPath}`;
   const ogImg = bookAny.og_image || book.cover_url || undefined;
@@ -476,8 +480,8 @@ const BookDetail = () => {
   const articleLd: Record<string, any> = {
     "@context": "https://schema.org",
     "@type": "Article",
-    headline: seoTitle,
-    description: seoDesc,
+    headline: effectiveSeoTitle,
+    description: effectiveSeoDesc,
     inLanguage: isHi ? "hi" : "en",
     mainEntityOfPage: { "@type": "WebPage", "@id": canonical },
     author: { "@type": "Organization", name: "Booknomics", url: "https://www.booknomics.com" },
@@ -526,8 +530,8 @@ const BookDetail = () => {
   return (
     <Layout>
       <SEO
-        title={seoTitle}
-        description={seoDesc}
+        title={effectiveSeoTitle}
+        description={effectiveSeoDesc}
         canonical={canonical}
         ogType="article"
         lang={isHi ? "hi" : "en"}
@@ -577,9 +581,14 @@ const BookDetail = () => {
                 className={`font-serif text-2xl md:text-6xl font-bold leading-[1.1] ${isHi ? "tracking-normal" : "tracking-tight"}`}
                 style={isHi ? { fontFamily: "'Noto Sans Devanagari', system-ui, sans-serif" } : undefined}
               >
-                {book.title}
+                {gscPilot?.h1 || book.title}
               </h1>
               <p className="text-base md:text-xl text-muted-foreground mt-2 md:mt-3">{isHi ? "लेखक: " : "by "}{book.author}</p>
+              {gscPilot?.intro && (
+                <p className="mt-4 max-w-3xl text-base leading-relaxed text-foreground/90" data-seo="gsc-pilot-intro">
+                  {gscPilot.intro}
+                </p>
+              )}
               {book.tagline && (
                 <p
                   className={`font-serif text-base md:text-2xl mt-4 md:mt-6 text-foreground/80 ${isHi ? "not-italic" : "italic"}`}
@@ -699,7 +708,7 @@ const BookDetail = () => {
                     <Suspense fallback={<div className="text-center py-16 text-muted-foreground">Loading reader…</div>}>
                       <ReadingView
                         content={merged}
-                        title={book.title}
+                        title={gscPilot ? undefined : book.title}
                         author={book.author}
                         category={(book as any).category || undefined}
                         language={lang}
