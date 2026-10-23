@@ -92,6 +92,16 @@
 .bn-display-title { max-width: 780px; font-size: clamp(3.55rem, 7.3vw, 7.75rem); line-height: .92 !important; letter-spacing: -.072em !important; font-weight: 700; }
 .bn-display-title > span { display: block; color: hsl(var(--primary)); font-style: italic; font-weight: 600; }
 .bn-home-lede { max-width: 42rem; margin-top: 1.7rem; color: hsl(var(--muted-foreground)); font-size: clamp(1.02rem, 1.5vw, 1.22rem); line-height: 1.72; }
+/* Text-first sections: slightly sturdier strokes on the warm paper surface. */
+.bn-home-lede,
+.bn-section-heading p,
+.bn-search-copy p,
+.bn-outcome-card p,
+.bn-language-card p,
+.bn-category-card p,
+.bn-resource-card p,
+.bn-about-panel > p,
+.bn-final-cta p { font-weight: 500; }
 .bn-home-actions { display: flex; flex-wrap: wrap; gap: .75rem; margin-top: 2rem; }
 .bn-primary-cta { min-height: 52px !important; border-radius: 999px !important; padding-inline: 1.5rem !important; gap: .55rem; background: hsl(var(--foreground)) !important; color: hsl(var(--background)) !important; box-shadow: 0 12px 30px -18px hsl(var(--foreground) / .65); transition: transform .25s ease, box-shadow .25s ease, background .25s ease; }
 .bn-primary-cta:hover { transform: translateY(-2px); background: hsl(var(--primary)) !important; box-shadow: 0 18px 36px -18px hsl(var(--primary) / .55); }

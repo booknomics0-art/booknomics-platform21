@@ -33,6 +33,7 @@ const contrast = (a: Rgb, b: Rgb) => {
 const themeCss = readFileSync(resolve(process.cwd(), "src/index.css"), "utf8");
 const pageSpeedCss = readFileSync(resolve(process.cwd(), "src/pagespeed.css"), "utf8");
 const readingView = readFileSync(resolve(process.cwd(), "src/components/ReadingView.tsx"), "utf8");
+const editorialCss = readFileSync(resolve(process.cwd(), "src/editorial.css"), "utf8");
 
 const cssColor = (scope: string, variable: string): Rgb => {
   const match = scope.match(new RegExp(`--${variable}:\\s*(\\d+(?:\\.\\d+)?)\\s+(\\d+(?:\\.\\d+)?)%\\s+(\\d+(?:\\.\\d+)?)%`));
@@ -76,5 +77,16 @@ describe("readable Booknomics palette", () => {
         expect(contrast(readerColor(theme, text), readerColor(theme, surface))).toBeGreaterThanOrEqual(4.5);
       }
     }
+  });
+
+  it.each(["light", "sepia", "dark"] as const)("keeps %s reader body ink high contrast", (theme) => {
+    expect(contrast(readerColor(theme, "text"), readerColor(theme, "bg"))).toBeGreaterThanOrEqual(10);
+  });
+
+  it("uses real medium-weight book fonts and stronger homepage copy", () => {
+    expect(readingView).toContain("Lora:ital,wght@0,400;0,500;0,600");
+    expect(readingView).toMatch(/\.rv-prose \{[^}]*font-weight: 500;/);
+    expect(readingView).toMatch(/\.rv-hi \.rv-eyebrow \{[^}]*font-size: 15px;/);
+    expect(editorialCss).toMatch(/\.bn-home-lede,\s*\.bn-section-heading p,[\s\S]*?font-weight: 500;/);
   });
 });

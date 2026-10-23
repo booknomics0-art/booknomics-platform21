@@ -148,8 +148,9 @@
 
 .bn-readable-copy > p {
   margin-top: .42rem;
-  color: hsl(var(--background) / .78);
-  font-size: .82rem;
+  color: hsl(var(--background) / .9);
+  font-size: .88rem;
+  font-weight: 500;
   line-height: 1.45;
   white-space: nowrap;
   overflow: hidden;
@@ -164,8 +165,8 @@
   margin-top: .78rem;
   padding-top: .72rem;
   border-top: 1px solid hsl(var(--background) / .11);
-  color: hsl(var(--background) / .76);
-  font-size: .7rem;
+  color: hsl(var(--background) / .88);
+  font-size: .78rem;
   font-weight: 600;
 }
 

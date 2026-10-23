@@ -17,7 +17,7 @@
     --popover-foreground: 25 25% 12%;
 
     /* Deep amber remains recognizably gold while small links/labels stay readable. */
-    --primary: 32 75% 35%;
+    --primary: 32 75% 32%;
     --primary-foreground: 40 50% 98%;
     --primary-glow: 38 90% 62%;
 
@@ -26,7 +26,7 @@
 
     --muted: 38 25% 92%;
     /* Body-secondary copy on paper/card backgrounds: high-contrast warm ink. */
-    --muted-foreground: 25 18% 32%;
+    --muted-foreground: 25 18% 25%;
 
     --accent: 32 80% 55%;
     --accent-foreground: 25 25% 12%;

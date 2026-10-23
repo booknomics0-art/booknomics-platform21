@@ -9,18 +9,18 @@ type LanguageKey = "en" | "hi";
 
 const THEMES: Record<ThemeKey, Record<string, string>> = {
   light: {
-    "--rv-bg": "#FBF9F1", "--rv-text": "#2C2416", "--rv-heading": "#1A1410",
-    "--rv-muted": "#67523E", "--rv-accent": "#805B08", "--rv-divider": "#E8DCC8",
+    "--rv-bg": "#FBF9F1", "--rv-text": "#241B15", "--rv-heading": "#1A1410",
+    "--rv-muted": "#58412E", "--rv-accent": "#704D05", "--rv-divider": "#E8DCC8",
     "--rv-quote-bg": "#F3EFE6", "--rv-highlight-bg": "#FFF3CD",
   },
   sepia: {
-    "--rv-bg": "#F4ECD8", "--rv-text": "#3A3020", "--rv-heading": "#1F1810",
-    "--rv-muted": "#695638", "--rv-accent": "#805B08", "--rv-divider": "#DDCDA8",
+    "--rv-bg": "#F4ECD8", "--rv-text": "#2A2118", "--rv-heading": "#1F1810",
+    "--rv-muted": "#584329", "--rv-accent": "#704D05", "--rv-divider": "#DDCDA8",
     "--rv-quote-bg": "#EDE3CC", "--rv-highlight-bg": "#F5E5B5",
   },
   dark: {
-    "--rv-bg": "#1A1A1A", "--rv-text": "#D4C5B2", "--rv-heading": "#E8DCC8",
-    "--rv-muted": "#B8A994", "--rv-accent": "#DAA520", "--rv-divider": "#2E2A24",
+    "--rv-bg": "#1A1A1A", "--rv-text": "#E9DCC9", "--rv-heading": "#F0E5D6",
+    "--rv-muted": "#C9BAA7", "--rv-accent": "#DAA520", "--rv-divider": "#2E2A24",
     "--rv-quote-bg": "#222222", "--rv-highlight-bg": "#3A2F12",
   },
 };
@@ -71,7 +71,7 @@ const loadFonts = (language: LanguageKey) => {
   l.rel = "stylesheet";
   l.href = language === "hi"
     ? "https://fonts.googleapis.com/css2?family=Noto+Sans+Devanagari:wght@500;600;700&family=Noto+Serif+Devanagari:wght@400;500;600&display=swap"
-    : "https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;800&family=Lora:ital,wght@0,400;0,600;1,400&display=swap";
+    : "https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;800&family=Lora:ital,wght@0,400;0,500;0,600;1,400;1,500&display=swap";
   document.head.appendChild(l);
 };
 
@@ -477,13 +477,13 @@ const ReadingView = ({
         .rv-h2, .rv-h3, .rv-h4 { scroll-margin-top: 90px; }
         .rv-article { max-width: calc(680px + (var(--rv-scale) - 1) * 120px); transition: max-width .3s ease; }
         .rv-h1 { font-size: calc(30px * var(--rv-scale)); }
-        .rv-reading-intent { max-width: 560px; margin: 14px auto 0; color: var(--rv-muted); font-size: calc(14px * var(--rv-scale)); line-height: 1.6; }
+        .rv-reading-intent { max-width: 560px; margin: 14px auto 0; color: var(--rv-muted); font-size: calc(15px * var(--rv-scale)); line-height: 1.6; font-weight: 500; }
         .rv-chapter { margin-top: calc(48px * var(--rv-scale)); margin-bottom: calc(16px * var(--rv-scale)); }
-        .rv-eyebrow { color: var(--rv-accent); font-size: 12px; letter-spacing: .2em; text-transform: uppercase; font-weight: 700; margin-bottom: 6px; }
+        .rv-eyebrow { color: var(--rv-accent); font-size: 14px; letter-spacing: .16em; text-transform: uppercase; font-weight: 700; margin-bottom: 6px; }
         .rv-h2 { font-size: calc(26px * var(--rv-scale)); }
         .rv-h3 { font-size: calc(20px * var(--rv-scale)); margin-top: calc(32px * var(--rv-scale)); margin-bottom: calc(10px * var(--rv-scale)); }
         .rv-h4 { font-size: calc(18px * var(--rv-scale)); margin-top: calc(26px * var(--rv-scale)); margin-bottom: calc(10px * var(--rv-scale)); font-weight: 800; }
-        .rv-prose { font-size: calc(18px * var(--rv-scale)); line-height: calc(1.85 - (var(--rv-scale) - 1) * 0.25); transition: font-size .3s ease, line-height .3s ease; }
+        .rv-prose { font-size: calc(18px * var(--rv-scale)); font-weight: 500; line-height: calc(1.85 - (var(--rv-scale) - 1) * 0.25); transition: font-size .3s ease, line-height .3s ease; }
         .rv-prose p, .rv-prose li { font-family: var(--rv-body-font); }
         .rv-p { margin-bottom: calc(20px * var(--rv-scale)); }
         .rv-dropcap::first-letter {
@@ -520,7 +520,7 @@ const ReadingView = ({
           margin-bottom: 4px;
         }
         .rv-key-text { display: inline; }
-        .rv-hi .rv-eyebrow { letter-spacing: 0; text-transform: none; font-size: 13px; }
+        .rv-hi .rv-eyebrow { letter-spacing: 0; text-transform: none; font-size: 15px; }
         .rv-hi .rv-prose { line-height: 1.9; }
         .rv-hi .rv-p { margin-bottom: calc(22px * var(--rv-scale)); }
         .rv-hi .rv-h1, .rv-hi .rv-h2, .rv-hi .rv-h3, .rv-hi .rv-h4 { letter-spacing: 0; }
