@@ -839,7 +839,7 @@ const BookDetail = () => {
             </TabsContent>
 
             <TabsContent value="mastery">
-              <AuthorBio author={book.author} category={book.category} title={book.title} isHindi={lang === "hi"} />
+              <AuthorBio bookId={book.id} bookSlug={book.slug} author={book.author} category={book.category} title={book.title} isHindi={lang === "hi"} />
               <BookMindmapSection title={book.title} mindmapUrl={assets?.mindmap_url} loading={assetsLoading} isHindi={lang === "hi"} book={book} />
               <Suspense fallback={<CommunityFallback />}>
                 <MasteryTab bookId={book.id} quiz={assets?.quiz_data ?? []} flashcards={assets?.flashcard_data ?? []} />
