@@ -1,0 +1,3515 @@
+{
+  "batch_goal": 500,
+  "phase1_target_words_per_book": 100,
+  "phase2_minimum_words_per_book": 2500,
+  "source_records": 500,
+  "drafts_written": 100,
+  "drafts_pass_basic_automated_checks": 100,
+  "drafts_needing_basic_qa_attention": 0,
+  "not_started": 400,
+  "drafts_editorial_factcheck_complete": 0,
+  "deployed": 0,
+  "generated_via_translation_or_llm_api": false,
+  "individual_qa": [
+    {
+      "queue_no": 1,
+      "draft_exists": true,
+      "word_count": 115,
+      "hindi_character_fraction": 1.0,
+      "issues": []
+    },
+    {
+      "queue_no": 2,
+      "draft_exists": true,
+      "word_count": 117,
+      "hindi_character_fraction": 1.0,
+      "issues": []
+    },
+    {
+      "queue_no": 3,
+      "draft_exists": true,
+      "word_count": 125,
+      "hindi_character_fraction": 1.0,
+      "issues": []
+    },
+    {
+      "queue_no": 4,
+      "draft_exists": true,
+      "word_count": 115,
+      "hindi_character_fraction": 1.0,
+      "issues": []
+    },
+    {
+      "queue_no": 5,
+      "draft_exists": true,
+      "word_count": 115,
+      "hindi_character_fraction": 0.946,
+      "issues": []
+    },
+    {
+      "queue_no": 6,
+      "draft_exists": true,
+      "word_count": 120,
+      "hindi_character_fraction": 0.946,
+      "issues": []
+    },
+    {
+      "queue_no": 7,
+      "draft_exists": true,
+      "word_count": 112,
+      "hindi_character_fraction": 0.935,
+      "issues": []
+    },
+    {
+      "queue_no": 8,
+      "draft_exists": true,
+      "word_count": 118,
+      "hindi_character_fraction": 0.971,
+      "issues": []
+    },
+    {
+      "queue_no": 9,
+      "draft_exists": true,
+      "word_count": 118,
+      "hindi_character_fraction": 1.0,
+      "issues": []
+    },
+    {
+      "queue_no": 10,
+      "draft_exists": true,
+      "word_count": 112,
+      "hindi_character_fraction": 0.929,
+      "issues": []
+    },
+    {
+      "queue_no": 11,
+      "draft_exists": true,
+      "word_count": 108,
+      "hindi_character_fraction": 0.971,
+      "issues": []
+    },
+    {
+      "queue_no": 12,
+      "draft_exists": true,
+      "word_count": 116,
+      "hindi_character_fraction": 0.975,
+      "issues": []
+    },
+    {
+      "queue_no": 13,
+      "draft_exists": true,
+      "word_count": 122,
+      "hindi_character_fraction": 0.924,
+      "issues": []
+    },
+    {
+      "queue_no": 14,
+      "draft_exists": true,
+      "word_count": 120,
+      "hindi_character_fraction": 0.927,
+      "issues": []
+    },
+    {
+      "queue_no": 15,
+      "draft_exists": true,
+      "word_count": 113,
+      "hindi_character_fraction": 0.923,
+      "issues": []
+    },
+    {
+      "queue_no": 16,
+      "draft_exists": true,
+      "word_count": 116,
+      "hindi_character_fraction": 0.915,
+      "issues": []
+    },
+    {
+      "queue_no": 17,
+      "draft_exists": true,
+      "word_count": 116,
+      "hindi_character_fraction": 0.92,
+      "issues": []
+    },
+    {
+      "queue_no": 18,
+      "draft_exists": true,
+      "word_count": 118,
+      "hindi_character_fraction": 0.925,
+      "issues": []
+    },
+    {
+      "queue_no": 19,
+      "draft_exists": true,
+      "word_count": 113,
+      "hindi_character_fraction": 0.968,
+      "issues": []
+    },
+    {
+      "queue_no": 20,
+      "draft_exists": true,
+      "word_count": 117,
+      "hindi_character_fraction": 0.971,
+      "issues": []
+    },
+    {
+      "queue_no": 21,
+      "draft_exists": true,
+      "word_count": 116,
+      "hindi_character_fraction": 0.949,
+      "issues": []
+    },
+    {
+      "queue_no": 22,
+      "draft_exists": true,
+      "word_count": 116,
+      "hindi_character_fraction": 0.936,
+      "issues": []
+    },
+    {
+      "queue_no": 23,
+      "draft_exists": true,
+      "word_count": 114,
+      "hindi_character_fraction": 0.937,
+      "issues": []
+    },
+    {
+      "queue_no": 24,
+      "draft_exists": true,
+      "word_count": 107,
+      "hindi_character_fraction": 1.0,
+      "issues": []
+    },
+    {
+      "queue_no": 25,
+      "draft_exists": true,
+      "word_count": 115,
+      "hindi_character_fraction": 0.954,
+      "issues": []
+    },
+    {
+      "queue_no": 26,
+      "draft_exists": true,
+      "word_count": 128,
+      "hindi_character_fraction": 1.0,
+      "issues": []
+    },
+    {
+      "queue_no": 27,
+      "draft_exists": true,
+      "word_count": 122,
+      "hindi_character_fraction": 0.963,
+      "issues": []
+    },
+    {
+      "queue_no": 28,
+      "draft_exists": true,
+      "word_count": 120,
+      "hindi_character_fraction": 0.928,
+      "issues": []
+    },
+    {
+      "queue_no": 29,
+      "draft_exists": true,
+      "word_count": 118,
+      "hindi_character_fraction": 0.976,
+      "issues": []
+    },
+    {
+      "queue_no": 30,
+      "draft_exists": true,
+      "word_count": 120,
+      "hindi_character_fraction": 0.987,
+      "issues": []
+    },
+    {
+      "queue_no": 31,
+      "draft_exists": true,
+      "word_count": 120,
+      "hindi_character_fraction": 0.962,
+      "issues": []
+    },
+    {
+      "queue_no": 32,
+      "draft_exists": true,
+      "word_count": 126,
+      "hindi_character_fraction": 0.96,
+      "issues": []
+    },
+    {
+      "queue_no": 33,
+      "draft_exists": true,
+      "word_count": 124,
+      "hindi_character_fraction": 0.953,
+      "issues": []
+    },
+    {
+      "queue_no": 34,
+      "draft_exists": true,
+      "word_count": 126,
+      "hindi_character_fraction": 0.912,
+      "issues": []
+    },
+    {
+      "queue_no": 35,
+      "draft_exists": true,
+      "word_count": 118,
+      "hindi_character_fraction": 0.944,
+      "issues": []
+    },
+    {
+      "queue_no": 36,
+      "draft_exists": true,
+      "word_count": 125,
+      "hindi_character_fraction": 0.955,
+      "issues": []
+    },
+    {
+      "queue_no": 37,
+      "draft_exists": true,
+      "word_count": 118,
+      "hindi_character_fraction": 0.932,
+      "issues": []
+    },
+    {
+      "queue_no": 38,
+      "draft_exists": true,
+      "word_count": 115,
+      "hindi_character_fraction": 0.987,
+      "issues": []
+    },
+    {
+      "queue_no": 39,
+      "draft_exists": true,
+      "word_count": 119,
+      "hindi_character_fraction": 0.962,
+      "issues": []
+    },
+    {
+      "queue_no": 40,
+      "draft_exists": true,
+      "word_count": 118,
+      "hindi_character_fraction": 0.937,
+      "issues": []
+    },
+    {
+      "queue_no": 41,
+      "draft_exists": true,
+      "word_count": 117,
+      "hindi_character_fraction": 0.964,
+      "issues": []
+    },
+    {
+      "queue_no": 42,
+      "draft_exists": true,
+      "word_count": 123,
+      "hindi_character_fraction": 0.929,
+      "issues": []
+    },
+    {
+      "queue_no": 43,
+      "draft_exists": true,
+      "word_count": 117,
+      "hindi_character_fraction": 0.965,
+      "issues": []
+    },
+    {
+      "queue_no": 44,
+      "draft_exists": true,
+      "word_count": 116,
+      "hindi_character_fraction": 0.936,
+      "issues": []
+    },
+    {
+      "queue_no": 45,
+      "draft_exists": true,
+      "word_count": 119,
+      "hindi_character_fraction": 0.963,
+      "issues": []
+    },
+    {
+      "queue_no": 46,
+      "draft_exists": true,
+      "word_count": 122,
+      "hindi_character_fraction": 0.962,
+      "issues": []
+    },
+    {
+      "queue_no": 47,
+      "draft_exists": true,
+      "word_count": 114,
+      "hindi_character_fraction": 0.968,
+      "issues": []
+    },
+    {
+      "queue_no": 48,
+      "draft_exists": true,
+      "word_count": 117,
+      "hindi_character_fraction": 0.94,
+      "issues": []
+    },
+    {
+      "queue_no": 49,
+      "draft_exists": true,
+      "word_count": 122,
+      "hindi_character_fraction": 0.919,
+      "issues": []
+    },
+    {
+      "queue_no": 50,
+      "draft_exists": true,
+      "word_count": 114,
+      "hindi_character_fraction": 0.971,
+      "issues": []
+    },
+    {
+      "queue_no": 51,
+      "draft_exists": true,
+      "word_count": 116,
+      "hindi_character_fraction": 0.969,
+      "issues": []
+    },
+    {
+      "queue_no": 52,
+      "draft_exists": true,
+      "word_count": 115,
+      "hindi_character_fraction": 0.964,
+      "issues": []
+    },
+    {
+      "queue_no": 53,
+      "draft_exists": true,
+      "word_count": 115,
+      "hindi_character_fraction": 0.981,
+      "issues": []
+    },
+    {
+      "queue_no": 54,
+      "draft_exists": true,
+      "word_count": 114,
+      "hindi_character_fraction": 0.932,
+      "issues": []
+    },
+    {
+      "queue_no": 55,
+      "draft_exists": true,
+      "word_count": 117,
+      "hindi_character_fraction": 0.95,
+      "issues": []
+    },
+    {
+      "queue_no": 56,
+      "draft_exists": true,
+      "word_count": 114,
+      "hindi_character_fraction": 0.962,
+      "issues": []
+    },
+    {
+      "queue_no": 57,
+      "draft_exists": true,
+      "word_count": 112,
+      "hindi_character_fraction": 0.947,
+      "issues": []
+    },
+    {
+      "queue_no": 58,
+      "draft_exists": true,
+      "word_count": 112,
+      "hindi_character_fraction": 0.957,
+      "issues": []
+    },
+    {
+      "queue_no": 59,
+      "draft_exists": true,
+      "word_count": 116,
+      "hindi_character_fraction": 0.96,
+      "issues": []
+    },
+    {
+      "queue_no": 60,
+      "draft_exists": true,
+      "word_count": 115,
+      "hindi_character_fraction": 0.96,
+      "issues": []
+    },
+    {
+      "queue_no": 61,
+      "draft_exists": true,
+      "word_count": 122,
+      "hindi_character_fraction": 0.96,
+      "issues": []
+    },
+    {
+      "queue_no": 62,
+      "draft_exists": true,
+      "word_count": 117,
+      "hindi_character_fraction": 0.966,
+      "issues": []
+    },
+    {
+      "queue_no": 63,
+      "draft_exists": true,
+      "word_count": 116,
+      "hindi_character_fraction": 0.965,
+      "issues": []
+    },
+    {
+      "queue_no": 64,
+      "draft_exists": true,
+      "word_count": 120,
+      "hindi_character_fraction": 0.974,
+      "issues": []
+    },
+    {
+      "queue_no": 65,
+      "draft_exists": true,
+      "word_count": 108,
+      "hindi_character_fraction": 0.935,
+      "issues": []
+    },
+    {
+      "queue_no": 66,
+      "draft_exists": true,
+      "word_count": 111,
+      "hindi_character_fraction": 0.931,
+      "issues": []
+    },
+    {
+      "queue_no": 67,
+      "draft_exists": true,
+      "word_count": 121,
+      "hindi_character_fraction": 0.952,
+      "issues": []
+    },
+    {
+      "queue_no": 68,
+      "draft_exists": true,
+      "word_count": 122,
+      "hindi_character_fraction": 0.95,
+      "issues": []
+    },
+    {
+      "queue_no": 69,
+      "draft_exists": true,
+      "word_count": 116,
+      "hindi_character_fraction": 0.99,
+      "issues": []
+    },
+    {
+      "queue_no": 70,
+      "draft_exists": true,
+      "word_count": 115,
+      "hindi_character_fraction": 0.962,
+      "issues": []
+    },
+    {
+      "queue_no": 71,
+      "draft_exists": true,
+      "word_count": 120,
+      "hindi_character_fraction": 0.947,
+      "issues": []
+    },
+    {
+      "queue_no": 72,
+      "draft_exists": true,
+      "word_count": 119,
+      "hindi_character_fraction": 0.941,
+      "issues": []
+    },
+    {
+      "queue_no": 73,
+      "draft_exists": true,
+      "word_count": 125,
+      "hindi_character_fraction": 0.928,
+      "issues": []
+    },
+    {
+      "queue_no": 74,
+      "draft_exists": true,
+      "word_count": 116,
+      "hindi_character_fraction": 0.944,
+      "issues": []
+    },
+    {
+      "queue_no": 75,
+      "draft_exists": true,
+      "word_count": 121,
+      "hindi_character_fraction": 0.911,
+      "issues": []
+    },
+    {
+      "queue_no": 76,
+      "draft_exists": true,
+      "word_count": 122,
+      "hindi_character_fraction": 0.963,
+      "issues": []
+    },
+    {
+      "queue_no": 77,
+      "draft_exists": true,
+      "word_count": 122,
+      "hindi_character_fraction": 0.952,
+      "issues": []
+    },
+    {
+      "queue_no": 78,
+      "draft_exists": true,
+      "word_count": 132,
+      "hindi_character_fraction": 0.958,
+      "issues": []
+    },
+    {
+      "queue_no": 79,
+      "draft_exists": true,
+      "word_count": 123,
+      "hindi_character_fraction": 0.969,
+      "issues": []
+    },
+    {
+      "queue_no": 80,
+      "draft_exists": true,
+      "word_count": 115,
+      "hindi_character_fraction": 0.966,
+      "issues": []
+    },
+    {
+      "queue_no": 81,
+      "draft_exists": true,
+      "word_count": 122,
+      "hindi_character_fraction": 0.928,
+      "issues": []
+    },
+    {
+      "queue_no": 82,
+      "draft_exists": true,
+      "word_count": 125,
+      "hindi_character_fraction": 0.918,
+      "issues": []
+    },
+    {
+      "queue_no": 83,
+      "draft_exists": true,
+      "word_count": 124,
+      "hindi_character_fraction": 0.975,
+      "issues": []
+    },
+    {
+      "queue_no": 84,
+      "draft_exists": true,
+      "word_count": 118,
+      "hindi_character_fraction": 0.97,
+      "issues": []
+    },
+    {
+      "queue_no": 85,
+      "draft_exists": true,
+      "word_count": 113,
+      "hindi_character_fraction": 0.949,
+      "issues": []
+    },
+    {
+      "queue_no": 86,
+      "draft_exists": true,
+      "word_count": 115,
+      "hindi_character_fraction": 0.986,
+      "issues": []
+    },
+    {
+      "queue_no": 87,
+      "draft_exists": true,
+      "word_count": 112,
+      "hindi_character_fraction": 0.966,
+      "issues": []
+    },
+    {
+      "queue_no": 88,
+      "draft_exists": true,
+      "word_count": 115,
+      "hindi_character_fraction": 0.961,
+      "issues": []
+    },
+    {
+      "queue_no": 89,
+      "draft_exists": true,
+      "word_count": 119,
+      "hindi_character_fraction": 0.977,
+      "issues": []
+    },
+    {
+      "queue_no": 90,
+      "draft_exists": true,
+      "word_count": 119,
+      "hindi_character_fraction": 0.952,
+      "issues": []
+    },
+    {
+      "queue_no": 91,
+      "draft_exists": true,
+      "word_count": 113,
+      "hindi_character_fraction": 0.979,
+      "issues": []
+    },
+    {
+      "queue_no": 92,
+      "draft_exists": true,
+      "word_count": 121,
+      "hindi_character_fraction": 0.94,
+      "issues": []
+    },
+    {
+      "queue_no": 93,
+      "draft_exists": true,
+      "word_count": 118,
+      "hindi_character_fraction": 0.97,
+      "issues": []
+    },
+    {
+      "queue_no": 94,
+      "draft_exists": true,
+      "word_count": 122,
+      "hindi_character_fraction": 0.95,
+      "issues": []
+    },
+    {
+      "queue_no": 95,
+      "draft_exists": true,
+      "word_count": 122,
+      "hindi_character_fraction": 0.973,
+      "issues": []
+    },
+    {
+      "queue_no": 96,
+      "draft_exists": true,
+      "word_count": 126,
+      "hindi_character_fraction": 0.962,
+      "issues": []
+    },
+    {
+      "queue_no": 97,
+      "draft_exists": true,
+      "word_count": 121,
+      "hindi_character_fraction": 0.956,
+      "issues": []
+    },
+    {
+      "queue_no": 98,
+      "draft_exists": true,
+      "word_count": 125,
+      "hindi_character_fraction": 0.902,
+      "issues": []
+    },
+    {
+      "queue_no": 99,
+      "draft_exists": true,
+      "word_count": 124,
+      "hindi_character_fraction": 0.952,
+      "issues": []
+    },
+    {
+      "queue_no": 100,
+      "draft_exists": true,
+      "word_count": 120,
+      "hindi_character_fraction": 0.96,
+      "issues": []
+    },
+    {
+      "queue_no": 101,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 102,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 103,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 104,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 105,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 106,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 107,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 108,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 109,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 110,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 111,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 112,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 113,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 114,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 115,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 116,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 117,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 118,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 119,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 120,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 121,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 122,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 123,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 124,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 125,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 126,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 127,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 128,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 129,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 130,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 131,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 132,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 133,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 134,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 135,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 136,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 137,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 138,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 139,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 140,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 141,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 142,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 143,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 144,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 145,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 146,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 147,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 148,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 149,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 150,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 151,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 152,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 153,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 154,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 155,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 156,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 157,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 158,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 159,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 160,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 161,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 162,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 163,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 164,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 165,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 166,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 167,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 168,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 169,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 170,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 171,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 172,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 173,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 174,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 175,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 176,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 177,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 178,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 179,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 180,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 181,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 182,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 183,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 184,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 185,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 186,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 187,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 188,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 189,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 190,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 191,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 192,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 193,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 194,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 195,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 196,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 197,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 198,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 199,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 200,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 201,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 202,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 203,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 204,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 205,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 206,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 207,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 208,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 209,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 210,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 211,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 212,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 213,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 214,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 215,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 216,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 217,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 218,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 219,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 220,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 221,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 222,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 223,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 224,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 225,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 226,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 227,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 228,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 229,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 230,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 231,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 232,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 233,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 234,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 235,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 236,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 237,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 238,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 239,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 240,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 241,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 242,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 243,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 244,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 245,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 246,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 247,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 248,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 249,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 250,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 251,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 252,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 253,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 254,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 255,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 256,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 257,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 258,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 259,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 260,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 261,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 262,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 263,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 264,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 265,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 266,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 267,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 268,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 269,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 270,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 271,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 272,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 273,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 274,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 275,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 276,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 277,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 278,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 279,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 280,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 281,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 282,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 283,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 284,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 285,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 286,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 287,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 288,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 289,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 290,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 291,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 292,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 293,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 294,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 295,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 296,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 297,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 298,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 299,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 300,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 301,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 302,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 303,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 304,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 305,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 306,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 307,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 308,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 309,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 310,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 311,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 312,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 313,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 314,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 315,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 316,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 317,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 318,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 319,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 320,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 321,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 322,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 323,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 324,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 325,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 326,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 327,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 328,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 329,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 330,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 331,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 332,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 333,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 334,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 335,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 336,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 337,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 338,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 339,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 340,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 341,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 342,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 343,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 344,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 345,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 346,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 347,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 348,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 349,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 350,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 351,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 352,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 353,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 354,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 355,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 356,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 357,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 358,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 359,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 360,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 361,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 362,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 363,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 364,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 365,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 366,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 367,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 368,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 369,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 370,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 371,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 372,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 373,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 374,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 375,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 376,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 377,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 378,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 379,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 380,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 381,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 382,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 383,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 384,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 385,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 386,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 387,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 388,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 389,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 390,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 391,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 392,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 393,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 394,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 395,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 396,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 397,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 398,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 399,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 400,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 401,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 402,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 403,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 404,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 405,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 406,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 407,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 408,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 409,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 410,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 411,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 412,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 413,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 414,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 415,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 416,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 417,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 418,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 419,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 420,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 421,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 422,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 423,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 424,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 425,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 426,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 427,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 428,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 429,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 430,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 431,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 432,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 433,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 434,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 435,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 436,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 437,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 438,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 439,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 440,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 441,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 442,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 443,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 444,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 445,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 446,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 447,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 448,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 449,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 450,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 451,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 452,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 453,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 454,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 455,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 456,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 457,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 458,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 459,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 460,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 461,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 462,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 463,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 464,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 465,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 466,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 467,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 468,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 469,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 470,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 471,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 472,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 473,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 474,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 475,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 476,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 477,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 478,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 479,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 480,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 481,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 482,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 483,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 484,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 485,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 486,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 487,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 488,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 489,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 490,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 491,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 492,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 493,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 494,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 495,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 496,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 497,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 498,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 499,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    },
+    {
+      "queue_no": 500,
+      "draft_exists": false,
+      "word_count": 0,
+      "hindi_character_fraction": 0,
+      "issues": []
+    }
+  ]
+}
