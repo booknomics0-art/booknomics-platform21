@@ -9,6 +9,7 @@ const AUTH = "Bearer supabase-google-access-token";
 function fixture(options: { admin?: boolean; existingUrl?: string | null; bookFound?: boolean; changes?: number; headSize?: number } = {}) {
   const queries: Array<{ sql: string; params: unknown[] }> = [];
   const uploads: Array<{ key: string; bytes: number; contentType: string | undefined }> = [];
+  const contents = new Map<string, Uint8Array>();
   let lastUrl = options.existingUrl ?? null;
   const env = Object.assign(Object.create(null), {
     SUPABASE_URL: "https://pbkfewrtdgiagytmcigb.supabase.co",
@@ -38,18 +39,28 @@ function fixture(options: { admin?: boolean; existingUrl?: string | null; bookFo
     },
     BOOK_ASSETS: {
       async put(key: string, body: ReadableStream, options: { httpMetadata: { contentType?: string } }) {
-        const bytes = (await new Response(body).arrayBuffer()).byteLength;
-        uploads.push({ key, bytes, contentType: options.httpMetadata.contentType });
-        return { key, size: bytes };
+        const content = new Uint8Array(await new Response(body).arrayBuffer());
+        contents.set(key, content);
+        uploads.push({ key, bytes: content.length, contentType: options.httpMetadata.contentType });
+        return { key, size: content.length };
       },
       async head(key: string) {
         const saved = uploads.find((upload) => upload.key === key);
         return saved ? { size: options.headSize ?? saved.bytes } : null;
       },
-      async get(key: string, { range }: { range: Headers }) {
-        if (!uploads.some((x) => x.key === key)) return null;
-        if (range.get("range")) return { size: 4, range: { offset: 0, length: 2 }, body: new Uint8Array([0x49, 0x44]) };
-        return { size: 4, body: new Uint8Array([0x49, 0x44, 0x33, 0x04]) };
+      async get(key: string, { range }: { range: Headers | { offset: number; length: number } }) {
+        const bytes = contents.get(key);
+        if (!bytes) return null;
+        const headerRange = range instanceof Headers ? range.get("range") : null;
+        const start = headerRange ? Number(/^bytes=(\d+)-/.exec(headerRange)?.[1] ?? "0") : range instanceof Headers ? 0 : range.offset;
+        const requested = headerRange ? /^bytes=\d+-(\d+)$/.exec(headerRange) : null;
+        const length = requested ? Number(requested[1]) - start + 1 : range instanceof Headers ? bytes.length - start : range.length;
+        const actualLength = Math.min(length, bytes.length - start);
+        return {
+          size: bytes.length,
+          ...(headerRange || !(range instanceof Headers) ? { range: { offset: start, length: actualLength } } : {}),
+          body: bytes.slice(start, start + actualLength),
+        };
       },
     },
   }) as Env;
@@ -154,7 +165,12 @@ describe("Cloudflare R2 audiobook admin API", () => {
     const stream = await handleAudioAdminRequest(new Request(`https://www.booknomics.com${data.preview_url}`, { headers: { range: "bytes=0-1" } }), f.env);
     expect(stream.status).toBe(206);
     expect(stream.headers.get("content-range")).toBe("bytes 0-1/4");
+    expect(new Uint8Array(await stream.arrayBuffer())).toEqual(new Uint8Array([0x49, 0x44]));
     expect(stream.headers.get("cache-control")).toBe("private, no-store");
+    const openEnded = await handleAudioAdminRequest(new Request(`https://www.booknomics.com${data.preview_url}`, { headers: { range: "bytes=0-" } }), f.env);
+    expect(openEnded.status).toBe(206);
+    expect(openEnded.headers.get("content-range")).toBe("bytes 0-3/4");
+    expect(new Uint8Array(await openEnded.arrayBuffer())).toEqual(new Uint8Array([0x49, 0x44, 0x33, 0x04]));
     const bad = new URL(`https://www.booknomics.com${data.preview_url}`);
     bad.searchParams.set("signature", "a".repeat(64));
     expect((await handleAudioAdminRequest(new Request(bad), f.env)).status).toBe(403);
@@ -165,5 +181,21 @@ describe("Cloudflare R2 audiobook admin API", () => {
   it("reports unsuccessful link or object verification instead of claiming success", async () => {
     expect((await handleAudioAdminRequest(uploadRequest(), fixture({ changes: 0 }).env)).status).toBe(409);
     expect((await handleAudioAdminRequest(uploadRequest(), fixture({ headSize: 3 }).env)).status).toBe(502);
+  });
+
+  it("inspects stored audio header without exposing private R2 object keys", async () => {
+    const f = fixture();
+    const mp3 = new Uint8Array(834);
+    mp3.set([0xff, 0xfb, 0x90, 0x00], 0);
+    mp3.set([0xff, 0xfb, 0x90, 0x00], 417);
+    expect((await handleAudioAdminRequest(uploadRequest({ body: mp3 }), f.env)).status).toBe(200);
+    const response = await handleAudioAdminRequest(new Request(`https://www.booknomics.com/api/admin/audio/inspect?bookId=${BOOK_ID}`, {
+      headers: { authorization: AUTH },
+    }), f.env);
+    expect(response.status).toBe(200);
+    const inspected = await response.json() as Record<string, unknown>;
+    expect(inspected).toMatchObject({ format: "mp3-frames-found", codec: "MPEG-1 Layer III", sampleRateHz: 44100, bitrateKbps: 128 });
+    expect(JSON.stringify(inspected)).not.toContain("r2-private:");
+    expect(JSON.stringify(inspected)).not.toContain("audiobooks/");
   });
 });

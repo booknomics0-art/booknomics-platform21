@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { AlertTriangle, CheckCircle2, CloudUpload, Headphones, Loader2, Pencil, Search, XCircle } from "lucide-react";
+import { AlertTriangle, CheckCircle2, CloudUpload, Headphones, Loader2, Pencil, RefreshCw, Search, XCircle } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -27,6 +27,7 @@ type Row = {
   audioUrl: string | null;
   duration: number | null;
 };
+type StoredCheck = { status: "checking" | "playable" | "unverified"; detail: string; previewUrl?: string };
 
 function formatBytes(bytes: number) {
   return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
@@ -71,25 +72,65 @@ function uploadMp3(file: File, bookId: string, replace: boolean, token: string,
 }
 
 async function verifyPlayback(url: string): Promise<number> {
-  // HTTP range support catches broken/redirected media URLs before loading the player.
-  const response = await fetch(url, { headers: { Range: "bytes=0-1" }, credentials: "same-origin", cache: "no-store" });
-  if (response.status !== 200 && response.status !== 206) throw new Error(`Audio stream returned HTTP ${response.status}`);
-  await response.body?.cancel();
+  // An object URL tests the original local file without making an HTTP request.
+  if (!url.startsWith("blob:")) {
+    const response = await fetch(url, { headers: { Range: "bytes=0-1" }, credentials: "same-origin", cache: "no-store" });
+    if (response.status !== 200 && response.status !== 206) throw new Error(`Audio stream returned HTTP ${response.status}`);
+    const contentType = response.headers?.get?.("content-type") ?? "";
+    if (contentType && !contentType.toLowerCase().includes("audio/mpeg")) {
+      throw new Error(`Audio streaming returned ${contentType} instead of MP3`);
+    }
+    await response.body?.cancel();
+  }
   return new Promise((resolve, reject) => {
     const audio = document.createElement("audio");
     audio.preload = "metadata";
-    const cleanup = () => { clearTimeout(timeout); audio.removeAttribute("src"); audio.load(); };
-    const timeout = window.setTimeout(() => { cleanup(); reject(new Error("Audio metadata did not load within 20 seconds")); }, 20_000);
+    const cleanup = () => {
+      clearTimeout(timeout);
+      audio.onloadedmetadata = null;
+      audio.onerror = null;
+      audio.removeAttribute("src");
+      audio.load();
+    };
+    const timeout = window.setTimeout(() => { cleanup(); reject(new Error("Audio metadata timed out (20 seconds)")); }, 20_000);
     audio.onloadedmetadata = () => {
       const duration = audio.duration;
       cleanup();
       if (Number.isFinite(duration) && duration > 0) resolve(duration);
-      else reject(new Error("Audio loaded without a valid duration"));
+      else reject(new Error("Audio metadata loaded but duration is unavailable; playback needs a manual check"));
     };
-    audio.onerror = () => { cleanup(); reject(new Error("Browser could not decode this MP3")); };
+    audio.onerror = () => {
+      const code = audio.error?.code;
+      const detail = code === 2 ? "Browser media network error (check stream/range response)"
+        : code === 3 ? "Browser could not decode the audio data (check MP3 encoding)"
+          : code === 4 ? "Browser does not support the supplied audio format"
+            : code === 1 ? "Browser aborted audio loading" : "Browser failed to load audio metadata";
+      cleanup();
+      reject(new Error(detail));
+    };
     audio.src = url;
     audio.load();
   });
+}
+
+async function inspectStoredAudio(bookId: string, token: string): Promise<string> {
+  const response = await fetch(`/api/admin/audio/inspect?bookId=${encodeURIComponent(bookId)}`, {
+    headers: { Authorization: `Bearer ${token}` }, credentials: "omit", cache: "no-store",
+  });
+  const data = await response.json() as { error?: string; format?: string; codec?: string; bitrateKbps?: number };
+  if (!response.ok) throw new Error(data.error ?? `R2 inspection returned HTTP ${response.status}`);
+  if (data.format === "mp3-frames-found") return `${data.codec ?? "MP3"} (${data.bitrateKbps ?? "?"} kbps)`;
+  if (data.format === "id3-tag-too-large-for-sample") return "MP3 frames are beyond the first 512 KB; original file needs checking";
+  throw new Error(`R2 stored file has ${data.format ?? "unknown format"}; check the original MP3 before replacing anything`);
+}
+
+async function getStoredPreview(bookId: string, token: string): Promise<string> {
+  const response = await fetch(`/api/admin/audio/preview?bookId=${encodeURIComponent(bookId)}`, {
+    headers: { Authorization: `Bearer ${token}` }, credentials: "omit", cache: "no-store",
+  });
+  const data = await response.json() as { error?: string; preview_url?: string };
+  if (!response.ok || !data.preview_url) throw new Error(data.error ?? `Preview returned HTTP ${response.status}`);
+  return data.preview_url;
 }
 
 export default function BulkAudioUpload() {
@@ -102,8 +143,12 @@ export default function BulkAudioUpload() {
   const [reviewKey, setReviewKey] = useState<string | null>(null);
   const [bookSearch, setBookSearch] = useState("");
   const [cancelled, setCancelled] = useState(false);
+  const [storedChecks, setStoredChecks] = useState<Record<string, StoredCheck>>({});
+  const [storedFilter, setStoredFilter] = useState("");
+  const [storedRunning, setStoredRunning] = useState(false);
   const activeRequests = useRef(new Set<XMLHttpRequest>());
   const stopRequested = useRef(false);
+  const stopStoredRequested = useRef(false);
 
   useEffect(() => {
     const abort = new AbortController();
@@ -118,12 +163,49 @@ export default function BulkAudioUpload() {
       })
       .catch((error: Error) => { if (!abort.signal.aborted) setCatalogError(error.message); })
       .finally(() => { if (!abort.signal.aborted) setCatalogLoading(false); });
-    return () => { abort.abort(); stopRequested.current = true; for (const request of requests) request.abort(); };
+    return () => { abort.abort(); stopRequested.current = true; stopStoredRequested.current = true; for (const request of requests) request.abort(); };
   }, []);
 
   const patchRow = useCallback((key: string, patch: Partial<Row>) => {
     setRows((current) => current.map((row) => row.key === key ? { ...row, ...patch } : row));
   }, []);
+
+  const checkStoredBook = async (bookId: string) => {
+    setStoredChecks((previous) => ({ ...previous, [bookId]: { status: "checking", detail: "Reading the private R2 file and testing playback…" } }));
+    let previewUrl: string | undefined;
+    let inspection = "";
+    try {
+      const token = await adminToken();
+      previewUrl = await getStoredPreview(bookId, token);
+      try { inspection = await inspectStoredAudio(bookId, token); }
+      catch (error) { inspection = error instanceof Error ? error.message : "MP3 inspection unavailable"; }
+      const duration = await verifyPlayback(previewUrl);
+      setStoredChecks((previous) => ({ ...previous, [bookId]: {
+        status: "playable", detail: `Playback verified (${Math.round(duration / 60)} min). R2 inspection: ${inspection}`, previewUrl,
+      } }));
+    } catch (error) {
+      const cause = error instanceof Error ? error.message : "Unknown browser issue";
+      setStoredChecks((previous) => ({ ...previous, [bookId]: {
+        status: "unverified", detail: `${cause}${inspection ? `. R2 inspection: ${inspection}` : ""}`, previewUrl,
+      } }));
+    }
+  };
+
+  const checkAllStored = async () => {
+    if (storedRunning) return;
+    const books = catalog.filter((book) => book.audio_url?.startsWith("r2-private:"));
+    setStoredRunning(true);
+    stopStoredRequested.current = false;
+    let cursor = 0;
+    const worker = async () => {
+      while (cursor < books.length && !stopStoredRequested.current) {
+        const book = books[cursor++];
+        await checkStoredBook(book.id);
+      }
+    };
+    try { await Promise.all(Array.from({ length: Math.min(3, books.length) }, () => worker())); }
+    finally { setStoredRunning(false); }
+  };
 
   const onFiles = (files: FileList | null) => {
     if (!files || running) return;
@@ -181,7 +263,20 @@ export default function BulkAudioUpload() {
           uploadedUrl = uploaded.previewUrl;
           setCatalog((current) => current.map((book) => book.id === row.bookId ? { ...book, audio_url: uploaded.audioUrl } : book));
           patchRow(row.key, { status: "verifying", progress: 100, audioUrl: uploadedUrl });
-          const duration = await verifyPlayback(uploadedUrl);
+          let duration: number;
+          try { duration = await verifyPlayback(uploadedUrl); }
+          catch (streamError) {
+            // Distinguish a bad original file from a problem with private R2 delivery.
+            const localUrl = URL.createObjectURL(row.file);
+            let originStatus: string;
+            try {
+              await verifyPlayback(localUrl);
+              originStatus = "Original file plays locally; check private R2 streaming/browser connectivity";
+            } catch (originalError) {
+              originStatus = `Original file also failed: ${originalError instanceof Error ? originalError.message : "unknown error"}. Re-encode as MP3 (MPEG Layer III)`;
+            } finally { URL.revokeObjectURL(localUrl); }
+            throw new Error(`${streamError instanceof Error ? streamError.message : "Cloud preview failed"}. ${originStatus}`);
+          }
           patchRow(row.key, { status: "verified", duration });
         } catch (error) {
           patchRow(row.key, {
@@ -203,6 +298,10 @@ export default function BulkAudioUpload() {
 
   const verifiedCount = rows.filter((row) => row.status === "verified").length;
   const unverifiedCount = rows.filter((row) => row.status === "unverified").length;
+  const storedBooks = catalog.filter((book) => book.audio_url?.startsWith("r2-private:"));
+  const visibleStoredBooks = storedBooks.filter((book) => normalizedAudioTitle(`${book.title} ${book.author}`).includes(normalizedAudioTitle(storedFilter)));
+  const storedPassed = Object.values(storedChecks).filter((check) => check.status === "playable").length;
+  const storedFailed = Object.values(storedChecks).filter((check) => check.status === "unverified").length;
 
   return (
     <div className="space-y-4">
@@ -299,6 +398,51 @@ export default function BulkAudioUpload() {
           </div>
           {cancelled && <p className="text-xs text-muted-foreground">Stopped. Check each affected book before retrying a partly completed upload.</p>}
           {verifiedCount > 0 && <p role="status" className="text-sm text-green-700 dark:text-green-400">{verifiedCount} audiobook{verifiedCount === 1 ? "" : "s"} uploaded, linked, and passed the browser playback check.</p>}
+        </Card>
+      )}
+
+      {!catalogLoading && !catalogError && storedBooks.length > 0 && (
+        <Card className="p-4 space-y-3">
+          <div className="flex gap-2 items-start justify-between flex-wrap">
+            <div>
+              <h3 className="font-semibold">Check previously uploaded R2 audiobooks</h3>
+              <p className="text-sm text-muted-foreground">{storedBooks.length} stored MP3 links. Check or replay them without uploading or replacing anything. An upload is not a playback verification.</p>
+              <p className="text-xs mt-1 text-muted-foreground">Checked: {Object.keys(storedChecks).length} · Playable: {storedPassed} · Needs attention: {storedFailed}</p>
+            </div>
+            <div className="flex gap-2 flex-wrap">
+              <Button type="button" size="sm" variant="outline" disabled={storedRunning || running} onClick={() => void checkAllStored()}>
+                {storedRunning ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <RefreshCw className="h-4 w-4 mr-2" />}
+                Check all {storedBooks.length} stored
+              </Button>
+              {storedRunning && <Button type="button" size="sm" variant="secondary" onClick={() => { stopStoredRequested.current = true; }}>Stop checking</Button>}
+            </div>
+          </div>
+          <Input aria-label="Search stored audiobooks" placeholder="Search uploaded title or author…" value={storedFilter} onChange={(event) => setStoredFilter(event.target.value)} />
+          <div className="max-h-[420px] overflow-y-auto rounded-lg border divide-y">
+            {visibleStoredBooks.map((book) => {
+              const check = storedChecks[book.id];
+              return (
+                <div key={book.id} className="p-3 text-sm space-y-2">
+                  <div className="flex items-center gap-2 justify-between flex-wrap">
+                    <div className="min-w-0 flex-1">
+                      <p className="font-medium">{book.title}</p>
+                      <p className="text-xs text-muted-foreground">{book.author} · {book.language}</p>
+                    </div>
+                    <Badge variant={check?.status === "playable" ? "secondary" : check?.status === "unverified" ? "destructive" : "outline"}>
+                      {check?.status === "playable" ? "Playable" : check?.status === "unverified" ? "Needs attention" : check?.status === "checking" ? "Checking…" : "Not checked"}
+                    </Badge>
+                    <Button type="button" size="sm" variant="outline" disabled={running || storedRunning || check?.status === "checking"} onClick={() => void checkStoredBook(book.id)}>
+                      <RefreshCw className="h-3 w-3 mr-1" />Recheck
+                    </Button>
+                  </div>
+                  {check && <p role="status" className={`text-xs ${check.status === "unverified" ? "text-destructive" : "text-muted-foreground"}`}>{check.detail}</p>}
+                  {check?.previewUrl && <audio controls preload="none" src={check.previewUrl} className="w-full h-9" aria-label={`Stored playback ${book.title}`} />}
+                </div>
+              );
+            })}
+            {visibleStoredBooks.length === 0 && <p className="p-3 text-sm text-muted-foreground">No stored audiobook matches this search.</p>}
+          </div>
+          <p className="text-xs text-muted-foreground">Only booknomics0@gmail.com admin can request these signed previews; links expire after 60 minutes. Inspection checks for MP3 frames, while the browser independently tests playback.</p>
         </Card>
       )}
 
