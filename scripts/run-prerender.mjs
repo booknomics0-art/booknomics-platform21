@@ -3,7 +3,8 @@ import { spawnSync } from "node:child_process";
 // Preview deployments intentionally test the React app without indexing copies
 // of thousands of production books. Production and direct Cloudflare builds
 // MUST generate their SEO pages; missing catalog credentials remain fatal.
-if (process.env.VERCEL_ENV === "preview") {
+if (process.env.VERCEL_ENV === "preview" ||
+    (process.env.BOOKNOMICS_PREVIEW_BUILD === "1" && process.env.VERCEL_ENV !== "production")) {
   console.log("[postbuild] Vercel preview: skipped production SEO prerender; live production builds remain strict.");
   process.exit(0);
 }
