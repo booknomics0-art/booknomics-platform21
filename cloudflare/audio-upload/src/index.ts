@@ -3,6 +3,7 @@ const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{
 const PRIVATE_AUDIO_PREFIX = "r2-private:";
 const PREVIEW_TTL_SECONDS = 60 * 60;
 const ADMIN_EMAIL = "booknomics0@gmail.com";
+const MP3_INSPECTION_BYTES = 512 * 1024;
 
 type BookRow = { id: string; title: string; author: string; slug: string; seo_slug: string | null; language: string; audio_url: string | null };
 
@@ -115,6 +116,63 @@ async function preview(request: Request, env: Env): Promise<Response> {
   return reply({ preview_url: await issuePreview(request, env, bookId, url.slice(PRIVATE_AUDIO_PREFIX.length)) });
 }
 
+/** Read only a bounded prefix from private R2, never return the audio or its object key. */
+function inspectMp3Prefix(bytes: Uint8Array, fullSize: number) {
+  let start = 0;
+  let id3Bytes = 0;
+  if (bytes.length >= 10 && bytes[0] === 0x49 && bytes[1] === 0x44 && bytes[2] === 0x33) {
+    // The high bit must be clear in all four syncsafe ID3v2 size bytes.
+    if (bytes.slice(6, 10).some((byte) => byte > 0x7f)) return { format: "invalid-id3-header", id3Bytes: 0 };
+    id3Bytes = 10 + ((bytes[6] << 21) | (bytes[7] << 14) | (bytes[8] << 7) | bytes[9]);
+    if (bytes[5] & 0x10) id3Bytes += 10;
+    start = id3Bytes;
+  }
+  if (start >= bytes.length) return { format: "id3-tag-too-large-for-sample", id3Bytes };
+
+  const rates = [44100, 48000, 32000];
+  const mpeg1Bitrates = [0, 32, 40, 48, 56, 64, 80, 96, 112, 128, 160, 192, 224, 256, 320];
+  const mpeg2Bitrates = [0, 8, 16, 24, 32, 40, 48, 56, 64, 80, 96, 112, 128, 144, 160];
+  const frame = (offset: number) => {
+    if (offset + 4 > bytes.length || bytes[offset] !== 0xff || (bytes[offset + 1] & 0xe0) !== 0xe0) return null;
+    const version = (bytes[offset + 1] >> 3) & 3;
+    const layer = (bytes[offset + 1] >> 1) & 3;
+    const rateIndex = (bytes[offset + 2] >> 2) & 3;
+    const bitrateIndex = (bytes[offset + 2] >> 4) & 15;
+    if (version === 1 || layer !== 1 || rateIndex === 3 || bitrateIndex === 0 || bitrateIndex === 15) return null;
+    const rate = Math.round(rates[rateIndex] / (version === 3 ? 1 : version === 2 ? 2 : 4));
+    const bitrate = (version === 3 ? mpeg1Bitrates : mpeg2Bitrates)[bitrateIndex];
+    const length = Math.floor((version === 3 ? 144 : 72) * bitrate * 1000 / rate) + ((bytes[offset + 2] >> 1) & 1);
+    return { length, rate, bitrate, version: version === 3 ? "MPEG-1" : version === 2 ? "MPEG-2" : "MPEG-2.5" };
+  };
+  for (let offset = start; offset < Math.min(bytes.length - 4, start + 8192); offset++) {
+    const first = frame(offset);
+    if (!first) continue;
+    // Two consecutive frames strongly distinguish MP3 from random byte sequences.
+    const secondOffset = offset + first.length;
+    if (secondOffset + 4 <= bytes.length && frame(secondOffset)) {
+      return { format: "mp3-frames-found", id3Bytes, firstFrameOffset: offset,
+        codec: `${first.version} Layer III`, bitrateKbps: first.bitrate, sampleRateHz: first.rate,
+        bytes: fullSize };
+    }
+  }
+  return { format: "no-mp3-frames-in-sample", id3Bytes, bytes: fullSize };
+}
+
+async function inspect(request: Request, env: Env): Promise<Response> {
+  const bookId = new URL(request.url).searchParams.get("bookId") ?? "";
+  if (!UUID_PATTERN.test(bookId)) return reply({ error: "Invalid book ID" }, 400);
+  const row = await env.DB.prepare("SELECT audio_url FROM book_assets WHERE book_id = ? LIMIT 1")
+    .bind(bookId).first<{ audio_url: string | null }>();
+  const key = row?.audio_url?.startsWith(PRIVATE_AUDIO_PREFIX) ? row.audio_url.slice(PRIVATE_AUDIO_PREFIX.length) : "";
+  if (!new RegExp(`^audiobooks/${bookId}/[0-9a-f-]{36}\\.mp3$`, "i").test(key)) return reply({ error: "Private MP3 not found" }, 404);
+  const head = await env.BOOK_ASSETS.head(key);
+  if (!head || head.size <= 0) return reply({ error: "R2 object missing or empty" }, 404);
+  const object = await env.BOOK_ASSETS.get(key, { range: { offset: 0, length: Math.min(head.size, MP3_INSPECTION_BYTES) } });
+  if (!object?.body) return reply({ error: "Could not read MP3 prefix from R2" }, 502);
+  const bytes = new Uint8Array(await new Response(object.body).arrayBuffer());
+  return reply({ book_id: bookId, ...inspectMp3Prefix(bytes, head.size) });
+}
+
 function hex(bytes: Uint8Array): string {
   return Array.from(bytes, (byte) => byte.toString(16).padStart(2, "0")).join("");
 }
@@ -187,6 +245,7 @@ export async function handleAudioAdminRequest(request: Request, env: Env): Promi
     if (path === "/api/admin/audio/catalog" && request.method === "GET") return catalog(env);
     if (path === "/api/admin/audio/upload" && request.method === "POST") return upload(request, env);
     if (path === "/api/admin/audio/preview" && request.method === "GET") return preview(request, env);
+    if (path === "/api/admin/audio/inspect" && request.method === "GET") return inspect(request, env);
     return reply({ error: "Not found" }, 404);
   } catch (error) {
     console.error(JSON.stringify({ event: "audio_upload_failure", message: error instanceof Error ? error.message : "Unknown failure" }));

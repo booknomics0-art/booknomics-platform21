@@ -92,4 +92,31 @@ describe("BulkAudiobookUpload admin UI", () => {
       load.mockRestore();
     }
   });
+
+  it("rechecks an existing private R2 audiobook without uploading it again", async () => {
+    const audioUrl = "/api/admin/audio/stream/00000000-0000-4000-8000-000000000001?expires=999&signature=signed";
+    const fetchMock = vi.fn(async (url: string) => {
+      if (String(url).includes("/catalog")) return { ok: true, json: async () => ({ books: [
+        { ...BOOKS[0], audio_url: "r2-private:audiobooks/00000000-0000-4000-8000-000000000001/stored.mp3" },
+      ] }) };
+      if (String(url).includes("/preview")) return { ok: true, json: async () => ({ preview_url: audioUrl }) };
+      if (String(url).includes("/inspect")) return { ok: true, json: async () => ({ format: "mp3-frames-found", codec: "MPEG-1 Layer III", bitrateKbps: 128 }) };
+      return { status: 206, headers: new Headers({ "content-type": "audio/mpeg" }), body: null };
+    });
+    vi.stubGlobal("fetch", fetchMock);
+    const load = vi.spyOn(HTMLMediaElement.prototype, "load").mockImplementation(function (this: HTMLMediaElement) {
+      if (!this.hasAttribute("src")) return;
+      Object.defineProperty(this, "duration", { configurable: true, value: 600 });
+      queueMicrotask(() => this.dispatchEvent(new Event("loadedmetadata")));
+    });
+    try {
+      render(<BulkAudioUpload />);
+      await screen.findByText(/1 private R2 audiobooks stored/);
+      fireEvent.click(screen.getByRole("button", { name: "Recheck" }));
+      await screen.findByText(/Playback verified \(10 min\)/);
+      expect(screen.getByText("Playable")).toBeTruthy();
+      expect(screen.getByLabelText("Stored playback White Fang")).toBeTruthy();
+      expect(fetchMock.mock.calls.some(([url]) => String(url).includes("/upload"))).toBe(false);
+    } finally { load.mockRestore(); }
+  });
 });
