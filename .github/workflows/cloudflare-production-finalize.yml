@@ -20,7 +20,7 @@ jobs:
       WORKER_NAME: booknomics
       CANDIDATE_VERSION_ID: 9dac9084-53ea-42c1-b38d-5af2beba7174
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - name: Verify exact deployed Worker version
         shell: bash

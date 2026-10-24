@@ -19,7 +19,7 @@ jobs:
       ZONE_NAME: booknomics.com
       WORKER_NAME: booknomics
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - name: Temporarily attach routes, probe every cutover endpoint, always rollback
         shell: bash
         run: |
