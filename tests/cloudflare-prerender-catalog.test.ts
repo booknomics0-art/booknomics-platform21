@@ -15,7 +15,7 @@ describe("Cloudflare SEO prerender catalog bridge", () => {
     vi.stubEnv("PRERENDER_CATALOG_API", "https://worker.example");
     vi.stubEnv("VITE_DATA_BACKEND", "cloudflare");
     vi.resetModules();
-    const fetcher = vi.fn(async () => new Response(JSON.stringify({ data: [{ id: "a" }] })));
+    const fetcher = vi.fn(async () => new Response(JSON.stringify({ data: [{ id: "a", title: "Example" }] })));
     vi.stubGlobal("fetch", fetcher);
     const { fetchCloudflarePrerenderBooks } = await import("../scripts/lib/cloudflare-prerender-catalog.mjs");
     const rows = await fetchCloudflarePrerenderBooks("books?select=id,title&is_draft=eq.false&status=in.(published,published_noindex)&language=eq.en&order=id.asc&limit=100&id=gt.da1c6e39-c41d-4aa2-8537-f6e84a125fb7");
@@ -26,6 +26,16 @@ describe("Cloudflare SEO prerender catalog bridge", () => {
     expect(calledUrl.searchParams.get("status")).toBe("all");
     expect(calledUrl.searchParams.get("after_id")).toBe("da1c6e39-c41d-4aa2-8537-f6e84a125fb7");
     expect(calledUrl.searchParams.get("fields")).toBe("id,title");
+  });
+
+  it("fails closed when an older Worker omits SEO prerender fields", async () => {
+    vi.stubEnv("PRERENDER_CATALOG_API", "https://worker.example");
+    vi.stubEnv("VITE_DATA_BACKEND", "cloudflare");
+    vi.resetModules();
+    vi.stubGlobal("fetch", vi.fn(async () => new Response(JSON.stringify({ data: [{ id: "a" }] }))));
+    const { fetchCloudflarePrerenderBooks } = await import("../scripts/lib/cloudflare-prerender-catalog.mjs");
+    await expect(fetchCloudflarePrerenderBooks("books?select=id,title&is_draft=eq.false&status=eq.published"))
+      .rejects.toThrow("missing required fields");
   });
 
   it("never accepts draft-inclusive or unsupported catalog queries", async () => {
