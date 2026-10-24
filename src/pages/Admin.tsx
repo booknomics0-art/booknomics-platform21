@@ -19,7 +19,7 @@ import {
   Upload, CheckCircle2, Trash2, Image as ImageIcon,
   Sparkles, Languages, Pencil, EyeOff, Eye, UploadCloud, Library as LibraryIcon,
   Search as SearchIcon, Copy, ExternalLink, AlertTriangle,
-  Settings as SettingsIcon, Send, Wand2,
+  Settings as SettingsIcon, Send, Wand2, Headphones,
 } from "lucide-react";
 import { Helmet } from "react-helmet-async";
 import { PublishingWizard } from "@/components/admin/PublishingWizard";
@@ -29,6 +29,7 @@ import { PublishingWizard } from "@/components/admin/PublishingWizard";
 
 const SettingsPanel = lazy(() => import("@/components/admin/SettingsPanel"));
 const PromotionHistory = lazy(() => import("@/components/admin/PromotionHistory"));
+const BulkAudioUpload = lazy(() => import("@/components/admin/BulkAudioUpload"));
 
 async function logAdminAccess(opts: { user_id?: string | null; attempted_email: string | null; outcome: "allowed" | "denied"; reason: string }) {
   try {
@@ -510,7 +511,7 @@ export default function Admin() {
               ["English", englishLiveCount],
               ["Missing SEO", missingSeoCount],
               ["Missing covers", missingCoverCount],
-              ["Audio ready", audioReadyCount],
+              ["Legacy audio ready", audioReadyCount],
             ].map(([label, value]) => (
               <div key={String(label)} className="rounded-xl border border-border bg-muted/20 p-3">
                 <div className="text-[10px] uppercase tracking-wide text-muted-foreground">{label}</div>
@@ -527,6 +528,9 @@ export default function Admin() {
             </TabsTrigger>
             <TabsTrigger value="upload">
               <Upload className="w-4 h-4 mr-1" />Upload
+            </TabsTrigger>
+            <TabsTrigger value="audio">
+              <Headphones className="w-4 h-4 mr-1" />Bulk Audio
             </TabsTrigger>
             <TabsTrigger value="indexing">
               <SearchIcon className="w-4 h-4 mr-1" />Indexing
@@ -788,6 +792,13 @@ export default function Admin() {
           </TabsContent>
 
           {/* ============ UPLOAD TAB ============ */}
+          <TabsContent value="audio" className="space-y-4">
+            <Suspense fallback={<Card className="p-4 text-sm">Loading private R2 audiobook uploader…</Card>}>
+              <BulkAudioUpload />
+            </Suspense>
+          </TabsContent>
+
+          {/* ============ STRUCTURED BOOK UPLOAD TAB ============ */}
           <TabsContent value="upload" className="space-y-4">
             <Card className="p-4">
               <div className="flex items-center justify-between mb-2">

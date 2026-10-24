@@ -1,0 +1,24 @@
+{
+  // Separate Worker: its narrower routes must not replace the existing Booknomics API Worker.
+  "name": "booknomics-audio-upload",
+  "main": "src/index.ts",
+  "compatibility_date": "2026-10-24",
+  "compatibility_flags": ["nodejs_compat"],
+  "account_id": "f3fa6b827335fefe7fd131ec2d2deae6",
+  "vars": { "SUPABASE_URL": "https://pbkfewrtdgiagytmcigb.supabase.co" },
+  "routes": [
+    { "pattern": "booknomics.com/api/admin/audio/*", "zone_name": "booknomics.com" },
+    { "pattern": "www.booknomics.com/api/admin/audio/*", "zone_name": "booknomics.com" }
+  ],
+  "d1_databases": [
+    { "binding": "DB", "database_name": "booknomics-production", "database_id": "b4774bd2-a463-4115-bc32-fb32119332e8" }
+  ],
+  "r2_buckets": [
+    { "binding": "BOOK_ASSETS", "bucket_name": "booknomics-private-audio" }
+  ],
+  "observability": {
+    "enabled": true,
+    "logs": { "head_sampling_rate": 0.1 },
+    "traces": { "enabled": true, "head_sampling_rate": 0.01 }
+  }
+}
