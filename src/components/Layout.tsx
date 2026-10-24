@@ -14,11 +14,6 @@ export const Layout = ({ children }: { children: ReactNode }) => {
     <div className="booknomics-site min-h-screen flex flex-col" lang={isHindi ? "hi" : undefined}>
       <Navbar />
       <main className="site-main flex-1 pb-20 md:pb-0">{children}</main>
-      <div className="container px-4 md:px-6 pt-6">
-        <p className="text-center text-[10px] md:text-xs text-muted-foreground">
-          As an Amazon Associate I earn from qualifying purchases.
-        </p>
-      </div>
       <Footer />
       <MobileNav />
       <CookieConsent />

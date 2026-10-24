@@ -1,16 +1,17 @@
 import { readFileSync, writeFileSync } from "node:fs";
 import { resolve } from "node:path";
+import { cloudflarePrerender, fetchCloudflarePrerenderBooks } from "./lib/cloudflare-prerender-catalog.mjs";
 
 const SUPABASE_URL = process.env.VITE_SUPABASE_URL?.trim();
 const SUPABASE_KEY = process.env.VITE_SUPABASE_PUBLISHABLE_KEY?.trim();
 const HINDI_FILE = resolve("dist", "hindi", "index.html");
 const PAGE_SIZE = 500;
 const OLD_TITLE = "हिंदी पुस्तक सारांश — लोकप्रिय किताबों के सारांश और विश्लेषण | Booknomics";
-const NEW_TITLE = "हिंदी पुस्तक सारांश — Best Hindi Book Summaries | Booknomics";
+const NEW_TITLE = "हिंदी पुस्तकालय — सभी प्रकाशित हिंदी पुस्तक सारांश | Booknomics";
 const OLD_DESCRIPTION = "प्रेमचंद, दिनकर, महादेवी वर्मा और अन्य लेखकों की हिंदी किताबों के सारांश, पात्र, मुख्य विचार, सीख और गहन विश्लेषण Booknomics पर पढ़ें।";
-const NEW_DESCRIPTION = "Booknomics पर चुने हुए हिंदी पुस्तक सारांश पढ़ें — साहित्य, इतिहास और दर्शन की किताबों के मुख्य विचार, गहन विश्लेषण, अभ्यास और रिफ्लेक्शन के साथ।";
+const NEW_DESCRIPTION = "Booknomics की पूरी हिंदी पुस्तक लाइब्रेरी ब्राउज़ करें — प्रकाशित हिंदी पुस्तक सारांश, लेखक, श्रेणियाँ, मुख्य विचार और गहन विश्लेषण एक जगह।";
 
-if (!SUPABASE_URL || !SUPABASE_KEY) {
+if (!cloudflarePrerender && (!SUPABASE_URL || !SUPABASE_KEY)) {
   throw new Error("finalize-hindi-hub: missing VITE_SUPABASE_URL or VITE_SUPABASE_PUBLISHABLE_KEY");
 }
 
@@ -22,6 +23,7 @@ const escapeHtml = (value = "") => String(value)
   .replace(/'/g, "&#039;");
 
 async function api(path) {
+  if (cloudflarePrerender) return fetchCloudflarePrerenderBooks(path);
   const response = await fetch(`${SUPABASE_URL}/rest/v1/${path}`, {
     headers: {
       apikey: SUPABASE_KEY,

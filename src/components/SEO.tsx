@@ -5,6 +5,7 @@ import { apiFetch } from "@/lib/cloudflareApi";
 const SITE = "https://www.booknomics.com";
 const DEFAULT_OG = `${SITE}/og-default.svg`;
 const ORG_ID = `${SITE}/#organization`;
+const HOME_TITLE = "Booknomics — English & Hindi Book Summaries & Key Insights";
 
 interface SEOProps {
   title: string;
@@ -95,6 +96,7 @@ export const SEO = ({
 }: SEOProps) => {
   const url = canonicalize(canonical ?? path);
   const ogImg = normalizeUrl(ogImage ?? image ?? DEFAULT_OG);
+  const resolvedTitle = url === `${SITE}/` ? HOME_TITLE : title;
   const [bookArticlePublishedAt, setBookArticlePublishedAt] = useState<string | null>(null);
 
   const ld = useMemo(() => {
@@ -183,7 +185,7 @@ export const SEO = ({
   return (
     <Helmet>
       <html lang={lang} />
-      <title>{title}</title>
+      <title>{resolvedTitle}</title>
       <meta name="description" content={description} />
       <meta name="robots" content={robots} />
       <meta name="googlebot" content={robots} />
@@ -192,7 +194,7 @@ export const SEO = ({
       {hrefHi && <link rel="alternate" hrefLang="hi" href={hrefHi} />}
       {hrefDefault && <link rel="alternate" hrefLang="x-default" href={hrefDefault} />}
       <meta property="og:type" content={ogType} />
-      <meta property="og:title" content={title} />
+      <meta property="og:title" content={resolvedTitle} />
       <meta property="og:description" content={description} />
       <meta property="og:url" content={url} />
       <meta property="og:image" content={ogImg} />
@@ -201,7 +203,7 @@ export const SEO = ({
       <meta property="og:site_name" content="Booknomics" />
       <meta property="og:locale" content={lang === "hi" ? "hi_IN" : "en_US"} />
       <meta name="twitter:card" content="summary_large_image" />
-      <meta name="twitter:title" content={title} />
+      <meta name="twitter:title" content={resolvedTitle} />
       <meta name="twitter:description" content={description} />
       <meta name="twitter:image" content={ogImg} />
       {normalizedLd.map((obj, i) => (

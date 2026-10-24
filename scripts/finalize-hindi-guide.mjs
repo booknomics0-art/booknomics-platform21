@@ -1,5 +1,6 @@
 import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, resolve } from "node:path";
+import { cloudflarePrerender, fetchCloudflarePrerenderBooks } from "./lib/cloudflare-prerender-catalog.mjs";
 
 const SUPABASE_URL = process.env.VITE_SUPABASE_URL?.trim();
 const SUPABASE_KEY = process.env.VITE_SUPABASE_PUBLISHABLE_KEY?.trim();
@@ -10,6 +11,7 @@ const PAGE_URL = `${BASE}/best-hindi-book-summaries`;
 const TITLE = "Best Hindi Book Summaries | Booknomics";
 const INDEXABLE_DESCRIPTION = "Booknomics पर चुने हुए हिंदी पुस्तक सारांश पढ़ें — साहित्य, इतिहास और दर्शन की किताबों के मुख्य विचार, गहन विश्लेषण, अभ्यास और रिफ्लेक्शन के साथ।";
 const HOLD_DESCRIPTION = "Booknomics का Hindi catalog अभी editorial quality review में है। केवल book-specific, original और useful pages quality gate pass करने के बाद search indexing और advertising के लिए eligible होंगे।";
+const PAGE_SIZE = 500;
 
 const FEATURED_SLUGS = [
   "रक्तकरबी",
@@ -24,7 +26,7 @@ const FEATURED_SLUGS = [
   "आइने-अकबरी-hindi-summary",
 ];
 
-if (!SUPABASE_URL || !SUPABASE_KEY) {
+if (!cloudflarePrerender && (!SUPABASE_URL || !SUPABASE_KEY)) {
   throw new Error("finalize-hindi-guide: missing VITE_SUPABASE_URL or VITE_SUPABASE_PUBLISHABLE_KEY");
 }
 
@@ -42,6 +44,7 @@ function replaceMeta(html, attr, key, value) {
 }
 
 async function api(path) {
+  if (cloudflarePrerender) return fetchCloudflarePrerenderBooks(path);
   const response = await fetch(`${SUPABASE_URL}/rest/v1/${path}`, {
     headers: {
       apikey: SUPABASE_KEY,
@@ -54,11 +57,20 @@ async function api(path) {
   return response.json();
 }
 
-const books = await api(
-  "books?select=slug,seo_slug,title,author,category&language=eq.hi&is_draft=eq.false&status=eq.published&order=title.asc&limit=500",
-);
-if (!Array.isArray(books)) throw new Error("finalize-hindi-guide: expected an array response");
+async function fetchPublishedHindi() {
+  const rows = [];
+  for (let offset = 0; ; offset += PAGE_SIZE) {
+    const page = await api(
+      `books?select=slug,seo_slug,title,author,category&language=eq.hi&is_draft=eq.false&status=eq.published&order=title.asc&limit=${PAGE_SIZE}&offset=${offset}`,
+    );
+    if (!Array.isArray(page)) throw new Error("finalize-hindi-guide: expected an array response");
+    rows.push(...page);
+    if (page.length < PAGE_SIZE) break;
+  }
+  return rows;
+}
 
+const books = await fetchPublishedHindi();
 const guideIndexable = books.length >= 20;
 const description = guideIndexable ? INDEXABLE_DESCRIPTION : HOLD_DESCRIPTION;
 const robots = guideIndexable

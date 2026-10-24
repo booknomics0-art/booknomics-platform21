@@ -69,6 +69,11 @@ Deno.serve(async (req) => {
 
     const rl = checkRateLimit(`polish:${ures.user.id}`, 60, 60 * 60);
     if (!rl.ok) return rateLimitedResponse(req, rl.retryAfterSeconds);
+    // Atomic per-user limiter shared by all function instances.
+    const { data: sharedAllowed, error: sharedLimitError } = await admin.rpc("consume_security_rate_limit",
+      { _key: `polish:${ures.user.id}`, _max_requests: 60, _window_seconds: 3600 });
+    if (sharedLimitError) console.error("Shared polish limiter unavailable", sharedLimitError.message);
+    else if (sharedAllowed !== true) return rateLimitedResponse(req, 3600);
 
     const { data: book, error: be } = await admin.from("books")
       .select("title,author,language,tagline,overview,deep_summary,key_ideas,deep_analysis,daily_application,action_system,practice_tracker,reflection_questions,real_life_example")

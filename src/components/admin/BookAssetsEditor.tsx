@@ -76,9 +76,7 @@ export function BookAssetsEditor({ bookId, bookTitle }: { bookId: string; bookTi
   const [uploadingMm, setUploadingMm] = useState(false);
   const [uploadingAu, setUploadingAu] = useState(false);
   const [aiBusy, setAiBusy] = useState<"quiz" | "flashcards" | "mindmap" | null>(null);
-  const [quizCount, setQuizCount] = useState(10);
   const [cardCount, setCardCount] = useState(12);
-  const [diff, setDiff] = useState<"Easy" | "Medium" | "Hard">("Medium");
   const [sourceText, setSourceText] = useState("");
   const auInput = useRef<HTMLInputElement>(null);
 
@@ -109,9 +107,11 @@ export function BookAssetsEditor({ bookId, bookTitle }: { bookId: string; bookTi
   }, [bookId]);
 
   const validate = (): string | null => {
+    if (quiz.length > 0 && quiz.length !== 10) return "Mastery assessment requires exactly 10 book-specific questions";
+    if (new Set(quiz.map((q) => q.question.trim().toLowerCase())).size !== quiz.length) return "Repeated quiz questions are not allowed";
     for (const q of quiz) {
       if (!q.question.trim()) return "Every quiz question needs text";
-      if (q.options.length < 2) return "Each question needs ≥2 options";
+      if (q.options.length !== 4) return "Each quiz question needs exactly four answer options";
       if (q.options.some((o) => !o.trim())) return "Options can't be empty";
       if (q.correct_option < 0 || q.correct_option >= q.options.length) return "Pick a correct answer for every question";
     }
@@ -148,6 +148,7 @@ export function BookAssetsEditor({ bookId, bookTitle }: { bookId: string; bookTi
   };
 
   const save = async (nextStatus?: "draft" | "published") => {
+    if (nextStatus === "published" && quiz.length !== 10) { toast.error("Publish a complete 10-question book-specific quiz first"); return; }
     await persistAssets({ status: nextStatus ?? status });
   };
 
@@ -232,13 +233,13 @@ export function BookAssetsEditor({ bookId, bookTitle }: { bookId: string; bookTi
     setAiBusy(action);
     try {
       const body: Record<string, unknown> = { book_id: bookId, action };
-      if (action === "quiz") { body.count = quizCount; body.difficulty = diff; }
+      if (action === "quiz") { body.count = 10; }
       if (action === "flashcards") { body.count = cardCount; if (sourceText.trim()) body.source_text = sourceText; }
       const data = await adminGenerateMastery(body);
       if (data?.error) throw new Error(data.error);
       if (action === "quiz" && data.quiz?.length) {
         setQuiz(data.quiz);
-        toast.success(`Generated ${data.quiz.length} questions`);
+        toast.success(`Generated ${data.quiz.length} book-specific questions — editorial review required before publication`);
       }
       if (action === "flashcards" && data.flashcards?.length) {
         setCards(data.flashcards);
@@ -286,16 +287,7 @@ export function BookAssetsEditor({ bookId, bookTitle }: { bookId: string; bookTi
         <TabsContent value="quiz" className="space-y-3 pt-3">
           <Card className="p-3 bg-gradient-to-br from-primary/5 to-transparent border-primary/20">
             <div className="flex items-end gap-2 flex-wrap">
-              <div>
-                <Label className="text-xs">Questions</Label>
-                <Input type="number" min={3} max={20} value={quizCount} onChange={(e) => setQuizCount(Number(e.target.value))} className="w-20 h-8 text-sm" />
-              </div>
-              <div>
-                <Label className="text-xs">Difficulty</Label>
-                <select value={diff} onChange={(e) => setDiff(e.target.value as any)} className="block h-8 text-sm rounded-md border border-input bg-background px-2">
-                  <option>Easy</option><option>Medium</option><option>Hard</option>
-                </select>
-              </div>
+              <span className="text-xs font-semibold">10 questions · 3 Basic / 4 Medium / 3 Advanced · manual review required</span>
               <Button size="sm" onClick={() => aiGenerate("quiz")} disabled={!!aiBusy} className="gap-1">
                 {aiBusy === "quiz" ? <Loader2 className="h-3 w-3 animate-spin" /> : <Sparkles className="h-3 w-3" />}
                 AI Generate from summary

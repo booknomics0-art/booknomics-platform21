@@ -55,8 +55,16 @@ export function MasteryTab({ bookId, quiz, flashcards, language = "en" }: Props)
   const { user } = useAuth();
   const [answers, setAnswers] = useState<Record<string, number>>({});
   const [submitted, setSubmitted] = useState(false);
+  const [questionIndex, setQuestionIndex] = useState(0);
   const [reviewed, setReviewed] = useState<Set<string>>(new Set());
   const hi = language === "hi";
+
+  useEffect(() => {
+    setAnswers({});
+    setSubmitted(false);
+    setQuestionIndex(0);
+    setReviewed(new Set());
+  }, [bookId]);
 
   const total = quiz.length;
   const score = useMemo(() => quiz.reduce((acc, q) => acc + (answers[q.id] === q.correct_option ? 1 : 0), 0), [answers, quiz]);
@@ -67,7 +75,7 @@ export function MasteryTab({ bookId, quiz, flashcards, language = "en" }: Props)
   useEffect(() => {
     if (!submitted || !user) return;
     (async () => {
-      const badge = pct === 100;
+      const badge = pct === 100 && total === 10;
       try {
         await apiFetch<{ ok: boolean; badge_awarded: boolean }>("/api/mastery", {
           method: "POST",
@@ -86,7 +94,8 @@ export function MasteryTab({ bookId, quiz, flashcards, language = "en" }: Props)
     })();
   }, [submitted]); // eslint-disable-line
 
-  const reset = () => { setAnswers({}); setSubmitted(false); };
+  const reset = () => { setAnswers({}); setSubmitted(false); setQuestionIndex(0); };
+  const questionTier = (index: number) => index < 3 ? cp(hi, "Basic", "बुनियादी") : index < 7 ? cp(hi, "Intermediate", "मध्यम") : cp(hi, "Advanced", "उन्नत");
 
   if (!quiz.length && !flashcards.length) {
     return (
@@ -112,7 +121,8 @@ export function MasteryTab({ bookId, quiz, flashcards, language = "en" }: Props)
 
       {quiz.length > 0 && (
         <div>
-          <div className="text-xs tracking-[0.2em] uppercase text-primary font-semibold mb-3">{cp(hi, "Active Recall", "Active Recall")}</div>
+          <div className="text-xs tracking-[0.2em] uppercase text-primary font-semibold mb-3">{cp(hi, "Active Recall", "सक्रिय स्मरण")}</div>
+          {total !== 10 && <p className="mb-4 rounded-xl border border-amber-400/40 bg-amber-500/10 p-3 text-sm text-foreground" role="status">{cp(hi, "This book's 10-question assessment is under editorial review, so this attempt is not certified.", "इस किताब के पूरे 10 निजी प्रश्न अभी संपादकीय समीक्षा में हैं; यह प्रमाणित महारत परीक्षण नहीं है।")}</p>}
           <div className="flex items-end justify-between gap-4 flex-wrap mb-6">
             <div>
               <h2 className="font-serif text-3xl md:text-4xl font-bold tracking-tight">{cp(hi, "Test what stayed", "देखें क्या याद रहा")}</h2>
@@ -138,11 +148,12 @@ export function MasteryTab({ bookId, quiz, flashcards, language = "en" }: Props)
           )}
 
           <div className="space-y-6">
-            {quiz.map((q, qi) => {
+            {(submitted ? quiz : quiz.slice(questionIndex, questionIndex + 1)).map((q, displayIndex) => {
+              const qi = submitted ? displayIndex : questionIndex;
               const sel = answers[q.id];
               return (
                 <div key={q.id} className="rounded-2xl border border-border p-5 bg-card">
-                  <div className="text-xs text-primary font-semibold mb-2">{cp(hi, "Question", "प्रश्न")} {qi + 1} / {total}</div>
+                  <div className="flex justify-between items-center gap-2 text-xs text-primary font-semibold mb-3"><span>{cp(hi, "Question", "प्रश्न")} {qi + 1} / {total}</span><span className="rounded-full border border-gold/40 px-3 py-1">{questionTier(qi)}</span></div>
                   <div className="font-serif text-lg md:text-xl mb-4">{q.question}</div>
                   <div className="grid gap-2">
                     {q.options.map((opt, oi) => {
@@ -171,7 +182,14 @@ export function MasteryTab({ bookId, quiz, flashcards, language = "en" }: Props)
           </div>
 
           {!submitted && (
-            <Button onClick={() => { if (!user) toast.error(cp(hi, "Sign in to save your mastery score", "महारत स्कोर सेव करने के लिए साइन इन करें")); setSubmitted(true); }} disabled={!allAnswered} size="lg" className="mt-6 bg-gold text-primary-foreground hover:opacity-90 rounded-full gap-2">
+            <div className="mt-5 flex flex-wrap items-center gap-3">
+              <Button type="button" variant="outline" disabled={questionIndex === 0} onClick={() => setQuestionIndex((v) => Math.max(0, v - 1))}>{cp(hi, "Previous", "पिछला प्रश्न")}</Button>
+              <span className="text-sm text-muted-foreground" aria-live="polite">{questionIndex + 1} / {total}</span>
+              <Button type="button" variant="outline" disabled={questionIndex === total - 1 || answers[quiz[questionIndex]?.id] === undefined} onClick={() => setQuestionIndex((v) => Math.min(total - 1, v + 1))}>{cp(hi, "Next", "अगला प्रश्न")} <ArrowRight className="h-4 w-4 ml-2" /></Button>
+            </div>
+          )}
+          {!submitted && (
+            <Button onClick={() => { if (!user) toast.error(cp(hi, "Sign in to save your mastery score", "महारत स्कोर सेव करने के लिए साइन इन करें")); setSubmitted(true); }} disabled={!allAnswered || total !== 10} size="lg" className="mt-6 bg-gold text-primary-foreground hover:opacity-90 rounded-full gap-2">
               <Sparkles className="h-4 w-4" /> {cp(hi, "Check my recall", "मेरी याददाश्त जाँचें")}
             </Button>
           )}

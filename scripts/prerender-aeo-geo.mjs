@@ -1,5 +1,6 @@
 import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, resolve } from "node:path";
+import { cloudflarePrerender, fetchCloudflarePrerenderBooks } from "./lib/cloudflare-prerender-catalog.mjs";
 
 const DIST = resolve("dist");
 const INDEX = resolve(DIST, "index.html");
@@ -9,7 +10,7 @@ const WEBSITE_ID = `${BASE}/#website`;
 const SUPABASE_URL = process.env.VITE_SUPABASE_URL?.trim();
 const SUPABASE_KEY = process.env.VITE_SUPABASE_PUBLISHABLE_KEY?.trim();
 
-if (!SUPABASE_URL || !SUPABASE_KEY) {
+if (!cloudflarePrerender && (!SUPABASE_URL || !SUPABASE_KEY)) {
   throw new Error("prerender-aeo-geo: missing VITE_SUPABASE_URL or VITE_SUPABASE_PUBLISHABLE_KEY");
 }
 
@@ -54,27 +55,32 @@ function isLowSignal(text = "") {
   return LOW_SIGNAL_MARKERS.some((marker) => normalized.includes(marker));
 }
 
+// The SEO prerender must use the same editorial source as the interactive reader.
+// Never create "lessons" by extracting random plot sentences from analysis or overview.
 function extractTakeaways(book, max = 5) {
-  const sources = [book.key_ideas, book.deep_analysis, book.overview].filter(Boolean);
-  const out = [];
+  const raw = String(book.key_ideas || "").replace(/\\n/g, "\n").replace(/\r/g, "");
+  if (!raw.trim() || isLowSignal(raw)) return [];
+  const chunks = raw.split(/\n\s*(?=[-*•]\s)|\n{2,}/g);
+  const result = [];
   const seen = new Set();
-  for (const source of sources) {
-    const chunks = String(source)
-      .replace(/\r/g, "")
-      .split(/\n{1,}|(?<=[.!?।॥])\s+/)
-      .map((chunk) => stripMarkdown(chunk).replace(/^\d+[.)]\s*/, "").trim())
-      .filter((chunk) => chunk.length >= 32 && chunk.length <= 330 && !isLowSignal(chunk));
-    for (const chunk of chunks) {
-      const sentence = chunk.split(/(?<=[.!?।॥])\s+/)[0]?.trim() || chunk;
-      const value = sentence.length > 230 ? `${sentence.slice(0, 227).trim()}…` : sentence;
-      const key = value.toLowerCase().replace(/[^\p{L}\p{N}]+/gu, " ").trim();
-      if (!key || seen.has(key)) continue;
-      seen.add(key);
-      out.push(value);
-      if (out.length >= max) return out;
-    }
+  for (const chunk of chunks) {
+    const value = chunk.trim().replace(/^[-*•]\s+/, "").trim();
+    const plain = stripMarkdown(value);
+    if (plain.length < 32 || isLowSignal(plain)) continue;
+    const normalized = plain.toLowerCase().replace(/[^\p{L}\p{N}]+/gu, " ").trim();
+    if (!normalized || seen.has(normalized)) continue;
+    seen.add(normalized);
+    result.push(value);
+    if (result.length >= max) break;
   }
-  return out;
+  return result;
+}
+
+// Preserve book-specific markdown bold labels in the SEO HTML, safely escaped.
+function renderIdea(item) {
+  const match = String(item).match(/^\*\*(.{3,110}?)\*\*\s*([\s\S]*)$/);
+  if (!match) return escapeHtml(stripMarkdown(item));
+  return `<strong>${escapeHtml(match[1])}</strong> ${escapeHtml(stripMarkdown(match[2]))}`;
 }
 
 function replaceMeta(html, attr, key, value) {
@@ -117,6 +123,7 @@ function writeRoute(pathname, html) {
 }
 
 async function api(path) {
+  if (cloudflarePrerender) return fetchCloudflarePrerenderBooks(path);
   const response = await fetch(`${SUPABASE_URL}/rest/v1/${path}`, {
     headers: { apikey: SUPABASE_KEY, Authorization: `Bearer ${SUPABASE_KEY}`, Accept: "application/json" },
     signal: AbortSignal.timeout(20000),
@@ -222,7 +229,7 @@ for (const book of liveHindi) {
   const staticRoot = `<main lang="hi" style="font-family:system-ui,-apple-system,sans-serif;max-width:900px;margin:0 auto;padding:32px 20px;line-height:1.75"><nav><a href="/">होम</a> › <a href="/hindi">हिंदी</a> › ${escapeHtml(book.title)}</nav><article>
 <header><p>Booknomics हिंदी अध्ययन-सारांश</p><h1>${escapeHtml(book.title)} — हिंदी सारांश</h1>${book.author ? `<p><strong>लेखक:</strong> ${escapeHtml(book.author)}</p>` : ""}${book.category ? `<p><strong>श्रेणी:</strong> ${escapeHtml(book.category)}</p>` : ""}${book.year ? `<p><strong>मूल प्रकाशन वर्ष:</strong> ${escapeHtml(String(book.year))}</p>` : ""}${book.cover_url ? `<img src="${escapeHtml(book.cover_url)}" alt="${escapeHtml(`${book.title} पुस्तक कवर`)}" width="320" height="480" loading="eager" />` : ""}</header>
 ${directAnswer ? `<section><h2>${escapeHtml(book.title)} का संक्षिप्त उत्तर</h2><p>${escapeHtml(directAnswer)}</p></section>` : ""}
-${takeaways.length ? `<section><h2>${escapeHtml(book.title)} की 5 मुख्य बातें</h2><ul>${takeaways.map((item) => `<li>${escapeHtml(item)}</li>`).join("")}</ul></section>` : ""}
+${takeaways.length ? `<section><h2>${escapeHtml(book.title)} की ${takeaways.length} मुख्य सीखें</h2><ul>${takeaways.map((item) => `<li>${renderIdea(item)}</li>`).join("")}</ul></section>` : ""}
 ${overview ? `<section><h2>पुस्तक का परिचय और सारांश</h2><p>${escapeHtml(overview)}</p></section>` : ""}${keyIdeas ? `<section><h2>मुख्य विचार</h2><p>${escapeHtml(keyIdeas)}</p></section>` : ""}${application ? `<section><h2>जीवन में कैसे लागू करें</h2><p>${escapeHtml(application)}</p></section>` : ""}
 <section><h2>स्रोत और संपादकीय नोट</h2><p>इस Booknomics पृष्ठ का स्रोत-कार्य <strong>${escapeHtml(book.title)}</strong>${book.author ? `, लेखक ${escapeHtml(book.author)}` : ""} है। Booknomics इसका स्वतंत्र हिंदी अध्ययन-सारांश प्रकाशित करता है; यह मूल लेखक या प्रकाशक का आधिकारिक पाठ नहीं है।</p><p><a href="/about#editorial-process">Editorial process और corrections policy पढ़ें</a>.</p></section>
 <section><h2>अक्सर पूछे जाने वाले प्रश्न</h2>${faqEntries.map((entry) => `<h3>${escapeHtml(entry.question)}</h3><p>${escapeHtml(entry.answer)}</p>`).join("\n")}</section>

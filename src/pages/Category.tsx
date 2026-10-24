@@ -12,7 +12,7 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import { ArrowRight } from "lucide-react";
-import { slugifyCategory } from "@/lib/categorySlug";
+import { getPublicCategoryInfo } from "@/lib/publicCategoryDirectory";
 import { getCategoryContent } from "@/content/categoryContent";
 
 const CATEGORY_INTROS: Record<string, string> = {
@@ -34,41 +34,6 @@ const CATEGORY_ALIASES: Record<string, string> = {
   "hindi-literature": "साहित्य",
 };
 
-type CatalogRow = {
-  category: string | null;
-  status: string | null;
-  title: string | null;
-  slug: string | null;
-  seo_slug: string | null;
-};
-
-const normalizeTitle = (value: string) =>
-  value
-    .toLowerCase()
-    .replace(/\([^)]*\)/g, " ")
-    .replace(/[’']/g, "")
-    .replace(/[^a-z0-9\u0900-\u097F]+/g, " ")
-    .replace(/\s+/g, " ")
-    .trim();
-
-const resolvePublishedPick = (label: string, rows: CatalogRow[]) => {
-  const wanted = normalizeTitle(label);
-  if (!wanted) return null;
-
-  const published = rows.filter((row) => row.status === "published" && row.title && (row.seo_slug || row.slug));
-  const exact = published.find((row) => normalizeTitle(row.title || "") === wanted);
-  if (exact) return exact.seo_slug || exact.slug;
-
-  // Curated labels are sometimes intentionally shorter than the catalog title
-  // (for example "Influence" vs "Influence: The Psychology of Persuasion").
-  // Only use a one-way prefix fallback after filtering to indexable books.
-  const prefixed = published.find((row) => {
-    const title = normalizeTitle(row.title || "");
-    return title.startsWith(`${wanted} `);
-  });
-  return prefixed ? (prefixed.seo_slug || prefixed.slug) : null;
-};
-
 const Category = () => {
   const { category } = useParams();
   const [resolved, setResolved] = useState<string | null | undefined>(undefined);
@@ -77,39 +42,40 @@ const Category = () => {
 
   useEffect(() => {
     if (!category) return;
+    let cancelled = false;
+    setResolved(undefined);
+    setCount(0);
     setPickTargets({});
 
-    supabase.from("books").select("category,status,title,slug,seo_slug")
-      .eq("is_draft", false)
-      .in("status", ["published", "published_noindex"])
-      .then(({ data }) => {
-        const rows = (data ?? []) as CatalogRow[];
-        const all = rows.map((r) => r.category).filter(Boolean) as string[];
-        const cats = Array.from(new Set(all));
-        const requestedSlug = category.toLowerCase();
-        const alias = CATEGORY_ALIASES[requestedSlug];
-        const match = alias && cats.includes(alias)
-          ? alias
-          : cats.find((c) => slugifyCategory(String(c)) === requestedSlug);
-
-        setResolved(match ?? null);
-        if (match) {
-          setCount(rows.filter((r) => r.category === match && r.status === "published").length);
-        } else {
-          setCount(0);
+    (async () => {
+      const requestedSlug = category.toLowerCase();
+      const editorial = getCategoryContent(requestedSlug);
+      const picks = editorial?.picks ?? [];
+      try {
+        // No more 11 serial full-catalog requests before the page can render.
+        // The single public RPC resolves category, count and curated links.
+        const result = await getPublicCategoryInfo({
+          slug: requestedSlug,
+          alias: CATEGORY_ALIASES[requestedSlug] ?? null,
+          pickLabels: picks.map((pick) => pick.label),
+        });
+        if (cancelled) return;
+        setResolved(result.category);
+        setCount(result.published_count);
+        const targets: Record<string, string> = {};
+        for (const pick of picks) {
+          const target = result.picks[pick.label];
+          if (target) targets[pick.slug] = target;
         }
+        setPickTargets(targets);
+      } catch (error) {
+        if (cancelled) return;
+        console.error("Category directory lookup failed", error);
+        setResolved(null);
+      }
+    })();
 
-        // categoryContent stores editorial labels, not permanent database IDs.
-        // Resolve every curated pick to today's indexable seo_slug at runtime so
-        // slug migrations cannot silently turn high-authority category links into 404s.
-        const editorial = getCategoryContent(requestedSlug);
-        const nextTargets: Record<string, string> = {};
-        for (const pick of editorial?.picks ?? []) {
-          const target = resolvePublishedPick(pick.label, rows);
-          if (target) nextTargets[pick.slug] = target;
-        }
-        setPickTargets(nextTargets);
-      });
+    return () => { cancelled = true; };
   }, [category]);
 
   if (!category) return <Navigate to="/browse" replace />;
@@ -133,8 +99,8 @@ const Category = () => {
     : `${resolved} Book Summaries — Best Books on ${resolved} | Booknomics`;
   const rawDesc = content?.description ?? intro;
   const description = rawDesc.length > 160 ? rawDesc.slice(0, 157) + "…" : rawDesc;
-  const canonical = `${SITE}/category/${slug}`;
-  const isHindi = slug === "hindi" || slug === "hindi-literature" || slug === "spiritual";
+  const canonical = `${SITE}/category/${encodeURI(slug)}`;
+  const isHindi = /[\u0900-\u097F]/.test(resolved) || slug === "hindi" || slug === "hindi-literature";
 
   const collectionLd = {
     "@context": "https://schema.org",

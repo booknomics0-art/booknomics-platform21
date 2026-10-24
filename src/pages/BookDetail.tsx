@@ -45,6 +45,7 @@ const BookReviews = lazy(() => import("@/components/BookReviews").then(m => ({ d
 const BookComments = lazy(() => import("@/components/BookComments").then(m => ({ default: m.BookComments })));
 const CommunitySidebar = lazy(() => import("@/components/CommunitySidebar").then(m => ({ default: m.CommunitySidebar })));
 const MasteryTab = lazy(() => import("@/components/MasteryTab"));
+const SubjectiveMastery = lazy(() => import("@/components/SubjectiveMastery"));
 const StickyAudioPlayer = lazy(() => import("@/components/StickyAudioPlayer").then(m => ({ default: m.StickyAudioPlayer })));
 const CommunityFallback = () => <div className="h-32 rounded-xl bg-muted/40 animate-pulse" />;
 
@@ -118,44 +119,24 @@ const isLowSignalHindiText = (text: string) => {
   return boilerplate.some((marker) => normalized.includes(marker)) || repeated >= 4;
 };
 
-const extractReaderTakeaways = (
-  primary: string,
-  overview: string,
-  analysis: string,
-  max = 5,
-) => {
+// The reader must never manufacture "lessons" from story exposition.
+// Only the book's explicitly edited key_ideas field may supply takeaways.
+const extractReaderTakeaways = (primary: string, max = 5): string[] => {
+  if (!primary.trim() || isLowSignalHindiText(primary)) return [];
+  const blocks = primary.replace(/\\n/g, "\n").split(/\n\s*(?=[-*•]\s)|\n{2,}/g);
   const result: string[] = [];
   const seen = new Set<string>();
-
-  const add = (raw: string) => {
-    const clean = stripMarkdown(raw)
-      .replace(/\\n/g, " ")
-      .replace(/^[-*•\d.)\s]+/, "")
-      .replace(/\s+/g, " ")
-      .trim();
-    if (clean.length < 28 || isLowSignalHindiText(clean)) return;
-    const first = clean.split(/(?<=[.!?।])\s+/)[0]?.trim() || clean;
-    const takeaway = first.length > 210 ? `${first.slice(0, 207).trimEnd()}…` : first;
-    const key = takeaway.toLowerCase().replace(/[^\p{L}\p{N}]+/gu, " ").trim();
-    if (!key || seen.has(key)) return;
+  for (const block of blocks) {
+    const candidate = block.trim().replace(/^[-*•]\s+/, "").trim();
+    const plain = stripMarkdown(candidate).replace(/\s+/g, " ").trim();
+    if (plain.length < 32 || isLowSignalHindiText(plain)) continue;
+    const key = plain.toLowerCase().replace(/[^\p{L}\p{N}]+/gu, " ").trim();
+    if (!key || seen.has(key)) continue;
     seen.add(key);
-    result.push(takeaway);
-  };
-
-  const addBlocks = (text: string) => {
-    text
-      .replace(/\\n/g, "\n")
-      .split(/\n{2,}|(?=^###\s+)/m)
-      .map((block) => block.replace(/^#{1,6}\s+.*$/m, "").trim())
-      .filter(Boolean)
-      .forEach(add);
-  };
-
-  if (primary && !isLowSignalHindiText(primary)) addBlocks(primary);
-  if (result.length < max && overview) addBlocks(overview);
-  if (result.length < max && analysis) addBlocks(analysis);
-
-  return result.slice(0, max);
+    result.push(candidate);
+    if (result.length >= max) break;
+  }
+  return result;
 };
 
 const BookDetail = () => {
@@ -171,8 +152,9 @@ const BookDetail = () => {
   const [inLibrary, setInLibrary] = useState(false);
   const [generating, setGenerating] = useState(false);
   const [lang, setLang] = useState<"en" | "hi">("en");
-  const [hiContent, setHiContent] = useState<Partial<Book> | null>(null);
+  const [translatedContent, setTranslatedContent] = useState<Partial<Book> | null>(null);
   const [translating, setTranslating] = useState(false);
+  const [activeBookTab, setActiveBookTab] = useState("summary");
   const [reviewStats, setReviewStats] = useState<{ count: number; avg: number; top: { rating: number; content: string; created_at: string } | null }>({ count: 0, avg: 0, top: null });
   const [linkTargets, setLinkTargets] = useState<LinkTarget[]>([]);
   const [podcastOpen, setPodcastOpen] = useState(false);
@@ -222,14 +204,9 @@ const BookDetail = () => {
           return;
         }
 
+        // Publish the public summary immediately; a premium RPC should never
+        // keep the entire book stuck on the loading screen.
         setBook(data as unknown as Book);
-        // Public summary sections are fetched above for every visible book.
-        // Premium-only interactive/action fields may still be merged below.
-        const { data: prem, error: premError } = await supabase.rpc("get_premium_summary", { p_book_id: (data as any).id });
-        if (!premError) {
-          const row = Array.isArray(prem) ? prem[0] : prem;
-          if (row) setBook((prev) => (prev ? ({ ...prev, ...row } as Book) : prev));
-        }
       } catch (error) {
         console.error("[BookDetail] load failed", error);
         setBookError(error instanceof Error ? error.message : "Unable to load this book");
@@ -238,6 +215,27 @@ const BookDetail = () => {
       }
     })();
   }, [slug, navigate]);
+
+  useEffect(() => {
+    if (!book?.id) return;
+    const bookId = book.id;
+    let cancelled = false;
+    // Premium sections enhance the page asynchronously; public reading remains
+    // usable even if this optional call is slow or fails.
+    void (async () => {
+      try {
+        const { data: premium, error } = await supabase.rpc("get_premium_summary", { p_book_id: bookId });
+        if (cancelled || error) return;
+        const row = Array.isArray(premium) ? premium[0] : premium;
+        if (row) {
+          setBook((current) => current?.id === bookId ? ({ ...current, ...row } as Book) : current);
+        }
+      } catch (error) {
+        if (!cancelled) console.error("Optional premium summary load failed", error);
+      }
+    })();
+    return () => { cancelled = true; };
+  }, [book?.id]);
 
   useEffect(() => {
     if (!book) return;
@@ -309,23 +307,57 @@ const BookDetail = () => {
   }, [book]);
 
 
+  // A translation belongs to one book only; never show the previous book's text
+  // after navigating to a different title.
+  useEffect(() => {
+    setLang(book?.language === "hi" ? "hi" : "en");
+    setTranslatedContent(null);
+    setActiveBookTab("summary");
+  }, [book?.id]);
+
   const switchLang = async (next: "en" | "hi") => {
-    setLang(next);
-    if (next === "hi" && !hiContent && book) {
-      setTranslating(true);
-      try {
-        const { data, error } = await supabase.functions.invoke("translate-to-hindi", {
-          body: { sections: {
-            overview: book.overview, key_ideas: book.key_ideas,
-            deep_analysis: book.deep_analysis, daily_application: book.daily_application,
-          }},
-        });
-        if (error || data?.error) throw new Error(data?.error ?? error?.message);
-        setHiContent(data);
-      } catch (e: any) {
-        toast.error(e.message ?? "Translation failed");
-        setLang("en");
-      } finally { setTranslating(false); }
+    if (!book || translating) return;
+    const originalLanguage = book.language === "hi" ? "hi" : "en";
+    if (next === originalLanguage || translatedContent) {
+      setLang(next);
+      return;
+    }
+    if (!user) {
+      toast.error(next === "hi" ? "हिंदी अनुवाद के लिए साइन इन करें।" : "Sign in to translate this book to English.");
+      return;
+    }
+
+    const keys = ["overview", "deep_summary", "key_ideas", "deep_analysis",
+      "daily_application", "action_system", "practice_tracker",
+      "reflection_questions", "real_life_example"] as const;
+    const sections = Object.fromEntries(keys
+      .filter((key) => typeof book[key] === "string" && !!book[key]?.trim())
+      .map((key) => [key, book[key]]));
+
+    setTranslating(true);
+    try {
+      const { data: sessionData } = await supabase.auth.getSession();
+      const token = sessionData.session?.access_token;
+      if (!token) throw new Error("Sign in again to translate this book.");
+      const response = await fetch("/api/translate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+        body: JSON.stringify({ bookId: book.id, targetLanguage: next }),
+      });
+      const data = await response.json().catch(() => null);
+      if (!response.ok) throw new Error(data?.error || "Translation unavailable. Original text preserved.");
+      if (data?.error) throw new Error(data.error);
+      const translated = data?.sections as Record<string, unknown> | undefined;
+      if (!translated || Object.keys(sections).some((key) =>
+        typeof translated[key] !== "string" || !(translated[key] as string).trim())) {
+        throw new Error("Translation was incomplete. Original content has been preserved.");
+      }
+      setTranslatedContent(translated as Partial<Book>);
+      setLang(next);
+    } catch (e: any) {
+      toast.error(e?.message || "Translation unavailable. Please try again.");
+    } finally {
+      setTranslating(false);
     }
   };
 
@@ -565,22 +597,14 @@ const BookDetail = () => {
                 {book.year && <span className="flex items-center gap-1.5"><Calendar className="h-4 w-4" />{book.year}</span>}
               </div>
 
-              {!isHi && (
-                <div className="mt-6 flex items-center gap-3 flex-wrap">
-                  <div className="inline-flex rounded-full border border-border p-1 bg-background/60 backdrop-blur">
-                    <button onClick={() => switchLang("en")} className={`px-4 py-1.5 text-sm rounded-full transition ${lang === "en" ? "bg-gold text-primary-foreground font-semibold" : "text-muted-foreground"}`}>EN</button>
-                    <button onClick={() => switchLang("hi")} disabled={translating} className={`px-4 py-1.5 text-sm rounded-full transition ${lang === "hi" ? "bg-gold text-primary-foreground font-semibold" : "text-muted-foreground"}`}>
-                      {translating ? <Loader2 className="h-3 w-3 animate-spin inline" /> : "हिंदी"}
-                    </button>
-                  </div>
-                  <AudioInsightButton bookId={book.id} lang={lang} />
+              <div className="mt-6 flex items-center gap-3 flex-wrap">
+                <div className="inline-flex rounded-full border border-border p-1 bg-background/60 backdrop-blur" role="group" aria-label="Reading language">
+                  <button type="button" onClick={() => switchLang("en")} disabled={translating} aria-pressed={lang === "en"} className={`px-4 py-1.5 text-sm rounded-full transition ${lang === "en" ? "bg-gold text-primary-foreground font-semibold" : "text-foreground"}`}>English</button>
+                  <button type="button" onClick={() => switchLang("hi")} disabled={translating} aria-pressed={lang === "hi"} className={`px-4 py-1.5 text-sm rounded-full transition ${lang === "hi" ? "bg-gold text-primary-foreground font-semibold" : "text-foreground"}`}>हिंदी</button>
                 </div>
-              )}
-              {isHi && (
-                <div className="mt-6">
-                  <AudioInsightButton bookId={book.id} lang="hi" />
-                </div>
-              )}
+                {translating && <span role="status" className="flex items-center gap-1 text-xs text-foreground"><Loader2 className="h-3 w-3 animate-spin" /> {isHi ? "अनुवाद तैयार हो रहा है…" : "Translating the full book…"}</span>}
+                <AudioInsightButton bookId={book.id} lang={lang} />
+              </div>
 
               <div className="mt-8 flex flex-wrap gap-3">
                 <Button onClick={toggleLibrary} size="lg" className="bg-gold text-primary-foreground hover:opacity-90 rounded-full gap-2">
@@ -612,7 +636,7 @@ const BookDetail = () => {
 
       <div className="container py-6 md:py-10 grid lg:grid-cols-[1fr,320px] gap-10 items-start">
         <article className="max-w-4xl w-full min-w-0">
-          <Tabs defaultValue="summary" className="w-full" id="book-tabs">
+          <Tabs value={activeBookTab} onValueChange={setActiveBookTab} className="w-full" id="book-tabs">
             <div className="-mx-4 md:mx-0 mb-6 md:mb-8 overflow-x-auto scrollbar-none">
               <TabsList className={`inline-flex w-max lg:flex lg:w-full px-4 md:px-0 gap-1`}>
                 <TabsTrigger value="summary" className="flex-1 text-xs md:text-sm">{isHi ? "सार" : "Summary"}</TabsTrigger>
@@ -626,8 +650,8 @@ const BookDetail = () => {
 
             <TabsContent value="summary">
               {(() => {
-                const src = lang === "hi" && hiContent ? hiContent : book;
-                const readerIsHi = isHi || lang === "hi";
+                const src = lang !== book.language && translatedContent ? translatedContent : book;
+                const readerIsHi = lang === "hi";
                 const labels = readerIsHi
                   ? ["किताब एक नज़र में", "5 मुख्य सीख", "विस्तृत सारांश", "मुख्य विचार", "गहन विश्लेषण", "जीवन में कैसे लागू करें"]
                   : ["The book at a glance", "5 key takeaways", "Detailed summary", "The core concepts", "Deeper analysis", "Living with the ideas"];
@@ -646,25 +670,9 @@ const BookDetail = () => {
                 const derivedAnalysis = !src.deep_summary && analysisSections.length > 1
                   ? analysisSections.slice(splitAt).join("\n\n")
                   : rawAnalysis;
-                const derivedIdeas = !src.key_ideas && analysisSections.length
-                  ? analysisSections.slice(0, 8).map((section) => {
-                      const heading = section.match(/^###\s+(.+)$/m)?.[1]?.trim();
-                      const body = section.replace(/^###\s+.+$/m, "").trim();
-                      const firstSentence = body
-                        .split(/(?<=[.!?।])\s+/)
-                        .find((sentence) => !isLowSignalHindiText(sentence))
-                        ?.trim();
-                      return heading ? `- **${heading}**${firstSentence ? ` — ${firstSentence}` : ""}` : "";
-                    }).filter(Boolean).join("\n")
-                  : "";
                 const keyIdeasAreLowSignal = readerIsHi && isLowSignalHindiText(src.key_ideas || "");
-                const effectiveKeyIdeas = keyIdeasAreLowSignal ? "" : (src.key_ideas || derivedIdeas);
-                const takeaways = extractReaderTakeaways(
-                  effectiveKeyIdeas,
-                  src.overview || "",
-                  rawAnalysis,
-                  5,
-                );
+                const effectiveKeyIdeas = keyIdeasAreLowSignal ? "" : (src.key_ideas || "");
+                const takeaways = extractReaderTakeaways(effectiveKeyIdeas, 5);
                 const takeawayMarkdown = takeaways.map((takeaway) => `★ ${takeaway}`).join("\n\n");
                 const derivedApplication = !src.daily_application
                   ? [
@@ -678,7 +686,7 @@ const BookDetail = () => {
 
                 const sections = [
                   { label: labels[0], text: src.overview },
-                  { label: labels[1], text: takeawayMarkdown },
+                  { label: takeaways.length === 5 ? labels[1] : (readerIsHi ? `${takeaways.length} मुख्य सीख` : `${takeaways.length} key takeaways`), text: takeawayMarkdown },
                   { label: labels[2], text: src.deep_summary || derivedSummary },
                   { label: labels[3], text: effectiveKeyIdeas },
                   { label: labels[4], text: src.deep_summary ? rawAnalysis : derivedAnalysis },
@@ -694,12 +702,17 @@ const BookDetail = () => {
                         title={book.title}
                         author={book.author}
                         category={(book as any).category || undefined}
-                        language={(isHi || lang === "hi") ? "hi" : "en"}
+                        language={lang}
+                        onAuthorIntroClick={() => {
+                          setActiveBookTab("mastery");
+                          window.setTimeout(() => document.getElementById("author-bio")?.scrollIntoView({ behavior: "smooth", block: "start" }), 0);
+                        }}
                       />
                     </Suspense>
                   </section>
                   <ShareInsight quotesSource={(src.key_ideas as string) || (src.overview as string)} bookTitle={book.title} bookAuthor={book.author} bookSlug={book.slug} />
                   <AffiliateCTA bookId={book.id} link={book.affiliate_link} title={`${book.title} ${book.author}`} placement="summary-end" />
+                   <BookMindmapSection title={book.title} mindmapUrl={assets?.mindmap_url} loading={assetsLoading} isHindi={lang === "hi"} book={book} />
                 </>;
               })()}
             </TabsContent>
@@ -735,7 +748,7 @@ const BookDetail = () => {
                 <section className="py-4">
                   <div className="text-xs tracking-[0.2em] uppercase text-primary font-semibold mb-3">Action System</div>
                   <h2 className="font-serif text-3xl md:text-4xl font-bold tracking-tight mb-6">Step-by-step plan</h2>
-                  <MD>{linkifyMarkdown(book.action_system, linkTargets, 1)}</MD>
+                  <MD>{linkifyMarkdown((lang !== book.language ? translatedContent?.action_system : book.action_system) || book.action_system, linkTargets, 1)}</MD>
                   <AffiliateCTA bookId={book.id} link={book.affiliate_link} title={`${book.title} ${book.author}`} placement="action-end" label="Get the full book" />
                 </section>
               ) : <EmptyState onGenerate={generateActionPlan} loading={generating} label="Build your Action System" />}
@@ -794,7 +807,7 @@ const BookDetail = () => {
                   {book.practice_tracker ? (
                     <div>
                       <h3 className="font-serif text-2xl font-bold mb-4">Suggested weekly plan</h3>
-                      <MD>{book.practice_tracker}</MD>
+                      <MD>{(lang !== book.language ? translatedContent?.practice_tracker : book.practice_tracker) || book.practice_tracker}</MD>
                     </div>
                   ) : <EmptyState onGenerate={generateActionPlan} loading={generating} label="Generate suggested plan" />}
                 </section>
@@ -826,8 +839,11 @@ const BookDetail = () => {
             </TabsContent>
 
             <TabsContent value="mastery">
+              <AuthorBio author={book.author} category={book.category} title={book.title} isHindi={lang === "hi"} />
+              <BookMindmapSection title={book.title} mindmapUrl={assets?.mindmap_url} loading={assetsLoading} isHindi={lang === "hi"} book={book} />
               <Suspense fallback={<CommunityFallback />}>
                 <MasteryTab bookId={book.id} quiz={assets?.quiz_data ?? []} flashcards={assets?.flashcard_data ?? []} />
+                <SubjectiveMastery key={book.id} bookId={book.id} language={lang} />
               </Suspense>
             </TabsContent>
 
@@ -840,16 +856,6 @@ const BookDetail = () => {
             </TabsContent>
           </Tabs>
 
-          <div id="book-mindmap">
-            <BookMindmapSection
-              title={book.title}
-              mindmapUrl={assets?.mindmap_url}
-              loading={assetsLoading}
-              isHindi={isHi}
-              book={book}
-            />
-          </div>
-
 
           <Suspense fallback={<CommunityFallback />}>
             <div className="hidden lg:block mt-12 pt-12 border-t border-border">
@@ -859,8 +865,6 @@ const BookDetail = () => {
               <BookComments bookId={book.id} />
             </div>
           </Suspense>
-
-          <AuthorBio author={book.author} category={book.category} />
 
           {/* AI/LLM-friendly summary text */}
           <section className="mt-12 pt-8 border-t border-border" aria-labelledby="ai-summary">

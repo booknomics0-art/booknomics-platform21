@@ -18,6 +18,7 @@ import { handleAdminAiRoute } from "./adminAiRoutes";
 import { handleAdminContentAiRoute } from "./adminContentAiRoutes";
 import { handleAdminMediaAiRoute } from "./adminMediaAiRoutes";
 import { handleSitemapDataRoute } from "./sitemapRoutes";
+import { handleSubjectiveMasteryRoute } from "./subjectiveMasteryRoutes";
 
 type D1 = any;
 type Env = {
@@ -124,6 +125,9 @@ export default {
 
     const cutoverFeature = await handleCutoverFeatureRoute(request, env);
     if (cutoverFeature) return cutoverFeature;
+
+    const subjectiveMastery = await handleSubjectiveMasteryRoute(request, env);
+    if (subjectiveMastery) return subjectiveMastery;
 
     const bookAi = await handleBookAiRoute(request, env);
     if (bookAi) return bookAi;

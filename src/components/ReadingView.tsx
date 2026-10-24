@@ -1,7 +1,7 @@
-import { Children, useEffect, useMemo, useRef, useState } from "react";
+import { Children, isValidElement, useEffect, useMemo, useRef, useState } from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
-import { Sun, Moon, BookOpen, ArrowUp, Brain, X, ZoomIn, ZoomOut, Download, Maximize2 } from "lucide-react";
+import { Sun, Moon, BookOpen, ArrowUp, Brain, X, ZoomIn, ZoomOut, Download, Maximize2, ListTree } from "lucide-react";
 
 type ThemeKey = "light" | "sepia" | "dark";
 type SizeKey = "sm" | "md" | "lg" | "xl";
@@ -9,18 +9,18 @@ type LanguageKey = "en" | "hi";
 
 const THEMES: Record<ThemeKey, Record<string, string>> = {
   light: {
-    "--rv-bg": "#FBF9F1", "--rv-text": "#2C2416", "--rv-heading": "#1A1410",
-    "--rv-muted": "#8B7355", "--rv-accent": "#B8860B", "--rv-divider": "#E8DCC8",
+    "--rv-bg": "#FBF9F1", "--rv-text": "#241B15", "--rv-heading": "#1A1410",
+    "--rv-muted": "#58412E", "--rv-accent": "#704D05", "--rv-divider": "#E8DCC8",
     "--rv-quote-bg": "#F3EFE6", "--rv-highlight-bg": "#FFF3CD",
   },
   sepia: {
-    "--rv-bg": "#F4ECD8", "--rv-text": "#3A3020", "--rv-heading": "#1F1810",
-    "--rv-muted": "#7A6748", "--rv-accent": "#B8860B", "--rv-divider": "#DDCDA8",
+    "--rv-bg": "#F4ECD8", "--rv-text": "#2A2118", "--rv-heading": "#1F1810",
+    "--rv-muted": "#584329", "--rv-accent": "#704D05", "--rv-divider": "#DDCDA8",
     "--rv-quote-bg": "#EDE3CC", "--rv-highlight-bg": "#F5E5B5",
   },
   dark: {
-    "--rv-bg": "#1A1A1A", "--rv-text": "#D4C5B2", "--rv-heading": "#E8DCC8",
-    "--rv-muted": "#9A8C76", "--rv-accent": "#DAA520", "--rv-divider": "#2E2A24",
+    "--rv-bg": "#1A1A1A", "--rv-text": "#E9DCC9", "--rv-heading": "#F0E5D6",
+    "--rv-muted": "#C9BAA7", "--rv-accent": "#DAA520", "--rv-divider": "#2E2A24",
     "--rv-quote-bg": "#222222", "--rv-highlight-bg": "#3A2F12",
   },
 };
@@ -71,7 +71,7 @@ const loadFonts = (language: LanguageKey) => {
   l.rel = "stylesheet";
   l.href = language === "hi"
     ? "https://fonts.googleapis.com/css2?family=Noto+Sans+Devanagari:wght@500;600;700&family=Noto+Serif+Devanagari:wght@400;500;600&display=swap"
-    : "https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;800&family=Lora:ital,wght@0,400;0,600;1,400&display=swap";
+    : "https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;800&family=Lora:ital,wght@0,400;0,500;0,600;1,400;1,500&display=swap";
   document.head.appendChild(l);
 };
 
@@ -97,31 +97,31 @@ const HINDI_COPY_REPLACEMENTS: Array<[RegExp, string]> = [
   [/\bidea\b/gi, "विचार"],
 ];
 
-const normalizeHindiMarkdown = (input: string) => {
-  const withRealLineBreaks = input.replace(/\\n/g, "\n");
-  let text = HINDI_COPY_REPLACEMENTS.reduce((acc, [pattern, replacement]) => acc.replace(pattern, replacement), withRealLineBreaks);
+// Preserve all intentional **bold** emphasis. The old formatter silently stripped
+// it after two occurrences in a paragraph, hiding character names and theme labels.
+const normalizeHindiMarkdown = (input: string) =>
+  HINDI_COPY_REPLACEMENTS.reduce(
+    (acc, [pattern, replacement]) => acc.replace(pattern, replacement),
+    input.replace(/\\n/g, "\n"),
+  );
 
-  text = text
-    .split("\n")
-    .map((line) => {
-      const heading = line.match(/^\s*\*\*([^*\n]{3,80})\*\*\s*$/);
-      return heading ? `### ${heading[1].trim().replace(/[।.:]+$/, "")}` : line;
-    })
-    .join("\n");
+const promoteEditorialSubheads = (input: string) =>
+  input.replace(
+    /(###\s*(?:\d+\.\s*)?(?:प्रमुख विषय|प्रमुख पात्र|मुख्य विषय|Major Themes|Key Themes|Characters)[^\n]*\n)([\s\S]*?)(?=\n###\s|\n##\s|$)/gu,
+    (_all, heading: string, body: string) => heading + body.replace(
+      /(^|\n\n)([\p{L}][\p{L}\p{M}\s\-–/]{3,48})\n(?=[\p{L}])/gu,
+      (_match, prefix: string, label: string) =>
+        /[।.!?:]$/.test(label.trim()) ? `${prefix}${label}\n` : `${prefix}**${label.trim()}**\n`,
+    ),
+  );
 
-  return text
-    .split(/\n{2,}/)
-    .map((block) => {
-      let kept = 0;
-      return block.replace(/\*\*([^*\n]+)\*\*/g, (_full, inner: string) => {
-        const clean = inner.trim();
-        const words = clean.split(/\s+/).filter(Boolean).length;
-        if (clean.length > 52 || words > 7 || kept >= 2) return clean;
-        kept += 1;
-        return `**${clean}**`;
-      });
-    })
-    .join("\n\n");
+const containsKeyMarker = (children: React.ReactNode): boolean => {
+  if (typeof children === "string") return children.includes("★KEY★");
+  if (Array.isArray(children)) return children.some(containsKeyMarker);
+  if (isValidElement<{ children?: React.ReactNode }>(children)) {
+    return containsKeyMarker(children.props.children);
+  }
+  return false;
 };
 
 const stripKeyMarker = (children: React.ReactNode) =>
@@ -130,7 +130,7 @@ const stripKeyMarker = (children: React.ReactNode) =>
   );
 
 const ReadingView = ({
-  content, title, author, category, mindmapUrl, language = "en",
+  content, title, author, category, mindmapUrl, language = "en", onAuthorIntroClick,
 }: {
   content: string;
   title?: string;
@@ -138,6 +138,7 @@ const ReadingView = ({
   category?: string;
   mindmapUrl?: string | null;
   language?: LanguageKey;
+  onAuthorIntroClick?: () => void;
 }) => {
   const [theme, setTheme] = useState<ThemeKey>(
     () => (typeof window !== "undefined" && (localStorage.getItem("rv-theme") as ThemeKey)) || "light",
@@ -182,13 +183,42 @@ const ReadingView = ({
   const processed = useMemo(() => {
     if (!content) return "";
     const refined = refineSectionHeadings(content, language);
-    const normalized = language === "hi" ? normalizeHindiMarkdown(refined) : refined;
+    const normalized = promoteEditorialSubheads(language === "hi" ? normalizeHindiMarkdown(refined) : refined);
     return normalized.split("\n").map((ln) => {
       const m = ln.match(/^\s*★\s*(.*)$/);
       return m ? `> ★KEY★ ${m[1]}` : ln;
     }).join("\n");
   }, [content, language]);
 
+  // Extract actual markdown headings for a collapsible, accessible table of contents.
+  const headingOutline = useMemo(() => {
+    let chapter = 0;
+    let subpoint = 0;
+    let detail = 0;
+    const toLetters = (value: number) => {
+      let n = value;
+      let letters = "";
+      while (n > 0) {
+        n--;
+        letters = String.fromCharCode(65 + (n % 26)) + letters;
+        n = Math.floor(n / 26);
+      }
+      return letters;
+    };
+    return processed.split("\n").flatMap((line) => {
+      const match = line.match(/^(#{2,4})\s+(.+?)\s*$/);
+      if (!match) return [];
+      const level = match[1].length;
+      if (level === 2) { chapter++; subpoint = 0; detail = 0; }
+      else if (level === 3) { subpoint++; detail = 0; }
+      else detail++;
+      const marker = level === 2 ? String(chapter) : toLetters(level === 3 ? subpoint : detail);
+      return [{ level, marker, text: match[2].replace(/\*\*/g, "") }];
+    });
+  }, [processed]);
+
+  const headingCounter = useRef(0);
+  headingCounter.current = 0;
   const chapterCounter = useRef(0);
   const lastHeadingKey = useRef<string | null>(null);
   chapterCounter.current = 0;
@@ -276,31 +306,38 @@ const ReadingView = ({
               return (
                 <div className="rv-chapter">
                   <div className="rv-eyebrow">{cue}</div>
-                  <h2 {...props} className="rv-h2" style={{ fontFamily: "var(--rv-heading-font)", color: "var(--rv-heading)", fontWeight: 700, lineHeight: 1.3, margin: 0 }}>
+                  <h2 {...props} id={`rv-chapter-${++headingCounter.current}`} className="rv-h2" style={{ fontFamily: "var(--rv-heading-font)", color: "var(--rv-heading)", fontWeight: 700, lineHeight: 1.3, margin: 0 }}>
                     {children}
                   </h2>
                 </div>
               );
             },
             h3: ({ children, ...props }) => (
-              <h3 {...props} className="rv-h3" style={{ fontFamily: "var(--rv-heading-font)", color: "var(--rv-heading)", fontWeight: 600, lineHeight: 1.35 }}>
+              <h3 {...props} id={`rv-chapter-${++headingCounter.current}`} className="rv-h3" style={{ fontFamily: "var(--rv-heading-font)", color: "var(--rv-heading)", fontWeight: 700, lineHeight: 1.35 }}>
                 {children}
               </h3>
             ),
+            // These are real #### Markdown headings in the book source, not plain
+            // paragraphs. Tailwind's preflight strips browser-default h4 boldness,
+            // so give them an explicit readable style for Hindi and English.
+            h4: ({ children, ...props }) => (
+              <h4 {...props} id={`rv-chapter-${++headingCounter.current}`} className="rv-h4" style={{ fontFamily: "var(--rv-heading-font)", color: "var(--rv-heading)", fontWeight: 800, lineHeight: 1.45 }}>
+                {children}
+              </h4>
+            ),
             p: ({ children }) => {
-              const isKey = JSON.stringify(children).includes("★KEY★");
+              const isKey = containsKeyMarker(children);
               const cleanedChildren = isKey ? stripKeyMarker(children) : children;
               const isDrop = !isHindi && lastHeadingKey.current !== null;
               if (lastHeadingKey.current !== null) lastHeadingKey.current = null;
               if (isKey) return <span className="rv-key-text">{cleanedChildren}</span>;
               return <p className={isDrop ? "rv-p rv-dropcap" : "rv-p"} style={{ color: "var(--rv-text)" }}>{cleanedChildren}</p>;
             },
-            strong: ({ children }) => <strong className="rv-bold" style={{ color: "var(--rv-heading)", fontWeight: 600 }}>{children}</strong>,
+            strong: ({ children }) => <strong className="rv-bold" style={{ color: "var(--rv-heading)", fontWeight: 700 }}>{children}</strong>,
             em: ({ children }) => <em style={{ fontStyle: "italic" }}>{children}</em>,
             hr: () => <div aria-hidden className="rv-divider">✦ ✦ ✦</div>,
             blockquote: ({ children }) => {
-              const raw = JSON.stringify(children);
-              if (raw.includes("★KEY★")) {
+              if (containsKeyMarker(children)) {
                 return (
                   <div className="rv-key-card">
                     <span style={{ fontSize: "1.35em", lineHeight: 1 }} aria-hidden>💡</span>
@@ -358,6 +395,34 @@ const ReadingView = ({
 
       {Toolbar}
 
+      {headingOutline.length > 0 && (
+        <div className="flex flex-wrap items-start gap-3 mb-4">
+        <details className="rv-toc">
+          <summary className="rv-toc-trigger">
+            <ListTree className="h-4 w-4" aria-hidden />
+            {isHindi ? "विषय-सूची · मनचाहा भाग पढ़ें" : "Table of contents · Jump to a section"}
+          </summary>
+          <nav aria-label={isHindi ? "पढ़ने की विषय-सूची" : "Reading table of contents"}>
+            <ol className="rv-toc-list">
+              {headingOutline.map((heading, index) => (
+                <li key={index} className={heading.level >= 3 ? (heading.level === 4 ? "rv-toc-subitem rv-toc-subsubitem" : "rv-toc-subitem") : "rv-toc-main"}>
+                  <a href={`#rv-chapter-${index + 1}`}>
+                    <span className="rv-toc-number" aria-hidden="true">{heading.marker}.</span>
+                    <span>{heading.text}</span>
+                  </a>
+                </li>
+              ))}
+            </ol>
+          </nav>
+        </details>
+        {onAuthorIntroClick && (
+          <button type="button" onClick={onAuthorIntroClick} className="rounded-lg border border-border bg-card px-4 py-2 text-sm font-semibold text-foreground hover:border-primary focus-visible:outline focus-visible:outline-2 focus-visible:outline-primary" aria-label={isHindi ? "लेखक का परिचय महारत में पढ़ें" : "Read author biography in Mastery"}>
+            {isHindi ? "लेखक का परिचय ↗" : "About the author ↗"}
+          </button>
+        )}
+        </div>
+      )}
+
       {sideBySide ? (
         <div className="rv-grid">
           <div className="min-w-0">{Article}</div>
@@ -398,14 +463,27 @@ const ReadingView = ({
         }
         .rv-progress-wrap { position: sticky; top: 0; left: 0; height: 3px; background: transparent; margin-bottom: 8px; z-index: 5; }
         .rv-progress { height: 100%; background: var(--rv-accent); border-radius: 2px; transition: width 120ms linear; }
+        .rv-toc { max-width: 680px; margin: 0 auto 24px; border: 1px solid var(--rv-divider); border-radius: 12px; padding: 12px 16px; background: var(--rv-quote-bg); }
+        .rv-toc-trigger { display: flex; align-items: center; gap: 10px; cursor: pointer; font: 700 14px var(--rv-heading-font); color: var(--rv-heading); }
+        .rv-toc-list { margin: 12px 0 0; padding: 0; list-style: none; }
+        .rv-toc-list li { margin: 6px 0; font-size: 14px; line-height: 1.6; }
+        .rv-toc-list a { display: flex; align-items: baseline; gap: 8px; color: var(--rv-text); text-decoration: none; }
+        .rv-toc-number { flex: none; min-width: 2ch; color: var(--rv-heading); font-weight: 800; font-variant-numeric: tabular-nums; }
+        .rv-toc-main a { color: var(--rv-heading); font-weight: 800; }
+        .rv-toc-list a:hover, .rv-toc-list a:focus-visible { color: var(--rv-accent); text-decoration: underline; }
+        .rv-toc-subitem { margin-left: 16px !important; }
+        .rv-toc-subitem a { font-weight: 550; }
+        .rv-toc-subsubitem { margin-left: 32px !important; font-size: 13px !important; }
+        .rv-h2, .rv-h3, .rv-h4 { scroll-margin-top: 90px; }
         .rv-article { max-width: calc(680px + (var(--rv-scale) - 1) * 120px); transition: max-width .3s ease; }
         .rv-h1 { font-size: calc(30px * var(--rv-scale)); }
-        .rv-reading-intent { max-width: 560px; margin: 14px auto 0; color: var(--rv-muted); font-size: calc(14px * var(--rv-scale)); line-height: 1.6; }
+        .rv-reading-intent { max-width: 560px; margin: 14px auto 0; color: var(--rv-muted); font-size: calc(15px * var(--rv-scale)); line-height: 1.6; font-weight: 500; }
         .rv-chapter { margin-top: calc(48px * var(--rv-scale)); margin-bottom: calc(16px * var(--rv-scale)); }
-        .rv-eyebrow { color: var(--rv-accent); font-size: 12px; letter-spacing: .2em; text-transform: uppercase; font-weight: 700; margin-bottom: 6px; }
+        .rv-eyebrow { color: var(--rv-accent); font-size: 14px; letter-spacing: .16em; text-transform: uppercase; font-weight: 700; margin-bottom: 6px; }
         .rv-h2 { font-size: calc(26px * var(--rv-scale)); }
         .rv-h3 { font-size: calc(20px * var(--rv-scale)); margin-top: calc(32px * var(--rv-scale)); margin-bottom: calc(10px * var(--rv-scale)); }
-        .rv-prose { font-size: calc(18px * var(--rv-scale)); line-height: calc(1.85 - (var(--rv-scale) - 1) * 0.25); transition: font-size .3s ease, line-height .3s ease; }
+        .rv-h4 { font-size: calc(18px * var(--rv-scale)); margin-top: calc(26px * var(--rv-scale)); margin-bottom: calc(10px * var(--rv-scale)); font-weight: 800; }
+        .rv-prose { font-size: calc(18px * var(--rv-scale)); font-weight: 500; line-height: calc(1.85 - (var(--rv-scale) - 1) * 0.25); transition: font-size .3s ease, line-height .3s ease; }
         .rv-prose p, .rv-prose li { font-family: var(--rv-body-font); }
         .rv-p { margin-bottom: calc(20px * var(--rv-scale)); }
         .rv-dropcap::first-letter {
@@ -442,10 +520,10 @@ const ReadingView = ({
           margin-bottom: 4px;
         }
         .rv-key-text { display: inline; }
-        .rv-hi .rv-eyebrow { letter-spacing: 0; text-transform: none; font-size: 13px; }
+        .rv-hi .rv-eyebrow { letter-spacing: 0; text-transform: none; font-size: 15px; }
         .rv-hi .rv-prose { line-height: 1.9; }
         .rv-hi .rv-p { margin-bottom: calc(22px * var(--rv-scale)); }
-        .rv-hi .rv-h1, .rv-hi .rv-h2, .rv-hi .rv-h3 { letter-spacing: 0; }
+        .rv-hi .rv-h1, .rv-hi .rv-h2, .rv-hi .rv-h3, .rv-hi .rv-h4 { letter-spacing: 0; }
         .rv-ul, .rv-ol { padding-left: 22px; margin: 12px 0 calc(20px * var(--rv-scale)); }
         .rv-ul { list-style: disc; } .rv-ol { list-style: decimal; }
         .rv-li { margin-bottom: 6px; }
