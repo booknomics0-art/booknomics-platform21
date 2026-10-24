@@ -16,7 +16,7 @@ const orgLd = {
   url: "https://www.booknomics.com/",
   logo: {
     "@type": "ImageObject",
-    url: "https://www.booknomics.com/og-default.svg",
+    url: "https://www.booknomics.com/booknomics-icon-512.png",
   },
   description: "Booknomics is a bilingual learning platform for practical book summaries, deeper analysis, reflection, and action in Hindi and English.",
   areaServed: { "@type": "Country", name: "India" },

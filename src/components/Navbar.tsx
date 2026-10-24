@@ -1,11 +1,12 @@
 import { Link, NavLink, useNavigate } from "react-router-dom";
-import { BookOpen, Crown, LogOut, Search, User as UserIcon } from "lucide-react";
+import { Crown, LogOut, Search, User as UserIcon } from "lucide-react";
 import { ThemeToggle } from "./ThemeToggle";
 import { Button } from "@/components/ui/button";
 import { useAdmin } from "@/hooks/useAdmin";
 import { TierSimulator } from "./TierSimulator";
 import { useTier } from "@/hooks/useTier";
 import { FollowMenu } from "./FollowMenu";
+import { BrandLogo } from "./BrandLogo";
 
 export const Navbar = () => {
   const { user, loading, signOut, isAdmin } = useAdmin();
@@ -20,13 +21,7 @@ export const Navbar = () => {
     <header className="bn-navbar sticky top-0 z-40 backdrop-blur-xl bg-background/80 border-b border-border">
       <div className="container flex h-16 items-center justify-between gap-4">
         <Link to="/" className="flex min-w-0 items-center gap-3" aria-label="Booknomics home">
-          <div className="bn-brand-mark h-10 w-10 shrink-0 grid place-items-center">
-            <BookOpen className="h-5 w-5 text-background" />
-          </div>
-          <div className="leading-tight min-w-0">
-            <div className="font-serif text-xl font-bold tracking-tight">Booknomics</div>
-            <div className="hidden sm:block text-[9px] tracking-[0.18em] text-muted-foreground uppercase whitespace-nowrap">Read · Apply · Transform</div>
-          </div>
+          <BrandLogo />
         </Link>
 
         <nav className="hidden md:flex items-center gap-5 lg:gap-6" aria-label="Primary navigation">

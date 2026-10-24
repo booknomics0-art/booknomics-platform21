@@ -41,7 +41,7 @@ const BlogPost = () => {
     publisher: {
       "@type": "Organization",
       name: "Booknomics",
-      logo: { "@type": "ImageObject", url: `${SITE}/og-default.svg` },
+      logo: { "@type": "ImageObject", url: `${SITE}/booknomics-icon-512.png` },
     },
     mainEntityOfPage: { "@type": "WebPage", "@id": url },
     keywords: post.tags.join(", "),

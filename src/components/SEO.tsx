@@ -3,7 +3,8 @@ import { Helmet } from "react-helmet-async";
 import { supabase } from "@/integrations/supabase/client";
 
 const SITE = "https://www.booknomics.com";
-const DEFAULT_OG = `${SITE}/og-default.svg`;
+const DEFAULT_OG = `${SITE}/og-default.jpg`;
+const BRAND_LOGO = `${SITE}/booknomics-icon-512.png`;
 const ORG_ID = `${SITE}/#organization`;
 const HOME_TITLE = "Booknomics — English & Hindi Book Summaries & Key Insights";
 
@@ -68,7 +69,7 @@ const normalizeStructuredData = (value: unknown): unknown => {
       if (!normalized.logo) {
         normalized.logo = {
           "@type": "ImageObject",
-          url: DEFAULT_OG,
+          url: BRAND_LOGO,
         };
       }
     }

@@ -7,7 +7,6 @@ import { Label } from "@/components/ui/label";
 import { supabase, SUPABASE_URL } from "@/integrations/supabase/client";
 import { safeRedirectPath } from "@/lib/safeRedirect";
 import { toast } from "sonner";
-import { BookOpen } from "lucide-react";
 import { trackLogin, trackSignup } from "@/lib/analytics";
 import { SEO } from "@/components/SEO";
 import { recordReferralIfPending } from "@/lib/referrals";
@@ -153,9 +152,7 @@ const Auth = () => {
       />
       <div className="container max-w-md py-16">
         <div className="text-center mb-8">
-          <div className="bg-gold h-14 w-14 rounded-2xl grid place-items-center mx-auto mb-4 shadow-cover">
-            <BookOpen className="h-6 w-6 text-primary-foreground" />
-          </div>
+          <img src="/booknomics-icon-512.png" alt="Booknomics" width={56} height={56} className="h-14 w-14 rounded-2xl mx-auto mb-4 shadow-cover" />
           <h1 className="font-serif text-4xl font-bold tracking-tight">{mode === "signin" ? "Welcome back" : "Begin reading"}</h1>
           <p className="text-muted-foreground mt-2">{mode === "signin" ? "Sign in to your library" : "Create your free account"}</p>
         </div>
