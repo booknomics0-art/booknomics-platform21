@@ -81,6 +81,7 @@ beforeEach(() => {
   vi.stubGlobal("fetch", vi.fn(async (url: string, init: RequestInit) => {
     expect(url).toBe("https://pbkfewrtdgiagytmcigb.supabase.co/auth/v1/user");
     expect(new Headers(init.headers).get("authorization")).toBe(AUTH);
+    expect(init.redirect).toBe("manual");
     return Response.json(verifiedUser);
   }));
 });
@@ -105,6 +106,17 @@ describe("Cloudflare R2 audiobook admin API", () => {
     expect(response.status).toBe(200);
     expect((await response.json()).books[0].title).toBe("White Fang");
     expect(queries[0].params[0]).toBe(USER_ID);
+  });
+
+  it("rejects Supabase Auth redirects without forwarding the bearer token", async () => {
+    const redirected = vi.fn(async (_url: string, init: RequestInit) => {
+      // The edge runtime throws for redirect: "error"; manual is supported.
+      expect(init.redirect).toBe("manual");
+      return new Response(null, { status: 302, headers: { location: "https://untrusted.example/" } });
+    });
+    vi.stubGlobal("fetch", redirected);
+    expect((await handleAudioAdminRequest(getCatalogRequest(), fixture().env)).status).toBe(403);
+    expect(redirected).toHaveBeenCalledTimes(1);
   });
 
   it("rejects cross-origin uploads and missing CSRF header", async () => {
