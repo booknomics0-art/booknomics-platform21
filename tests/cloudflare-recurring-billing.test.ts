@@ -1,11 +1,22 @@
 import { describe, expect, it } from "vitest";
-import { handleRecurringBillingRoute } from "../worker/recurringBillingRoutes";
+import { billingCredentials, handleRecurringBillingRoute } from "../worker/recurringBillingRoutes";
 
 const fakeD1 = { prepare: () => ({ bind: () => ({ first: async () => null }) }) };
 const env = { DB: fakeD1, RAZORPAY_WEBHOOK_SECRET: "local-test-secret" };
 const url = (route: string) => "https://www.booknomics.com/api/payments/razorpay/" + route;
 
 describe("Cloudflare recurring Razorpay guardrails", () => {
+  it("permits test credentials only in staging and live credentials only in production", () => {
+    const live = { RAZORPAY_KEY_ID: "rzp_live_sample", RAZORPAY_KEY_SECRET: "dummy" };
+    const test = { RAZORPAY_KEY_ID: "rzp_test_sample", RAZORPAY_KEY_SECRET: "dummy" };
+    expect(billingCredentials({ ...live, BOOKNOMICS_ENV: "production" })).not.toBeNull();
+    expect(billingCredentials({ ...test, BOOKNOMICS_ENV: "staging" })).not.toBeNull();
+    expect(billingCredentials({ ...test, BOOKNOMICS_ENV: "production" })).toBeNull();
+    expect(billingCredentials({ ...live, BOOKNOMICS_ENV: "staging" })).toBeNull();
+    expect(billingCredentials({ ...live, BOOKNOMICS_ENV: "preview" })).toBeNull();
+    expect(billingCredentials({ ...live })).toBeNull();
+    expect(billingCredentials({ ...test, BOOKNOMICS_ENV: "staging", RAZORPAY_KEY_SECRET: "" })).toBeNull();
+  });
   it("does not intercept legacy payments", async () => {
     const result = await handleRecurringBillingRoute(new Request(url("order"), { method: "POST" }), env);
     expect(result).toBeNull();
