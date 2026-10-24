@@ -7,10 +7,7 @@ const fail = (text: string) => ({ content: [{ type: "text" as const, text }], is
 async function adminDb(ctx: any) {
   if (!ctx.isAuthenticated()) throw new Error("Authentication required");
   const db = supabaseForUser(ctx);
-  const { data: allowed, error } = await db.rpc("has_role", {
-    _user_id: ctx.getUserId(),
-    _role: "admin",
-  });
+  const { data: allowed, error } = await db.rpc("is_admin_email");
   if (error || allowed !== true) throw new Error("Administrator role required");
   return db;
 }

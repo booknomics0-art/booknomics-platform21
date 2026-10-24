@@ -1,7 +1,7 @@
 import { apiFetch } from "@/lib/cloudflareApi";
 
-/** Server-side roles remain authoritative. */
-export async function isAdminUser(_userId: string): Promise<boolean> {
+/** The Cloudflare Worker checks the signed-in session against its private role table. */
+export async function isAdminUser(): Promise<boolean> {
   const data = await apiFetch<{ isAdmin: boolean }>("/api/me/admin");
   return data.isAdmin === true;
 }

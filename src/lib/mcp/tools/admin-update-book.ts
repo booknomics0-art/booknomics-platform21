@@ -21,7 +21,7 @@ export default defineTool({
     const fail = (text: string) => ({ content: [{ type: 'text' as const, text }], isError: true });
     if (!ctx.isAuthenticated()) return fail('Authentication required');
     const db = supabaseForUser(ctx);
-    const { data: allowed, error: roleError } = await db.rpc('has_role', { _user_id: ctx.getUserId(), _role: 'admin' });
+    const { data: allowed, error: roleError } = await db.rpc('is_admin_email');
     if (roleError || allowed !== true) return fail('Administrator role required');
     const { data, error } = await db.from('books').update(patch).eq('id', book_id)
       .select('id,title,author,tagline,overview,category,meta_title,meta_description').maybeSingle();

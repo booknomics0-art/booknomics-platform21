@@ -43,10 +43,16 @@ export const Navbar = () => {
         <div className="flex items-center gap-2">
           <div className="hidden xl:block"><FollowMenu /></div>
           {showAdmin && <div className="hidden md:block"><TierSimulator /></div>}
+          {showAdmin && (
+            <Link to="/admin" className="md:hidden text-xs font-semibold text-primary border border-primary/30 rounded-full px-3 py-2">
+              Admin
+            </Link>
+          )}
           <Link to={isPremium ? "/account/subscription" : "/pricing"}
             className="inline-flex items-center gap-1 rounded-full bg-primary/10 text-primary border border-primary/25 px-2.5 py-2 text-[11px] font-semibold hover:bg-primary/15"
             aria-label={isPremium ? "Manage your Premium subscription" : "View Premium plans"}>
-            <Crown className="h-4 w-4" /> <span className="hidden sm:inline">{isPremium ? "My Premium" : "Go Premium"}</span>
+            <Crown className="h-4 w-4" />
+            <span className="hidden sm:inline">{isPremium ? "My Premium" : "Go Premium"}</span>
           </Link>
           <Button variant="outline" size="icon" onClick={() => navigate("/browse")} className="rounded-full bg-card/70" aria-label="Search books">
             <Search className="h-4 w-4" />

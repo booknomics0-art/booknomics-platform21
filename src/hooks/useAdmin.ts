@@ -5,7 +5,7 @@ export function useAdmin() {
   const auth = useAuth();
   const role = useQuery({
     queryKey: ['admin-role', auth.user?.id],
-    queryFn: () => isAdminUser(auth.user!.id),
+    queryFn: isAdminUser,
     enabled: !!auth.user && !auth.loading,
     staleTime: 0,
     retry: 1,

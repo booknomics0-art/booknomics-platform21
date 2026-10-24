@@ -4,7 +4,7 @@ import { SEO } from "@/components/SEO";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { Mail, Twitter, Instagram, Shield } from "lucide-react";
+import { Mail, Instagram } from "lucide-react";
 import { toast } from "sonner";
 
 const Contact = () => {
@@ -17,7 +17,7 @@ const Contact = () => {
     if (!name || !email || !message) return toast.error("Please fill in all fields");
     const subject = encodeURIComponent(`[Booknomics] Message from ${name}`);
     const body = encodeURIComponent(`${message}\n\n— ${name} (${email})`);
-    window.location.href = `mailto:hello@booknomics.com?subject=${subject}&body=${body}`;
+    window.location.href = `mailto:booknomics0@gmail.com?subject=${subject}&body=${body}`;
     toast.success("Opening your email app…");
   };
 
@@ -55,27 +55,16 @@ const Contact = () => {
           </form>
 
           <aside className="space-y-3">
-            <a href="mailto:hello@booknomics.com" className="flex items-center gap-3 bg-card border border-border rounded-xl p-4 hover:bg-muted/50 transition">
+            <a href="mailto:booknomics0@gmail.com" className="flex items-center gap-3 bg-card border border-border rounded-xl p-4 hover:bg-muted/50 transition">
               <Mail className="h-5 w-5 text-primary" />
               <div>
                 <div className="text-xs text-muted-foreground">General</div>
-                <div className="text-sm font-medium">hello@booknomics.com</div>
+                <div className="text-sm font-medium">booknomics0@gmail.com</div>
               </div>
             </a>
-            <a href="mailto:legal@booknomics.com" className="flex items-center gap-3 bg-card border border-border rounded-xl p-4 hover:bg-muted/50 transition">
-              <Shield className="h-5 w-5 text-primary" />
-              <div>
-                <div className="text-xs text-muted-foreground">Copyright / DMCA</div>
-                <div className="text-sm font-medium">legal@booknomics.com</div>
-              </div>
-            </a>
-            <a href="https://twitter.com/booknomics" target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 bg-card border border-border rounded-xl p-4 hover:bg-muted/50 transition">
-              <Twitter className="h-5 w-5 text-primary" />
-              <div className="text-sm font-medium">@booknomics</div>
-            </a>
-            <a href="https://instagram.com/booknomics" target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 bg-card border border-border rounded-xl p-4 hover:bg-muted/50 transition">
+            <a href="https://www.instagram.com/booknomics_official/" target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 bg-card border border-border rounded-xl p-4 hover:bg-muted/50 transition">
               <Instagram className="h-5 w-5 text-primary" />
-              <div className="text-sm font-medium">@booknomics</div>
+              <div className="text-sm font-medium">@booknomics_official</div>
             </a>
           </aside>
         </div>
