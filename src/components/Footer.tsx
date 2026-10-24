@@ -1,7 +1,7 @@
 import { Link, useLocation } from "react-router-dom";
-import { BookOpen } from "lucide-react";
 import { SOCIAL_LINKS, SOCIAL_REL, withUtm } from "@/config/social";
 import { SocialIcon } from "./SocialIcon";
+import { BrandLogo } from "./BrandLogo";
 
 const DISCLAIMER_EN =
   "Booknomics provides educational summaries, key insights, and commentary on published books. Book titles, author names, and cover images are property of their respective publishers and copyright holders, used here under fair use principles for editorial and educational purposes. We do not reproduce copyrighted book content. We encourage readers to purchase original books from authors and publishers.";
@@ -22,10 +22,7 @@ export const Footer = () => {
         <div className="grid grid-cols-3 md:grid-cols-4 gap-5 md:gap-10">
           <div className="hidden md:block">
             <div className="flex items-center gap-2 mb-4">
-              <div className="bn-brand-mark h-8 w-8 grid place-items-center">
-                <BookOpen className="h-4 w-4 text-background" />
-              </div>
-              <span className="font-serif text-lg font-bold">Booknomics</span>
+              <BrandLogo iconClassName="h-8 w-8" wordmarkClassName="w-[136px]" />
             </div>
             <p className="text-sm text-muted-foreground max-w-xs leading-relaxed">
               A practical library for ideas worth understanding, remembering and applying.
@@ -99,8 +96,7 @@ export const Footer = () => {
 
         <div className="flex items-center justify-between mt-6 pt-5 border-t border-border">
           <div className="flex items-center gap-2 md:hidden">
-            <div className="bn-brand-mark h-6 w-6 grid place-items-center"><BookOpen className="h-3 w-3 text-background" /></div>
-            <span className="font-serif text-sm font-bold">Booknomics</span>
+            <BrandLogo iconClassName="h-6 w-6" wordmarkClassName="w-[106px]" />
           </div>
           <span className="text-[10px] md:text-xs text-muted-foreground">© {new Date().getFullYear()} Booknomics. Original educational analyses.</span>
         </div>
