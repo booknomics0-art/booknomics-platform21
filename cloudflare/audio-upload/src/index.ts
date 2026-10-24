@@ -19,9 +19,12 @@ async function isAdmin(request: Request, env: Env): Promise<boolean> {
   if (base.protocol !== "https:" || base.pathname !== "/" || base.search || base.hash) return false;
   const authResponse = await fetch(`${base.origin}/auth/v1/user`, {
     headers: { authorization: `Bearer ${bearer}`, apikey: env.SUPABASE_ANON_KEY },
-    redirect: "error",
+    // Cloudflare Workers deliberately does not implement redirect: "error".
+    // Manual mode never forwards the bearer token to a redirect destination.
+    redirect: "manual",
     signal: AbortSignal.timeout(10_000),
   });
+  if (authResponse.status >= 300 && authResponse.status < 400) return false;
   if (!authResponse.ok) return false;
   const user = await authResponse.json() as { id?: string; email?: string; email_confirmed_at?: string };
   if (!UUID_PATTERN.test(user.id ?? "") || user.email?.toLowerCase() !== ADMIN_EMAIL || !user.email_confirmed_at) return false;
