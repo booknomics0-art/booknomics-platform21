@@ -2,6 +2,7 @@
 type D1 = any;
 type Env = {
   DB?: D1;
+  BOOKNOMICS_ENV?: string;
   RAZORPAY_KEY_ID?: string;
   RAZORPAY_KEY_SECRET?: string;
   RAZORPAY_WEBHOOK_SECRET?: string;
@@ -33,8 +34,10 @@ const fromUnix = (seconds: unknown): string | null => {
 function planConfig(env: Env, plan: PaidPlan) {
   return { id: plan === "weekly" ? env.RAZORPAY_WEEKLY_PLAN_ID : env.RAZORPAY_MONTHLY_PLAN_ID, amount: AMOUNTS[plan] };
 }
-function liveCredentials(env: Env) {
-  if (!env.RAZORPAY_KEY_ID?.startsWith("rzp_live_") || !env.RAZORPAY_KEY_SECRET) return null;
+export function billingCredentials(env: Env) {
+  const prefix = env.BOOKNOMICS_ENV === "production" ? "rzp_live_"
+    : env.BOOKNOMICS_ENV === "staging" ? "rzp_test_" : null;
+  if (!prefix || !env.RAZORPAY_KEY_ID?.startsWith(prefix) || !env.RAZORPAY_KEY_SECRET) return null;
   return { key: env.RAZORPAY_KEY_ID, secret: env.RAZORPAY_KEY_SECRET };
 }
 async function verifyHmac(secret: string, message: string, hex: string) {
@@ -44,8 +47,8 @@ async function verifyHmac(secret: string, message: string, hex: string) {
   return crypto.subtle.verify("HMAC", key, signature, bytes.encode(message));
 }
 async function razorpay(env: Env, path: string, method = "GET", payload?: unknown): Promise<any> {
-  const creds = liveCredentials(env);
-  if (!creds) throw new Error("Razorpay Live Mode is not configured");
+  const creds = billingCredentials(env);
+  if (!creds) throw new Error("Razorpay is not configured for this environment");
   const response = await fetch("https://api.razorpay.com/v1/" + path, {
     method,
     headers: { authorization: "Basic " + btoa(creds.key + ":" + creds.secret), ...(payload ? { "content-type": "application/json" } : {}) },
@@ -87,16 +90,16 @@ async function ownSubscriptions(db: D1, userId: string): Promise<Subscription[]>
 }
 async function verifyProviderPlan(env: Env, plan: PaidPlan) {
   const cfg = planConfig(env, plan);
-  if (!validId(cfg.id, "plan")) throw new Error("Live billing plan is missing");
+  if (!validId(cfg.id, "plan")) throw new Error("Billing plan is missing");
   const remote = await razorpay(env, "plans/" + encodeURIComponent(cfg.id));
   if (remote.id !== cfg.id || remote.period !== plan || Number(remote.interval) !== 1 ||
       Number(remote.item?.amount) !== cfg.amount || remote.item?.currency !== "INR") {
-    throw new Error("Razorpay Live plan amount or billing frequency mismatch");
+    throw new Error("Razorpay plan amount or billing frequency mismatch");
   }
   return cfg;
 }
 async function createSubscription(req: Request, env: Env, user: User) {
-  if (!liveCredentials(env)) return json({ error: "Live billing is not configured" }, 503);
+  if (!billingCredentials(env)) return json({ error: "Billing is not configured for this environment" }, 503);
   const body = await req.json().catch(() => null) as { plan?: string } | null;
   if (body?.plan !== "weekly" && body?.plan !== "monthly") return json({ error: "Invalid plan" }, 400);
   const plan = body.plan;
@@ -140,7 +143,7 @@ async function confirmSubscription(req: Request, env: Env, user: User) {
   const record = await env.DB!.prepare("SELECT * FROM subscriptions WHERE razorpay_subscription_id=? AND user_id=? LIMIT 1")
     .bind(id,user.id).first() as Subscription | null;
   if (!record) return json({ error: "Subscription not found" }, 404);
-  if (!liveCredentials(env)) return json({ error: "Billing credentials unavailable" }, 503);
+  if (!billingCredentials(env)) return json({ error: "Billing credentials unavailable" }, 503);
   const sigOk = await verifyHmac(env.RAZORPAY_KEY_SECRET!, paymentId + "|" + id, body.razorpay_signature);
   if (!sigOk) return json({ error: "Invalid checkout signature" }, 401);
   const remote = await razorpay(env,"subscriptions/"+encodeURIComponent(id));
