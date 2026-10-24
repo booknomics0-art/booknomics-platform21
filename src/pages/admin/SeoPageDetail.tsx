@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import { AdminGuard } from "@/components/admin/AdminGuard";
 import { AdminShell } from "@/components/admin/AdminShell";
-import { supabase } from "@/integrations/supabase/client";
+import { adminGetBook, adminGsc } from "@/lib/adminApi";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -33,10 +33,13 @@ function Inner() {
   useEffect(() => {
     if (!pageId) return;
     (async () => {
-      const { data, error } = await supabase
-        .from("books_admin").select("*").eq("id", pageId).maybeSingle();
-      if (error || !data) { toast.error("Book not found"); return; }
-      setBook(data as any);
+      try {
+        const data = await adminGetBook<BookForAudit>(pageId);
+        if (!data) { toast.error("Book not found"); return; }
+        setBook(data);
+      } catch {
+        toast.error("Book not found");
+      }
     })();
   }, [pageId]);
 
@@ -46,16 +49,12 @@ function Inner() {
     try {
       const days = range === "7d" ? 7 : range === "28d" ? 28 : range === "3mo" ? 90 : 180;
       const end = new Date(); const start = new Date(); start.setDate(end.getDate() - days);
-      const { data, error } = await supabase.functions.invoke("admin-gsc", {
-        body: {
-          action: "page_data",
-          pageUrl: bookUrl(book.slug),
-          startDate: start.toISOString().slice(0, 10),
-          endDate: end.toISOString().slice(0, 10),
-        },
+      const data = await adminGsc<any>({
+        action: "page_data",
+        pageUrl: bookUrl(book.slug),
+        startDate: start.toISOString().slice(0, 10),
+        endDate: end.toISOString().slice(0, 10),
       });
-      if (error) throw new Error(error.message);
-      if ((data as any)?.error) throw new Error((data as any).error);
       setGsc(data);
     } catch (e: any) {
       toast.error(e.message || "GSC fetch failed");
@@ -82,8 +81,7 @@ function Inner() {
         <div>
           <div className="text-sm text-muted-foreground">{book.author}</div>
           <h2 className="text-xl font-bold">{book.title}</h2>
-          <a href={bookUrl(book.slug)} target="_blank" rel="noreferrer"
-             className="text-xs text-primary inline-flex items-center gap-1 hover:underline">
+          <a href={bookUrl(book.slug)} target="_blank" rel="noreferrer" className="text-xs text-primary inline-flex items-center gap-1 hover:underline">
             {bookUrl(book.slug)} <ExternalLink className="h-3 w-3" />
           </a>
         </div>
@@ -102,14 +100,11 @@ function Inner() {
       </div>
       <ScoreCard label="SEO Readiness (composite)" score={ready.score} big />
 
-      {/* GSC */}
       <Card className="p-4">
         <div className="flex items-center justify-between gap-2 mb-3">
           <h3 className="font-semibold flex items-center gap-2"><Globe className="h-4 w-4" /> Google Search Console</h3>
           <div className="flex gap-1">
-            {(["7d","28d","3mo","6mo"] as const).map(r => (
-              <Button key={r} size="sm" variant={range === r ? "default" : "outline"} onClick={() => setRange(r)}>{r}</Button>
-            ))}
+            {(["7d","28d","3mo","6mo"] as const).map(r => <Button key={r} size="sm" variant={range === r ? "default" : "outline"} onClick={() => setRange(r)}>{r}</Button>)}
             <Button size="sm" onClick={fetchGsc} disabled={gscLoading}>{gscLoading ? "Fetching…" : "Fetch data"}</Button>
           </div>
         </div>
@@ -147,9 +142,7 @@ function Inner() {
       <Card className="p-4">
         <h3 className="font-semibold mb-3">Recommendations ({recs.length})</h3>
         {recs.length === 0 && <div className="text-sm text-muted-foreground">All clear. 🎉</div>}
-        <ul className="space-y-2">
-          {recs.map(r => <RecRow key={r.id} r={r} />)}
-        </ul>
+        <ul className="space-y-2">{recs.map(r => <RecRow key={r.id} r={r} />)}</ul>
       </Card>
 
       <BacklinkOpportunities book={book} />
@@ -158,8 +151,7 @@ function Inner() {
 }
 
 function offPageEstimate(book: BookForAudit) {
-  // Without a paid backlink API: rough composite of internal signals.
-  let s = 30; // base
+  let s = 30;
   if (book.affiliate_link) s += 10;
   if ((book.overview || "").length > 400) s += 10;
   if ((book.key_ideas || "").length > 200) s += 10;
@@ -172,20 +164,13 @@ function ScoreCard({ label, score, big }: { label: string; score: number; big?: 
     <Card className="p-4">
       <div className="text-xs uppercase tracking-wider text-muted-foreground">{label}</div>
       <div className={`${big ? "text-4xl" : "text-3xl"} font-bold tabular-nums ${scoreColor(score)}`}>{score}<span className="text-base text-muted-foreground">/100</span></div>
-      <div className="mt-2 h-1.5 bg-muted rounded-full overflow-hidden">
-        <div className={`h-full ${scoreBg(score)}`} style={{ width: `${score}%` }} />
-      </div>
+      <div className="mt-2 h-1.5 bg-muted rounded-full overflow-hidden"><div className={`h-full ${scoreBg(score)}`} style={{ width: `${score}%` }} /></div>
     </Card>
   );
 }
 
 function Mini({ label, value }: { label: string; value: any }) {
-  return (
-    <div className="rounded-md border p-3">
-      <div className="text-[10px] uppercase tracking-wider text-muted-foreground">{label}</div>
-      <div className="text-xl font-bold tabular-nums">{value}</div>
-    </div>
-  );
+  return <div className="rounded-md border p-3"><div className="text-[10px] uppercase tracking-wider text-muted-foreground">{label}</div><div className="text-xl font-bold tabular-nums">{value}</div></div>;
 }
 
 function ChecksCard({ title, data }: { title: string; data: Check[] }) {
@@ -195,16 +180,9 @@ function ChecksCard({ title, data }: { title: string; data: Check[] }) {
       <ul className="space-y-1.5 text-sm">
         {data.map(c => (
           <li key={c.id} className="flex items-start gap-2">
-            {c.passed
-              ? <CheckCircle2 className="h-4 w-4 text-emerald-500 mt-0.5 shrink-0" />
-              : c.severity === "critical" || c.severity === "high"
-                ? <XCircle className="h-4 w-4 text-red-500 mt-0.5 shrink-0" />
-                : <AlertTriangle className="h-4 w-4 text-amber-500 mt-0.5 shrink-0" />}
+            {c.passed ? <CheckCircle2 className="h-4 w-4 text-emerald-500 mt-0.5 shrink-0" /> : c.severity === "critical" || c.severity === "high" ? <XCircle className="h-4 w-4 text-red-500 mt-0.5 shrink-0" /> : <AlertTriangle className="h-4 w-4 text-amber-500 mt-0.5 shrink-0" />}
             <div className="flex-1">
-              <div className="flex items-center gap-2 flex-wrap">
-                <span className={c.passed ? "" : "font-medium"}>{c.label}</span>
-                {c.detail && <span className="text-xs text-muted-foreground">({c.detail})</span>}
-              </div>
+              <div className="flex items-center gap-2 flex-wrap"><span className={c.passed ? "" : "font-medium"}>{c.label}</span>{c.detail && <span className="text-xs text-muted-foreground">({c.detail})</span>}</div>
               {!c.passed && c.fix && <div className="text-xs text-muted-foreground mt-0.5">→ {c.fix}</div>}
             </div>
           </li>
@@ -220,11 +198,7 @@ function RecRow({ r }: { r: Recommendation }) {
     <li className="border rounded-md p-3 flex items-start gap-3">
       <span className={`inline-block w-2 h-2 rounded-full mt-1.5 ${color}`} />
       <div className="flex-1">
-        <div className="flex items-center gap-2 flex-wrap">
-          <span className="font-medium text-sm">{r.title}</span>
-          <Badge variant="outline" className="text-[10px]">{r.priority}</Badge>
-          <Badge variant="secondary" className="text-[10px]">{r.module}</Badge>
-        </div>
+        <div className="flex items-center gap-2 flex-wrap"><span className="font-medium text-sm">{r.title}</span><Badge variant="outline" className="text-[10px]">{r.priority}</Badge><Badge variant="secondary" className="text-[10px]">{r.module}</Badge></div>
         <div className="text-xs text-muted-foreground mt-1"><strong>Why:</strong> {r.why}</div>
         <div className="text-xs mt-1"><strong>Fix:</strong> {r.fix}</div>
       </div>
@@ -234,31 +208,19 @@ function RecRow({ r }: { r: Recommendation }) {
 
 function BacklinkOpportunities({ book }: { book: BookForAudit }) {
   const ideas = [
-    { type: "Quora answer", platform: "Quora", anchor: `${book.title} summary`, target: bookUrl(book.slug),
-      note: `Find questions like "best summary of ${book.title}" and answer with 1 paragraph + link.` },
-    { type: "Reddit comment", platform: "Reddit (r/books, r/selfimprovement)", anchor: `${book.title} key ideas`, target: bookUrl(book.slug),
-      note: "Comment on relevant threads with value first, link last." },
-    { type: "Medium article", platform: "Medium", anchor: `5 lessons from ${book.title}`, target: bookUrl(book.slug),
-      note: "800-word listicle linking back to the full summary." },
-    { type: "Pinterest pin", platform: "Pinterest", anchor: book.title, target: bookUrl(book.slug),
-      note: "1080×1920 pin → repins drive long-tail referrals." },
-    { type: "YouTube short", platform: "YouTube", anchor: book.title, target: bookUrl(book.slug),
-      note: "60-second short with the single biggest idea + link in description." },
-    { type: "Internal link", platform: "Booknomics", anchor: book.title, target: bookUrl(book.slug),
-      note: `Link from 2–3 related books in /${book.category || "category"}/.` },
+    { type: "Quora answer", platform: "Quora", anchor: `${book.title} summary`, target: bookUrl(book.slug), note: `Find questions like "best summary of ${book.title}" and answer with 1 paragraph + link.` },
+    { type: "Reddit comment", platform: "Reddit (r/books, r/selfimprovement)", anchor: `${book.title} key ideas`, target: bookUrl(book.slug), note: "Comment on relevant threads with value first, link last." },
+    { type: "Medium article", platform: "Medium", anchor: `5 lessons from ${book.title}`, target: bookUrl(book.slug), note: "800-word listicle linking back to the full summary." },
+    { type: "Pinterest pin", platform: "Pinterest", anchor: book.title, target: bookUrl(book.slug), note: "1080×1920 pin → repins drive long-tail referrals." },
+    { type: "YouTube short", platform: "YouTube", anchor: book.title, target: bookUrl(book.slug), note: "60-second short with the single biggest idea + link in description." },
+    { type: "Internal link", platform: "Booknomics", anchor: book.title, target: bookUrl(book.slug), note: `Link from 2–3 related books in /${book.category || "category"}/.` },
   ];
   return (
     <Card className="p-4">
       <h3 className="font-semibold mb-3">Backlink opportunities (manual)</h3>
       <div className="text-xs text-muted-foreground mb-3">No paid backlink API connected. Use these targeted opportunities and track them in the database when you place them.</div>
       <div className="grid md:grid-cols-2 gap-2">
-        {ideas.map((i, idx) => (
-          <div key={idx} className="border rounded p-3 text-sm">
-            <div className="font-medium">{i.type} <span className="text-muted-foreground font-normal">— {i.platform}</span></div>
-            <div className="text-xs text-muted-foreground mt-1">Anchor: <code>{i.anchor}</code></div>
-            <div className="text-xs mt-1">{i.note}</div>
-          </div>
-        ))}
+        {ideas.map((i, idx) => <div key={idx} className="border rounded p-3 text-sm"><div className="font-medium">{i.type} <span className="text-muted-foreground font-normal">— {i.platform}</span></div><div className="text-xs text-muted-foreground mt-1">Anchor: <code>{i.anchor}</code></div><div className="text-xs mt-1">{i.note}</div></div>)}
       </div>
     </Card>
   );

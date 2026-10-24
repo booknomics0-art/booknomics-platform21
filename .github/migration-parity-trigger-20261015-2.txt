@@ -1,0 +1,1 @@
+Trigger repaired Cloudflare D1/R2 parity verification after resilient reconciliation fixes.

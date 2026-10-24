@@ -1,34 +1,31 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-const { rpc } = vi.hoisted(() => ({ rpc: vi.fn() }));
+const { apiFetch } = vi.hoisted(() => ({ apiFetch: vi.fn() }));
 
-vi.mock('@/integrations/supabase/client', () => ({
-  supabase: { rpc },
-}));
+vi.mock('@/lib/cloudflareApi', () => ({ apiFetch }));
 
 import { isAdminUser } from './isAdmin';
 
 describe('isAdminUser', () => {
-  beforeEach(() => rpc.mockReset());
+  beforeEach(() => apiFetch.mockReset());
 
-  it('checks the current session using the exposed, role-backed admin RPC', async () => {
-    rpc.mockResolvedValue({ data: true, error: null });
+  it('checks the current session through the Cloudflare role endpoint', async () => {
+    apiFetch.mockResolvedValue({ isAdmin: true });
 
     await expect(isAdminUser()).resolves.toBe(true);
-    expect(rpc).toHaveBeenCalledWith('is_admin_email');
-    expect(rpc).toHaveBeenCalledTimes(1);
+    expect(apiFetch).toHaveBeenCalledWith('/api/me/admin');
+    expect(apiFetch).toHaveBeenCalledTimes(1);
   });
 
   it('does not grant admin access for a regular user or signed-out session', async () => {
-    rpc.mockResolvedValue({ data: false, error: null });
+    apiFetch.mockResolvedValue({ isAdmin: false });
 
     await expect(isAdminUser()).resolves.toBe(false);
   });
 
-  it('fails closed and reports a role-check error', async () => {
-    const error = new Error('admin RPC unavailable');
-    rpc.mockResolvedValue({ data: null, error });
+  it('fails closed when the role endpoint omits an explicit admin grant', async () => {
+    apiFetch.mockResolvedValue({});
 
-    await expect(isAdminUser()).rejects.toThrow('admin RPC unavailable');
+    await expect(isAdminUser()).resolves.toBe(false);
   });
 });

@@ -1,4 +1,4 @@
-import { supabase } from "@/integrations/supabase/client";
+import { apiFetch } from "@/lib/cloudflareApi";
 
 /** Small, RLS-respecting server-side category directory. Never fetch all book rows in a browser. */
 export type PublicCategoryInfo = {
@@ -20,22 +20,18 @@ const TTL_MS = 5 * 60 * 1000;
 const cache = new Map<string, { expires: number; pending: Promise<PublicCategoryInfo> }>();
 
 export function getPublicCategoryInfo(options: Options = {}): Promise<PublicCategoryInfo> {
-  const args = {
-    p_slug: options.slug ?? null,
-    p_alias: options.alias ?? null,
-    p_language: options.language ?? null,
-    p_published_only: options.publishedOnly ?? false,
-    p_pick_labels: options.pickLabels ?? [],
-  };
-  const key = JSON.stringify(args);
+  const args = new URLSearchParams();
+  if (options.slug) args.set("slug", options.slug);
+  if (options.alias) args.set("alias", options.alias);
+  if (options.language) args.set("language", options.language);
+  args.set("published_only", String(options.publishedOnly ?? false));
+  args.set("pick_labels", JSON.stringify(options.pickLabels ?? []));
+  const key = args.toString();
   const cached = cache.get(key);
   if (cached && cached.expires > Date.now()) return cached.pending;
 
   const pending = (async () => {
-    // The migration adds this read-only RPC. Keep its response validation local
-    // rather than regenerating unrelated Supabase types in a performance patch.
-    const { data, error } = await (supabase as any).rpc("get_public_category_info", args);
-    if (error) throw error;
+    const data = await apiFetch<PublicCategoryInfo>(`/api/catalog/category-directory?${key}`);
     if (!data || !Array.isArray(data.categories)) throw new Error("Invalid category directory response");
 
     return {

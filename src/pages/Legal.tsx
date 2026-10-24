@@ -204,7 +204,7 @@ export const Terms = () => (
         title: "Subscriptions & Payments",
         body: (
           <>
-            <p>Booknomics plans to offer automatic recurring Premium membership at ₹19 per week or ₹49 per month once the new secure Cloudflare checkout is active. At present, the new subscription checkout is not accepting payments. Existing one-time Premium purchases remain valid through their original expiry dates and do not automatically renew. When recurring billing becomes available, charges and the cancellation option will be clearly disclosed before the customer authorises the mandate. Refunds for existing purchases are handled according to applicable law; contact Booknomics support for billing issues.</p>
+            <p>Booknomics offers recurring Premium at ₹19 per week or ₹49 per month, charged automatically by Razorpay for the selected billing cycle until you cancel or the plan reaches its stated maximum cycles (52 weekly or 12 monthly). Prices shown at checkout include applicable taxes. You authorise recurring charges when you accept the mandate. Cancel future renewals from My Subscription before the next charge; already-paid access continues to the end of the paid period. Older one-time memberships retain their originally purchased validity and do not automatically renew. Refunds are handled under applicable law and our payment policy; contact support for a failed activation or billing dispute.</p>
             <p>The site may display third-party advertisements, including ads served by Google AdSense. Advertisements are clearly marked and never influence our editorial choices or book recommendations.</p>
           </>
         ),

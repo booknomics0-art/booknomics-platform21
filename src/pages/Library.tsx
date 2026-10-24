@@ -4,10 +4,10 @@ import { Layout } from "@/components/Layout";
 import { BookCard, BookCardData } from "@/components/BookCard";
 import { Button } from "@/components/ui/button";
 import { SEO } from "@/components/SEO";
-import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { Bookmark, CheckCircle2, Circle } from "lucide-react";
 import { toast } from "sonner";
+import { apiFetch } from "@/lib/cloudflareApi";
 
 type LibBook = BookCardData & { read: boolean };
 
@@ -17,40 +17,38 @@ const Library = () => {
   const [filter, setFilter] = useState<"all" | "unread" | "read">("all");
 
   useEffect(() => {
-    if (!user) return;
+    if (!user) {
+      setBooks([]);
+      return;
+    }
+    let cancelled = false;
     (async () => {
-      const { data: lib } = await supabase
-        .from("library")
-        .select("books(id,slug,title,author,category,cover_color,cover_url,tagline,rating,reading_time)")
-        .eq("user_id", user.id);
-      const list = (lib ?? []).map((r: any) => r.books).filter(Boolean) as BookCardData[];
-      const ids = list.map(b => b.id);
-      let readSet = new Set<string>();
-      if (ids.length) {
-        const { data: prog } = await supabase
-          .from("reading_progress")
-          .select("book_id,completed")
-          .eq("user_id", user.id)
-          .in("book_id", ids);
-        readSet = new Set((prog ?? []).filter((p: any) => p.completed).map((p: any) => p.book_id));
+      try {
+        const payload = await apiFetch<{ data: LibBook[] }>("/api/library");
+        if (!cancelled) setBooks(payload.data ?? []);
+      } catch (error: any) {
+        if (!cancelled) {
+          setBooks([]);
+          toast.error(error?.message || "Could not load your library");
+        }
       }
-      setBooks(list.map(b => ({ ...b, read: readSet.has(b.id) })));
     })();
+    return () => { cancelled = true; };
   }, [user]);
 
   const toggleRead = async (book: LibBook) => {
     if (!user) return;
     const next = !book.read;
     setBooks(prev => prev.map(b => b.id === book.id ? { ...b, read: next } : b));
-    const { error } = await supabase.from("reading_progress").upsert(
-      { user_id: user.id, book_id: book.id, completed: next, last_read_at: new Date().toISOString() },
-      { onConflict: "user_id,book_id" } as any
-    );
-    if (error) {
-      setBooks(prev => prev.map(b => b.id === book.id ? { ...b, read: !next } : b));
-      toast.error("Could not update status");
-    } else {
+    try {
+      await apiFetch<{ ok: boolean; completed: boolean }>("/api/reading-progress", {
+        method: "POST",
+        body: JSON.stringify({ book_id: book.id, completed: next }),
+      });
       toast.success(next ? "Marked as read" : "Marked as unread");
+    } catch (error: any) {
+      setBooks(prev => prev.map(b => b.id === book.id ? { ...b, read: !next } : b));
+      toast.error(error?.message || "Could not update status");
     }
   };
 

@@ -1,119 +1,227 @@
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
-import { ArrowRight, BookOpen, Check, Crown, Headphones, ShieldCheck } from "lucide-react";
+import { useNavigate, Link } from "react-router-dom";
+import { ArrowRight, BookOpen, Check, Crown, Headphones, ShieldCheck, Sparkles } from "lucide-react";
 import { Layout } from "@/components/Layout";
-import { FEATURES, PLANS, type SellablePlan, SELLABLE_PLANS } from "@/lib/plans";
+import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
+import { toast } from "sonner";
+import { apiFetch } from "@/lib/cloudflareApi";
+import { useAuth } from "@/hooks/useAuth";
 import { useTier } from "@/hooks/useTier";
+import { FEATURES, PLANS, SELLABLE_PLANS, type SellablePlan } from "@/lib/plans";
 
-// Production main still uses Supabase sessions. Recurring mandates are on the
-// separate Cloudflare migration branch; do not open the legacy Razorpay Orders
-// checkout or collect money before session + entitlement parity is verified.
+function loadRazorpay(): Promise<boolean> {
+  return new Promise((resolve) => {
+    if ((window as any).Razorpay) return resolve(true);
+    const existing = document.querySelector('script[data-bn-razorpay]');
+    if (existing) {
+      existing.addEventListener("load", () => resolve(true), { once: true });
+      existing.addEventListener("error", () => resolve(false), { once: true });
+      return;
+    }
+    const script = document.createElement("script");
+    script.setAttribute("data-bn-razorpay", "true");
+    script.src = "https://checkout.razorpay.com/v1/checkout.js";
+    script.onload = () => resolve(true);
+    script.onerror = () => resolve(false);
+    document.body.appendChild(script);
+  });
+}
+
+const benefits = [
+  "Full Hindi & English summary library",
+  "Ad-free, distraction-free reading",
+  "Book-specific action plans and interactive habit trackers",
+  "Audio insights for supported books",
+  "Progress, notes and personalised reading tools",
+];
+
 export default function Pricing() {
+  const navigate = useNavigate();
+  const { user, loading: authLoading } = useAuth();
+  const { isPremium, refresh } = useTier();
   const [selected, setSelected] = useState<SellablePlan>("monthly");
-  const { isPremium } = useTier();
+  const [consent, setConsent] = useState(false);
+  const [paying, setPaying] = useState(false);
   const plan = PLANS[selected];
 
-  useEffect(() => { document.title = "Booknomics Premium Plans | Weekly ₹19 & Monthly ₹49"; }, []);
+  useEffect(() => {
+    document.title = "Affordable Premium Plans | Booknomics";
+  }, []);
+
+  const subscribe = async () => {
+    if (!user) {
+      toast.info("Sign in to choose your Premium plan");
+      navigate("/auth");
+      return;
+    }
+    if (isPremium) {
+      navigate("/account/subscription");
+      return;
+    }
+    if (!consent) {
+      toast.error("Please accept the recurring billing terms first");
+      return;
+    }
+    if (paying) return;
+    setPaying(true);
+    try {
+      if (!await loadRazorpay()) throw new Error("Secure checkout could not load");
+      const data = await apiFetch<{ subscription_id: string; key_id: string }>("/api/payments/razorpay/subscribe", {
+        method: "POST", body: JSON.stringify({ plan: selected }),
+      });
+      if (!data?.subscription_id || !data?.key_id) throw new Error("Could not start your subscription");
+      const rzp = new (window as any).Razorpay({
+        key: data.key_id,
+        subscription_id: data.subscription_id,
+        name: "Booknomics Premium",
+        description: plan.label + " auto-renewing membership",
+        prefill: { email: user.email || "" },
+        theme: { color: "#152d4a" },
+        handler: async (resp: any) => {
+          try {
+            if (resp.razorpay_subscription_id !== data.subscription_id) throw new Error("Subscription mismatch");
+            const result = await apiFetch<{ activated: boolean }>("/api/payments/razorpay/confirm", {
+              method: "POST",
+              body: JSON.stringify({
+                razorpay_subscription_id: resp.razorpay_subscription_id,
+                razorpay_payment_id: resp.razorpay_payment_id,
+                razorpay_signature: resp.razorpay_signature,
+              }),
+            });
+            if (result.activated) {
+              await refresh();
+              toast.success("Premium activated! Welcome to Booknomics.");
+            } else {
+              toast.info("Mandate authorised. Premium activates after Razorpay confirms the first charge.");
+            }
+            navigate("/account/subscription");
+          } catch (err: any) {
+            toast.error(err?.message || "We are verifying your payment. Check your subscription page.");
+            navigate("/account/subscription");
+          }
+        },
+        modal: { ondismiss: () => setPaying(false) },
+      });
+      rzp.on?.("payment.failed", (err: any) => {
+        toast.error(err?.error?.description || "Payment failed. No Premium access has been granted.");
+      });
+      rzp.open();
+    } catch (err: any) {
+      toast.error(err?.message || "Checkout is unavailable");
+    } finally {
+      setPaying(false);
+    }
+  };
 
   return (
     <Layout>
-      <div className="container max-w-6xl py-10 md:py-16">
-        <div className="mx-auto mb-10 max-w-3xl text-center">
-          <span className="inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/10 px-4 py-2 text-xs font-bold tracking-[0.12em] text-primary">
-            <Crown className="h-4 w-4" /> BOOKNOMICS PREMIUM
-          </span>
-          <h1 className="mt-6 font-serif text-4xl font-bold leading-tight tracking-tight text-foreground md:text-6xl">
-            Read deeper. Build better habits.
+      <main className="container max-w-6xl py-12 md:py-20">
+        <div className="text-center max-w-3xl mx-auto mb-12">
+          <div className="inline-flex gap-2 items-center rounded-full bg-primary/10 border border-primary/20 text-primary text-xs font-bold px-4 py-2 mb-5">
+            <Crown className="w-4 h-4" /> BOOKNOMICS PREMIUM
+          </div>
+          <h1 className="font-serif text-4xl md:text-6xl font-bold tracking-tight leading-tight">
+            Read more. Learn deeper. <span className="text-primary">Spend less.</span>
           </h1>
-          <p className="mx-auto mt-5 max-w-2xl text-base leading-relaxed text-foreground/80 md:text-lg">
-            Choose a simple membership for book insights, reading routines and learning tools.
-            Switch between the weekly and monthly plans below.
+          <p className="text-muted-foreground text-base md:text-lg mt-5">
+            Built for students, curious minds, and lifelong readers. One membership for Hindi and English reading tools.
           </p>
         </div>
 
+
         <div className="mx-auto mb-8 flex w-fit flex-col items-center gap-3">
-          <span className="text-xs font-bold uppercase tracking-[0.2em] text-foreground/70">Select subscription</span>
-          <div className="inline-flex items-center gap-1.5 rounded-full border-2 border-border bg-muted/50 p-1.5 shadow-sm"
-            role="tablist" aria-label="Premium billing cycle">
+          <span className="text-xs font-bold uppercase tracking-[0.2em] text-foreground/70">Choose your billing cycle</span>
+          <div className="inline-flex items-center gap-1.5 rounded-full border-2 border-border bg-muted/50 p-1.5 shadow-sm" role="tablist" aria-label="Premium subscription duration">
             {SELLABLE_PLANS.map((key) => (
-              <button key={key} type="button" role="tab" aria-selected={selected === key}
-                onClick={() => setSelected(key)}
+              <button
+                key={key}
+                type="button"
+                role="tab"
+                aria-selected={selected === key}
+                onClick={() => { setSelected(key); setConsent(false); }}
                 className={"min-w-36 rounded-full px-5 py-3 text-sm font-bold transition-all focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary sm:min-w-44 " + (
                   selected === key ? "bg-primary text-primary-foreground shadow-md" : "text-foreground/80 hover:bg-card"
-                )}>
+                )}
+              >
                 {key === "weekly" ? "Weekly · ₹19" : "Monthly · ₹49"}
               </button>
             ))}
           </div>
-          <p className="text-center text-xs text-muted-foreground">Compare the plans. No charge is made when changing this selection.</p>
+          <span className="text-xs text-muted-foreground">
+            One simple membership. Change your selection before checkout.
+          </span>
         </div>
 
         <section className="mx-auto max-w-3xl overflow-hidden rounded-[2rem] border border-border bg-card shadow-lg" aria-live="polite">
           <div className="border-b border-border bg-primary/5 px-7 py-7 sm:px-10 sm:py-9">
             <div className="flex flex-wrap items-center justify-between gap-3">
-              <p className="flex items-center gap-2 text-sm font-bold text-primary"><Crown className="h-4 w-4" /> {plan.label} Premium</p>
+              <p className="flex items-center gap-2 text-sm font-bold text-primary">
+                <Crown className="h-4 w-4" /> {plan.label} Premium
+              </p>
               {selected === "monthly" && <span className="rounded-full bg-primary px-3 py-1.5 text-xs font-bold text-primary-foreground">Most popular</span>}
             </div>
             <div className="mt-5 flex items-end gap-3">
               <strong className="text-6xl font-extrabold tracking-tight text-foreground sm:text-7xl">₹{plan.price}</strong>
               <span className="pb-2 text-base font-semibold text-foreground/70">/ {selected === "weekly" ? "week" : "month"}</span>
             </div>
-            <p className="mt-3 max-w-xl text-sm leading-relaxed text-foreground/80">
+            <p className="mt-3 max-w-xl text-sm leading-relaxed text-foreground/75">
               {selected === "weekly"
-                ? "A flexible seven-day membership with the Weekly Premium learning tools."
-                : "A full month of advanced reading, tracking and supported audio experiences."}
+                ? "Flexible 7-day access to the reading tools included in Weekly Premium."
+                : "Monthly access to advanced reading tools, practice trackers and supported audio."}
             </p>
-            <p className="mt-2 text-xs text-muted-foreground">Planned automatic renewal: ₹{plan.price} per {selected === "weekly" ? "week" : "month"}, until cancelled.</p>
+            <p className="mt-2 text-xs text-muted-foreground">Automatically renews at ₹{plan.price} every {selected === "weekly" ? "week" : "month"} unless cancelled.</p>
           </div>
+
           <div className="px-7 py-7 sm:px-10 sm:py-9">
-            <h2 className="text-lg font-bold text-foreground">What's included</h2>
+            <h2 className="text-lg font-bold text-foreground">What your plan includes</h2>
             <ul className="mt-5 grid gap-4 sm:grid-cols-2">
-              {FEATURES.filter((item) => item[selected]).map((item) => (
-                <li key={item.label} className="flex items-start gap-3 text-sm leading-relaxed text-foreground/90">
+              {FEATURES.filter((feature) => feature[selected]).map((feature) => (
+                <li key={feature.label} className="flex items-start gap-3 text-sm leading-relaxed text-foreground/90">
                   <span className="mt-0.5 grid h-5 w-5 shrink-0 place-items-center rounded-full bg-emerald-500/10 text-emerald-700 dark:text-emerald-400">
                     <Check className="h-3.5 w-3.5" />
                   </span>
-                  <span>{item.label}</span>
+                  <span>{feature.label}</span>
                 </li>
               ))}
             </ul>
-            <div className="mt-7 rounded-2xl border border-border bg-muted/30 p-5">
-              <p className="flex items-center gap-2 font-semibold text-foreground">
-                <ShieldCheck className="h-5 w-5 text-primary" /> Secure subscriptions are being enabled
-              </p>
-              <p className="mt-2 text-sm leading-relaxed text-foreground/80">
-                We are completing Cloudflare billing activation. Enrollment is temporarily unavailable, so
-                no payment will be collected from this page until secure checkout is verified.
-              </p>
-              <button type="button" disabled
-                className="mt-5 flex w-full cursor-not-allowed items-center justify-center gap-2 rounded-full bg-primary/60 px-5 py-3.5 text-base font-bold text-primary-foreground"
-                aria-label="Subscription checkout is not active yet">
-                {isPremium ? "Your existing Premium stays active" : "Subscription checkout opening soon"}
-                <ArrowRight className="h-4 w-4" />
-              </button>
-              <p className="mt-3 text-center text-xs text-muted-foreground">
-                For billing questions, <Link className="font-medium text-primary underline" to="/contact">contact Booknomics</Link>.
-              </p>
-            </div>
+            <p className="mt-6 text-xs leading-relaxed text-muted-foreground">
+              Availability of audio and other learning experiences varies by book. Existing free summaries stay free.
+            </p>
           </div>
         </section>
-
-        <div className="mx-auto mt-12 grid max-w-3xl gap-6 sm:grid-cols-2">
-          <div className="flex items-start gap-3"><BookOpen className="mt-1 h-5 w-5 shrink-0 text-primary"/>
-            <div><h2 className="font-bold text-foreground">Reading made practical</h2>
-              <p className="mt-2 text-sm leading-relaxed text-foreground/75">Understand ideas and put them into daily action through supported summaries and trackers.</p>
-            </div>
-          </div>
-          <div className="flex items-start gap-3"><Headphones className="mt-1 h-5 w-5 shrink-0 text-primary"/>
-            <div><h2 className="font-bold text-foreground">Audio when available</h2>
-              <p className="mt-2 text-sm leading-relaxed text-foreground/75">Audio and interactive experiences depend on the particular title and plan.</p>
-            </div>
-          </div>
+        <div className="max-w-3xl mx-auto mt-5 rounded-2xl bg-card border p-5 md:p-7">
+          <label className="flex items-start gap-3 text-sm leading-relaxed cursor-pointer">
+            <Checkbox checked={consent} onCheckedChange={(value) => setConsent(value === true)} className="mt-1" />
+            <span>I authorise Booknomics / Razorpay to automatically charge <strong>₹{plan.price} every {selected === "weekly" ? "week" : "month"}</strong> (taxes included), for up to {selected === "weekly" ? "52 weekly" : "12 monthly"} billing cycles unless I cancel earlier. I can cancel future renewals from My Subscription before the next charge. I agree to the <Link className="underline text-primary" to="/terms" onClick={(e) => e.stopPropagation()}>Terms</Link>.</span>
+          </label>
+          <Button className="w-full mt-5 h-12 rounded-full bg-primary text-primary-foreground text-base" onClick={subscribe}
+            disabled={paying || authLoading || (!consent && !isPremium)}>
+            {paying ? "Opening secure checkout..." : isPremium ? "Manage your membership" : "Continue with ₹" + plan.price + " " + plan.label}
+            {!paying && <ArrowRight className="ml-2 w-4 h-4" />}
+          </Button>
+          <p className="text-xs text-muted-foreground text-center mt-3">Secure checkout by Razorpay. Supported recurring payment methods depend on your bank and Razorpay account.</p>
+          {isPremium && <p className="text-center mt-3"><Link to="/account/subscription" className="text-primary underline font-medium">View existing subscription</Link></p>}
         </div>
-        <p className="mt-10 text-center text-xs text-muted-foreground">
-          Existing purchased memberships keep their original validity. View <Link className="underline" to="/terms">Terms</Link> and <Link className="underline" to="/privacy">Privacy</Link>.
-        </p>
-      </div>
+
+        <div className="grid lg:grid-cols-2 gap-10 max-w-3xl mx-auto mt-16">
+          <section>
+            <h2 className="font-serif text-3xl font-bold mb-6">Everything you need to turn reading into action</h2>
+            <ul className="space-y-4">
+              {benefits.map((item) => <li key={item} className="flex gap-3 items-start"><Check className="w-5 h-5 text-emerald-600 shrink-0 mt-0.5" /> {item}</li>)}
+            </ul>
+          </section>
+          <section className="rounded-3xl border bg-primary/5 p-7 space-y-5">
+            <div className="flex items-center gap-3"><BookOpen className="text-primary w-6 h-6" /><strong>Keep reading free</strong></div>
+            <p className="text-sm text-muted-foreground">You can still discover books and read public summaries for free. Premium unlocks enhanced tools where available.</p>
+            <div className="flex items-center gap-3"><Headphones className="text-primary w-6 h-6" /><strong>Listen and learn</strong></div>
+            <p className="text-sm text-muted-foreground">Audio and other learning experiences are offered on supported book pages. Content availability varies by title.</p>
+            <div className="flex items-center gap-3"><Sparkles className="text-primary w-6 h-6" /><strong>No hidden price surprise</strong></div>
+            <p className="text-sm text-muted-foreground">See the recurring amount and maximum billing cycles before you authorise the mandate.</p>
+          </section>
+        </div>
+        <p className="text-xs text-center text-muted-foreground mt-12">Refund requests and billing support: <Link className="underline" to="/contact">Contact Booknomics</Link>. For account-level cancellation, visit My Subscription.</p>
+      </main>
     </Layout>
   );
 }

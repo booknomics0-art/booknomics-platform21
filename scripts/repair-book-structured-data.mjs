@@ -1,5 +1,6 @@
 import { readFileSync, readdirSync, writeFileSync } from "node:fs";
 import { resolve } from "node:path";
+import { cloudflarePrerender, fetchCloudflarePrerenderBooks } from "./lib/cloudflare-prerender-catalog.mjs";
 
 const BASE = "https://www.booknomics.com";
 const ORG_ID = `${BASE}/#organization`;
@@ -9,11 +10,12 @@ const SUPABASE_URL = process.env.VITE_SUPABASE_URL?.trim();
 const SUPABASE_KEY = process.env.VITE_SUPABASE_PUBLISHABLE_KEY?.trim();
 const PAGE_SIZE = 500;
 
-if (!SUPABASE_URL || !SUPABASE_KEY) {
+if (!cloudflarePrerender && (!SUPABASE_URL || !SUPABASE_KEY)) {
   throw new Error("repair-book-structured-data: missing Supabase env");
 }
 
 async function api(path) {
+  if (cloudflarePrerender) return fetchCloudflarePrerenderBooks(path);
   const response = await fetch(`${SUPABASE_URL}/rest/v1/${path}`, {
     headers: {
       apikey: SUPABASE_KEY,

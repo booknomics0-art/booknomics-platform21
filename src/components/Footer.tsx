@@ -47,6 +47,7 @@ export const Footer = () => {
               <li><Link to="/resources" className={footerLinkClass}>Free resources</Link></li>
               <li><Link to="/dashboard" className={footerLinkClass}>Dashboard</Link></li>
               <li><Link to="/pricing" className={footerLinkClass}>Premium plans</Link></li>
+              <li><Link to="/account/subscription" className={footerLinkClass}>My subscription</Link></li>
             </ul>
           </div>
           <div>

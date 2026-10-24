@@ -1,0 +1,218 @@
+name: Cloudflare Production Cutover
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - cloudflare-full-migration
+
+permissions:
+  contents: read
+
+jobs:
+  cutover:
+    if: github.event_name == 'workflow_dispatch' || contains(github.event.head_commit.message, '[cloudflare-production-cutover]')
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      WORKER_NAME: booknomics
+      ZONE_NAME: booknomics.com
+      CANDIDATE_VERSION_ID: 9dac9084-53ea-42c1-b38d-5af2beba7174
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Require Cloudflare credentials
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -n "${CLOUDFLARE_ACCOUNT_ID:-}"
+          test -n "${CLOUDFLARE_API_TOKEN:-}"
+
+      - name: Verify cutover config and exact tested version
+        shell: bash
+        run: |
+          set -euo pipefail
+          node - <<'NODE'
+          const fs = require('fs');
+          const text = fs.readFileSync('wrangler.jsonc','utf8');
+          for (const required of ['booknomics.com/*','www.booknomics.com/*','"BOOKNOMICS_ENV": "production"']) {
+            if (!text.includes(required)) throw new Error(`Missing cutover config: ${required}`);
+          }
+          NODE
+          npx --yes wrangler@4.136.3 versions list --name "$WORKER_NAME" > /tmp/versions.txt
+          grep -Fq "$CANDIDATE_VERSION_ID" /tmp/versions.txt || {
+            echo "::error::Tested Worker version $CANDIDATE_VERSION_ID is not available"
+            exit 1
+          }
+
+      - name: Confirm clean pre-cutover route state
+        shell: bash
+        run: |
+          set -euo pipefail
+          AUTH=(-H "Authorization: Bearer ${CLOUDFLARE_API_TOKEN}" -H 'Content-Type: application/json')
+          ZONES=$(curl --fail --silent --show-error "${AUTH[@]}" "https://api.cloudflare.com/client/v4/zones?name=${ZONE_NAME}&status=active")
+          ZONE_ID=$(node -e 'const d=JSON.parse(process.argv[1]); process.stdout.write((d.result&&d.result[0]&&d.result[0].id)||"")' "$ZONES")
+          test -n "$ZONE_ID" || { echo '::error::Active zone not found'; exit 1; }
+          echo "ZONE_ID=$ZONE_ID" >> "$GITHUB_ENV"
+          ROUTES=$(curl --fail --silent --show-error "${AUTH[@]}" "https://api.cloudflare.com/client/v4/zones/${ZONE_ID}/workers/routes")
+          node - "$ROUTES" <<'NODE'
+          const d = JSON.parse(process.argv[2]);
+          const conflicts = (d.result || []).filter(r =>
+            ['booknomics.com/*','www.booknomics.com/*'].includes(r.pattern) && r.script !== 'booknomics'
+          );
+          if (conflicts.length) {
+            console.error('Conflicting Worker routes already exist:', conflicts);
+            process.exit(1);
+          }
+          console.log('Pre-cutover route state safe.');
+          NODE
+
+      - name: Promote exact tested Worker version
+        shell: bash
+        run: |
+          set -euo pipefail
+          npx --yes wrangler@4.136.3 versions deploy "${CANDIDATE_VERSION_ID}@100%" \
+            --name "$WORKER_NAME" \
+            --message "Booknomics Cloudflare production cutover 2026-10-15" \
+            -y
+          npx --yes wrangler@4.136.3 deployments list --name "$WORKER_NAME" > /tmp/deployments.txt
+          grep -Fq "$CANDIDATE_VERSION_ID" /tmp/deployments.txt || {
+            echo '::error::Exact tested version was not promoted to production'
+            exit 1
+          }
+          echo 'Exact tested Worker version is active; public traffic remains unchanged until routes are applied.'
+
+      - name: Activate Worker routes through Zone API and smoke production
+        shell: bash
+        run: |
+          set -euo pipefail
+          AUTH=(-H "Authorization: Bearer ${CLOUDFLARE_API_TOKEN}" -H 'Content-Type: application/json')
+          : > /tmp/created-route-ids
+
+          rollback_created_routes() {
+            echo 'Attempting automatic Worker-route rollback to Vercel origin...'
+            if [[ -f /tmp/created-route-ids ]]; then
+              while IFS= read -r id; do
+                [[ -n "$id" ]] || continue
+                curl --fail --silent --show-error -X DELETE "${AUTH[@]}" \
+                  "https://api.cloudflare.com/client/v4/zones/${ZONE_ID}/workers/routes/${id}" >/dev/null || true
+              done < /tmp/created-route-ids
+            fi
+          }
+          trap 'rc=$?; if [[ $rc -ne 0 ]]; then rollback_created_routes; fi; exit $rc' EXIT
+
+          ROUTES=$(curl --fail --silent --show-error "${AUTH[@]}" "https://api.cloudflare.com/client/v4/zones/${ZONE_ID}/workers/routes")
+          for pattern in 'booknomics.com/*' 'www.booknomics.com/*'; do
+            EXISTING_ID=$(node - "$ROUTES" "$pattern" <<'NODE'
+          const d=JSON.parse(process.argv[2]);
+          const pattern=process.argv[3];
+          const route=(d.result||[]).find(r => r.pattern===pattern && r.script==='booknomics');
+          process.stdout.write(route?.id || '');
+          NODE
+            )
+            if [[ -n "$EXISTING_ID" ]]; then
+              echo "Route already active: ${pattern} (${EXISTING_ID})"
+              continue
+            fi
+
+            BODY=$(node -e 'process.stdout.write(JSON.stringify({pattern:process.argv[1],script:"booknomics"}))' "$pattern")
+            HTTP_CODE=$(curl --silent --show-error --output /tmp/route-create.json --write-out '%{http_code}' \
+              -X POST "${AUTH[@]}" \
+              --data "$BODY" \
+              "https://api.cloudflare.com/client/v4/zones/${ZONE_ID}/workers/routes" || true)
+            if [[ "$HTTP_CODE" -lt 200 || "$HTTP_CODE" -ge 300 ]]; then
+              echo "::error::Cloudflare Workers Route create failed for ${pattern} (HTTP ${HTTP_CODE})"
+              cat /tmp/route-create.json || true
+              exit 1
+            fi
+            CREATED_ID=$(node - <<'NODE'
+          const fs=require('fs');
+          const d=JSON.parse(fs.readFileSync('/tmp/route-create.json','utf8'));
+          if (!d.success || !d.result?.id || d.result?.script !== 'booknomics') {
+            console.error(d);
+            process.exit(1);
+          }
+          process.stdout.write(d.result.id);
+          NODE
+            )
+            echo "$CREATED_ID" >> /tmp/created-route-ids
+            echo "Created route: ${pattern} (${CREATED_ID})"
+            ROUTES=$(curl --fail --silent --show-error "${AUTH[@]}" "https://api.cloudflare.com/client/v4/zones/${ZONE_ID}/workers/routes")
+          done
+
+          ROUTES=$(curl --fail --silent --show-error "${AUTH[@]}" "https://api.cloudflare.com/client/v4/zones/${ZONE_ID}/workers/routes")
+          node - "$ROUTES" <<'NODE'
+          const d = JSON.parse(process.argv[2]);
+          const wanted = new Map((d.result || []).map(r => [r.pattern, r.script]));
+          for (const pattern of ['booknomics.com/*','www.booknomics.com/*']) {
+            if (wanted.get(pattern) !== 'booknomics') throw new Error(`Route not active for ${pattern}`);
+          }
+          console.log('Both Booknomics Worker routes are active.');
+          NODE
+
+          echo 'Waiting briefly for edge route propagation...'
+          sleep 8
+
+          APEX_STATUS=$(curl --silent --show-error --output /dev/null --dump-header /tmp/apex.headers \
+            --write-out '%{http_code}' --max-redirs 0 'https://booknomics.com/' || true)
+          [[ "$APEX_STATUS" == '308' ]] || { echo "::error::Apex expected 308, got $APEX_STATUS"; exit 1; }
+          APEX_LOCATION=$(tr -d '\r' < /tmp/apex.headers | awk 'tolower($1)=="location:" {print $2}' | tail -1)
+          [[ "$APEX_LOCATION" == 'https://www.booknomics.com/' ]] || { echo "::error::Apex redirect target mismatch: $APEX_LOCATION"; exit 1; }
+
+          HOME_STATUS=$(curl --silent --show-error --output /tmp/home.html --dump-header /tmp/home.headers \
+            --write-out '%{http_code}' 'https://www.booknomics.com/' || true)
+          [[ "$HOME_STATUS" == '200' ]] || { echo "::error::www home expected 200, got $HOME_STATUS"; exit 1; }
+          grep -qi '<html' /tmp/home.html || { echo '::error::Home response is not HTML'; exit 1; }
+          if grep -Eqi '^x-vercel-(id|cache):' /tmp/home.headers; then
+            echo '::error::Public home is still being served by Vercel after Worker route activation'
+            exit 1
+          fi
+
+          curl --fail --silent --show-error 'https://www.booknomics.com/api/catalog/books?limit=1' -o /tmp/catalog.json
+          BOOK_SLUG=$(node - <<'NODE'
+          const fs=require('fs'); const d=JSON.parse(fs.readFileSync('/tmp/catalog.json','utf8'));
+          if (!Array.isArray(d.data) || d.data.length < 1 || Number(d.count||0) !== 5027) throw new Error(`Unexpected catalog count ${d.count}`);
+          const slug=d.data[0].slug || d.data[0].seo_slug;
+          if (!slug) throw new Error('Catalog row missing slug');
+          process.stdout.write(String(slug));
+          NODE
+          )
+          BOOK_STATUS=$(curl --silent --show-error --output /tmp/book.html --write-out '%{http_code}' "https://www.booknomics.com/books/${BOOK_SLUG}" || true)
+          [[ "$BOOK_STATUS" == '200' ]] || { echo "::error::Book page expected 200, got $BOOK_STATUS"; exit 1; }
+
+          curl --fail --silent --show-error 'https://www.booknomics.com/api/auth/session' -o /tmp/session.json
+          node -e 'const d=require("/tmp/session.json"); if (!("user" in d)) process.exit(1)'
+
+          # Never accept a Cloudflare API with a legacy Supabase login frontend.
+          AUTH_SMOKE_BASE_URL='https://www.booknomics.com' node scripts/verify-cloudflare-auth-cutover.mjs
+          GOOGLE_STATUS=$(curl --silent --show-error --output /dev/null --dump-header /tmp/google.headers \
+            --write-out '%{http_code}' --max-redirs 0 \
+            'https://www.booknomics.com/api/auth/google/start?return_to=%2F' || true)
+          [[ "$GOOGLE_STATUS" == '302' ]] || { echo "::error::Google OAuth start expected 302, got $GOOGLE_STATUS"; exit 1; }
+          GOOGLE_LOCATION=$(tr -d '\r' < /tmp/google.headers | awk 'tolower($1)=="location:" {print $2}' | tail -1)
+          node - "$GOOGLE_LOCATION" <<'NODE'
+          const u=new URL(process.argv[2]);
+          if (u.origin !== 'https://accounts.google.com') throw new Error('OAuth did not redirect to Google');
+          if (u.searchParams.get('redirect_uri') !== 'https://www.booknomics.com/api/auth/google/callback') {
+            throw new Error(`Unexpected OAuth redirect_uri: ${u.searchParams.get('redirect_uri')}`);
+          }
+          console.log('Google OAuth production redirect URI is correct.');
+          NODE
+
+          curl --fail --silent --show-error 'https://www.booknomics.com/.well-known/oauth-authorization-server' -o /tmp/oauth.json
+          node -e 'const d=require("/tmp/oauth.json"); for (const k of ["issuer","authorization_endpoint","token_endpoint","registration_endpoint"]) if(!d[k]) process.exit(1)'
+          for path in /browse /hindi; do
+            code=$(curl --silent --show-error --output /tmp/page.html --write-out '%{http_code}' "https://www.booknomics.com${path}" || true)
+            [[ "$code" == '200' ]] || { echo "::error::${path} expected 200, got $code"; exit 1; }
+            grep -qi '<html' /tmp/page.html || { echo "::error::${path} is not HTML"; exit 1; }
+          done
+
+          trap - EXIT
+          echo 'BOOKNOMICS CLOUDFLARE PRODUCTION CUTOVER PASSED. Worker/D1/R2 are serving public traffic.'

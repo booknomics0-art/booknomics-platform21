@@ -1,7 +1,6 @@
 import { ExternalLink } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { supabase } from "@/integrations/supabase/client";
-import { useAuth } from "@/hooks/useAuth";
+import { apiFetch } from "@/lib/cloudflareApi";
 
 interface Props {
   bookId: string;
@@ -17,16 +16,18 @@ const AMAZON_SEARCH = (q: string) =>
   `https://www.amazon.in/s?k=${encodeURIComponent(q)}&tag=${AMAZON_ASSOCIATE_TAG}`;
 
 export const AffiliateCTA = ({ bookId, link, title, placement = "detail", variant = "primary", label }: Props) => {
-  const { user } = useAuth();
   const href = link || AMAZON_SEARCH(title);
 
   const onClick = () => {
-    supabase.from("affiliate_clicks").insert({
-      book_id: bookId,
-      user_id: user?.id ?? null,
-      source: "amazon",
-      placement,
-    }).then(() => {});
+    void apiFetch<{ ok: boolean }>("/api/affiliate-click", {
+      method: "POST",
+      keepalive: true,
+      body: JSON.stringify({
+        book_id: bookId,
+        source: "amazon",
+        placement,
+      }),
+    }).catch(() => {});
   };
 
   if (variant === "inline") {

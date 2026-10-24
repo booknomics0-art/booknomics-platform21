@@ -20,13 +20,13 @@ function configuredEnv(names: readonly string[]): string | undefined {
 }
 
 export function supabaseProjectUrl(): string {
-  const url = configuredEnv(["SUPABASE_URL", "VITE_SUPABASE_URL"]);
-  if (!url) throw new Error("SUPABASE_URL (or VITE_SUPABASE_URL) is required");
+  const url = configuredEnv(["SUPABASE_URL"]);
+  if (!url) throw new Error("SUPABASE_URL is required");
   return url;
 }
 
 function supabasePublishableKey(): string {
-  const direct = configuredEnv(["SUPABASE_PUBLISHABLE_KEY", "VITE_SUPABASE_PUBLISHABLE_KEY"]);
+  const direct = configuredEnv(["SUPABASE_PUBLISHABLE_KEY"]);
   if (direct) return direct;
   const keyset = runtimeEnv("SUPABASE_PUBLISHABLE_KEYS");
   if (keyset) {
@@ -40,15 +40,15 @@ function supabasePublishableKey(): string {
         if (key) return key;
       }
     } catch {
-      // fall through to legacy names
+      // fall through to the legacy server-only anon key
     }
   }
-  const legacy = configuredEnv(["SUPABASE_ANON_KEY", "VITE_SUPABASE_ANON_KEY"]);
+  const legacy = configuredEnv(["SUPABASE_ANON_KEY"]);
   if (legacy) return legacy;
   throw new Error("SUPABASE_PUBLISHABLE_KEY, SUPABASE_PUBLISHABLE_KEYS, or SUPABASE_ANON_KEY is required");
 }
 
-/** No caller identity — RLS runs as `anon`. Public data only. */
+/** Server-side MCP helper only. No browser VITE_* configuration is accepted. */
 export function supabaseAnon() {
   return createClient(supabaseProjectUrl(), supabasePublishableKey(), {
     auth: { persistSession: false, autoRefreshToken: false },

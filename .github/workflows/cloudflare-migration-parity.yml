@@ -1,0 +1,137 @@
+name: Cloudflare Migration Parity
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - cloudflare-full-migration
+
+permissions:
+  contents: read
+
+jobs:
+  sync-and-verify:
+    if: github.event_name == 'workflow_dispatch' || contains(github.event.head_commit.message, '[migration-parity]')
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    env:
+      CI: 'true'
+      SUPABASE_URL: https://pbkfewrtdgiagytmcigb.supabase.co
+      SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+      CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      CLOUDFLARE_D1_DATABASE_ID: b4774bd2-a463-4115-bc32-fb32119332e8
+      R2_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+      R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+      R2_COVERS_BUCKET: booknomics-covers
+      R2_ASSETS_BUCKET: booknomics-assets
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+
+      - name: Require migration credentials
+        shell: bash
+        run: |
+          set -euo pipefail
+          missing=0
+          for name in SUPABASE_SERVICE_ROLE_KEY CLOUDFLARE_ACCOUNT_ID CLOUDFLARE_API_TOKEN R2_ACCESS_KEY_ID R2_SECRET_ACCESS_KEY; do
+            if [[ -z "${!name:-}" ]]; then
+              echo "::error::Required GitHub Actions secret is not configured: ${name}"
+              missing=1
+            fi
+          done
+          if [[ "$missing" -ne 0 ]]; then
+            exit 1
+          fi
+
+      - name: Validate migration scripts
+        run: |
+          node --check cloudflare/apply-d1-sql.mjs
+          node --check cloudflare/reconcile-d1.mjs
+          node --check cloudflare/reconcile-storage-list.mjs
+          node --check cloudflare/sync-referrals.mjs
+          node --check cloudflare/sync-book-modules.mjs
+          node --check cloudflare/verify-parity.mjs
+
+      - name: Ensure cutover schemas exist in D1
+        env:
+          MIGRATION_APPLY: 'YES'
+        run: |
+          node cloudflare/apply-d1-sql.mjs cloudflare/migrations/0005_referrals.sql
+          node cloudflare/apply-d1-sql.mjs cloudflare/migrations/0006_cutover_features.sql
+          node cloudflare/apply-d1-sql.mjs cloudflare/migrations/0007_oauth_mcp.sql
+
+      - name: Reconcile source-authoritative D1 rows
+        env:
+          MIGRATION_APPLY: 'YES'
+        shell: bash
+        run: |
+          set -o pipefail
+          node cloudflare/reconcile-d1.mjs | tee d1-reconcile.log
+
+      - name: Delta sync referrals to D1
+        env:
+          MIGRATION_APPLY: 'YES'
+        shell: bash
+        run: |
+          set -o pipefail
+          node cloudflare/sync-referrals.mjs | tee referrals-delta-sync.log
+
+      - name: Delta sync and verify book modules
+        id: modules_parity
+        continue-on-error: true
+        env:
+          MIGRATION_APPLY: 'YES'
+        shell: bash
+        run: |
+          set -o pipefail
+          node cloudflare/sync-book-modules.mjs | tee book-modules-parity.json
+
+      - name: Fast reconcile and verify Supabase Storage to R2
+        id: storage_parity
+        continue-on-error: true
+        env:
+          MIGRATION_APPLY: 'YES'
+        shell: bash
+        run: |
+          set -o pipefail
+          node cloudflare/reconcile-storage-list.mjs | tee r2-parity-report.log
+
+      - name: Verify D1 migration parity
+        id: db_parity
+        continue-on-error: true
+        shell: bash
+        run: |
+          set -o pipefail
+          node cloudflare/verify-parity.mjs | tee d1-parity-report.json
+
+      - name: Upload migration reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cloudflare-migration-parity-${{ github.sha }}
+          if-no-files-found: warn
+          retention-days: 14
+          path: |
+            d1-reconcile.log
+            referrals-delta-sync.log
+            book-modules-parity.json
+            d1-parity-report.json
+            r2-parity-report.log
+
+      - name: Enforce parity gate
+        if: always()
+        shell: bash
+        run: |
+          if [[ "${{ steps.modules_parity.outcome }}" != "success" || "${{ steps.db_parity.outcome }}" != "success" || "${{ steps.storage_parity.outcome }}" != "success" ]]; then
+            echo "::error::Cloudflare parity gate failed. Keep Supabase enabled and do not cut over yet."
+            exit 1
+          fi
+          echo "Cloudflare D1 + book modules + R2 parity gate passed. Supabase must still remain available until preview/auth smoke tests pass."

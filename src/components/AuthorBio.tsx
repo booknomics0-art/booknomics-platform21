@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { BookOpen, ShieldCheck } from "lucide-react";
 import { Link } from "react-router-dom";
-import { supabase } from "@/integrations/supabase/client";
+import { apiFetch } from "@/lib/cloudflareApi";
 import { findReviewedAuthorProfile } from "@/lib/reviewedHindiAuthors";
 
 interface Props { author: string; category: string; title?: string; isHindi?: boolean }
@@ -24,18 +24,14 @@ export const AuthorBio = ({ author, category, title, isHindi = false }: Props) =
     let active = true;
     setOtherWorks([]);
     if (!author?.trim()) return () => { active = false; };
-    supabase.from("books")
-      .select("title,slug,seo_slug")
-      .eq("author", author)
-      .eq("is_draft", false)
-      .eq("status", "published")
-      .limit(12)
+    const params = new URLSearchParams({ author, status: "published", limit: "12" });
+    void apiFetch<{ data: OtherWork[] }>(`/api/catalog/books?${params.toString()}`)
       .then(({ data }) => {
-        if (active) setOtherWorks(((data || []) as OtherWork[])
+        if (active) setOtherWorks((data || [])
           .filter((work) => work.title !== title)
           .filter((work, index, array) => array.findIndex((other) => other.title === work.title) === index)
           .slice(0, 5));
-      });
+      }).catch(() => { if (active) setOtherWorks([]); });
     return () => { active = false; };
   }, [author, title]);
 

@@ -3,7 +3,7 @@ import { Brain, Loader2, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { useAuth } from "@/hooks/useAuth";
-import { supabase } from "@/integrations/supabase/client";
+import { apiFetch } from "@/lib/cloudflareApi";
 
 type Feedback = {
   score: number;
@@ -25,17 +25,10 @@ export default function SubjectiveMastery({ bookId, language }: { bookId: string
   const label = (english: string, hindi: string) => hi ? hindi : english;
 
   const callAssessment = async (body: Record<string, unknown>) => {
-    const { data, error } = await supabase.functions.invoke("mastery-subjective", { body: { bookId, ...body } });
-    if (error) {
-      const context = (error as { context?: unknown }).context;
-      if (context instanceof Response) {
-        const payload = await context.clone().json().catch(() => null);
-        if (payload && typeof payload.error === "string") throw new Error(payload.error);
-      }
-      throw new Error(error.message || "Assessment unavailable");
-    }
-    if (data?.error) throw new Error(String(data.error));
-    return data;
+    return apiFetch<Record<string, any>>("/api/mastery/subjective", {
+      method: "POST",
+      body: JSON.stringify({ bookId, ...body }),
+    });
   };
 
   const loadQuestions = async () => {

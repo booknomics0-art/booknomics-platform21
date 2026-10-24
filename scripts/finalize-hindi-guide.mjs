@@ -1,5 +1,6 @@
 import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, resolve } from "node:path";
+import { cloudflarePrerender, fetchCloudflarePrerenderBooks } from "./lib/cloudflare-prerender-catalog.mjs";
 
 const SUPABASE_URL = process.env.VITE_SUPABASE_URL?.trim();
 const SUPABASE_KEY = process.env.VITE_SUPABASE_PUBLISHABLE_KEY?.trim();
@@ -25,7 +26,7 @@ const FEATURED_SLUGS = [
   "आइने-अकबरी-hindi-summary",
 ];
 
-if (!SUPABASE_URL || !SUPABASE_KEY) {
+if (!cloudflarePrerender && (!SUPABASE_URL || !SUPABASE_KEY)) {
   throw new Error("finalize-hindi-guide: missing VITE_SUPABASE_URL or VITE_SUPABASE_PUBLISHABLE_KEY");
 }
 
@@ -43,6 +44,7 @@ function replaceMeta(html, attr, key, value) {
 }
 
 async function api(path) {
+  if (cloudflarePrerender) return fetchCloudflarePrerenderBooks(path);
   const response = await fetch(`${SUPABASE_URL}/rest/v1/${path}`, {
     headers: {
       apikey: SUPABASE_KEY,

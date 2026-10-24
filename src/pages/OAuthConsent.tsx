@@ -2,68 +2,70 @@ import { useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { Layout } from "@/components/Layout";
 import { Button } from "@/components/ui/button";
-import { supabase } from "@/integrations/supabase/client";
+import { apiFetch } from "@/lib/cloudflareApi";
 import { ShieldCheck } from "lucide-react";
 import { SEO } from "@/components/SEO";
 
-type OAuthNamespace = {
-  getAuthorizationDetails: (id: string) => Promise<{ data: any; error: any }>;
-  approveAuthorization: (id: string) => Promise<{ data: any; error: any }>;
-  denyAuthorization: (id: string) => Promise<{ data: any; error: any }>;
+type AuthorizationDetails = {
+  id: string;
+  client_id: string;
+  client_name: string;
+  redirect_uri: string;
+  scope: string;
+  resource: string;
+  expires_at: string;
 };
-
-const oauth = () => (supabase.auth as unknown as { oauth: OAuthNamespace }).oauth;
 
 export default function OAuthConsent() {
   const [params] = useSearchParams();
   const authorizationId = params.get("authorization_id") ?? "";
-  const [details, setDetails] = useState<any>(null);
+  const [details, setDetails] = useState<AuthorizationDetails | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
 
   useEffect(() => {
     let active = true;
     (async () => {
-      if (!authorizationId) return setError("Missing authorization_id");
-      const { data: sess } = await supabase.auth.getSession();
-      if (!sess.session) {
-        const next = window.location.pathname + window.location.search;
-        window.location.href = "/auth?next=" + encodeURIComponent(next);
+      if (!authorizationId) {
+        setError("Missing authorization_id");
         return;
       }
-      const { data, error } = await oauth().getAuthorizationDetails(authorizationId);
-      if (!active) return;
-      if (error) return setError(error.message);
-      const immediate = data?.redirect_url ?? data?.redirect_to;
-      if (immediate && !data?.client) {
-        window.location.href = immediate;
-        return;
+      try {
+        const session = await apiFetch<{ user: { id: string } | null }>("/api/auth/session");
+        if (!session.user) {
+          const next = window.location.pathname + window.location.search;
+          window.location.href = "/auth?next=" + encodeURIComponent(next);
+          return;
+        }
+        const payload = await apiFetch<{ data: AuthorizationDetails }>(
+          `/api/oauth/authorizations/${encodeURIComponent(authorizationId)}`,
+        );
+        if (active) setDetails(payload.data);
+      } catch (e) {
+        if (active) setError(e instanceof Error ? e.message : "Authorization request failed");
       }
-      setDetails(data);
     })();
-    return () => {
-      active = false;
-    };
+    return () => { active = false; };
   }, [authorizationId]);
 
-  async function decide(approve: boolean) {
+  async function decide(decision: "approve" | "deny") {
     setBusy(true);
-    const { data, error } = approve
-      ? await oauth().approveAuthorization(authorizationId)
-      : await oauth().denyAuthorization(authorizationId);
-    if (error) {
+    setError(null);
+    try {
+      const data = await apiFetch<{ redirect_url: string }>(
+        `/api/oauth/authorizations/${encodeURIComponent(authorizationId)}/decision`,
+        { method: "POST", body: JSON.stringify({ decision }) },
+      );
+      if (!data.redirect_url) throw new Error("No redirect returned by the authorization server.");
+      window.location.href = data.redirect_url;
+    } catch (e) {
       setBusy(false);
-      return setError(error.message);
+      setError(e instanceof Error ? e.message : "Authorization request failed");
     }
-    const target = data?.redirect_url ?? data?.redirect_to;
-    if (!target) {
-      setBusy(false);
-      return setError("No redirect returned by the authorization server.");
-    }
-    window.location.href = target;
   }
 
-  const clientName = details?.client?.name ?? "this app";
+  const requestedScopes = details?.scope?.split(/\s+/).filter(Boolean) ?? [];
+  const canAdmin = requestedScopes.includes("mcp:admin");
 
   return (
     <Layout>
@@ -82,20 +84,25 @@ export default function OAuthConsent() {
             <p className="text-muted-foreground">Loading…</p>
           ) : (
             <>
-              <h1 className="font-serif text-2xl font-bold">Connect {clientName} to your account</h1>
+              <h1 className="font-serif text-2xl font-bold">Connect {details.client_name || "this app"} to your account</h1>
               <p className="text-muted-foreground mt-2 text-sm">
-                {clientName} will be able to search Booknomics summaries and read or update your personal library on your
-                behalf. If your account is an administrator, it can also edit public book content. You can revoke access at any time.
+                This app is requesting delegated access to Booknomics through our Cloudflare-hosted OAuth 2.1 server.
+                Access is limited to the permissions shown below and can be revoked by invalidating the OAuth token.
               </p>
+              <div className="mt-5 rounded-xl border border-border bg-muted/20 p-4 text-sm space-y-2">
+                {requestedScopes.includes("mcp:read") && <div>• Search summaries and read your saved library.</div>}
+                {requestedScopes.includes("mcp:write") && <div>• Add books to your personal library.</div>}
+                {canAdmin && <div className="font-medium text-amber-700 dark:text-amber-300">• Use administrator publishing and generation tools if your Booknomics account is an admin.</div>}
+              </div>
               <div className="mt-6 flex gap-3">
                 <Button
-                  onClick={() => decide(true)}
+                  onClick={() => decide("approve")}
                   disabled={busy}
                   className="flex-1 rounded-full bg-gold text-primary-foreground hover:opacity-90"
                 >
-                  Approve
+                  {busy ? "Authorizing…" : "Approve"}
                 </Button>
-                <Button onClick={() => decide(false)} disabled={busy} variant="outline" className="flex-1 rounded-full">
+                <Button onClick={() => decide("deny")} disabled={busy} variant="outline" className="flex-1 rounded-full">
                   Deny
                 </Button>
               </div>

@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { Helmet } from "react-helmet-async";
-import { supabase } from "@/integrations/supabase/client";
+import { apiFetch } from "@/lib/cloudflareApi";
 
 const SITE = "https://www.booknomics.com";
 const DEFAULT_OG = `${SITE}/og-default.jpg`;
@@ -35,7 +35,7 @@ const BOOKNOMICS_HOST_RE = /^https?:\/\/(?:www\.)?booknomics\.com(?=\/|$)/i;
 /**
  * Keep every first-party SEO URL on one HTTPS hostname. This intentionally
  * normalizes legacy absolute apex URLs passed by older page components while
- * leaving third-party URLs (for example Supabase-hosted cover images) intact.
+ * leaving third-party URLs (for example externally hosted cover images) intact.
  */
 const normalizeUrl = (value: string) => {
   if (!value) return value;
@@ -145,27 +145,15 @@ export const SEO = ({
     if (!slug) return () => { cancelled = true; };
 
     (async () => {
-      const bySlug = await supabase
-        .from("books")
-        .select("created_at")
-        .eq("slug", slug)
-        .eq("is_draft", false)
-        .in("status", ["published", "published_noindex"])
-        .maybeSingle();
-
-      let createdAt = bySlug.data?.created_at ?? null;
-      if (!createdAt) {
-        const bySeoSlug = await supabase
-          .from("books")
-          .select("created_at")
-          .eq("seo_slug", slug)
-          .eq("is_draft", false)
-          .in("status", ["published", "published_noindex"])
-          .maybeSingle();
-        createdAt = bySeoSlug.data?.created_at ?? null;
+      try {
+        const payload = await apiFetch<{ book?: { created_at?: string | null } }>(
+          `/api/book-detail-data/${encodeURIComponent(slug)}`,
+        );
+        const createdAt = payload.book?.created_at ?? null;
+        if (!cancelled && createdAt) setBookArticlePublishedAt(createdAt);
+      } catch {
+        // Keep Article markup withheld rather than inventing a publication date.
       }
-
-      if (!cancelled && createdAt) setBookArticlePublishedAt(createdAt);
     })();
 
     return () => { cancelled = true; };

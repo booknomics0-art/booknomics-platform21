@@ -3,11 +3,15 @@ import { Link } from "react-router-dom";
 import { Card, CardContent } from "@/components/ui/card";
 import { NotebookPen, ChevronDown, ChevronUp } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { supabase } from "@/integrations/supabase/client";
+import { apiFetch } from "@/lib/cloudflareApi";
 
 interface NoteRow {
-  id: string; content: string; updated_at: string;
-  books: { slug: string; title: string; author: string } | null;
+  id: string;
+  content: string;
+  updated_at: string;
+  slug: string | null;
+  title: string | null;
+  author: string | null;
 }
 
 export function NotesArchive({ userId }: { userId: string }) {
@@ -15,12 +19,10 @@ export function NotesArchive({ userId }: { userId: string }) {
   const [open, setOpen] = useState(false);
 
   useEffect(() => {
-    supabase.from("book_notes")
-      .select("id,content,updated_at,books(slug,title,author)")
-      .eq("user_id", userId)
-      .order("updated_at", { ascending: false })
-      .limit(50)
-      .then(({ data }) => setNotes((data as any) ?? []));
+    if (!userId) return;
+    apiFetch<{ data: NoteRow[] }>("/api/notes")
+      .then(({ data }) => setNotes(data ?? []))
+      .catch(() => setNotes([]));
   }, [userId]);
 
   const visible = open ? notes : notes.slice(0, 3);
@@ -40,9 +42,9 @@ export function NotesArchive({ userId }: { userId: string }) {
               {visible.map(n => (
                 <li key={n.id} className="border-l-2 border-primary/40 pl-4 py-1">
                   <div className="text-sm whitespace-pre-wrap line-clamp-3">{n.content}</div>
-                  {n.books && (
-                    <Link to={`/books/${n.books.slug}`} className="text-xs text-primary hover:underline mt-1 inline-block">
-                      → {n.books.title}
+                  {n.slug && n.title && (
+                    <Link to={`/books/${n.slug}`} className="text-xs text-primary hover:underline mt-1 inline-block">
+                      → {n.title}
                     </Link>
                   )}
                 </li>

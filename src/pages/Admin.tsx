@@ -11,7 +11,7 @@ import {
   Dialog, DialogContent, DialogHeader, DialogTitle,
 } from "@/components/ui/dialog";
 import { useAdmin } from "@/hooks/useAdmin";
-import { supabase } from "@/integrations/supabase/client";
+import { adminCloudflareCompat as supabase } from "@/lib/adminCloudflareCompat";
 import { parseBulkBooks, ParsedBook } from "@/lib/bookParser";
 import { toast } from "sonner";
 import { trackAdminAddBook } from "@/lib/analytics";

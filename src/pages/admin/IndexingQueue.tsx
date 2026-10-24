@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { AdminGuard } from "@/components/admin/AdminGuard";
 import { AdminShell } from "@/components/admin/AdminShell";
-import { supabase } from "@/integrations/supabase/client";
+import { adminGsc, adminListIndexingJobs, adminUpdateIndexingJob } from "@/lib/adminApi";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -29,25 +29,23 @@ function Inner() {
 
   const load = async () => {
     setLoading(true);
-    const { data } = await supabase.from("seo_indexing_jobs")
-      .select("*").order("created_at", { ascending: false }).limit(200);
-    setJobs((data || []) as any);
+    try { setJobs(await adminListIndexingJobs<Job>(200)); }
+    catch { setJobs([]); }
     setLoading(false);
   };
   useEffect(() => { load(); }, []);
 
   const recheck = async (job: Job) => {
     try {
-      const { data, error } = await supabase.functions.invoke("admin-gsc", {
-        body: { action: "inspect_url", siteUrl: "https://booknomics.com/", pageUrl: job.url },
+      const data: any = await adminGsc({ action: "inspect_url", siteUrl: "https://booknomics.com/", pageUrl: job.url });
+      const verdict = data?.inspectionResult?.indexStatusResult?.verdict || "UNKNOWN";
+      const coverage = data?.inspectionResult?.indexStatusResult?.coverageState || null;
+      await adminUpdateIndexingJob(job.id, {
+        gsc_status: coverage,
+        status: verdict === "PASS" ? "indexed" : "not_indexed",
+        last_checked_at: new Date().toISOString(),
+        attempts: job.attempts + 1,
       });
-      if (error) throw error;
-      const verdict = (data as any)?.inspectionResult?.indexStatusResult?.verdict || "UNKNOWN";
-      const coverage = (data as any)?.inspectionResult?.indexStatusResult?.coverageState || null;
-      await supabase.from("seo_indexing_jobs").update({
-        gsc_status: coverage, status: verdict === "PASS" ? "indexed" : "not_indexed",
-        last_checked_at: new Date().toISOString(), attempts: job.attempts + 1,
-      }).eq("id", job.id);
       toast.success(`Status: ${verdict}`);
       load();
     } catch (e: any) { toast.error(e.message); }

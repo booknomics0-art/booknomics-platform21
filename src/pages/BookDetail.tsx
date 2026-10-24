@@ -7,7 +7,7 @@ import { Layout } from "@/components/Layout";
 import { BookCover } from "@/components/BookCard";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { supabase } from "@/integrations/supabase/client";
+import { supabase } from "@/lib/bookDetailCloudflareCompat";
 import { useAuth } from "@/hooks/useAuth";
 
 import { toast } from "sonner";

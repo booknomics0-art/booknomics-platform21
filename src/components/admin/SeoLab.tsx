@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
-import { supabase } from "@/integrations/supabase/client";
+import { apiFetch } from "@/lib/cloudflareApi";
+import { adminGetBook, adminGetSeoAudit, adminUpdateBook } from "@/lib/adminApi";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -61,33 +62,29 @@ export function SeoLab({ bookId }: Props) {
   const [audit, setAudit] = useState<AiAudit | null>(null);
 
   useEffect(() => {
+    let active = true;
     (async () => {
-      const [bookResult, auditResult] = await Promise.all([
-        supabase
-          .from("books_admin")
-          .select("title, meta_title, meta_description, slug, overview, key_ideas, category")
-          .eq("id", bookId)
-          .maybeSingle(),
-        supabase
-          .from("seo_audits")
-          .select("aeo_score, geo_score, ai_visibility_score, scoring_version, aeo_details, geo_details, updated_at")
-          .eq("book_id", bookId)
-          .order("updated_at", { ascending: false })
-          .limit(1)
-          .maybeSingle(),
-      ]);
-
-      const data = bookResult.data;
-      if (data) {
-        setTitle(data.meta_title ?? data.title ?? "");
-        setDesc(data.meta_description ?? "");
-        setSlug(data.slug ?? "");
-        setKeyword(data.title ?? "");
-        setBody(`${data.overview ?? ""}\n${data.key_ideas ?? ""}`);
+      try {
+        const [data, auditData] = await Promise.all([
+          adminGetBook<any>(bookId),
+          adminGetSeoAudit<AiAudit>(bookId).catch(() => null),
+        ]);
+        if (!active) return;
+        if (data) {
+          setTitle(data.meta_title ?? data.title ?? "");
+          setDesc(data.meta_description ?? "");
+          setSlug(data.slug ?? "");
+          setKeyword(data.title ?? "");
+          setBody(`${data.overview ?? ""}\n${data.key_ideas ?? ""}`);
+        }
+        if (auditData) setAudit(auditData);
+      } catch (error) {
+        if (active) toast.error(error instanceof Error ? error.message : "Could not load SEO data");
+      } finally {
+        if (active) setLoading(false);
       }
-      if (auditResult.data) setAudit(auditResult.data as unknown as AiAudit);
-      setLoading(false);
     })();
+    return () => { active = false; };
   }, [bookId]);
 
   const titleLen = title.length;
@@ -118,31 +115,40 @@ export function SeoLab({ bookId }: Props) {
 
   const save = async () => {
     setSaving(true);
-    const { error } = await supabase.from("books").update({
-      meta_title: title || null,
-      meta_description: desc || null,
-      slug: slug || undefined,
-    }).eq("id", bookId);
-    setSaving(false);
-    if (error) toast.error(error.message);
-    else toast.success("SEO saved");
+    try {
+      await adminUpdateBook(bookId, {
+        meta_title: title || null,
+        meta_description: desc || null,
+        ...(slug ? { slug } : {}),
+      });
+      toast.success("SEO saved");
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Could not save SEO");
+    } finally {
+      setSaving(false);
+    }
   };
 
   const runAi = async () => {
     setAiBusy(true);
-    const { data, error } = await supabase.functions.invoke("seo-marketing", {
-      body: { book_id: bookId, mode: "seo" },
-    });
-    setAiBusy(false);
-    if (error || data?.error) return toast.error(error?.message || data?.error);
-    setSuggestions(Array.isArray(data?.suggestions) ? data.suggestions : []);
+    try {
+      const data = await apiFetch<{ suggestions?: Suggestion[]; error?: string }>("/api/admin/ai/seo-marketing", {
+        method: "POST",
+        body: JSON.stringify({ book_id: bookId, mode: "seo" }),
+      });
+      if (data?.error) return toast.error(data.error);
+      setSuggestions(Array.isArray(data?.suggestions) ? data.suggestions : []);
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "AI optimization failed");
+    } finally {
+      setAiBusy(false);
+    }
   };
 
   if (loading) return <div className="p-6 text-sm text-muted-foreground">Loading…</div>;
 
   return (
     <div className="space-y-4">
-      {/* SERP Preview */}
       <Card className="p-4 bg-background border-l-4 border-l-primary">
         <div className="flex items-center gap-2 mb-3">
           <Globe className="w-4 h-4 text-primary" />
@@ -159,7 +165,6 @@ export function SeoLab({ bookId }: Props) {
         </div>
       </Card>
 
-      {/* AEO / GEO readiness */}
       <Card className="p-4 space-y-3">
         <div className="flex items-start justify-between gap-3 flex-wrap">
           <div>
@@ -207,7 +212,6 @@ export function SeoLab({ bookId }: Props) {
         )}
       </Card>
 
-      {/* Editors */}
       <Card className="p-4 space-y-3">
         <div>
           <div className="flex items-center justify-between">
@@ -246,7 +250,6 @@ export function SeoLab({ bookId }: Props) {
         </div>
       </Card>
 
-      {/* Keyword density */}
       <Card className="p-4">
         <h4 className="font-semibold text-sm mb-2">Keyword Density Map</h4>
         <div className="flex flex-wrap gap-2 text-xs">
@@ -262,7 +265,6 @@ export function SeoLab({ bookId }: Props) {
         </div>
       </Card>
 
-      {/* AI suggestions */}
       {suggestions.length > 0 && (
         <Card className="p-4 space-y-3">
           <h4 className="font-semibold text-sm">AI Suggestions</h4>

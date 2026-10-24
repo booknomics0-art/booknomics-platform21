@@ -7,7 +7,7 @@ import { Label } from "@/components/ui/label";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { supabase } from "@/integrations/supabase/client";
+import { adminGenerateMastery, adminGetBookAssets, adminPutBookAssets, adminUploadObject } from "@/lib/adminApi";
 import { toast } from "sonner";
 import {
   UploadCloud, Plus, Trash2, GripVertical, Check, Loader2, Save, Image as ImageIcon,
@@ -18,8 +18,18 @@ type QuizQuestion = { id: string; question: string; options: string[]; correct_o
 type Flashcard = { id: string; front: string; back: string };
 type ChapterMarker = { time: number; title: string };
 
+type BookAssetsRow = {
+  book_id?: string;
+  mindmap_url?: string | null;
+  audio_url?: string | null;
+  quiz_data?: QuizQuestion[];
+  flashcard_data?: Flashcard[];
+  chapter_markers?: ChapterMarker[];
+  status?: "draft" | "published";
+  updated_at?: string | null;
+};
+
 const uid = () => Math.random().toString(36).slice(2, 9);
-const PRIVATE_BUCKET_MARKER = "/book-assets/";
 const MINDMAP_MAX_SIZE = 5 * 1024 * 1024;
 const MINDMAP_ACCEPT = {
   "image/png": [".png"],
@@ -46,31 +56,10 @@ function formatBytes(bytes: number) {
   return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
 }
 
-async function signAssetPath(path: string) {
-  const { data, error } = await supabase.storage.from("book-assets").createSignedUrl(path, 60 * 60 * 6);
-  if (error || !data?.signedUrl) return null;
-  return data.signedUrl;
-}
-
-async function signAssetUrl(url: string | null) {
-  if (!url) return null;
-  const i = url.indexOf(PRIVATE_BUCKET_MARKER);
-  if (i === -1) return url;
-  const path = url.slice(i + PRIVATE_BUCKET_MARKER.length).split("?")[0];
-  return (await signAssetPath(path)) ?? url;
-}
-
 async function uploadToBucket(bookId: string, file: File, kind: "audio" | "mindmap") {
   const ext = file.name.split(".").pop()?.toLowerCase() || "bin";
   const path = `${bookId}/${kind}-${Date.now()}.${ext}`;
-  const { error } = await supabase.storage.from("book-assets").upload(path, file, {
-    cacheControl: "31536000",
-    upsert: true,
-    contentType: file.type,
-  });
-  if (error) throw error;
-  const { data } = supabase.storage.from("book-assets").getPublicUrl(path);
-  return { publicUrl: data.publicUrl, signedUrl: await signAssetPath(path) };
+  return adminUploadObject("assets", path, file);
 }
 
 export function BookAssetsEditor({ bookId, bookTitle }: { bookId: string; bookTitle: string }) {
@@ -94,21 +83,26 @@ export function BookAssetsEditor({ bookId, bookTitle }: { bookId: string; bookTi
   useEffect(() => {
     let active = true;
     setLoading(true);
-    supabase.from("book_assets").select("*").eq("book_id", bookId).maybeSingle().then(async ({ data }) => {
-      if (!active) return;
-      if (data) {
-        setMindmapUrl(data.mindmap_url ?? "");
-        setAudioUrl(data.audio_url ?? "");
-        setStatus((data.status as any) ?? "draft");
-        setUpdatedAt(data.updated_at);
-        setQuiz(Array.isArray(data.quiz_data) ? (data.quiz_data as any) : []);
-        setCards(Array.isArray(data.flashcard_data) ? (data.flashcard_data as any) : []);
-        setChapters(Array.isArray((data as any).chapter_markers) ? ((data as any).chapter_markers as any) : []);
-        const signedMap = await signAssetUrl(data.mindmap_url ?? null);
-        if (active) setMindmapPreviewUrl(signedMap ?? "");
+    (async () => {
+      try {
+        const data = await adminGetBookAssets<BookAssetsRow>(bookId);
+        if (!active) return;
+        if (data) {
+          setMindmapUrl(data.mindmap_url ?? "");
+          setMindmapPreviewUrl(data.mindmap_url ?? "");
+          setAudioUrl(data.audio_url ?? "");
+          setStatus(data.status ?? "draft");
+          setUpdatedAt(data.updated_at ?? null);
+          setQuiz(Array.isArray(data.quiz_data) ? data.quiz_data : []);
+          setCards(Array.isArray(data.flashcard_data) ? data.flashcard_data : []);
+          setChapters(Array.isArray(data.chapter_markers) ? data.chapter_markers : []);
+        }
+      } catch (error) {
+        if (active) toast.error(error instanceof Error ? error.message : "Could not load assets");
+      } finally {
+        if (active) setLoading(false);
       }
-      if (active) setLoading(false);
-    });
+    })();
     return () => { active = false; };
   }, [bookId]);
 
@@ -130,8 +124,7 @@ export function BookAssetsEditor({ bookId, bookTitle }: { bookId: string; bookTi
     const err = validate();
     if (err) { toast.error(err); return false; }
     setSaving(true);
-    const payload: any = {
-      book_id: bookId,
+    const payload: Record<string, unknown> = {
       mindmap_url: mindmapUrl || null,
       audio_url: audioUrl || null,
       quiz_data: quiz,
@@ -140,18 +133,18 @@ export function BookAssetsEditor({ bookId, bookTitle }: { bookId: string; bookTi
       status,
       ...overrides,
     };
-    const { error, data } = await supabase.from("book_assets").upsert(payload, { onConflict: "book_id" }).select().maybeSingle();
-    setSaving(false);
-    if (error) {
-      toast.error(error.message);
+    try {
+      const data = await adminPutBookAssets<BookAssetsRow>(bookId, payload);
+      setStatus(data?.status ?? "draft");
+      setUpdatedAt(data?.updated_at ?? null);
+      toast.success(successMessage);
+      return true;
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Could not save assets");
       return false;
+    } finally {
+      setSaving(false);
     }
-    if (data) {
-      setStatus((data.status as any) ?? "draft");
-      setUpdatedAt(data.updated_at);
-    }
-    toast.success(successMessage);
-    return true;
   };
 
   const save = async (nextStatus?: "draft" | "published") => {
@@ -176,8 +169,8 @@ export function BookAssetsEditor({ bookId, bookTitle }: { bookId: string; bookTi
       const a = document.createElement("audio");
       a.src = publicUrl;
       a.addEventListener("loadedmetadata", () => toast.success(`Uploaded · duration ${fmtTime(a.duration)}`), { once: true });
-    } catch (e: any) {
-      toast.error(e.message);
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : "Audio upload failed");
     } finally {
       setUploadingAu(false);
     }
@@ -195,12 +188,12 @@ export function BookAssetsEditor({ bookId, bookTitle }: { bookId: string; bookTi
     }
     try {
       setUploadingMm(true);
-      const { publicUrl, signedUrl } = await uploadToBucket(bookId, file, "mindmap");
+      const { publicUrl } = await uploadToBucket(bookId, file, "mindmap");
       setMindmapUrl(publicUrl);
-      setMindmapPreviewUrl(signedUrl ?? publicUrl);
+      setMindmapPreviewUrl(publicUrl);
       toast.success("Mindmap uploaded");
-    } catch (e: any) {
-      toast.error(e.message);
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : "Mindmap upload failed");
     } finally {
       setUploadingMm(false);
     }
@@ -224,12 +217,7 @@ export function BookAssetsEditor({ bookId, bookTitle }: { bookId: string; bookTi
   });
 
   const handleMindmapUrlBlur = async () => {
-    if (!mindmapUrl) {
-      setMindmapPreviewUrl("");
-      return;
-    }
-    const signed = await signAssetUrl(mindmapUrl);
-    setMindmapPreviewUrl(signed ?? mindmapUrl);
+    setMindmapPreviewUrl(mindmapUrl);
   };
 
   const removeMindmap = async () => {
@@ -244,11 +232,11 @@ export function BookAssetsEditor({ bookId, bookTitle }: { bookId: string; bookTi
   const aiGenerate = async (action: "quiz" | "flashcards" | "mindmap") => {
     setAiBusy(action);
     try {
-      const body: any = { book_id: bookId, action };
+      const body: Record<string, unknown> = { book_id: bookId, action };
       if (action === "quiz") { body.count = 10; }
       if (action === "flashcards") { body.count = cardCount; if (sourceText.trim()) body.source_text = sourceText; }
-      const { data, error } = await supabase.functions.invoke("generate-mastery-assets", { body });
-      if (error || data?.error) throw new Error(error?.message || data?.error || "Generation failed");
+      const data = await adminGenerateMastery(body);
+      if (data?.error) throw new Error(data.error);
       if (action === "quiz" && data.quiz?.length) {
         setQuiz(data.quiz);
         toast.success(`Generated ${data.quiz.length} book-specific questions — editorial review required before publication`);
@@ -262,8 +250,8 @@ export function BookAssetsEditor({ bookId, bookTitle }: { bookId: string; bookTi
         setMindmapPreviewUrl(data.mindmap_url);
         toast.success("Mind map generated");
       }
-    } catch (e: any) {
-      toast.error(e.message);
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : "Generation failed");
     } finally {
       setAiBusy(null);
     }

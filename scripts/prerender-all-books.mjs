@@ -1,5 +1,6 @@
 import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, resolve } from "node:path";
+import { cloudflarePrerender, fetchCloudflarePrerenderBooks } from "./lib/cloudflare-prerender-catalog.mjs";
 
 const DIST = resolve("dist");
 const INDEX = resolve(DIST, "index.html");
@@ -12,7 +13,7 @@ const SUPABASE_KEY = process.env.VITE_SUPABASE_PUBLISHABLE_KEY?.trim();
 // The prerender only needs enough indexable text for crawlers; the full article
 // continues to hydrate from Supabase in the client.
 const PAGE_SIZE = 200;
-if (!SUPABASE_URL || !SUPABASE_KEY) throw new Error("prerender-all-books: missing Supabase env");
+if (!cloudflarePrerender && (!SUPABASE_URL || !SUPABASE_KEY)) throw new Error("prerender-all-books: missing Supabase rollback env");
 const template = readFileSync(INDEX, "utf8");
 
 const esc = (v="") => String(v).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/\"/g,"&quot;").replace(/'/g,"&#039;");
@@ -32,6 +33,7 @@ function writeFallbackCover(book){const dir=resolve(DIST,"seo-cover");mkdirSync(
 const RETRY_ATTEMPTS = 4;
 const pause = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 async function api(path) {
+  if (cloudflarePrerender) return fetchCloudflarePrerenderBooks(path);
   for (let attempt = 0; attempt < RETRY_ATTEMPTS; attempt++) {
     try {
       const r = await fetch(`${SUPABASE_URL}/rest/v1/${path}`, {

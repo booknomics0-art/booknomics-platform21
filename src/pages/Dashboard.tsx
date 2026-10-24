@@ -6,10 +6,10 @@ import { Button } from "@/components/ui/button";
 import { Flame, BookOpen, Trophy, Target, Sparkles, Clock, CheckSquare, ArrowRight, Route } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { usePremium } from "@/hooks/usePremium";
-import { supabase } from "@/integrations/supabase/client";
 import { Milestones } from "@/components/Milestones";
 import { KnowledgeMap } from "@/components/KnowledgeMap";
 import { NotesArchive } from "@/components/NotesArchive";
+import { apiFetch } from "@/lib/cloudflareApi";
 
 interface Stats {
   completed: number;
@@ -22,6 +22,14 @@ interface Stats {
 
 interface MasteryRow { book_id: string; quiz_score: number; quiz_total: number; badge_awarded: boolean; books: { title: string; slug: string; cover_color: string; cover_url: string | null } | null }
 
+type DashboardPayload = {
+  streak: number;
+  stats: Stats;
+  recent: any[];
+  categoryMap: { category: string; count: number }[];
+  badges: MasteryRow[];
+};
+
 const Dashboard = () => {
   const { user, loading } = useAuth();
   const { isPremium, plan } = usePremium();
@@ -31,59 +39,32 @@ const Dashboard = () => {
   const [categoryMap, setCategoryMap] = useState<{ category: string; count: number }[]>([]);
   const [badges, setBadges] = useState<MasteryRow[]>([]);
 
-  useEffect(() => { document.title = "Dashboard — BookInsight"; }, []);
+  useEffect(() => { document.title = "Dashboard — Booknomics"; }, []);
 
   useEffect(() => {
-    if (!user) return;
+    if (!user) {
+      setStats({ completed: 0, inProgress: 0, totalHabits: 0, doneHabits: 0, hoursSaved: 0, masterBadges: 0 });
+      setStreak(0);
+      setRecent([]);
+      setCategoryMap([]);
+      setBadges([]);
+      return;
+    }
+    let cancelled = false;
     (async () => {
-      const today = new Date().toISOString().slice(0, 10);
-      const [{ data: profile }, { data: privateProfile }] = await Promise.all([
-        supabase.from("profiles").select("streak_count").eq("id", user.id).maybeSingle(),
-        (supabase as any).rpc("get_my_profile_extras"),
-      ]);
-
-      let s = profile?.streak_count ?? 0;
-      const last = (privateProfile as { last_active_date?: string | null } | null)?.last_active_date;
-      if (last !== today) {
-        const yesterday = new Date(Date.now() - 86400000).toISOString().slice(0, 10);
-        s = last === yesterday ? s + 1 : 1;
-        await supabase.from("profiles").update({ streak_count: s, last_active_date: today }).eq("id", user.id);
+      try {
+        const payload = await apiFetch<DashboardPayload>("/api/dashboard");
+        if (cancelled) return;
+        setStats(payload.stats);
+        setStreak(payload.streak);
+        setRecent(payload.recent ?? []);
+        setCategoryMap(payload.categoryMap ?? []);
+        setBadges(payload.badges ?? []);
+      } catch (error) {
+        console.error("[Dashboard] Cloudflare data load failed", error);
       }
-      setStreak(s);
-
-      const [{ data: prog }, { data: habits }, { data: lib }, { data: mastery }] = await Promise.all([
-        supabase.from("reading_progress").select("completed, books(reading_time, category)").eq("user_id", user.id),
-        supabase.from("habit_entries").select("done").eq("user_id", user.id),
-        supabase.from("library").select("books(id,slug,title,author,cover_color,cover_url,category)").eq("user_id", user.id).limit(8),
-        supabase.from("user_book_mastery").select("book_id,quiz_score,quiz_total,badge_awarded,books(title,slug,cover_color,cover_url)").eq("user_id", user.id).eq("badge_awarded", true).order("completed_at", { ascending: false }).limit(6),
-      ]);
-
-      const completedRows = (prog ?? []).filter((p: any) => p.completed);
-      const totalMinSaved = completedRows.reduce((acc: number, r: any) => acc + ((r.books?.reading_time ?? 12) * 25), 0);
-      const badgeRows = (mastery ?? []) as any as MasteryRow[];
-      setBadges(badgeRows);
-
-      setStats({
-        completed: completedRows.length,
-        inProgress: (prog ?? []).filter((p: any) => !p.completed).length,
-        totalHabits: (habits ?? []).length,
-        doneHabits: (habits ?? []).filter((h: any) => h.done).length,
-        hoursSaved: Math.round(totalMinSaved / 60),
-        masterBadges: badgeRows.length,
-      });
-      setRecent(((lib ?? []).map((r: any) => r.books).filter(Boolean)).slice(0, 4));
-
-      const counts: Record<string, number> = {};
-      (lib ?? []).forEach((r: any) => {
-        const c = r.books?.category;
-        if (c) counts[c] = (counts[c] ?? 0) + 1;
-      });
-      completedRows.forEach((r: any) => {
-        const c = r.books?.category;
-        if (c) counts[c] = (counts[c] ?? 0) + 1;
-      });
-      setCategoryMap(Object.entries(counts).map(([category, count]) => ({ category, count })).sort((a, b) => b.count - a.count));
     })();
+    return () => { cancelled = true; };
   }, [user]);
 
   if (loading) return <Layout><div className="container py-20 text-center text-muted-foreground">Loading…</div></Layout>;

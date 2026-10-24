@@ -43,9 +43,9 @@ export const Navbar = () => {
               Admin
             </Link>
           )}
-          <Link to="/pricing"
-            className="inline-flex items-center gap-1 rounded-full border border-primary/25 bg-primary/10 px-2.5 py-2 text-[11px] font-semibold text-primary hover:bg-primary/15"
-            aria-label={isPremium ? "View your Premium benefits" : "See Premium plans"}>
+          <Link to={isPremium ? "/account/subscription" : "/pricing"}
+            className="inline-flex items-center gap-1 rounded-full bg-primary/10 text-primary border border-primary/25 px-2.5 py-2 text-[11px] font-semibold hover:bg-primary/15"
+            aria-label={isPremium ? "Manage your Premium subscription" : "View Premium plans"}>
             <Crown className="h-4 w-4" />
             <span className="hidden sm:inline">{isPremium ? "My Premium" : "Go Premium"}</span>
           </Link>

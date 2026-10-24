@@ -1,0 +1,137 @@
+name: Cloudflare Version Smoke
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - cloudflare-full-migration
+
+permissions:
+  contents: read
+
+jobs:
+  smoke:
+    if: github.event_name == 'workflow_dispatch' || contains(github.event.head_commit.message, '[cloudflare-version-smoke]')
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      CI: 'true'
+      CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
+      GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Require Version smoke credentials
+        shell: bash
+        run: |
+          set -euo pipefail
+          missing=0
+          for name in CLOUDFLARE_ACCOUNT_ID CLOUDFLARE_API_TOKEN GOOGLE_CLIENT_ID GOOGLE_CLIENT_SECRET; do
+            if [[ -z "${!name:-}" ]]; then
+              echo "::error::Required GitHub Actions secret is not configured: ${name}"
+              missing=1
+            fi
+          done
+          if [[ "$missing" -ne 0 ]]; then
+            exit 1
+          fi
+      - name: Build Supabase-free static assets
+        run: npm run build --ignore-scripts
+        env:
+          ALLOW_STATIC_SITEMAP: 'true'
+      - name: Guard browser bundle
+        run: node scripts/guard-no-browser-supabase.mjs
+      - name: Prepare version-only OAuth secrets
+        shell: bash
+        run: |
+          set -euo pipefail
+          node - <<'NODE'
+          const fs = require('fs');
+          const required = ['GOOGLE_CLIENT_ID', 'GOOGLE_CLIENT_SECRET'];
+          for (const name of required) {
+            if (!process.env[name]) throw new Error(`Missing required secret: ${name}`);
+          }
+          fs.writeFileSync(
+            '/tmp/cloudflare-version-secrets.json',
+            JSON.stringify(Object.fromEntries(required.map((name) => [name, process.env[name]]))),
+            { mode: 0o600 },
+          );
+          NODE
+      - name: Upload Worker version without production deployment
+        id: upload
+        shell: bash
+        run: |
+          set -euo pipefail
+          trap 'rm -f /tmp/cloudflare-version-secrets.json' EXIT
+          npx --yes wrangler@4.136.3 versions upload \
+            --secrets-file /tmp/cloudflare-version-secrets.json \
+            --preview-alias migration-smoke 2>&1 | tee /tmp/version-upload.log
+          VERSION_URL=$(grep -Eo 'https://[a-zA-Z0-9.-]+\.workers\.dev' /tmp/version-upload.log | tail -1 || true)
+          if [[ -z "$VERSION_URL" ]]; then
+            echo '::error::Could not determine Cloudflare Version URL'
+            cat /tmp/version-upload.log
+            exit 1
+          fi
+          echo "version_url=$VERSION_URL" >> "$GITHUB_OUTPUT"
+          echo "Version URL: $VERSION_URL"
+      - name: Smoke production resources and auth configuration
+        shell: bash
+        env:
+          VERSION_URL: ${{ steps.upload.outputs.version_url }}
+        run: |
+          set -euo pipefail
+          curl --fail --silent --show-error "$VERSION_URL/" -o /tmp/home.html
+          grep -qi '<html' /tmp/home.html
+
+          curl --fail --silent --show-error "$VERSION_URL/api/catalog/books?limit=1" -o /tmp/catalog.json
+          node - <<'NODE'
+          const fs = require('fs');
+          const data = JSON.parse(fs.readFileSync('/tmp/catalog.json','utf8'));
+          if (!Array.isArray(data.data) || data.data.length < 1 || Number(data.count || 0) < 1) {
+            throw new Error('Catalog returned no rows');
+          }
+          console.log(`Catalog OK: count=${data.count}`);
+          NODE
+
+          curl --fail --silent --show-error "$VERSION_URL/api/auth/session" -o /tmp/session.json
+          node - <<'NODE'
+          const fs = require('fs');
+          const data = JSON.parse(fs.readFileSync('/tmp/session.json','utf8'));
+          if (!('user' in data)) throw new Error('Auth session endpoint malformed');
+          console.log('Auth session endpoint OK');
+          NODE
+
+          STATUS=$(curl --silent --show-error --output /dev/null --dump-header /tmp/google-oauth.headers \
+            --write-out '%{http_code}' --max-redirs 0 \
+            "$VERSION_URL/api/auth/google/start?return_to=%2F" || true)
+          if [[ "$STATUS" != "302" ]]; then
+            echo "::error::Google OAuth start expected 302, got $STATUS"
+            exit 1
+          fi
+          LOCATION=$(tr -d '\r' < /tmp/google-oauth.headers | awk 'tolower($1)=="location:" {print $2}' | tail -1)
+          if [[ "$LOCATION" != https://accounts.google.com/* ]]; then
+            echo "::error::Google OAuth start did not redirect to Google"
+            exit 1
+          fi
+          echo 'Google OAuth secret/config start OK'
+
+          curl --fail --silent --show-error "$VERSION_URL/.well-known/oauth-authorization-server" -o /tmp/oauth.json
+          node - <<'NODE'
+          const fs = require('fs');
+          const data = JSON.parse(fs.readFileSync('/tmp/oauth.json','utf8'));
+          for (const field of ['issuer','authorization_endpoint','token_endpoint','registration_endpoint']) {
+            if (!data[field]) throw new Error(`OAuth metadata missing ${field}`);
+          }
+          if (!Array.isArray(data.code_challenge_methods_supported) || !data.code_challenge_methods_supported.includes('S256')) {
+            throw new Error('OAuth metadata missing PKCE S256');
+          }
+          console.log('OAuth/MCP discovery OK');
+          NODE
+
+          echo 'Cloudflare production-resource Version smoke PASSED. Production traffic was not changed.'
