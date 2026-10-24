@@ -14,7 +14,8 @@ export async function fetchCloudflarePrerenderBooks(path) {
   const params = input.searchParams;
   if (params.get("is_draft") !== "eq.false") throw new Error("Prerender query must exclude drafts");
   const statuses = params.get("status");
-  const status = statuses === "eq.published" ? "published"
+  // PostgREST emits in.(published) for one-item arrays (as used by fetchPaged).
+  const status = statuses === "eq.published" || statuses === "in.(published)" ? "published"
     : statuses === "in.(published,published_noindex)" ? "all" : null;
   if (!status) throw new Error(`Unsupported prerender statuses: ${statuses}`);
   const languageFilter = params.get("language");
