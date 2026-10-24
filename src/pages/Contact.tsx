@@ -64,7 +64,7 @@ const Contact = () => {
             </a>
             <a href="https://www.instagram.com/booknomics_official/" target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 bg-card border border-border rounded-xl p-4 hover:bg-muted/50 transition">
               <Instagram className="h-5 w-5 text-primary" />
-              <div className="text-sm font-medium">@booknomics</div>
+              <div className="text-sm font-medium">@booknomics_official</div>
             </a>
           </aside>
         </div>
