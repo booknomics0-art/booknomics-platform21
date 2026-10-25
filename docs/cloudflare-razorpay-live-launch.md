@@ -32,6 +32,14 @@ Only enable the webhook after its Cloudflare Worker endpoint is deployed, signat
 6. Compare provider record to D1 row; no repeated subscription creation; any unexpected event is logged. Reconciliation for dropped provider events and reversals/disputes must be reviewed before wider marketing.
 7. Keep Supabase and old Vercel production intact as rollback until Cloudflare cutover is verified. Do not promote branch or change DNS solely for billing.
 
+## Production blocker observed 2026-10-25
+- Cloudflare's production D1 API returned error `7500`: `Your account has exceeded D1's free tier daily row read limit`.
+- The public `GET https://www.booknomics.com/api/catalog/books?limit=1` returned HTTP 500. The production Vercel build failed while fetching the prerender catalog with the same HTTP 500 error.
+- **Do not enable recurring checkout or deploy/promote the new payment UI while D1 is unavailable.** Signed-in sessions, entitlement checks, subscriptions and webhook event persistence all depend on D1.
+- Cloudflare documents 5 million rows read per day for Workers Free, resetting at 00:00 UTC. The owner must choose between waiting for that reset (and reducing row-read usage) and explicitly authorizing the Workers Paid plan (minimum USD 5/month plus applicable overages). Do not upgrade a paid plan without approval.
+- Keep the deployed Worker routes scoped to `/api/*` and `/media/*` on both domains; `booknomics.com/*` would intercept the existing Vercel website. Preserve the dedicated `/api/admin/audio/*` Worker routes.
+- After capacity recovers: verify catalog, sign-in and session retention; deploy the billing-capable Worker with the scoped routes and existing secrets preserved; check unsigned webhooks return 401; produce a successful **strict** Vercel production prerender build; then arrange a supervised real subscription and cancellation test before marketing it as live.
+
 ## Known follow-ups
 - Old one-time /api/payments/razorpay/order returns HTTP 410 by default; it can only be deliberately restored with LEGACY_ORDER_CHECKOUT_ENABLED=enabled. Historical /verify endpoint stays available to settle previously created Orders.
 - D1 data and Cloudflare Auth are authoritative after cutover. Do not deploy the old Supabase-centric PR #87 onto the Cloudflare runtime.
