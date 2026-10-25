@@ -1,19 +1,16 @@
 // @vitest-environment node
-import { beforeEach, afterEach, describe, expect, it, vi } from "vitest";
+import { describe, expect, it } from "vitest";
 import { handleAudioAdminRequest } from "./index";
 
 const BOOK_ID = "fba9e5f0-a129-47f1-9e78-972b5e642abb";
-const USER_ID = "bca45e4e-f7bc-4c27-b5ca-4431b8341f37";
-const AUTH = "Bearer supabase-google-access-token";
+const SESSION = "cloudflare-admin-session-token-1234567890abcdef";
 
-function fixture(options: { admin?: boolean; existingUrl?: string | null; bookFound?: boolean; changes?: number; headSize?: number } = {}) {
+function fixture(options: { admin?: boolean; userEmail?: string; existingUrl?: string | null; bookFound?: boolean; changes?: number; headSize?: number } = {}) {
   const queries: Array<{ sql: string; params: unknown[] }> = [];
   const uploads: Array<{ key: string; bytes: number; contentType: string | undefined }> = [];
   const contents = new Map<string, Uint8Array>();
   let lastUrl = options.existingUrl ?? null;
   const env = Object.assign(Object.create(null), {
-    SUPABASE_URL: "https://pbkfewrtdgiagytmcigb.supabase.co",
-    SUPABASE_ANON_KEY: "test-publishable-key",
     AUDIO_PREVIEW_SIGNING_KEY: "nonproduction-test-signing-key-at-least-32-bytes",
     DB: {
       prepare(sql: string) {
@@ -22,7 +19,7 @@ function fixture(options: { admin?: boolean; existingUrl?: string | null; bookFo
             queries.push({ sql, params });
             return {
               async first() {
-                if (sql.includes("SELECT 1 AS ok FROM user_roles")) return options.admin === false ? null : { ok: 1 };
+                if (sql.includes("FROM sessions s")) return options.admin === false ? null : { email: options.userEmail ?? "booknomics0@gmail.com" };
                 if (sql.includes("SELECT id FROM books")) return options.bookFound === false ? null : { id: BOOK_ID };
                 if (sql.includes("SELECT audio_url FROM book_assets")) return { audio_url: lastUrl };
                 return null;
@@ -67,8 +64,8 @@ function fixture(options: { admin?: boolean; existingUrl?: string | null; bookFo
   return { env, queries, uploads };
 }
 
-function getCatalogRequest(authorization = AUTH) {
-  return new Request("https://www.booknomics.com/api/admin/audio/catalog", { headers: { authorization } });
+function getCatalogRequest(session = SESSION) {
+  return new Request("https://www.booknomics.com/api/admin/audio/catalog", { headers: { cookie: `bn_session=${session}` } });
 }
 
 function uploadRequest(options: { body?: Uint8Array; origin?: string; type?: string; bookId?: string; replace?: boolean; csrfHeader?: boolean } = {}) {
@@ -76,7 +73,7 @@ function uploadRequest(options: { body?: Uint8Array; origin?: string; type?: str
   return new Request(`https://www.booknomics.com/api/admin/audio/upload?bookId=${options.bookId ?? BOOK_ID}&replace=${Boolean(options.replace)}`, {
     method: "POST",
     headers: {
-      authorization: AUTH,
+      cookie: `bn_session=${SESSION}`,
       origin: options.origin ?? "https://www.booknomics.com",
       "content-type": options.type ?? "audio/mpeg",
       "content-length": String(body.length),
@@ -86,48 +83,29 @@ function uploadRequest(options: { body?: Uint8Array; origin?: string; type?: str
   });
 }
 
-let verifiedUser = { id: USER_ID, email: "booknomics0@gmail.com", email_confirmed_at: "2026-10-20T00:00:00Z" };
-beforeEach(() => {
-  verifiedUser = { id: USER_ID, email: "booknomics0@gmail.com", email_confirmed_at: "2026-10-20T00:00:00Z" };
-  vi.stubGlobal("fetch", vi.fn(async (url: string, init: RequestInit) => {
-    expect(url).toBe("https://pbkfewrtdgiagytmcigb.supabase.co/auth/v1/user");
-    expect(new Headers(init.headers).get("authorization")).toBe(AUTH);
-    expect(init.redirect).toBe("manual");
-    return Response.json(verifiedUser);
-  }));
-});
-afterEach(() => vi.unstubAllGlobals());
-
 describe("Cloudflare R2 audiobook admin API", () => {
-  it("denies missing token, wrong email, unconfirmed email and non-admin catalog requests", async () => {
+  it("denies missing or invalid session, wrong email and non-admin catalog requests", async () => {
     const { env } = fixture();
     expect((await handleAudioAdminRequest(getCatalogRequest(""), env)).status).toBe(403);
-    verifiedUser.email = "someone@example.com";
-    expect((await handleAudioAdminRequest(getCatalogRequest(), env)).status).toBe(403);
-    verifiedUser.email = "booknomics0@gmail.com";
-    verifiedUser.email_confirmed_at = "";
-    expect((await handleAudioAdminRequest(getCatalogRequest(), env)).status).toBe(403);
-    verifiedUser.email_confirmed_at = "2026-10-20T00:00:00Z";
+    expect((await handleAudioAdminRequest(getCatalogRequest("too-short"), env)).status).toBe(403);
+    expect((await handleAudioAdminRequest(getCatalogRequest(), fixture({ userEmail: "someone@example.com" }).env)).status).toBe(403);
     expect((await handleAudioAdminRequest(getCatalogRequest(), fixture({ admin: false }).env)).status).toBe(403);
   });
 
-  it("serves catalog only after Supabase JWT and D1 admin role verification", async () => {
+  it("serves catalog only after Cloudflare cookie and D1 admin role verification", async () => {
     const { env, queries } = fixture();
     const response = await handleAudioAdminRequest(getCatalogRequest(), env);
     expect(response.status).toBe(200);
     expect((await response.json()).books[0].title).toBe("White Fang");
-    expect(queries[0].params[0]).toBe(USER_ID);
+    expect(queries[0].sql).toContain("FROM sessions s");
+    expect(queries[0].params[0]).toMatch(/^[0-9a-f]{64}$/);
   });
 
-  it("rejects Supabase Auth redirects without forwarding the bearer token", async () => {
-    const redirected = vi.fn(async (_url: string, init: RequestInit) => {
-      // The edge runtime throws for redirect: "error"; manual is supported.
-      expect(init.redirect).toBe("manual");
-      return new Response(null, { status: 302, headers: { location: "https://untrusted.example/" } });
+  it("ignores forged bearer tokens when the Cloudflare session cookie is missing", async () => {
+    const forged = new Request("https://www.booknomics.com/api/admin/audio/catalog", {
+      headers: { authorization: "Bearer fake-admin-token" },
     });
-    vi.stubGlobal("fetch", redirected);
-    expect((await handleAudioAdminRequest(getCatalogRequest(), fixture().env)).status).toBe(403);
-    expect(redirected).toHaveBeenCalledTimes(1);
+    expect((await handleAudioAdminRequest(forged, fixture().env)).status).toBe(403);
   });
 
   it("rejects cross-origin uploads and missing CSRF header", async () => {
@@ -190,7 +168,7 @@ describe("Cloudflare R2 audiobook admin API", () => {
     mp3.set([0xff, 0xfb, 0x90, 0x00], 417);
     expect((await handleAudioAdminRequest(uploadRequest({ body: mp3 }), f.env)).status).toBe(200);
     const response = await handleAudioAdminRequest(new Request(`https://www.booknomics.com/api/admin/audio/inspect?bookId=${BOOK_ID}`, {
-      headers: { authorization: AUTH },
+      headers: { cookie: `bn_session=${SESSION}` },
     }), f.env);
     expect(response.status).toBe(200);
     const inspected = await response.json() as Record<string, unknown>;

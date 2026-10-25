@@ -1,3 +1,5 @@
+import { cachePublicApi } from "./publicApiCache";
+
 type D1 = any;
 type R2 = any;
 
@@ -454,7 +456,12 @@ export default {
   async fetch(request: Request, env: Env): Promise<Response> {
     const url = new URL(request.url);
 
-    if (url.pathname.startsWith("/api/")) return handleApi(request, env);
+    if (url.pathname.startsWith("/api/")) {
+      if (request.method === "GET" && (url.pathname === "/api/books" || url.pathname === "/api/categories")) {
+        return cachePublicApi(request, () => handleApi(request, env)) as Promise<Response>;
+      }
+      return handleApi(request, env);
+    }
 
     if (url.pathname.startsWith("/media/covers/")) {
       return serveR2(request, env.BOOK_COVERS, decodeURIComponent(url.pathname.slice("/media/covers/".length)));

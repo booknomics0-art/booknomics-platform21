@@ -1,6 +1,6 @@
 # Cloudflare R2 bulk audiobook upload — implementation notes
 
-Status: **secure admin upload code prepared for deployment** (24 October 2026). Production deployment and a real MP3 smoke test must be verified separately.
+Status: **Cloudflare-session admin upload code prepared for deployment** (25 October 2026). Production deployment and a real MP3 smoke test must be verified separately.
 
 ## What was added
 
@@ -8,7 +8,7 @@ Status: **secure admin upload code prepared for deployment** (24 October 2026). 
 - English/Hindi filename normalization, conservative book matching, searchable manual selection, duplicate detection, skip, explicit replacement confirmation.
 - Two simultaneous uploads with per-file progress, stop, independent errors, HTTP-range and browser metadata playback verification.
 - A **separate** Cloudflare Worker at `/api/admin/audio/*` so the existing `booknomics` Worker and its `/api/*` and `/media/*` routes are not overwritten.
-- Server-side **Supabase Auth `/auth/v1/user` verification** for the real signed-in Google OAuth access token, exact verified `booknomics0@gmail.com` email and Cloudflare D1 `user_roles.role='admin'` check.
+- Server-side verification of the main Booknomics **HttpOnly `bn_session` Cloudflare cookie**, its unexpired D1 session hash, exact `booknomics0@gmail.com` email and D1 `user_roles.role='admin'`. No browser Supabase client or JWT is needed.
 - Files stream into a dedicated private R2 bucket, are size-verified, and are linked to `book_assets.audio_url` in D1. Admin gets a 60-minute **signed, seekable playback URL** for upload verification.
 - The existing visitor book pages, Supabase legacy audio and other learning assets are untouched until public versus premium playback access is explicitly configured and tested.
 
@@ -39,10 +39,10 @@ Cloudflare generated binding types: `cloudflare/audio-upload/worker-configuratio
 ## Deployment prerequisites — **requires explicit approval**
 
 1. Review the `booknomics-audio-upload` Worker code and route precedence. Its routes (`/api/admin/audio/*`) are narrower than the existing `booknomics.com/api/*` routes.
-2. Configure `SUPABASE_ANON_KEY` (a valid enabled publishable key) and a fresh 32+ character `AUDIO_PREVIEW_SIGNING_KEY` as Worker secrets. `SUPABASE_URL` is a Worker plain-text variable.
+2. Keep the existing fresh 32+ character `AUDIO_PREVIEW_SIGNING_KEY` as a Worker secret. Supabase URL and anon-key secrets are no longer used for this Worker; do not rotate or expose the signing key.
 3. Verify `booknomics-private-audio` is bound **only** to the dedicated Worker. Do not bind it to the public site Worker, publish an R2 public domain, or make a public media route for it.
-4. Deploy the dedicated Cloudflare Worker, then deploy the admin frontend; do not delete or disable Supabase while parity is incomplete.
-5. Sign in with the verified Supabase Google identity `booknomics0@gmail.com`. The Worker verifies the token with Supabase Auth and matches its UUID to D1 `user_roles.role='admin'`.
+4. Deploy the dedicated Cloudflare Worker, then deploy the admin frontend; do not delete Supabase until unrelated migration parity is verified.
+5. Sign in through the site's **Cloudflare Google sign-in** as `booknomics0@gmail.com`. The dedicated Worker checks its `bn_session` cookie against the shared production D1 sessions and admin roles.
 6. Upload two authorized test MP3s, verify correct title/language, R2 object size, D1 private link, range/seek, signed preview expiry, and an unauthorized account's 403. The public book page must **not** expose them. Only then upload the remaining 50 files.
 7. Legacy Supabase `admin_book_catalog.audio_ready` stats remain separate from D1; Admin explicitly labels the old count `Legacy audio ready` and the Bulk tab gives a D1 private-audio count.
 

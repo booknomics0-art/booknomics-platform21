@@ -12,27 +12,21 @@ function reply(body: object, status = 200): Response {
 }
 
 async function isAdmin(request: Request, env: Env): Promise<boolean> {
-  // The admin portal signs in with Supabase Google OAuth, not Cloudflare's bn_session.
-  // Never trust an email, role or user ID sent directly by the browser.
-  const bearer = request.headers.get("authorization")?.match(/^Bearer ([^\s]+)$/i)?.[1];
-  if (!bearer || bearer.length > 8192 || !env.SUPABASE_URL || !env.SUPABASE_ANON_KEY) return false;
-  const base = new URL(env.SUPABASE_URL);
-  if (base.protocol !== "https:" || base.pathname !== "/" || base.search || base.hash) return false;
-  const authResponse = await fetch(`${base.origin}/auth/v1/user`, {
-    headers: { authorization: `Bearer ${bearer}`, apikey: env.SUPABASE_ANON_KEY },
-    // Cloudflare Workers deliberately does not implement redirect: "error".
-    // Manual mode never forwards the bearer token to a redirect destination.
-    redirect: "manual",
-    signal: AbortSignal.timeout(10_000),
-  });
-  if (authResponse.status >= 300 && authResponse.status < 400) return false;
-  if (!authResponse.ok) return false;
-  const user = await authResponse.json() as { id?: string; email?: string; email_confirmed_at?: string };
-  if (!UUID_PATTERN.test(user.id ?? "") || user.email?.toLowerCase() !== ADMIN_EMAIL || !user.email_confirmed_at) return false;
-  const role = await env.DB.prepare(
-    "SELECT 1 AS ok FROM user_roles WHERE user_id = ? AND role = 'admin' LIMIT 1",
-  ).bind(user.id).first<{ ok: number }>();
-  return Boolean(role?.ok);
+  // Same HttpOnly Cloudflare session as the main Worker; never trust browser-supplied identity.
+  // Decode only the known session cookie, then verify its hash, expiry and D1 admin role.
+  const cookie = (request.headers.get("cookie") || "").split(";")
+    .map((part) => part.trim()).find((part) => part.startsWith("bn_session="));
+  const token = cookie?.slice("bn_session=".length) || "";
+  if (!/^[A-Za-z0-9_-]{32,128}$/.test(token)) return false;
+  const digest = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(token));
+  const tokenHash = Array.from(new Uint8Array(digest), (b) => b.toString(16).padStart(2, "0")).join("");
+  const row = await env.DB.prepare(
+    `SELECT u.email FROM sessions s
+     JOIN users u ON u.id = s.user_id
+     JOIN user_roles r ON r.user_id = u.id AND r.role = 'admin'
+     WHERE s.token_hash = ? AND datetime(s.expires_at) > datetime('now') LIMIT 1`,
+  ).bind(tokenHash).first<{ email: string }>();
+  return row?.email?.toLowerCase() === ADMIN_EMAIL;
 }
 
 function sameOriginMutation(request: Request): boolean {
@@ -238,7 +232,7 @@ export async function handleAudioAdminRequest(request: Request, env: Env): Promi
     if (!path.startsWith("/api/admin/audio/")) return reply({ error: "Not found" }, 404);
     const streamMatch = path.match(/^\/api\/admin\/audio\/stream\/([^/]+)$/);
     if (streamMatch && (request.method === "GET" || request.method === "HEAD")) return streamPreview(request, env, streamMatch[1]);
-    if (!env.SUPABASE_URL || !env.SUPABASE_ANON_KEY || !env.AUDIO_PREVIEW_SIGNING_KEY) {
+    if (!env.DB || !env.AUDIO_PREVIEW_SIGNING_KEY) {
       return reply({ error: "Audiobook authentication is not configured" }, 503);
     }
     if (!(await isAdmin(request, env))) return reply({ error: "Cloudflare admin session required" }, 403);

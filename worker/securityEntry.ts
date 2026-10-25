@@ -8,6 +8,7 @@ import { handleGrowthRoute } from "./growthRoutes";
 import { handleBookAiRoute } from "./bookAiRoutes";
 import { handleBookDetailRoute } from "./bookDetailRoutes";
 import { handleCatalogRoute } from "./catalogRoutes";
+import { cachePublicApi } from "./publicApiCache";
 import { handleAudioRoute } from "./audioRoutes";
 import { handleAdminRoute } from "./adminRoutes";
 import { handleAdminOpsRoute } from "./adminOpsRoutes";
@@ -135,7 +136,10 @@ export default {
     const bookDetail = await handleBookDetailRoute(request, env);
     if (bookDetail) return bookDetail;
 
-    const catalog = await handleCatalogRoute(request, env);
+    const catalog = request.method === "GET" &&
+      (requestUrl.pathname === "/api/catalog/books" || requestUrl.pathname === "/api/catalog/category-directory")
+      ? await cachePublicApi(request, () => handleCatalogRoute(request, env))
+      : await handleCatalogRoute(request, env);
     if (catalog) return catalog;
 
     const audio = await handleAudioRoute(request, env);

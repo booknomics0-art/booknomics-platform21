@@ -3,8 +3,6 @@
 interface __BaseEnv_Env {
 	BOOK_ASSETS: R2Bucket;
 	DB: D1Database;
-	SUPABASE_URL: string;
-	SUPABASE_ANON_KEY: string;
 	AUDIO_PREVIEW_SIGNING_KEY: string;
 }
 declare namespace Cloudflare {

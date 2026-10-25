@@ -1,8 +1,8 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import BulkAudioUpload from "./BulkAudioUpload";
-vi.mock("@/integrations/supabase/client", () => ({
-  supabase: { auth: { getSession: vi.fn(async () => ({ data: { session: { access_token: "test-supabase-jwt" } }, error: null })) } },
+vi.mock("@/lib/cloudflareApi", () => ({
+  apiFetch: vi.fn(async () => ({ isAdmin: true })),
 }));
 
 const BOOKS = [
@@ -64,8 +64,9 @@ describe("BulkAudiobookUpload admin UI", () => {
       timeout = 0;
       withCredentials = false;
       open() { /* captured by the fake */ }
-      setRequestHeader() { /* captured by the fake */ }
+      setRequestHeader(name: string) { expect(name.toLowerCase()).not.toBe("authorization"); }
       send(file: File) {
+        expect(this.withCredentials).toBe(true);
         this.upload.onprogress?.({ lengthComputable: true, loaded: file.size, total: file.size });
         queueMicrotask(() => this.onload?.());
       }
