@@ -3,8 +3,11 @@ import { BookOpen, ShieldCheck } from "lucide-react";
 import { Link } from "react-router-dom";
 import { apiFetch } from "@/lib/cloudflareApi";
 import { findReviewedAuthorProfile } from "@/lib/reviewedHindiAuthors";
+import { findReviewedBookAuthorProfile } from "@/lib/reviewedBookAuthorProfiles";
+import { fetchCloudflareAuthorBio, type CloudflareAuthorBio } from "@/lib/cloudflareAuthorBio";
+import { findVerifiedAuthorProfile100 } from "@/lib/verifiedAuthorProfiles100";
 
-interface Props { author: string; category: string; title?: string; isHindi?: boolean }
+interface Props { bookId?: string; bookSlug?: string; author: string; category: string; title?: string; isHindi?: boolean }
 interface OtherWork { title: string; slug: string; seo_slug: string | null }
 
 const isPremchand = (name: string) =>
@@ -18,8 +21,21 @@ const premchandBio = {
   source: "https://www.rekhta.org/artists/premchand/profile",
 };
 
-export const AuthorBio = ({ author, category, title, isHindi = false }: Props) => {
+export const AuthorBio = ({ bookId, bookSlug, author, category, title, isHindi = false }: Props) => {
   const [otherWorks, setOtherWorks] = useState<OtherWork[]>([]);
+  const [cloudflareBio, setCloudflareBio] = useState<CloudflareAuthorBio | null>(null);
+
+  useEffect(() => {
+    let active = true;
+    const controller = new AbortController();
+    setCloudflareBio(null);
+    if (bookId && bookSlug && title) {
+      void fetchCloudflareAuthorBio({ bookId, slug: bookSlug, title, author }, controller.signal)
+        .then((profile) => { if (active) setCloudflareBio(profile); });
+    }
+    return () => { active = false; controller.abort(); };
+  }, [bookId, bookSlug, title, author]);
+
   useEffect(() => {
     let active = true;
     setOtherWorks([]);
@@ -35,8 +51,12 @@ export const AuthorBio = ({ author, category, title, isHindi = false }: Props) =
     return () => { active = false; };
   }, [author, title]);
 
+  const bookProfile = bookId ? findReviewedBookAuthorProfile(bookId) : undefined;
+  const activeBookProfile = cloudflareBio ?? bookProfile;
   const reviewedProfile = isPremchand(author) ? premchandBio : findReviewedAuthorProfile(author);
-  const reviewed = Boolean(reviewedProfile);
+  const authorProfile100 = findVerifiedAuthorProfile100(author);
+  const reviewed = Boolean(authorProfile100 || activeBookProfile || reviewedProfile);
+  const sources = authorProfile100?.sources ?? activeBookProfile?.sources ?? (reviewedProfile ? [reviewedProfile.source] : []);
   return (
     <section className="pt-2 pb-6 scroll-mt-28" aria-labelledby="author-bio">
       <div className="text-xs tracking-[0.14em] text-primary font-semibold mb-3">
@@ -52,16 +72,38 @@ export const AuthorBio = ({ author, category, title, isHindi = false }: Props) =
             <span className="text-sm font-semibold">{isHindi ? "लेखक और प्रमुख कृतियाँ" : "The author and their works"}</span>
           </div>
           <p className="text-base text-foreground/90 leading-7 whitespace-pre-line">
-            {reviewed ? (isHindi ? reviewedProfile!.hi : reviewedProfile!.en) : (
+            {authorProfile100?.biography ?? activeBookProfile?.text ?? (reviewedProfile ? (isHindi ? reviewedProfile.hi : reviewedProfile.en) : (
               isHindi
                 ? `${author} इस पुस्तक के रचनाकार हैं। यह कृति ${category} विधा से संबंधित है। लेखक के जीवन, साहित्यिक योगदान और अन्य रचनाओं का तथ्य-जाँचा हुआ विस्तृत परिचय अभी संपादकीय समीक्षा में है।`
                 : `${author} wrote the original work, ${title || "this book"}, in the ${category} category. A source-checked account of their life, literary contribution, and bibliography is pending editorial review.`
-            )}
+            ))}
           </p>
-          {reviewed && (
-            <a className="text-sm text-primary underline mt-3 inline-block" href={reviewedProfile!.source} target="_blank" rel="noopener noreferrer">
-              {isHindi ? "जीवनी व रचनाओं के लिए स्रोत" : "Biographical source"}
-            </a>
+          {authorProfile100 && authorProfile100.language !== (isHindi ? "hi" : "en") && (
+            <p className="text-xs text-muted-foreground mt-3">
+              {isHindi ? "यह सत्यापित लेखक परिचय अभी मूल भाषा में उपलब्ध है।" : "This verified author profile is currently available in its original language."}
+            </p>
+          )}
+          {!authorProfile100 && activeBookProfile && activeBookProfile.language !== (isHindi ? "hi" : "en") && (
+            <p className="text-xs text-muted-foreground mt-3">
+              {isHindi ? "संपादकीय सत्यापन वाला यह पुस्तक-विशिष्ट परिचय अभी मूल भाषा में उपलब्ध है।" : "This verified book-specific introduction is currently available in the book’s original language."}
+            </p>
+          )}
+          {reviewed && sources.length > 0 && (
+            <div className="mt-3 flex flex-wrap gap-x-4 gap-y-1">
+              {sources.map((source, index) => (
+                <a key={source} className="text-sm text-primary underline" href={source} target="_blank" rel="noopener noreferrer">
+                  {isHindi ? `स्रोत ${index + 1}` : `Source ${index + 1}`}
+                </a>
+              ))}
+            </div>
+          )}
+          {authorProfile100 && (
+            <div className="mt-4">
+              <h3 className="text-sm font-bold mb-2">{isHindi ? "प्रसिद्ध कृतियाँ" : "Notable books and works"}</h3>
+              <ul className="text-sm text-foreground/90 list-disc pl-5 space-y-1">
+                {authorProfile100.famousBooks.map((work) => <li key={work}>{work}</li>)}
+              </ul>
+            </div>
           )}
           {otherWorks.length > 0 && (
             <div className="mt-4">
