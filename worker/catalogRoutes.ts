@@ -149,19 +149,21 @@ export async function handleCatalogRoute(request: Request, env: CatalogEnv): Pro
           ? "category ASC, title ASC"
           : "title ASC";
     const whereSql = `WHERE ${where.join(" AND ")}`;
-    const count = await env.DB.prepare(`SELECT COUNT(*) AS total FROM books ${whereSql}`).bind(...binds).first();
+    // SEO prerenders paginate by ID and never use count. Omitting a repeated
+    // full-catalog COUNT avoids hundreds of thousands of D1 row reads/build.
+    const count = view === "prerender" ? null : await env.DB.prepare(`SELECT COUNT(*) AS total FROM books ${whereSql}`).bind(...binds).first();
     const result = await env.DB.prepare(
       `SELECT ${fields} FROM books ${whereSql} ORDER BY ${orderBy} LIMIT ? OFFSET ?`,
     ).bind(...binds, limit, offset).all();
 
     return json({
       data: result.results || [],
-      count: Number(count?.total || 0),
+      count: count == null ? null : Number(count.total || 0),
       limit,
       offset,
     });
   } catch (error) {
     console.error("catalog route failed", error);
-    return json({ error: "Unable to load catalog" }, { status: 500 });
+    return json({ error: "Unable to load catalog" }, { status: 500, headers: { "cache-control": "no-store" } });
   }
 }

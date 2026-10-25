@@ -8,7 +8,7 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } f
 import { Input } from "@/components/ui/input";
 import { Progress } from "@/components/ui/progress";
 import { matchAudioFilename, normalizedAudioTitle, type AudioCatalogBook, type AudioFileMatch } from "@/lib/audioBulkMatcher";
-import { supabase } from "@/integrations/supabase/client";
+import { apiFetch } from "@/lib/cloudflareApi";
 
 const MAX_AUDIO_BYTES = 95 * 1024 * 1024;
 const MAX_BATCH_FILES = 500;
@@ -33,25 +33,23 @@ function formatBytes(bytes: number) {
   return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
 }
 
-async function adminToken(): Promise<string> {
-  // A browser session is only a source of the token. The Worker verifies it
-  // independently with Supabase Auth and checks D1 admin role + exact email.
-  const { data, error } = await supabase.auth.getSession();
-  if (error || !data.session?.access_token) throw new Error("Sign in with booknomics0@gmail.com to use Bulk Audio");
-  return data.session.access_token;
+async function requireAdminSession(): Promise<void> {
+  // Cloudflare's HttpOnly bn_session cookie is sent by the browser, never exposed to JS.
+  // The dedicated audio Worker independently validates the session and D1 admin role.
+  const data = await apiFetch<{ isAdmin: boolean }>("/api/me/admin", { cache: "no-store" });
+  if (!data.isAdmin) throw new Error("Sign in as a Booknomics admin to use Bulk Audio");
 }
 
-function uploadMp3(file: File, bookId: string, replace: boolean, token: string,
+function uploadMp3(file: File, bookId: string, replace: boolean,
   onProgress: (percent: number) => void, activeRequests: Set<XMLHttpRequest>): Promise<{ audioUrl: string; previewUrl: string }> {
   return new Promise((resolve, reject) => {
     const xhr = new XMLHttpRequest();
     activeRequests.add(xhr);
     xhr.open("POST", `/api/admin/audio/upload?bookId=${encodeURIComponent(bookId)}&replace=${replace}`, true);
-    xhr.withCredentials = false;
+    xhr.withCredentials = true;
     xhr.timeout = 20 * 60 * 1000;
     xhr.setRequestHeader("Content-Type", "audio/mpeg");
     xhr.setRequestHeader("X-Booknomics-Audio-Upload", "1");
-    xhr.setRequestHeader("Authorization", `Bearer ${token}`);
     xhr.upload.onprogress = (event) => {
       if (event.lengthComputable && event.total) onProgress(Math.min(100, Math.round((event.loaded / event.total) * 100)));
     };
@@ -113,9 +111,9 @@ async function verifyPlayback(url: string): Promise<number> {
   });
 }
 
-async function inspectStoredAudio(bookId: string, token: string): Promise<string> {
+async function inspectStoredAudio(bookId: string): Promise<string> {
   const response = await fetch(`/api/admin/audio/inspect?bookId=${encodeURIComponent(bookId)}`, {
-    headers: { Authorization: `Bearer ${token}` }, credentials: "omit", cache: "no-store",
+    credentials: "include", cache: "no-store",
   });
   const data = await response.json() as { error?: string; format?: string; codec?: string; bitrateKbps?: number };
   if (!response.ok) throw new Error(data.error ?? `R2 inspection returned HTTP ${response.status}`);
@@ -124,9 +122,9 @@ async function inspectStoredAudio(bookId: string, token: string): Promise<string
   throw new Error(`R2 stored file has ${data.format ?? "unknown format"}; check the original MP3 before replacing anything`);
 }
 
-async function getStoredPreview(bookId: string, token: string): Promise<string> {
+async function getStoredPreview(bookId: string): Promise<string> {
   const response = await fetch(`/api/admin/audio/preview?bookId=${encodeURIComponent(bookId)}`, {
-    headers: { Authorization: `Bearer ${token}` }, credentials: "omit", cache: "no-store",
+    credentials: "include", cache: "no-store",
   });
   const data = await response.json() as { error?: string; preview_url?: string };
   if (!response.ok || !data.preview_url) throw new Error(data.error ?? `Preview returned HTTP ${response.status}`);
@@ -153,8 +151,8 @@ export default function BulkAudioUpload() {
   useEffect(() => {
     const abort = new AbortController();
     const requests = activeRequests.current;
-    adminToken().then((token) => fetch("/api/admin/audio/catalog", {
-      headers: { Authorization: `Bearer ${token}` }, credentials: "omit", signal: abort.signal,
+    requireAdminSession().then(() => fetch("/api/admin/audio/catalog", {
+      credentials: "include", signal: abort.signal,
     }))
       .then(async (response) => {
         const data = await response.json();
@@ -175,9 +173,9 @@ export default function BulkAudioUpload() {
     let previewUrl: string | undefined;
     let inspection = "";
     try {
-      const token = await adminToken();
-      previewUrl = await getStoredPreview(bookId, token);
-      try { inspection = await inspectStoredAudio(bookId, token); }
+      await requireAdminSession();
+      previewUrl = await getStoredPreview(bookId);
+      try { inspection = await inspectStoredAudio(bookId); }
       catch (error) { inspection = error instanceof Error ? error.message : "MP3 inspection unavailable"; }
       const duration = await verifyPlayback(previewUrl);
       setStoredChecks((previous) => ({ ...previous, [bookId]: {
@@ -243,7 +241,7 @@ export default function BulkAudioUpload() {
 
   const startUpload = async () => {
     if (running || !reviewed || ready.length === 0 || pending.length > 0) return;
-    try { await adminToken(); }
+    try { await requireAdminSession(); }
     catch (error) { setCatalogError(error instanceof Error ? error.message : "You must sign in again"); return; }
     setRunning(true);
     setCancelled(false);
@@ -257,8 +255,8 @@ export default function BulkAudioUpload() {
         patchRow(row.key, { status: "uploading", progress: 0, error: null });
         let uploadedUrl: string | null = null;
         try {
-          const token = await adminToken(); // refreshed per file for long batches
-          const uploaded = await uploadMp3(row.file, row.bookId, row.replace, token,
+          await requireAdminSession(); // recheck admin status per file for long batches
+          const uploaded = await uploadMp3(row.file, row.bookId, row.replace,
             (progress) => patchRow(row.key, { progress, status: progress >= 100 ? "linking" : "uploading" }), activeRequests.current);
           uploadedUrl = uploaded.previewUrl;
           setCatalog((current) => current.map((book) => book.id === row.bookId ? { ...book, audio_url: uploaded.audioUrl } : book));

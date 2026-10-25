@@ -6,7 +6,9 @@ const json = (data: unknown, init: ResponseInit = {}) =>
     ...init,
     headers: {
       "content-type": "application/json; charset=utf-8",
-      "cache-control": "public, max-age=60, s-maxage=300",
+      // Editorial updates from the admin portal must be visible on the next load.
+      // Catalog and static assets can still use their separate caching policies.
+      "cache-control": "no-store",
       ...init.headers,
     },
   });

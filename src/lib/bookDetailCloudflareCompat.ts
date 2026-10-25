@@ -29,9 +29,10 @@ async function loadBundle(slug: string): Promise<Bundle> {
     booksById.set(String(bundle.book.id), bundle.book);
     if (bundle.counterpart?.id) booksById.set(String(bundle.counterpart.id), bundle.counterpart);
     return bundle;
-  } catch (error) {
-    bundlesBySlug.delete(key);
-    throw error;
+  } finally {
+    // Deduplicate only simultaneous requests, not every visit for the lifetime
+    // of a tab. Admin edits must appear after returning to a book page.
+    if (bundlesBySlug.get(key) === pending) bundlesBySlug.delete(key);
   }
 }
 

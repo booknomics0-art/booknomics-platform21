@@ -56,10 +56,14 @@ export async function adminCreateBooks<T = any>(rows: unknown[]) {
   return result.data || [];
 }
 
-export async function adminUpdateBook<T = any>(id: string, patch: Record<string, unknown>) {
+export async function adminUpdateBook<T = any>(
+  id: string,
+  patch: Record<string, unknown>,
+  options?: { expected?: Record<string, unknown> },
+) {
   const result = await apiFetch<AdminApiResult<T>>(`/api/admin/books/${encodeURIComponent(id)}`, {
     method: "PATCH",
-    body: JSON.stringify(patch),
+    body: JSON.stringify(options?.expected ? { ...patch, _expected: options.expected } : patch),
   });
   return result.data;
 }
