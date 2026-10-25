@@ -210,12 +210,30 @@ async function updateAdminBook(request: Request, env: AdminEnv, bookId: string) 
 
   const entries = Object.entries(body).filter(([key, value]) => BOOK_MUTABLE_SET.has(key) && value !== undefined);
   if (!entries.length) return json({ error: "No mutable fields supplied" }, { status: 400 });
-  const sql = `UPDATE books SET ${entries.map(([key]) => `${key} = ?`).join(", ")} WHERE id = ?`;
+  // Optional optimistic concurrency guard for the new full-content editor.
+  // A second admin/polish job must not silently replace content loaded earlier.
+  const providedExpected = body._expected;
+  const expected = providedExpected && typeof providedExpected === "object" && !Array.isArray(providedExpected)
+    ? providedExpected as Record<string, unknown> : null;
+  if (providedExpected !== undefined && !expected) return json({ error: "Invalid expected values" }, { status: 400 });
+  if (expected && (Object.keys(expected).some((key) => !BOOK_MUTABLE_SET.has(key)) ||
+      entries.some(([key]) => !Object.prototype.hasOwnProperty.call(expected, key)))) {
+    return json({ error: "Expected values must cover only editable fields and include each changed field" }, { status: 400 });
+  }
+  const conflictSql = expected ? ` AND ${entries.map(([key]) => `${key} IS ?`).join(" AND ")}` : "";
+  const sql = `UPDATE books SET ${entries.map(([key]) => `${key} = ?`).join(", ")} WHERE id = ?${conflictSql}`;
   const result = await env.DB!.prepare(sql).bind(
     ...entries.map(([key, value]) => normalizeBookValue(key as BookMutableColumn, value)),
     bookId,
+    ...(expected ? entries.map(([key]) => normalizeBookValue(key as BookMutableColumn, expected[key])) : []),
   ).run();
-  if (!result?.meta?.changes) return json({ error: "Book not found" }, { status: 404 });
+  if (!result?.meta?.changes) {
+    if (expected) {
+      const exists = await env.DB!.prepare("SELECT id FROM books WHERE id = ? LIMIT 1").bind(bookId).first();
+      if (exists) return json({ error: "This book changed since you opened it. Copy your edits, reload the editor, then review the latest version." }, { status: 409 });
+    }
+    return json({ error: "Book not found" }, { status: 404 });
+  }
   const row = await env.DB!.prepare("SELECT * FROM books WHERE id = ? LIMIT 1").bind(bookId).first();
   return json({ data: publicBookRow(row) });
 }

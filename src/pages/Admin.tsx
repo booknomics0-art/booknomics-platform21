@@ -112,7 +112,7 @@ type BookReadinessSource = {
   cover_url: string | null;
 };
 
-type EditState = Pick<AdminBook, "id" | "title" | "author" | "category" | "language" | "slug" | "affiliate_link"> & { overview?: string | null };
+type EditState = Pick<AdminBook, "id" | "title">;
 
 function indexReadiness(b: BookReadinessSource) {
   const missing: string[] = [];
@@ -158,6 +158,7 @@ export default function Admin() {
   });
   const [bulkPolish, setBulkPolish] = useState<{ running: boolean; done: number; total: number; failed: number }>({ running: false, done: 0, total: 0, failed: 0 });
   const [editing, setEditing] = useState<EditState | null>(null);
+  const [editorDirty, setEditorDirty] = useState(false);
   const fileInputs = useRef<Record<string, HTMLInputElement | null>>({});
 
   
@@ -441,14 +442,10 @@ export default function Admin() {
 
 
 
-  const saveEdit = async () => {
-    if (!editing) return;
-    const { id, ...patch } = editing;
-    const { error } = await supabase.from("books").update(patch).eq("id", id);
-    if (error) return toast.error(error.message);
-    toast.success("Saved");
+  const closeEditor = () => {
+    if (editorDirty && !window.confirm("You have unsaved book edits. Close without saving?")) return;
+    setEditorDirty(false);
     setEditing(null);
-    loadBooks();
   };
 
   const filtered = allBooks
@@ -721,19 +718,7 @@ export default function Admin() {
                   <Button
                     size="sm"
                     variant="outline"
-                    onClick={async () => {
-                      const { data } = await supabase.from("books_admin").select("overview").eq("id", d.id).maybeSingle();
-                      setEditing({
-                        id: d.id,
-                        title: d.title,
-                        author: d.author,
-                        category: d.category,
-                        language: d.language,
-                        slug: d.slug,
-                        affiliate_link: d.affiliate_link,
-                        overview: (data as any)?.overview ?? "",
-                      });
-                    }}
+                    onClick={() => { setEditorDirty(false); setEditing({ id: d.id, title: d.title }); }}
                   >
                     <Pencil className="w-4 h-4 mr-1" />Edit
                   </Button>
@@ -918,8 +903,8 @@ Category: Productivity
         </Tabs>
 
         {/* ============ EDIT DIALOG (4-step wizard) ============ */}
-        <Dialog open={!!editing} onOpenChange={(o) => !o && setEditing(null)}>
-          <DialogContent className="max-w-4xl max-h-[92vh] overflow-y-auto">
+        <Dialog open={!!editing} onOpenChange={(open) => { if (!open) closeEditor(); }}>
+          <DialogContent className="max-w-6xl max-h-[92vh] overflow-y-auto">
             <DialogHeader>
               <DialogTitle>Publishing Wizard{editing ? ` — ${editing.title}` : ""}</DialogTitle>
             </DialogHeader>
@@ -927,7 +912,8 @@ Category: Productivity
               <PublishingWizard
                 initial={editing}
                 onSaved={() => { loadBooks(); }}
-                onClose={() => setEditing(null)}
+                onClose={closeEditor}
+                onDirtyChange={setEditorDirty}
               />
             )}
           </DialogContent>
