@@ -122,9 +122,10 @@ Cloudflare D1's old user records **must not be deleted as part of this work**.
    and pending mandate behavior. A real paid subscription must be verified
    from Razorpay API and reflected in the new Supabase row.
 5. Only after Razorpay and all remaining personal routes are verified, enable
-   the frontend billing flag and switch webhook delivery deliberately. Do not
-   run a second concurrent billing system or keep two webhook URLs updating
-   different databases for the same subscription.
+   the frontend billing flag and add the separately signed NEW Supabase webhook.
+   The provider-side `booknomics_backend=new_supabase_v1` tag ensures each
+   webhook handles only its own subscriptions. Retain the existing webhook for
+   older customers until they are separately reconciled.
 
 6. After payment and remaining personal routes are migrated/tested, set
    **build-time** public environment variables:
@@ -170,8 +171,8 @@ Cloudflare D1's old user records **must not be deleted as part of this work**.
   handle webhook order/replay/timeout and prevent duplicate subscriptions.
 - An expired or pending subscription does **not** unlock premium. Cancellation
   preserves paid access until the verified paid period ends.
-- Update the existing Razorpay webhook URL only after the new endpoint is
-  deployed and tested, so paid events are never sent into an unready handler.
+- Register the second new Razorpay webhook only after **both** tag-aware
+  handlers are deployed and tested. Keep the old webhook for legacy subscribers.
 
 No production SQL, webhook change, user deletion or deployment is performed
 simply by opening this PR.
@@ -209,6 +210,15 @@ continue to use the old backend while the rollout is disabled.
 3. Check paid/unpaid/expired results using two separate signed-in accounts,
    verify that deleting a browser's local tier never grants access, and inspect
    logs without printing JWTs or provider secrets.
+
+Subscriptions created after this update receive the provider note
+`booknomics_backend=new_supabase_v1`. Both Razorpay webhook endpoints may stay
+configured concurrently: the legacy D1 handler ignores this tag, and the new
+Supabase handler checks the live provider's note before processing. **Do not
+remove the old webhook while existing Cloudflare subscriptions may renew.**
+When creating the additional new webhook, use the NEW webhook secret configured
+in the new Supabase function (do not reuse the existing webhook's secret).
+Deploy both changed handlers before enabling the second webhook.
 
 **Still blocked before accepting real money:** New-auth audio and AI action
 generation still use the legacy D1 user/rate-limit paths, mastery scores still

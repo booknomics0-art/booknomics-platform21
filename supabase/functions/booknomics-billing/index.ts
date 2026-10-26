@@ -127,7 +127,7 @@ async function subscribe(req: Request, user: Subscriber) {
       total_count: cycles[plan],
       quantity: 1,
       customer_notify: 0,
-      notes: { booknomics_user_id: user.id, booknomics_subscription_id: reservation.id, plan },
+      notes: { booknomics_backend: 'new_supabase_v1', booknomics_user_id: user.id, booknomics_subscription_id: reservation.id, plan },
     });
     if (!validId(remote.id, 'sub') || remote.plan_id !== providerPlan) throw new Error('Invalid provider subscription');
     const { error: updateError } = await db.from('subscriptions').update({
@@ -232,6 +232,10 @@ async function webhook(req: Request) {
   // Fetch current provider state; the signed payload may arrive out of order.
   const providerSub = await razorpay(`subscriptions/${encodeURIComponent(payloadSub.id)}`);
   if (providerSub.id !== payloadSub.id) return text(req, 'Provider mismatch', 409);
+  // Legacy D1 subscriptions and newly created Supabase subscriptions may
+  // share one Razorpay account while two independent webhook URLs are active.
+  // A signed but untagged event belongs to legacy billing, not this database.
+  if (providerSub.notes?.booknomics_backend !== 'new_supabase_v1') return text(req, 'ignored');
   let paymentId = '';
   let amount = 0;
   let currency = '';
