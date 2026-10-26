@@ -6,6 +6,7 @@ import { cn } from "@/lib/utils";
 import { apiFetch } from "@/lib/cloudflareApi";
 import { useAuth } from "@/hooks/useAuth";
 import { toast } from "sonner";
+import { isPersonalSupabaseEnabled } from '@/lib/personalSupabase';
 
 export type QuizQuestion = {
   id: string;
@@ -74,6 +75,10 @@ export function MasteryTab({ bookId, quiz, flashcards, language = "en" }: Props)
 
   useEffect(() => {
     if (!submitted || !user) return;
+    // Until canonical answers are verified on the server, the new Supabase
+    // user's quiz stays a practice-only score. No D1 personal writes, and no
+    // client-awarded badge may be recorded as a trusted accomplishment.
+    if (isPersonalSupabaseEnabled) return;
     (async () => {
       const badge = pct === 100 && total === 10;
       try {
@@ -143,6 +148,9 @@ export function MasteryTab({ bookId, quiz, flashcards, language = "en" }: Props)
                   ? cp(hi, "Perfect recall. Now try explaining the book in three sentences without looking.", "बहुत बढ़िया। अब बिना देखे किताब को तीन वाक्यों में समझाने की कोशिश करें।")
                   : cp(hi, `${score} of ${total} correct. Read only the explanations you missed, then retake.`, `${total} में से ${score} सही। सिर्फ गलत answers की explanation देखें, फिर दोबारा प्रयास करें।`)}
               </p>
+              {isPersonalSupabaseEnabled && <p className="mt-2 text-xs text-muted-foreground" role="status">
+                {cp(hi, "Practice score only for this session. Verified badge syncing to your new account is coming soon.", "यह अभ्यास स्कोर अभी सिर्फ इस सत्र का है। नए अकाउंट में प्रमाणित बैज जोड़ने का काम चल रहा है।")}
+              </p>}
               <Button onClick={reset} variant="outline" size="sm" className="mt-4 rounded-full gap-2"><RotateCcw className="h-3 w-3" /> {cp(hi, "Retake", "फिर से करें")}</Button>
             </div>
           )}

@@ -260,3 +260,10 @@ book modules and webhook payment success must be tested. Do not activate both
 `VITE_AUTH_BACKEND=supabase` and
 `VITE_SUPABASE_BILLING_ENABLED=true` until paid features, webhook and live
 payment entitlement have all passed end-to-end verification.
+
+As a temporary safety barrier, the Worker now rejects legacy D1 personal
+endpoints when a new Supabase bearer token is supplied. Public read-only book
+and community feeds remain available. New-account Mastery quizzes show a
+practice score in the current page only and do not falsely award persistent
+badges. Community interactions require a later Supabase-backed implementation;
+the cutoff does not silently write a new user's activity into D1.

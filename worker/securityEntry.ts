@@ -20,6 +20,7 @@ import { handleAdminMediaAiRoute } from "./adminMediaAiRoutes";
 import { handleSitemapDataRoute } from "./sitemapRoutes";
 import { handleSubjectiveMasteryRoute } from "./subjectiveMasteryRoutes";
 import { getPersonalEntitlement, PersonalAuthError, type PersonalEntitlementEnv } from './personalEntitlement';
+import { blocksLegacyPersonalRouteForSupabase } from './newAuthIsolation';
 
 type D1 = any;
 type Env = {
@@ -123,6 +124,10 @@ export default {
     if (requestUrl.hostname === "booknomics.com") {
       requestUrl.hostname = "www.booknomics.com";
       return Response.redirect(requestUrl.toString(), 308);
+    }
+
+    if (blocksLegacyPersonalRouteForSupabase(request)) {
+      return json({ error: 'This personal feature is not yet connected to your new Supabase account. Your older Cloudflare data has not been changed.' }, { status: 409 });
     }
 
     const oauthMcp = await handleOAuthMcpRoute(request, env);
