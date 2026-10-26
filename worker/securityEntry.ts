@@ -104,7 +104,7 @@ async function stripPremiumFields(response: Response) {
 }
 
 export default {
-  async fetch(request: Request, env: Env): Promise<Response> {
+  async fetch(request: Request, env: Env, ctx?: { waitUntil(promise: Promise<unknown>): void }): Promise<Response> {
     const requestUrl = new URL(request.url);
     if (requestUrl.hostname === "booknomics.com") {
       requestUrl.hostname = "www.booknomics.com";
@@ -135,7 +135,7 @@ export default {
     const bookDetail = await handleBookDetailRoute(request, env);
     if (bookDetail) return bookDetail;
 
-    const catalog = await handleCatalogRoute(request, env);
+    const catalog = await handleCatalogRoute(request, env, ctx);
     if (catalog) return catalog;
 
     const audio = await handleAudioRoute(request, env);
