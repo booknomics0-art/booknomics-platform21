@@ -36,17 +36,24 @@ before the corresponding frontend has been deployed.
 
 ## Pre-cutover blockers
 
-1. **Old D1 identities:** The bridge intentionally refuses to link a new
-   Supabase UUID to an old Cloudflare user just because the email matches. It
-   returns HTTP `409` on a collision. Back up old user records and decide on
-   their retention/archival before enabling new accounts with those emails.
-2. **Existing Cloudflare sessions:** Disabling the legacy *login endpoints*
-   alone does not revoke preexisting `bn_session` cookies. Plan a controlled
-   session revocation, after backing up relevant records, before declaring a
-   fresh-user cutover complete.
-3. **Admin access:** The new Supabase user has a fresh UUID. Existing D1 admin
+1. **Non-destructive D1 schema migration is REQUIRED first:** Apply
+   `cloudflare/migrations/0010_supabase_auth_email.sql` to the intended D1
+   database before deploying the new Worker code. It adds the nullable
+   `users.supabase_email` field and a case-insensitive unique index. Do not
+   re-run an already-applied `ALTER TABLE` migration.
+2. **Old D1 identities remain in place:** The bridge never links accounts by
+   matching email. A new Supabase UUID gets its own `users` row with a unique
+   non-deliverable internal email (`supabase-<uuid>@identity.booknomics.invalid`),
+   while the real verified email is in `users.supabase_email`. The existing
+   `users.email` UNIQUE constraint and all old account data stay intact.
+   Authenticated API responses read the real email through `COALESCE`.
+3. **Existing Cloudflare sessions:** Disabling the legacy *login endpoints*
+   does not revoke preexisting `bn_session` cookies. Existing legacy sessions
+   may remain usable until their original expiry; a complete reset would need
+   separately authorized revocation. This migration **does not** revoke them.
+4. **Admin access:** The new Supabase user has a fresh UUID. Existing D1 admin
    roles do not transfer. Provision admin access deliberately and verify it.
-4. **Payments:** This PR does **not** move Razorpay or subscription processing.
+5. **Payments:** This PR does **not** move Razorpay or subscription processing.
    Verify identity and webhook ownership together before payment cutover.
 
 ## Verification and egress
@@ -60,8 +67,14 @@ before the corresponding frontend has been deployed.
   refresh, and that the Cloudflare D1 user ID equals the new Supabase Auth UUID.
 - Verify that unauthenticated users and users with rejected tokens cannot read
   or mutate premium data.
-- Confirm that legacy D1 identities and any old sessions are handled according
-  to the approved archival/revocation plan. Do not delete old Supabase projects
+- Test login with a **legacy Cloudflare email** against the new Supabase project.
+  It must create a different user ID and a completely empty D1 profile/library;
+  the original Cloudflare user, library, and paid subscription must remain unchanged.
+- Confirm that the new `users.supabase_email` is visible in the dashboard and
+  any email-bearing billing/admin routes (the internal placeholder must never
+  appear to the user or be sent in payments).
+- Confirm old Cloudflare sessions are not mistaken for new Supabase identities.
+  Do not delete old Supabase projects
   until data parity and production smoke tests pass.
 
 This PR defaults to the existing Cloudflare login until the environment flags

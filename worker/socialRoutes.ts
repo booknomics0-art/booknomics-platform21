@@ -30,7 +30,7 @@ async function currentUser(request: Request, db: D1): Promise<SafeUser | null> {
   if (!token) return null;
   const tokenHash = await sha256(token);
   const row = await db.prepare(
-    `SELECT u.id, u.email, u.display_name, u.avatar_url
+    `SELECT u.id, COALESCE(u.supabase_email, u.email) AS email, u.display_name, u.avatar_url
      FROM sessions s JOIN users u ON u.id = s.user_id
      WHERE s.token_hash = ? AND datetime(s.expires_at) > datetime('now') LIMIT 1`,
   ).bind(tokenHash).first();

@@ -93,11 +93,13 @@ export async function handleSupabaseAuthBridge(request: Request, env: Env): Prom
     return reply({ error: 'A verified Supabase account is required' }, 403);
   }
 
-  const old = await env.DB.prepare('SELECT id FROM users WHERE lower(email) = lower(?) LIMIT 1').bind(email).first();
-  if (old && String(old.id) !== id) {
-    // Intentionally do not link legacy users by email. The new Supabase project
-    // starts fresh; linking would silently restore an old user's entitlements.
-    return reply({ error: 'This email belongs to a legacy Booknomics account. Contact the administrator to reset its local profile before signing in.' }, 409);
+  // Never merge identities just because their email addresses match. The legacy
+  // users.email column is UNIQUE, so give each Supabase UUID its own internal
+  // placeholder while preserving the verified email in users.supabase_email.
+  // Old Cloudflare rows, sessions, libraries and subscriptions stay untouched.
+  const existing = await env.DB.prepare('SELECT provider FROM users WHERE id = ? LIMIT 1').bind(id).first();
+  if (existing && existing.provider !== 'supabase') {
+    return reply({ error: 'This identity conflicts with a legacy account' }, 409);
   }
 
   const metadata = verified.user_metadata || {};
@@ -107,14 +109,24 @@ export async function handleSupabaseAuthBridge(request: Request, env: Env): Prom
     ? metadata.avatar_url.slice(0, 1000) : null;
   const now = new Date().toISOString();
 
-  await env.DB.prepare(
-    `INSERT INTO users (id,email,password_hash,email_verified,provider,created_at,updated_at,display_name,avatar_url,last_sign_in_at)
-     VALUES (?,?,NULL,1,'supabase',?,?,?,?,?)
-     ON CONFLICT(id) DO UPDATE SET email=excluded.email, email_verified=1, provider='supabase',
+  const internalEmail = `supabase-${id}@identity.booknomics.invalid`;
+  try {
+    await env.DB.prepare(
+    `INSERT INTO users (id,email,supabase_email,password_hash,email_verified,provider,created_at,updated_at,display_name,avatar_url,last_sign_in_at)
+     VALUES (?,?,?,NULL,1,'supabase',?,?,?,?,?)
+     ON CONFLICT(id) DO UPDATE SET supabase_email=excluded.supabase_email, email_verified=1,
        display_name=COALESCE(excluded.display_name,users.display_name),
        avatar_url=COALESCE(excluded.avatar_url,users.avatar_url),last_sign_in_at=excluded.last_sign_in_at,
-       updated_at=excluded.updated_at`,
-  ).bind(id, email, now, now, name, avatar, now).run();
+       updated_at=excluded.updated_at WHERE users.provider='supabase'`,
+    ).bind(id, internalEmail, email, now, now, name, avatar, now).run();
+  } catch (error) {
+    // Never inherit another identity's D1 data. Missing migrations and D1
+    // outages are service failures, not evidence of an existing account.
+    if (/UNIQUE constraint failed/i.test(String(error))) {
+      return reply({ error: 'This verified email is already assigned to another new account' }, 409);
+    }
+    return reply({ error: 'Authentication profile storage is temporarily unavailable' }, 503);
+  }
   await env.DB.prepare(
     `INSERT OR IGNORE INTO profiles (id,display_name,avatar_url,created_at,streak_count,daily_goal_minutes)
      VALUES (?,?,?,?,0,15)`,

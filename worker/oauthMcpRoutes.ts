@@ -71,7 +71,7 @@ async function sessionUser(request: Request, db: D1): Promise<User | null> {
   const token = cookies(request).get(SESSION_COOKIE);
   if (!token) return null;
   const row = await db.prepare(
-    `SELECT u.id,u.email FROM sessions s JOIN users u ON u.id=s.user_id
+    `SELECT u.id,COALESCE(u.supabase_email, u.email) AS email FROM sessions s JOIN users u ON u.id=s.user_id
      WHERE s.token_hash=? AND datetime(s.expires_at)>datetime('now') LIMIT 1`,
   ).bind(await sha256(token)).first();
   return row ? row as User : null;
@@ -86,7 +86,7 @@ async function oauthPrincipal(request: Request, db: D1): Promise<TokenPrincipal 
   const raw = bearer(request);
   if (!raw) return null;
   const row = await db.prepare(
-    `SELECT u.id,u.email,t.client_id,t.scope,t.resource
+    `SELECT u.id,COALESCE(u.supabase_email, u.email) AS email,t.client_id,t.scope,t.resource
      FROM oauth_access_tokens t JOIN users u ON u.id=t.user_id
      WHERE t.token_hash=? AND datetime(t.expires_at)>datetime('now') LIMIT 1`,
   ).bind(await sha256(raw)).first();

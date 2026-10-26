@@ -69,7 +69,7 @@ async function userFromSession(req: Request, db: D1): Promise<User | null> {
   const digest = await crypto.subtle.digest("SHA-256", bytes.encode(token));
   const hash = Array.from(new Uint8Array(digest), (v) => v.toString(16).padStart(2, "0")).join("");
   const row = await db.prepare(
-    "SELECT u.id, u.email FROM sessions s JOIN users u ON u.id = s.user_id WHERE s.token_hash = ? AND datetime(s.expires_at) > datetime('now') LIMIT 1"
+    "SELECT u.id, COALESCE(u.supabase_email, u.email) AS email FROM sessions s JOIN users u ON u.id = s.user_id WHERE s.token_hash = ? AND datetime(s.expires_at) > datetime('now') LIMIT 1"
   ).bind(hash).first();
   return row as User | null;
 }
