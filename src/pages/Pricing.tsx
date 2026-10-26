@@ -9,7 +9,7 @@ import { apiFetch } from "@/lib/cloudflareApi";
 import { useAuth } from "@/hooks/useAuth";
 import { useTier } from "@/hooks/useTier";
 import { FEATURES, PLANS, SELLABLE_PLANS, type SellablePlan } from "@/lib/plans";
-import { isPersonalSupabaseEnabled } from '@/lib/personalSupabase';
+import { isPersonalSupabaseEnabled, isPersonalBillingEnabled, personalBillingFetch } from '@/lib/personalSupabase';
 
 function loadRazorpay(): Promise<boolean> {
   return new Promise((resolve) => {
@@ -51,7 +51,7 @@ export default function Pricing() {
   }, []);
 
   const subscribe = async () => {
-    if (isPersonalSupabaseEnabled) {
+    if (isPersonalSupabaseEnabled && !isPersonalBillingEnabled) {
       // Never send a new Supabase user's payment to the legacy D1 session endpoint.
       toast.error('Secure checkout is being connected to the new account. No payment was started.');
       return;
@@ -73,7 +73,10 @@ export default function Pricing() {
     setPaying(true);
     try {
       if (!await loadRazorpay()) throw new Error("Secure checkout could not load");
-      const data = await apiFetch<{ subscription_id: string; key_id: string }>("/api/payments/razorpay/subscribe", {
+      const request = { method: 'POST', body: JSON.stringify({ plan: selected }) };
+      const data = isPersonalSupabaseEnabled
+        ? await personalBillingFetch<{ subscription_id: string; key_id: string }>('subscribe', request)
+        : await apiFetch<{ subscription_id: string; key_id: string }>("/api/payments/razorpay/subscribe", {
         method: "POST", body: JSON.stringify({ plan: selected }),
       });
       if (!data?.subscription_id || !data?.key_id) throw new Error("Could not start your subscription");
@@ -87,14 +90,14 @@ export default function Pricing() {
         handler: async (resp: any) => {
           try {
             if (resp.razorpay_subscription_id !== data.subscription_id) throw new Error("Subscription mismatch");
-            const result = await apiFetch<{ activated: boolean }>("/api/payments/razorpay/confirm", {
-              method: "POST",
-              body: JSON.stringify({
+            const confirmation = { method: 'POST', body: JSON.stringify({
                 razorpay_subscription_id: resp.razorpay_subscription_id,
                 razorpay_payment_id: resp.razorpay_payment_id,
                 razorpay_signature: resp.razorpay_signature,
-              }),
-            });
+              }) };
+            const result = isPersonalSupabaseEnabled
+              ? await personalBillingFetch<{ activated: boolean }>('confirm', confirmation)
+              : await apiFetch<{ activated: boolean }>("/api/payments/razorpay/confirm", confirmation);
             if (result.activated) {
               await refresh();
               toast.success("Premium activated! Welcome to Booknomics.");
@@ -123,7 +126,7 @@ export default function Pricing() {
   return (
     <Layout>
       <main className="container max-w-6xl py-12 md:py-20">
-        {isPersonalSupabaseEnabled && (
+        {isPersonalSupabaseEnabled && !isPersonalBillingEnabled && (
           <div role="status" className="mb-8 rounded-xl border border-amber-300 bg-amber-50 p-4 text-sm text-amber-950">
             Checkout is temporarily unavailable while the new account's verified payment system is being connected. No payment will be initiated.
           </div>

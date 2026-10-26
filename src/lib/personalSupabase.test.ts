@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { asBooknomicsUser } from './personalSupabase';
+import { asBooknomicsUser, personalBillingFetch } from './personalSupabase';
 
 describe('asBooknomicsUser', () => {
   it('maps the new Supabase identity into existing Booknomics UI shape', () => {
@@ -29,5 +29,12 @@ describe('asBooknomicsUser', () => {
 
   it('handles signed-out state', () => {
     expect(asBooknomicsUser(null)).toBeNull();
+  });
+
+  it('blocks payment calls while the independent billing feature is disabled', async () => {
+    await expect(personalBillingFetch('subscribe', {
+      method: 'POST',
+      body: JSON.stringify({ plan: 'monthly' }),
+    })).rejects.toThrow('not enabled');
   });
 });

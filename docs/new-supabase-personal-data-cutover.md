@@ -35,16 +35,17 @@ Cloudflare D1's old user records **must not be deleted as part of this work**.
 - Tier display reads **read-only** paid subscription records from Supabase;
   admin UI role checks call a secure Supabase RPC rather than accepting claims
   from user metadata.
+- A new Supabase Edge Function implements recurring subscribe, confirm, manage,
+  list and webhook handlers. SQL 002 atomically handles verified webhook events.
+  The independent `VITE_SUPABASE_BILLING_ENABLED` flag defaults to false.
 - Old Cloudflare-auth behavior stays as the default until explicitly activated.
 
 ## Not yet migrated — blocking production cutover
 
-1. **Razorpay recurring billing and webhook** still rely on D1 in
-   `worker/recurringBillingRoutes.ts`. A new, independently authenticated
-   Supabase-backed payment handler must validate Razorpay *live* signature,
-   plan/amount/currency, duplicate events and subscription ownership before
-   production activation. Payment records must be written only with server
-   credentials. Do not reuse the old D1 webhook for new Supabase users.
+1. **Razorpay Edge Function is written but not deployed or payment-tested.**
+   SQL 002, secret configuration, JWT/HMAC verification and a real webhook
+   delivery must pass before enabling the billing flag. Old D1 billing remains
+   unchanged and must never be used for the new Supabase identity.
 2. Dashboard stats, notes, mastery, habits, path enrolment, community actions,
    bookmarks through any other compat adapters, referrals and MCP/admin OAuth
    endpoints still have D1-backed user dependencies. Their individual routes
@@ -77,6 +78,54 @@ Cloudflare D1's old user records **must not be deleted as part of this work**.
    In **Table Editor -> public.profiles**, check the profile trigger made one
    row for that user. Verify one user's client cannot read another user's
    library or subscription using two distinct test accounts.
+
+### Deploy and verify the new Razorpay handler (separate account)
+
+1. Apply `ops/new-supabase/002_billing_webhook_rpc.sql` in the SAME new
+   Supabase SQL Editor after SQL 001. This is a separate manual migration.
+2. Set the following in **Supabase -> Edge Functions -> Secrets** in project
+   `otmjrtigeiuzktunodmb`. Razorpay secrets must never appear in the frontend,
+   repository, screenshot or chat:
+
+   ```text
+   RAZORPAY_KEY_ID = existing LIVE key ID (rzp_live_...)
+   RAZORPAY_KEY_SECRET = the corresponding LIVE secret
+   RAZORPAY_WEEKLY_PLAN_ID = verified ₹19/week plan ID
+   RAZORPAY_MONTHLY_PLAN_ID = verified ₹49/month plan ID
+   RAZORPAY_WEBHOOK_SECRET = secret configured for the new webhook endpoint
+   ```
+
+   Supabase provides `SUPABASE_URL`, its publishable/anon key and its
+   service_role/secret key to Edge Functions automatically.
+3. Deploy **only** `booknomics-billing` to the NEW project from a clean clone
+   of the branch (not the old project). Its file is
+   `supabase/functions/booknomics-billing/index.ts`. From Windows PowerShell:
+
+   ```powershell
+   cd C:\Users\admin\booknomics-auth-fresh-20261026
+   # Pull/update the reviewed branch containing this function before deploying.
+   npx supabase functions deploy booknomics-billing --project-ref otmjrtigeiuzktunodmb --no-verify-jwt
+   ```
+
+   The `--no-verify-jwt` setting allows unsigned Razorpay webhook delivery;
+   **the function validates raw-body Razorpay HMAC independently**, and
+   separately validates Supabase user access tokens on all other routes.
+4. **Do not enter the new URL in Razorpay until the function passes safety
+   checks.** The new webhook URL will be:
+
+   ```text
+   https://otmjrtigeiuzktunodmb.supabase.co/functions/v1/booknomics-billing/webhook
+   ```
+
+   Verify valid/invalid webhook signatures, duplicate event IDs, wrong
+   payment amounts, expiry, authenticated subscription ownership, cancellation,
+   and pending mandate behavior. A real paid subscription must be verified
+   from Razorpay API and reflected in the new Supabase row.
+5. Only after Razorpay and all remaining personal routes are verified, enable
+   the frontend billing flag and switch webhook delivery deliberately. Do not
+   run a second concurrent billing system or keep two webhook URLs updating
+   different databases for the same subscription.
+
 6. After payment and remaining personal routes are migrated/tested, set
    **build-time** public environment variables:
 
@@ -85,6 +134,7 @@ Cloudflare D1's old user records **must not be deleted as part of this work**.
    VITE_AUTH_BACKEND=supabase
    VITE_AUTH_SUPABASE_URL=https://otmjrtigeiuzktunodmb.supabase.co
    VITE_AUTH_SUPABASE_PUBLISHABLE_KEY=<publishable key from NEW project>
+   VITE_SUPABASE_BILLING_ENABLED=true
    ```
 
    Set these in the platform actually building frontend assets. Cloudflare
