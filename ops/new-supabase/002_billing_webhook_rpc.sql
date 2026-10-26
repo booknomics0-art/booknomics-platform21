@@ -75,6 +75,7 @@ begin
       last_provider_event_at = p_happened_at,
       cancel_at_cycle_end = case
         when p_event_name in ('subscription.cancelled', 'subscription.completed') then true
+        when p_event_name = 'subscription.resumed' then false
         else cancel_at_cycle_end
       end,
       status = case
