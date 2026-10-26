@@ -8,6 +8,7 @@ import { BookCover } from "@/components/BookCard";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { supabase } from "@/lib/bookDetailCloudflareCompat";
+import { isPersonalSupabaseEnabled, personalSupabase } from '@/lib/personalSupabase';
 import { useAuth } from "@/hooks/useAuth";
 
 import { toast } from "sonner";
@@ -364,6 +365,14 @@ const BookDetail = () => {
 
   useEffect(() => {
     if (!user || !book) return;
+    if (isPersonalSupabaseEnabled) {
+      if (!personalSupabase) return;
+      let cancelled = false;
+      personalSupabase.from('library').select('id')
+        .eq('user_id', user.id).eq('book_id', book.id).maybeSingle()
+        .then(({ data }) => { if (!cancelled) setInLibrary(!!data); });
+      return () => { cancelled = true; };
+    }
     supabase.from("library").select("id").eq("user_id", user.id).eq("book_id", book.id).maybeSingle()
       .then(({ data }) => setInLibrary(!!data));
   }, [user, book]);
@@ -371,6 +380,25 @@ const BookDetail = () => {
   const toggleLibrary = async () => {
     if (!user) { navigate("/auth"); return; }
     if (!book) return;
+    if (isPersonalSupabaseEnabled) {
+      if (!personalSupabase) { toast.error('Supabase authentication is not configured'); return; }
+      const { error } = inLibrary
+        ? await personalSupabase.from('library').delete().eq('user_id', user.id).eq('book_id', book.id)
+        : await personalSupabase.from('library').upsert({
+            user_id: user.id,
+            book_id: book.id,
+            book_title: book.title,
+            book_slug: (book as Book & { seo_slug?: string }).seo_slug || book.slug,
+            book_author: book.author,
+            book_category: book.category,
+            book_cover_color: book.cover_color,
+            book_cover_url: book.cover_url,
+          }, { onConflict: 'user_id,book_id' });
+      if (error) { toast.error(error.message); return; }
+      setInLibrary(!inLibrary);
+      toast.success(inLibrary ? 'Removed from library' : 'Added to library');
+      return;
+    }
     if (inLibrary) {
       await supabase.from("library").delete().eq("user_id", user.id).eq("book_id", book.id);
       setInLibrary(false);

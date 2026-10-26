@@ -9,6 +9,7 @@ import { apiFetch } from "@/lib/cloudflareApi";
 import { useAuth } from "@/hooks/useAuth";
 import { useTier } from "@/hooks/useTier";
 import { FEATURES, PLANS, SELLABLE_PLANS, type SellablePlan } from "@/lib/plans";
+import { isPersonalSupabaseEnabled } from '@/lib/personalSupabase';
 
 function loadRazorpay(): Promise<boolean> {
   return new Promise((resolve) => {
@@ -50,6 +51,11 @@ export default function Pricing() {
   }, []);
 
   const subscribe = async () => {
+    if (isPersonalSupabaseEnabled) {
+      // Never send a new Supabase user's payment to the legacy D1 session endpoint.
+      toast.error('Secure checkout is being connected to the new account. No payment was started.');
+      return;
+    }
     if (!user) {
       toast.info("Sign in to choose your Premium plan");
       navigate("/auth");
@@ -117,6 +123,11 @@ export default function Pricing() {
   return (
     <Layout>
       <main className="container max-w-6xl py-12 md:py-20">
+        {isPersonalSupabaseEnabled && (
+          <div role="status" className="mb-8 rounded-xl border border-amber-300 bg-amber-50 p-4 text-sm text-amber-950">
+            Checkout is temporarily unavailable while the new account's verified payment system is being connected. No payment will be initiated.
+          </div>
+        )}
         <div className="text-center max-w-3xl mx-auto mb-12">
           <div className="inline-flex gap-2 items-center rounded-full bg-primary/10 border border-primary/20 text-primary text-xs font-bold px-4 py-2 mb-5">
             <Crown className="w-4 h-4" /> BOOKNOMICS PREMIUM
