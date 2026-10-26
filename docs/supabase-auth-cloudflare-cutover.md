@@ -40,7 +40,20 @@ before the corresponding frontend has been deployed.
    `cloudflare/migrations/0010_supabase_auth_email.sql` to the intended D1
    database before deploying the new Worker code. It adds the nullable
    `users.supabase_email` field and a case-insensitive unique index. Do not
-   re-run an already-applied `ALTER TABLE` migration.
+   re-run an already-applied `ALTER TABLE` migration. Existing migrations live
+   in `cloudflare/migrations/`, rather than Wrangler's default `migrations/`
+   folder, so **do not apply the entire migration history to a populated DB**.
+   After verifying the target database, taking a backup, and checking that the
+   new column does not exist, apply this **single file once** from the repo root:
+
+   ```powershell
+   npx wrangler d1 execute booknomics-production --remote --command "PRAGMA table_info(users)"
+   npx wrangler d1 execute booknomics-production --remote --file=cloudflare/migrations/0010_supabase_auth_email.sql
+   npx wrangler d1 execute booknomics-production --remote --command "PRAGMA table_info(users)"
+   ```
+
+   This must be reviewed before production execution; no database migration is
+   performed simply by merging this PR.
 2. **Old D1 identities remain in place:** The bridge never links accounts by
    matching email. A new Supabase UUID gets its own `users` row with a unique
    non-deliverable internal email (`supabase-<uuid>@identity.booknomics.invalid`),
