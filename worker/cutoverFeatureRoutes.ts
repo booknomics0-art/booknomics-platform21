@@ -1,6 +1,8 @@
+import { getPersonalEntitlement } from './personalEntitlement';
+
 type D1 = any;
 
-export type CutoverFeatureEnv = { DB?: D1; LOVABLE_API_KEY?: string; GEMINI_API_KEY?: string };
+export type CutoverFeatureEnv = { DB?: D1; LOVABLE_API_KEY?: string; GEMINI_API_KEY?: string; AUTH_SUPABASE_URL?: string; AUTH_SUPABASE_PUBLISHABLE_KEY?: string };
 type SafeUser = { id: string; email: string };
 const SESSION_COOKIE = "bn_session";
 const encoder = new TextEncoder();
@@ -66,7 +68,9 @@ async function getBookModules(request: Request, env: CutoverFeatureEnv) {
   if (!env.DB) return json({ error: "D1 binding not configured" }, { status: 503 });
   const url = new URL(request.url); const bookId = url.searchParams.get("book_id") || ""; const language = url.searchParams.get("language") === "hi" ? "hi" : "en";
   if (!BOOK_ID_RE.test(bookId)) return json({ error: "Bad book id" }, { status: 400 });
-  const user = await currentUser(request, env.DB); const premium = await isPremium(env.DB, user?.id || null);
+  const personal = await getPersonalEntitlement(request, env);
+  const user = personal ? null : await currentUser(request, env.DB);
+  const premium = personal ? personal.premium : await isPremium(env.DB, user?.id || null);
   const rows = await env.DB.prepare(
     `SELECT id,part_number,part_key,title,content,is_premium FROM book_modules
      WHERE book_id=? AND language=? ORDER BY part_number ASC`,

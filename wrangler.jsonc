@@ -31,7 +31,8 @@
     "enabled": true
   },
   "vars": {
-    "BOOKNOMICS_ENV": "production"
+    "BOOKNOMICS_ENV": "production",
+    "AUTH_SUPABASE_URL": "https://otmjrtigeiuzktunodmb.supabase.co"
   },
   "d1_databases": [
     {
@@ -52,7 +53,8 @@
   ],
   "previews": {
     "vars": {
-      "BOOKNOMICS_ENV": "preview"
+      "BOOKNOMICS_ENV": "preview",
+      "AUTH_SUPABASE_URL": "https://otmjrtigeiuzktunodmb.supabase.co"
     },
     "d1_databases": [
       {

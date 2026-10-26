@@ -175,3 +175,44 @@ Cloudflare D1's old user records **must not be deleted as part of this work**.
 
 No production SQL, webhook change, user deletion or deployment is performed
 simply by opening this PR.
+
+## Reader-data + premium content gate (October 26 follow-up)
+
+The draft PR now connects Dashboard, personal notes, habit practice, reading
+goals, path enrollment and personal library to NEW Supabase under user RLS.
+Cloudflare still owns *public* learning-path and book catalog data.
+
+The Cloudflare Worker now accepts a Supabase Auth access token for its protected
+premium-summary and premium book-module routes. It checks that token with
+Supabase Auth and checks active/unexpired `subscriptions` through Supabase
+PostgREST under **that user's RLS policy**. No browser-reported paid tier is
+trusted; missing configuration fails closed, and existing D1-cookie sessions
+continue to use the old backend while the rollout is disabled.
+
+**Additional necessary Worker binding** (not a Razorpay secret):
+
+1. With the appropriate Cloudflare production account logged into Wrangler,
+   from the Booknomics repo folder in PowerShell run:
+
+   ```powershell
+   npx wrangler secret put AUTH_SUPABASE_PUBLISHABLE_KEY
+   ```
+
+   Paste the **NEW Supabase project's public `sb_publishable_...` key** only
+   into the hidden Wrangler prompt. The Worker config already supplies
+   `AUTH_SUPABASE_URL`; the Vercel/Vite env vars do **not** automatically
+   configure the Cloudflare Worker. Never upload a service-role or Razorpay
+   secret under this variable name.
+2. Only when the Worker is actually deployed after this commit will the new
+   server-side access checks take effect. Do not assume the frontend build
+   updates the Worker.
+3. Check paid/unpaid/expired results using two separate signed-in accounts,
+   verify that deleting a browser's local tier never grants access, and inspect
+   logs without printing JWTs or provider secrets.
+
+**Still blocked before accepting real money:** New-auth audio and AI action
+generation still use the legacy D1 user/rate-limit paths, mastery scores still
+need server-verified persistence, and referral/community user writes remain on
+the old routes. Do not activate both `VITE_AUTH_BACKEND=supabase` and
+`VITE_SUPABASE_BILLING_ENABLED=true` until paid features, webhook and live
+payment entitlement have all passed end-to-end verification.
