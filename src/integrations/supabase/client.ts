@@ -1,6 +1,7 @@
 import { createClient } from '@supabase/supabase-js';
 import type { Database } from './types';
 import { apiFetch } from '@/lib/cloudflareApi';
+import { supabaseAuthClient } from '@/lib/supabaseAuth';
 
 const backend = (import.meta.env.VITE_DATA_BACKEND || 'supabase').trim().toLowerCase();
 export const isCloudflareBackend = backend === 'cloudflare';
@@ -402,7 +403,7 @@ function makeDisabledSupabase() {
     },
     functions: { invoke: async () => ({ data: null, error: disabledError }) },
     storage: { from: (bucketName: string) => makeCloudflareStorageBucket(bucketName) },
-    auth: {
+    auth: supabaseAuthClient?.auth || {
       getSession: async () => ({ data: { session: null }, error: null }), getUser: async () => ({ data: { user: null }, error: null }), signOut: async () => ({ error: null }),
       signInWithPassword: async () => ({ data: { user: null, session: null }, error: disabledError }), signUp: async () => ({ data: { user: null, session: null }, error: disabledError }),
       signInWithOAuth: async () => ({ data: null, error: disabledError }), exchangeCodeForSession: async () => ({ data: { user: null, session: null }, error: disabledError }),

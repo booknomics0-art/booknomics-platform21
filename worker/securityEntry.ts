@@ -19,6 +19,7 @@ import { handleAdminContentAiRoute } from "./adminContentAiRoutes";
 import { handleAdminMediaAiRoute } from "./adminMediaAiRoutes";
 import { handleSitemapDataRoute } from "./sitemapRoutes";
 import { handleSubjectiveMasteryRoute } from "./subjectiveMasteryRoutes";
+import { handleSupabaseAuthBridge } from "./supabaseAuthBridge";
 
 type D1 = any;
 type Env = {
@@ -27,6 +28,9 @@ type Env = {
   BOOK_COVERS?: any;
   BOOK_ASSETS?: any;
   BOOKNOMICS_ENV?: string;
+  AUTH_MODE?: string;
+  AUTH_SUPABASE_URL?: string;
+  AUTH_SUPABASE_PUBLISHABLE_KEY?: string;
   GOOGLE_CLIENT_ID?: string;
   GOOGLE_CLIENT_SECRET?: string;
   GOOGLE_SEARCH_CONSOLE_API_KEY?: string;
@@ -68,7 +72,7 @@ async function currentUser(request: Request, db: D1): Promise<SafeUser | null> {
   if (!token) return null;
   const tokenHash = await sha256(token);
   const row = await db.prepare(
-    `SELECT u.id, u.email, u.display_name, u.avatar_url
+    `SELECT u.id, COALESCE(u.supabase_email, u.email) AS email, u.display_name, u.avatar_url
      FROM sessions s JOIN users u ON u.id = s.user_id
      WHERE s.token_hash = ? AND datetime(s.expires_at) > datetime('now') LIMIT 1`,
   ).bind(tokenHash).first();
@@ -109,6 +113,15 @@ export default {
     if (requestUrl.hostname === "booknomics.com") {
       requestUrl.hostname = "www.booknomics.com";
       return Response.redirect(requestUrl.toString(), 308);
+    }
+
+    const supabaseAuth = await handleSupabaseAuthBridge(request, env);
+    if (supabaseAuth) return supabaseAuth;
+
+    if (env.AUTH_MODE === 'supabase' && [
+      '/api/auth/login', '/api/auth/signup', '/api/auth/google/start', '/api/auth/google/callback',
+    ].includes(requestUrl.pathname)) {
+      return json({ error: 'Legacy login is disabled. Use the new Supabase Auth sign-in page.' }, { status: 410 });
     }
 
     const oauthMcp = await handleOAuthMcpRoute(request, env);

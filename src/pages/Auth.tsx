@@ -10,6 +10,7 @@ import { trackLogin, trackSignup } from "@/lib/analytics";
 import { SEO } from "@/components/SEO";
 import { apiFetch, apiRawFetch, googleSignInUrl, type CloudflareUser } from "@/lib/cloudflareApi";
 import { recordReferralIfPending } from "@/lib/referrals";
+import { connectCloudflareSession, isSupabaseAuthBackend, supabaseAuthClient } from "@/lib/supabaseAuth";
 
 const Auth = () => {
   const navigate = useNavigate();
@@ -31,6 +32,25 @@ const Auth = () => {
 
     (async () => {
       try {
+        if (isSupabaseAuthBackend) {
+          if (!supabaseAuthClient) {
+            if (!cancelled) setPreviewBackendMissing(true);
+            return;
+          }
+          const { data, error } = await supabaseAuthClient.auth.getSession();
+          if (error) throw error;
+          if (!cancelled && data.session) {
+            const current = await apiFetch<{ user: { id: string } | null }>('/api/auth/session').catch(() => ({ user: null }));
+            if (current.user?.id !== data.session.user.id) {
+              await connectCloudflareSession(data.session.access_token);
+            }
+            await recordReferralIfPending();
+            const savedNext = window.sessionStorage.getItem('bn-auth-next');
+            window.sessionStorage.removeItem('bn-auth-next');
+            window.location.replace(safeRedirectPath(savedNext || '') || afterAuth);
+          }
+          return;
+        }
         const response = await apiRawFetch("/api/auth/session");
         if (response.status === 404 && window.location.hostname.endsWith(".vercel.app")) {
           if (!cancelled) setPreviewBackendMissing(true);
@@ -57,6 +77,34 @@ const Auth = () => {
     if (previewBackendMissing) return;
     setLoading(true);
     try {
+      if (isSupabaseAuthBackend) {
+        if (!supabaseAuthClient) throw new Error('Supabase authentication is not configured');
+        if (mode === 'signup') {
+          const { data, error } = await supabaseAuthClient.auth.signUp({
+            email,
+            password,
+            options: { data: { full_name: name }, emailRedirectTo: `${window.location.origin}/auth` },
+          });
+          if (error) throw error;
+          trackSignup('email');
+          if (!data.session) {
+            toast.success('Check your email to confirm your new account, then sign in.');
+            return;
+          }
+          await connectCloudflareSession(data.session.access_token);
+          await recordReferralIfPending();
+          window.location.assign(afterAuth);
+          return;
+        }
+        const { data, error } = await supabaseAuthClient.auth.signInWithPassword({ email, password });
+        if (error) throw error;
+        if (!data.session) throw new Error('No active session returned by Supabase');
+        await connectCloudflareSession(data.session.access_token);
+        trackLogin('email');
+        await recordReferralIfPending();
+        window.location.assign(afterAuth);
+        return;
+      }
       if (mode === "signup") {
         await apiFetch<{ user: Omit<CloudflareUser, "user_metadata"> }>("/api/auth/signup", {
           method: "POST",
@@ -85,6 +133,16 @@ const Auth = () => {
     if (previewBackendMissing) return;
     setLoading(true);
     try {
+      if (isSupabaseAuthBackend) {
+        if (!supabaseAuthClient) throw new Error('Supabase authentication is not configured');
+        window.sessionStorage.setItem('bn-auth-next', afterAuth);
+        const { error } = await supabaseAuthClient.auth.signInWithOAuth({
+          provider: 'google',
+          options: { redirectTo: `${window.location.origin}/auth` },
+        });
+        if (error) throw error;
+        return;
+      }
       // Static Vercel previews do not host the Cloudflare Worker auth routes.
       // Check availability before navigating away to a dead OAuth URL.
       const response = await apiRawFetch("/api/auth/session");

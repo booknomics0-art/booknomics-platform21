@@ -29,7 +29,7 @@ async function requireAdmin(request: Request, env: CutoverAdminEnv) {
   const token = cookies(request).get(SESSION_COOKIE);
   if (!token) return { user: null as SafeUser | null, response: json({ error: "Authentication required" }, { status: 401 }) };
   const user = await env.DB.prepare(
-    `SELECT u.id,u.email FROM sessions s JOIN users u ON u.id=s.user_id
+    `SELECT u.id,COALESCE(u.supabase_email, u.email) AS email FROM sessions s JOIN users u ON u.id=s.user_id
      WHERE s.token_hash=? AND datetime(s.expires_at)>datetime('now') LIMIT 1`,
   ).bind(await sha256(token)).first() as SafeUser | null;
   if (!user) return { user: null, response: json({ error: "Session expired" }, { status: 401 }) };

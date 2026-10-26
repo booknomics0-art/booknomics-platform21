@@ -33,7 +33,7 @@ async function currentUser(request: Request, db: D1): Promise<SafeUser | null> {
   const token = cookies(request).get(SESSION_COOKIE);
   if (!token) return null;
   const row = await db.prepare(
-    `SELECT u.id, u.email
+    `SELECT u.id, COALESCE(u.supabase_email, u.email) AS email
      FROM sessions s JOIN users u ON u.id = s.user_id
      WHERE s.token_hash = ? AND datetime(s.expires_at) > datetime('now')
      LIMIT 1`,
