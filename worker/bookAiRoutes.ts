@@ -1,6 +1,8 @@
+import { consumePersonalQuota, getPersonalEntitlement, type PersonalEntitlementEnv } from './personalEntitlement';
+
 type D1 = any;
 
-type Env = {
+type Env = PersonalEntitlementEnv & {
   DB?: D1;
   LOVABLE_API_KEY?: string;
 };
@@ -161,24 +163,27 @@ const compact = (value: unknown, limit: number) =>
   typeof value === "string" ? value.replace(/\\n/g, "\n").trim().slice(0, limit) : "";
 
 async function generateActionPlan(request: Request, env: Env) {
-  const auth = await requireUser(request, env);
+  const personal = await getPersonalEntitlement(request, env);
+  const auth = personal
+    ? { user: { id: personal.userId, email: personal.email }, response: null }
+    : await requireUser(request, env);
   if (auth.response) return auth.response;
   const user = auth.user!;
   const body = await request.json().catch(() => null) as { book_id?: unknown; force?: unknown } | null;
   const bookId = typeof body?.book_id === "string" ? body.book_id : "";
   if (!/^[0-9a-f-]{36}$/i.test(bookId)) return json({ error: "book_id required" }, { status: 400 });
-  if (!(await rateLimit(request, env, user, "user-ai:action-plan", 10))) {
+  if (!(personal ? await consumePersonalQuota(request, env, 'action_plan') : await rateLimit(request, env, user, "user-ai:action-plan", 10))) {
     return json({ error: "Rate limit. Try again shortly." }, { status: 429 });
   }
 
-  const role = await env.DB!.prepare("SELECT 1 AS ok FROM user_roles WHERE user_id = ? AND role = 'admin' LIMIT 1")
+  const role = personal ? null : await env.DB!.prepare("SELECT 1 AS ok FROM user_roles WHERE user_id = ? AND role = 'admin' LIMIT 1")
     .bind(user.id).first();
   const isAdmin = Boolean(role);
-  const sub = await env.DB!.prepare(
+  const sub = personal ? null : await env.DB!.prepare(
     `SELECT 1 AS ok FROM subscriptions WHERE user_id = ? AND status = 'active'
      AND (expires_at IS NULL OR datetime(expires_at) > datetime('now')) LIMIT 1`,
   ).bind(user.id).first();
-  if (!isAdmin && !sub) return json({ error: "Premium subscription required" }, { status: 403 });
+  if (!isAdmin && !(personal ? personal.premium : Boolean(sub))) return json({ error: "Premium subscription required" }, { status: 403 });
 
   const book = await env.DB!.prepare(
     `SELECT id,title,author,category,language,overview,deep_summary,key_ideas,deep_analysis,daily_application,

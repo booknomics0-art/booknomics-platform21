@@ -51,3 +51,24 @@ export async function getPersonalEntitlement(
   if (!Array.isArray(subscriptions)) throw new PersonalAuthError(503, 'Unexpected membership response');
   return { userId: user.id, email: typeof user.email === 'string' ? user.email : '', premium: subscriptions.length > 0 };
 }
+
+export async function consumePersonalQuota(
+  request: Request,
+  env: PersonalEntitlementEnv,
+  feature: 'audio' | 'action_plan',
+): Promise<boolean> {
+  const base = env.AUTH_SUPABASE_URL?.replace(/\/$/, '');
+  const apikey = env.AUTH_SUPABASE_PUBLISHABLE_KEY;
+  const authorization = request.headers.get('authorization');
+  if (base !== 'https://otmjrtigeiuzktunodmb.supabase.co' || !apikey || !authorization)
+    throw new PersonalAuthError(503, 'Personal feature quotas unavailable');
+  const response = await fetch(`${base}/rest/v1/rpc/booknomics_consume_feature_quota`, {
+    method: 'POST',
+    headers: { apikey, authorization, 'content-type': 'application/json', accept: 'application/json' },
+    body: JSON.stringify({ p_feature: feature }),
+  });
+  if (!response.ok) throw new PersonalAuthError(503, 'Feature quotas are unavailable');
+  const result = await response.json();
+  if (typeof result !== 'boolean') throw new PersonalAuthError(503, 'Unexpected quota response');
+  return result;
+}

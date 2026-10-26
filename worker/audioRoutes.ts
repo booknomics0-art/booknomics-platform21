@@ -1,5 +1,7 @@
+import { consumePersonalQuota, getPersonalEntitlement, type PersonalEntitlementEnv } from './personalEntitlement';
+
 type D1 = any;
-export type AudioEnv = { DB?: D1; ELEVENLABS_API_KEY?: string };
+export type AudioEnv = PersonalEntitlementEnv & { DB?: D1; ELEVENLABS_API_KEY?: string };
 
 type SafeUser = { id: string; email: string };
 const SESSION_COOKIE = "bn_session";
@@ -73,9 +75,10 @@ export async function handleAudioRoute(request: Request, env: AudioEnv): Promise
   if (!env.ELEVENLABS_API_KEY) return json({ error: "Audio service not configured" }, { status: 503 });
 
   try {
-    const user = await currentUser(request, env.DB);
+    const personal = await getPersonalEntitlement(request, env);
+    const user = personal ? { id: personal.userId, email: personal.email } : await currentUser(request, env.DB);
     if (!user) return json({ error: "Authentication required" }, { status: 401 });
-    if (!(await underRateLimit(request, env, user))) {
+    if (!(personal ? await consumePersonalQuota(request, env, 'audio') : await underRateLimit(request, env, user))) {
       return json({ error: "Audio rate limit reached. Try again later." }, { status: 429 });
     }
 
@@ -84,11 +87,11 @@ export async function handleAudioRoute(request: Request, env: AudioEnv): Promise
     if (!/^[0-9a-f-]{36}$/i.test(bookId)) return json({ error: "book_id required" }, { status: 400 });
     const requestedLang = body?.lang === "hi" ? "hi" : "en";
 
-    const subscription = await env.DB.prepare(
+    const subscription = personal ? null : await env.DB.prepare(
       `SELECT 1 AS ok FROM subscriptions WHERE user_id = ? AND status = 'active'
        AND (expires_at IS NULL OR datetime(expires_at) > datetime('now')) LIMIT 1`,
     ).bind(user.id).first();
-    const isPremium = Boolean(subscription);
+    const isPremium = personal ? personal.premium : Boolean(subscription);
 
     const book = await env.DB.prepare(
       `SELECT title,author,tagline,overview,key_ideas,daily_application,language

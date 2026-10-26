@@ -220,9 +220,18 @@ When creating the additional new webhook, use the NEW webhook secret configured
 in the new Supabase function (do not reuse the existing webhook's secret).
 Deploy both changed handlers before enabling the second webhook.
 
-**Still blocked before accepting real money:** New-auth audio and AI action
-generation still use the legacy D1 user/rate-limit paths, mastery scores still
-need server-verified persistence, and referral/community user writes remain on
-the old routes. Do not activate both `VITE_AUTH_BACKEND=supabase` and
+**Additional SQL step:** Run `ops/new-supabase/003_premium_feature_quota.sql`
+in the NEW project's SQL Editor. This creates a fixed 10-use/hour quota for
+authenticated audio and action-plan requests without writing new user activity
+into Cloudflare D1. The Cloudflare Worker calls the quota RPC using the user's
+Supabase token, not a server role key. Test the limit before enabling these
+cost-bearing features. If the SQL has not been applied, these features fail
+closed rather than making unmetered AI requests.
+
+**Still blocked before accepting real money:** Mastery scores still need
+server-verified persistence, and referral/community user writes remain on
+the old routes. Two separate Supabase test accounts, premium audio, protected
+book modules and webhook payment success must be tested. Do not activate both
+`VITE_AUTH_BACKEND=supabase` and
 `VITE_SUPABASE_BILLING_ENABLED=true` until paid features, webhook and live
 payment entitlement have all passed end-to-end verification.
