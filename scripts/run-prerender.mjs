@@ -1,4 +1,5 @@
 import { spawnSync } from "node:child_process";
+import { fileURLToPath } from "node:url";
 
 // Preview deployments intentionally test the React app without indexing copies
 // of thousands of production books. Production and direct Cloudflare builds
@@ -26,7 +27,7 @@ const scripts = [
 
 for (const filename of scripts) {
   console.log(`[postbuild] ${filename}`);
-  const result = spawnSync(process.execPath, [new URL(filename, import.meta.url).pathname], {
+  const result = spawnSync(process.execPath, [fileURLToPath(new URL(filename, import.meta.url))], {
     stdio: "inherit", env: process.env,
   });
   if (result.error) throw result.error;
