@@ -42,20 +42,24 @@ Cloudflare D1's old user records **must not be deleted as part of this work**.
 
 ## Not yet migrated — blocking production cutover
 
-1. **Razorpay Edge Function is written but not deployed or payment-tested.**
-   SQL 002, secret configuration, JWT/HMAC verification and a real webhook
-   delivery must pass before enabling the billing flag. Old D1 billing remains
-   unchanged and must never be used for the new Supabase identity.
-2. Dashboard stats, notes, mastery, habits, path enrolment, community actions,
-   bookmarks through any other compat adapters, referrals and MCP/admin OAuth
-   endpoints still have D1-backed user dependencies. Their individual routes
-   must be converted before the new backend can be the only personal store.
+1. **Razorpay Edge Function's older version was deployed manually, but this
+   PR's updated tag-aware webhook code is NOT deployed or payment-tested.**
+   SQL 002 and the secrets were configured by the owner; valid signed webhook
+   delivery and real checkout/entitlement must still pass before enabling the
+   billing flag. Old D1 billing remains unchanged and must never be used for
+   the new Supabase identity.
+2. Dashboard stats, notes, habits, path enrolment, and referrals now have
+   Supabase-backed implementations under the new-auth flag. Mastery scoring,
+   community actions, other D1-backed compatibility adapters, and MCP/admin
+   OAuth endpoints still need a safe per-user migration before a complete
+   backend cutover; do not claim full feature parity yet.
 3. The Cloudflare catalog remains on D1, so **public catalog endpoints may still
    fail** during the D1 daily read limit, independent of login. The current
    D1 quota cannot be bypassed by retrying migrations or creating aliases.
-4. Authenticated premium-content authorization on the server must check a
-   verified Supabase token and trusted subscription record. The browser's
-   `useTier` result is for display only and is **not** an access-control gate.
+4. The new Worker code checks a verified Supabase token and trusted subscription
+   record for protected premium content, but the deployed Worker does **not yet**
+   include this PR. The browser's `useTier` result is for display only and is
+   **not** an access-control gate.
 
 ## Manual setup in the new Supabase account
 
@@ -189,6 +193,21 @@ Supabase Auth and checks active/unexpired `subscriptions` through Supabase
 PostgREST under **that user's RLS policy**. No browser-reported paid tier is
 trusted; missing configuration fails closed, and existing D1-cookie sessions
 continue to use the old backend while the rollout is disabled.
+
+**Observed production routing on October 26:** Cloudflare's `booknomics` Worker
+owns only `booknomics.com/api/*`, `www.booknomics.com/api/*`, and both `/media/*`
+routes; Vercel currently serves the other web paths. Therefore `wrangler.jsonc`
+now preserves those narrow routes. Do NOT widen either route to `/*` during a
+billing deploy: that would unexpectedly transfer the website frontend to the
+Worker. The separate `booknomics-audio-upload` Worker continues to own the
+more-specific `/api/admin/audio/*` routes.
+
+Vercel's October 24 and 26 production builds failed when the production D1
+catalog returned `HTTP 500 Unable to load catalog` during strict SEO prerender.
+The last `READY` deployment is older. Neither a passing local Vite build nor
+updated Vercel environment variables implies that production was deployed.
+Keep the last known-good frontend serving until catalog/SEO prerender succeeds
+and the new login and payment paths pass end-to-end checks.
 
 **Additional necessary Worker binding** (not a Razorpay secret):
 

@@ -6,11 +6,19 @@
   "upload_source_maps": true,
   "routes": [
     {
-      "pattern": "booknomics.com/*",
+      "pattern": "booknomics.com/api/*",
       "zone_name": "booknomics.com"
     },
     {
-      "pattern": "www.booknomics.com/*",
+      "pattern": "www.booknomics.com/api/*",
+      "zone_name": "booknomics.com"
+    },
+    {
+      "pattern": "booknomics.com/media/*",
+      "zone_name": "booknomics.com"
+    },
+    {
+      "pattern": "www.booknomics.com/media/*",
       "zone_name": "booknomics.com"
     }
   ],
