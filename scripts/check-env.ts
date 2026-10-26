@@ -4,6 +4,16 @@ const env = { ...loadEnv('production', process.cwd(), ''), ...process.env };
 // Cloudflare is the migration branch's primary backend. Supabase remains available
 // only as an explicit rollback mode until parity and production smoke tests pass.
 const backend = (env.VITE_DATA_BACKEND || 'cloudflare').trim().toLowerCase();
+const authBackend = (env.VITE_AUTH_BACKEND || 'cloudflare').trim().toLowerCase();
+
+if (authBackend === 'supabase') {
+  const url = env.VITE_AUTH_SUPABASE_URL?.trim() || '';
+  const key = env.VITE_AUTH_SUPABASE_PUBLISHABLE_KEY?.trim() || '';
+  if (!/^https:\/\/[a-z0-9-]+\.supabase\.co$/.test(url)) throw new Error('VITE_AUTH_SUPABASE_URL must be a valid Supabase HTTPS project URL');
+  if (!key.startsWith('sb_publishable_')) throw new Error('VITE_AUTH_SUPABASE_PUBLISHABLE_KEY must be a browser-safe sb_publishable_ key, never a secret or service-role key');
+} else if (authBackend !== 'cloudflare') {
+  throw new Error(`Unsupported VITE_AUTH_BACKEND: ${authBackend}`);
+}
 
 if (backend === 'cloudflare') {
   const apiBase = (env.VITE_API_BASE || '').trim();
