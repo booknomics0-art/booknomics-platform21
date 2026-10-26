@@ -209,6 +209,13 @@ updated Vercel environment variables implies that production was deployed.
 Keep the last known-good frontend serving until catalog/SEO prerender succeeds
 and the new login and payment paths pass end-to-end checks.
 
+The Worker catalog now avoids an unused full-result `COUNT(*)` query on
+each SEO-prerender page and caches only public catalog GET responses for five
+minutes. This reduces **future** D1 reads; it does not make already-exhausted
+free-tier D1 queries succeed. Cloudflare resets exhausted daily counters at
+midnight UTC (05:30 IST), and new live subscribers must not be charged while
+their promised paid book content is unavailable.
+
 **Additional necessary Worker binding** (not a Razorpay secret):
 
 1. With the appropriate Cloudflare production account logged into Wrangler,
