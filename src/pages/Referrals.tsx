@@ -7,6 +7,7 @@ import { Card } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { useAuth } from "@/hooks/useAuth";
 import { apiFetch } from "@/lib/cloudflareApi";
+import { isPersonalSupabaseEnabled, personalSupabase } from '@/lib/personalSupabase';
 import { toast } from "sonner";
 import { SEO } from "@/components/SEO";
 
@@ -25,7 +26,20 @@ export default function Referrals() {
     (async () => {
       setLoading(true);
       try {
-        const data = await apiFetch<{ code: string | null; count: number }>("/api/referrals/me");
+        let data: { code: string | null; count: number };
+        if (isPersonalSupabaseEnabled) {
+          if (!personalSupabase) throw new Error('Supabase authentication is not configured');
+          const [codes, claims] = await Promise.all([
+            personalSupabase.from('referral_codes').select('code').eq('user_id', user.id).maybeSingle(),
+            personalSupabase.from('referral_claims').select('referee_id', { count: 'exact', head: true })
+              .eq('referrer_id', user.id),
+          ]);
+          if (codes.error) throw codes.error;
+          if (claims.error) throw claims.error;
+          data = { code: codes.data?.code || null, count: claims.count || 0 };
+        } else {
+          data = await apiFetch<{ code: string | null; count: number }>("/api/referrals/me");
+        }
         setCode(data.code || null);
         setCount(Number(data.count || 0));
       } catch (error) {

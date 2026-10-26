@@ -39,7 +39,10 @@ const Auth = () => {
           }
           const { data, error } = await personalSupabase.auth.getSession();
           if (error) throw error;
-          if (!cancelled && data.session) navigate(afterAuth, { replace: true });
+          if (!cancelled && data.session) {
+            await recordReferralIfPending();
+            if (!cancelled) navigate(afterAuth, { replace: true });
+          }
           return;
         }
         const response = await apiRawFetch("/api/auth/session");
@@ -60,7 +63,15 @@ const Auth = () => {
 
     if (isPersonalSupabaseEnabled && personalSupabase) {
       const { data } = personalSupabase.auth.onAuthStateChange((event, session) => {
-        if (!cancelled && event === 'SIGNED_IN' && session) navigate(afterAuth, { replace: true });
+        if (!cancelled && event === 'SIGNED_IN' && session) {
+          // Run follow-up RPC outside the auth state callback to avoid
+          // re-entrant Supabase client calls during session initialization.
+          setTimeout(() => {
+            void recordReferralIfPending().finally(() => {
+              if (!cancelled) navigate(afterAuth, { replace: true });
+            });
+          }, 0);
+        }
       });
       return () => { cancelled = true; data.subscription.unsubscribe(); };
     }
@@ -92,12 +103,14 @@ const Auth = () => {
             toast.success('Check your inbox to confirm your email, then sign in.');
             return;
           }
+          await recordReferralIfPending();
           navigate(afterAuth, { replace: true });
         } else {
           const { error } = await personalSupabase.auth.signInWithPassword({ email, password });
           if (error) throw error;
           trackLogin('email');
           toast.success('Welcome back');
+          await recordReferralIfPending();
           navigate(afterAuth, { replace: true });
         }
         return;

@@ -228,9 +228,15 @@ Supabase token, not a server role key. Test the limit before enabling these
 cost-bearing features. If the SQL has not been applied, these features fail
 closed rather than making unmetered AI requests.
 
+Run `ops/new-supabase/004_referrals.sql` in the SAME new project to create
+privacy-scoped referral codes and a single-claim-per-new-user RPC. This award
+is a badge only; a referral cannot create or modify a paid subscription.
+Claims for accounts older than seven days are rejected and new users cannot
+refer themselves. Do this before testing `/referrals` in the new auth mode.
+
 **Still blocked before accepting real money:** Mastery scores still need
-server-verified persistence, and referral/community user writes remain on
-the old routes. Two separate Supabase test accounts, premium audio, protected
+server-verified persistence, and the legacy community interactions need a
+personal-data migration. Two separate Supabase test accounts, premium audio, protected
 book modules and webhook payment success must be tested. Do not activate both
 `VITE_AUTH_BACKEND=supabase` and
 `VITE_SUPABASE_BILLING_ENABLED=true` until paid features, webhook and live
