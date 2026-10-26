@@ -4,6 +4,8 @@ import { Card, CardContent } from "@/components/ui/card";
 import { NotebookPen, ChevronDown, ChevronUp } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { apiFetch } from "@/lib/cloudflareApi";
+import { isPersonalSupabaseEnabled } from '@/lib/personalSupabase';
+import { getNotesArchive } from '@/lib/personalData';
 
 interface NoteRow {
   id: string;
@@ -20,8 +22,10 @@ export function NotesArchive({ userId }: { userId: string }) {
 
   useEffect(() => {
     if (!userId) return;
-    apiFetch<{ data: NoteRow[] }>("/api/notes")
-      .then(({ data }) => setNotes(data ?? []))
+    (isPersonalSupabaseEnabled
+      ? getNotesArchive(userId)
+      : apiFetch<{ data: NoteRow[] }>("/api/notes").then(({ data }) => data))
+      .then((data) => setNotes(data ?? []))
       .catch(() => setNotes([]));
   }, [userId]);
 

@@ -8,6 +8,8 @@ import { Badge } from "@/components/ui/badge";
 import { Check, BookOpen, ArrowLeft, Sparkles } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { apiFetch } from "@/lib/cloudflareApi";
+import { isPersonalSupabaseEnabled } from '@/lib/personalSupabase';
+import { isEnrolled, setEnrolled as persistPathEnrollment } from '@/lib/personalData';
 import { toast } from "sonner";
 
 export default function PathDetail() {
@@ -29,8 +31,25 @@ export default function PathDetail() {
       setPath(data.path);
       const nextBooks = data.books || [];
       setBooks(nextBooks);
-      setCompleted(new Set(nextBooks.filter((book: any) => book.completed).map((book: any) => book.id)));
-      setEnrolled(!!data.enrolled);
+      if (isPersonalSupabaseEnabled && user) {
+        const [enrolledInSupabase, progress] = await Promise.all([
+          isEnrolled(user.id, String(data.path.id)),
+          import('@/lib/personalSupabase').then(async ({ personalSupabase }) => {
+            if (!personalSupabase || nextBooks.length === 0) return [];
+            const { data: rows, error } = await personalSupabase.from('reading_progress')
+              .select('book_id,completed').eq('user_id', user.id)
+              .in('book_id', nextBooks.map((book: any) => book.id));
+            if (error) throw error;
+            return rows || [];
+          }),
+        ]);
+        setEnrolled(enrolledInSupabase);
+        const completedIds = new Set(progress.filter(row => row.completed).map(row => row.book_id));
+        setCompleted(new Set(nextBooks.filter((book: any) => completedIds.has(book.id)).map((book: any) => book.id)));
+      } else {
+        setCompleted(new Set(nextBooks.filter((book: any) => book.completed).map((book: any) => book.id)));
+        setEnrolled(isPersonalSupabaseEnabled ? false : !!data.enrolled);
+      }
       document.title = `${data.path.title} — Learning Path — BookInsight`;
     } catch {
       setPath(null);
@@ -47,9 +66,8 @@ export default function PathDetail() {
   const enroll = async () => {
     if (!user) { toast.error("Sign in to enroll"); return; }
     try {
-      await apiFetch<{ ok: boolean; enrolled: boolean }>(`/api/learning-paths/${encodeURIComponent(path.id)}/enroll`, {
-        method: "POST",
-      });
+      if (isPersonalSupabaseEnabled) await persistPathEnrollment(user.id, String(path.id), true);
+      else await apiFetch<{ ok: boolean; enrolled: boolean }>(`/api/learning-paths/${encodeURIComponent(path.id)}/enroll`, { method: 'POST' });
       setEnrolled(true);
       toast.success(`Enrolled in ${path.title}`);
     } catch (error) {
@@ -60,9 +78,8 @@ export default function PathDetail() {
   const unenroll = async () => {
     if (!user) return;
     try {
-      await apiFetch<{ ok: boolean; enrolled: boolean }>(`/api/learning-paths/${encodeURIComponent(path.id)}/enroll`, {
-        method: "DELETE",
-      });
+      if (isPersonalSupabaseEnabled) await persistPathEnrollment(user.id, String(path.id), false);
+      else await apiFetch<{ ok: boolean; enrolled: boolean }>(`/api/learning-paths/${encodeURIComponent(path.id)}/enroll`, { method: 'DELETE' });
       setEnrolled(false);
       toast("Left the path");
     } catch (error) {
