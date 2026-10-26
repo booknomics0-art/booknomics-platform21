@@ -1,5 +1,51 @@
 type D1 = any;
 export type CatalogEnv = { DB?: D1 };
+type CatalogContext = { waitUntil(promise: Promise<unknown>): void };
+
+// Unlike an origin fetch, a D1-generated response is not automatically stored
+// by Cloudflare just because it has public Cache-Control headers. Cache only
+// these two public endpoints; user/session/payment endpoints must stay uncached.
+const CATALOG_CACHE_PARAMS: Record<string, Set<string>> = {
+  "/api/catalog/books": new Set([
+    "language", "category", "author", "status", "slugs", "limit", "offset",
+    "sort", "view", "fields", "after_id",
+  ]),
+  "/api/catalog/category-directory": new Set([
+    "language", "published_only", "slug", "alias", "pick_labels",
+  ]),
+};
+
+type CatalogCache = {
+  match(key: Request): Promise<Response | undefined>;
+  put(key: Request, response: Response): Promise<void>;
+};
+
+function publicCacheKey(url: URL): Request {
+  // Ignore tracking or unknown query parameters so they cannot force a fresh
+  // D1 scan with a unique cache key on every request.
+  const normalized = new URL(url.origin + url.pathname);
+  const keys = CATALOG_CACHE_PARAMS[url.pathname];
+  for (const [key, value] of [...url.searchParams].sort(([a, av], [b, bv]) => a.localeCompare(b) || av.localeCompare(bv))) {
+    if (keys.has(key)) normalized.searchParams.append(key, value);
+  }
+  return new Request(normalized.toString(), { method: "GET" });
+}
+
+async function fromPublicCache(cache: CatalogCache, key: Request): Promise<Response | undefined> {
+  try {
+    return await cache.match(key);
+  } catch (error) {
+    console.warn("catalog cache lookup failed", error);
+    return undefined;
+  }
+}
+
+async function savePublicCache(cache: CatalogCache, key: Request, response: Response, ctx?: CatalogContext) {
+  if (!response.ok) return;
+  const store = cache.put(key, response.clone()).catch(error => console.warn("catalog cache write failed", error));
+  if (ctx) ctx.waitUntil(store);
+  else await store;
+}
 
 const json = (data: unknown, init: ResponseInit = {}) =>
   new Response(JSON.stringify(data), {
@@ -84,14 +130,25 @@ async function categoryDirectory(url: URL, env: CatalogEnv): Promise<Response> {
   return json({ categories, category: matching?.category || null, published_count: Number(matching?.published_count || 0), picks });
 }
 
-export async function handleCatalogRoute(request: Request, env: CatalogEnv): Promise<Response | null> {
+export async function handleCatalogRoute(request: Request, env: CatalogEnv, ctx?: CatalogContext): Promise<Response | null> {
   const url = new URL(request.url);
   if (url.pathname !== "/api/catalog/books" && url.pathname !== "/api/catalog/category-directory") return null;
   if (request.method !== "GET") return json({ error: "Method not allowed" }, { status: 405 });
   if (!env.DB) return json({ error: "D1 binding not configured" }, { status: 503 });
 
+  const cache = (globalThis as typeof globalThis & { caches?: { default?: CatalogCache } }).caches?.default;
+  const cacheKey = cache ? publicCacheKey(url) : undefined;
+  if (cache && cacheKey) {
+    const cached = await fromPublicCache(cache, cacheKey);
+    if (cached) return cached;
+  }
+
   try {
-    if (url.pathname === "/api/catalog/category-directory") return categoryDirectory(url, env);
+    if (url.pathname === "/api/catalog/category-directory") {
+      const response = await categoryDirectory(url, env);
+      if (cache && cacheKey) await savePublicCache(cache, cacheKey, response, ctx);
+      return response;
+    }
     const language = url.searchParams.get("language")?.trim();
     const category = url.searchParams.get("category")?.trim();
     const author = url.searchParams.get("author")?.trim().slice(0, 200);
@@ -154,12 +211,14 @@ export async function handleCatalogRoute(request: Request, env: CatalogEnv): Pro
       `SELECT ${fields} FROM books ${whereSql} ORDER BY ${orderBy} LIMIT ? OFFSET ?`,
     ).bind(...binds, limit, offset).all();
 
-    return json({
+    const response = json({
       data: result.results || [],
       count: Number(count?.total || 0),
       limit,
       offset,
     });
+    if (cache && cacheKey) await savePublicCache(cache, cacheKey, response, ctx);
+    return response;
   } catch (error) {
     console.error("catalog route failed", error);
     return json({ error: "Unable to load catalog" }, { status: 500 });
