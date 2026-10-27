@@ -1,6 +1,18 @@
 <!doctype html>
 <html lang="en">
   <head>
+    <!-- Default Booknomics to the dark theme before styles load; respect an explicit light choice. -->
+    <script>
+      (function () {
+        try {
+          if (localStorage.getItem("theme") !== "light") {
+            document.documentElement.classList.add("dark");
+          }
+        } catch (_) {
+          document.documentElement.classList.add("dark");
+        }
+      })();
+    </script>
     <!-- Bot detection must run before analytics/ads scheduling. -->
     <script>
       (function () {
