@@ -12,7 +12,12 @@
   color: hsl(var(--foreground));
 }
 
-/* Preserve the existing dark-mode accent, which already has adequate contrast. */
+/* Keep the dark theme accent vivid orange, with black text on orange controls. */
 .dark {
-  --primary: 38 85% 60%;
+  --primary: 28 100% 55%;
+}
+
+.dark .bg-gold.text-primary-foreground,
+.dark .bg-gold .text-primary-foreground {
+  color: hsl(var(--primary-foreground));
 }

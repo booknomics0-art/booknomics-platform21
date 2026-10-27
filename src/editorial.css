@@ -9,6 +9,15 @@
   --bn-line: hsl(35 22% 83%);
 }
 
+.dark {
+  --bn-ink: hsl(0 0% 96%);
+  --bn-paper: hsl(220 14% 5%);
+  --bn-paper-soft: hsl(220 14% 8%);
+  --bn-gold: hsl(28 100% 55%);
+  --bn-gold-soft: hsl(32 100% 65%);
+  --bn-line: hsl(220 10% 20%);
+}
+
 .booknomics-site {
   position: relative;
   isolation: isolate;
