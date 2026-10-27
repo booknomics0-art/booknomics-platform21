@@ -74,6 +74,44 @@ async function fetchBooks(): Promise<BookRow[]> {
   return rows;
 }
 
+/**
+ * If Cloudflare D1 temporarily refuses reads (for example, after the daily
+ * free-tier row-read allowance is exhausted), preserve the last published SEO
+ * artifacts instead of failing a theme/content deployment or publishing empty
+ * sitemaps. All files are validated before any are overwritten.
+ */
+async function restorePublishedSitemapArtifacts(reason: unknown): Promise<void> {
+  const paths = ["/sitemap.xml", "/books-sitemap.xml", "/image-sitemap.xml", "/_redirects"] as const;
+  const artifacts = await Promise.all(paths.map(async (path) => {
+    const isXml = path.endsWith(".xml");
+    const response = await fetch(`${BASE_URL}${path}`, {
+      headers: { accept: isXml ? "application/xml,text/xml;q=0.9,*/*;q=0.8" : "text/plain,*/*;q=0.8" },
+      signal: AbortSignal.timeout(20000),
+    });
+    if (!response.ok) throw new Error(`Published SEO fallback fetch failed (${response.status}) for ${path}`);
+    const body = await response.text();
+
+    if (isXml) {
+      const count = (body.match(/<url(?:\\s|>)/g) || []).length;
+      if (!body.includes("<urlset") || count < MIN_EXPECTED_BOOKS) {
+        throw new Error(`Published SEO fallback ${path} failed validation (${count} URLs)`);
+      }
+    } else {
+      const redirects = (body.match(/301!/g) || []).length;
+      if (body.length < 1000 || redirects < 10) {
+        throw new Error(`Published SEO fallback ${path} failed validation (${redirects} redirects)`);
+      }
+    }
+    return { path, body };
+  }));
+
+  for (const { path, body } of artifacts) {
+    writeFileSync(resolve("public", path.slice(1)), body);
+  }
+  const reasonText = reason instanceof Error ? reason.message : String(reason);
+  console.warn(`[sitemap-v2] Preserved verified published SEO artifacts because Cloudflare data was unavailable: ${reasonText}`);
+}
+
 const escapeXml = (v: string) => v.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;").replace(/'/g,"&apos;");
 const slugify = (s: string) => s.toLowerCase().replace(/[\\/&]+/g,"-").replace(/[^a-z0-9\u0900-\u097F]+/g,"-").replace(/-+/g,"-").replace(/^-|-$/g,"");
 const dedupe = (entries: Entry[]) => Array.from(new Map(entries.map(e => [e.path, e])).values());
@@ -103,8 +141,19 @@ function renderRedirects(bookRedirects: Array<{from:string;to:string}>) {
 
 (async () => {
   try {
-    const books = await fetchBooks();
-    if (!staticPreview && books.length < MIN_EXPECTED_BOOKS) throw new Error(`Only ${books.length} published books returned (expected >= ${MIN_EXPECTED_BOOKS}). Refusing stale sitemap.`);
+    let books: BookRow[];
+    try {
+      books = await fetchBooks();
+      if (!staticPreview && books.length < MIN_EXPECTED_BOOKS) {
+        throw new Error(`Only ${books.length} published books returned (expected >= ${MIN_EXPECTED_BOOKS}). Refusing stale sitemap.`);
+      }
+    } catch (fetchError) {
+      if (DATA_BACKEND === "cloudflare" && !staticPreview) {
+        await restorePublishedSitemapArtifacts(fetchError);
+        return;
+      }
+      throw fetchError;
+    }
     console.log(`[sitemap-v2] backend ${DATA_BACKEND} · published books fetched: ${books.length}`);
 
     const entries: Entry[] = [
