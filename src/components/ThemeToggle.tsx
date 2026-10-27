@@ -9,7 +9,7 @@ export const ThemeToggle = () => {
 
   useEffect(() => {
     const saved = localStorage.getItem("theme");
-    const isDark = saved === "dark" || (!saved && window.matchMedia("(prefers-color-scheme: dark)").matches);
+    const isDark = saved === "dark" || saved === null;
     document.documentElement.classList.toggle("dark", isDark);
     setDark(isDark);
   }, []);
