@@ -92,7 +92,7 @@ async function restorePublishedSitemapArtifacts(reason: unknown): Promise<void> 
     const body = await response.text();
 
     if (isXml) {
-      const count = (body.match(/<url(?:\\s|>)/g) || []).length;
+      const count = (body.match(/<url(?:\s|>)/g) || []).length;
       if (!body.includes("<urlset") || count < MIN_EXPECTED_BOOKS) {
         throw new Error(`Published SEO fallback ${path} failed validation (${count} URLs)`);
       }
