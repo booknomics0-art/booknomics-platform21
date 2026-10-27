@@ -19,9 +19,13 @@ import { handleAdminContentAiRoute } from "./adminContentAiRoutes";
 import { handleAdminMediaAiRoute } from "./adminMediaAiRoutes";
 import { handleSitemapDataRoute } from "./sitemapRoutes";
 import { handleSubjectiveMasteryRoute } from "./subjectiveMasteryRoutes";
+import { getPersonalEntitlement, PersonalAuthError, type PersonalEntitlementEnv } from './personalEntitlement';
+import { blocksLegacyPersonalRouteForSupabase } from './newAuthIsolation';
 
 type D1 = any;
 type Env = {
+  AUTH_SUPABASE_URL?: PersonalEntitlementEnv['AUTH_SUPABASE_URL'];
+  AUTH_SUPABASE_PUBLISHABLE_KEY?: PersonalEntitlementEnv['AUTH_SUPABASE_PUBLISHABLE_KEY'];
   ASSETS: { fetch(request: Request): Promise<Response> };
   DB?: D1;
   BOOK_COVERS?: any;
@@ -78,13 +82,24 @@ async function currentUser(request: Request, db: D1): Promise<SafeUser | null> {
 async function premiumSummary(request: Request, env: Env, bookId: string) {
   if (!env.DB) return json({ error: "D1 binding not configured" }, { status: 503 });
   if (!/^[0-9a-f-]{36}$/i.test(bookId)) return json({ error: "Bad book id" }, { status: 400 });
-  const user = await currentUser(request, env.DB);
-  if (!user) return json({ error: "Authentication required" }, { status: 401 });
-  const sub = await env.DB.prepare(
-    `SELECT 1 AS ok FROM subscriptions WHERE user_id = ? AND status = 'active'
-     AND (expires_at IS NULL OR datetime(expires_at) > datetime('now')) LIMIT 1`,
-  ).bind(user.id).first();
-  if (!sub) return json({ error: "Premium subscription required" }, { status: 403 });
+  let premium = false;
+  try {
+    const personal = await getPersonalEntitlement(request, env);
+    if (personal) premium = personal.premium;
+    else {
+      const user = await currentUser(request, env.DB);
+      if (!user) return json({ error: "Authentication required" }, { status: 401 });
+      const sub = await env.DB.prepare(
+        `SELECT 1 AS ok FROM subscriptions WHERE user_id = ? AND status = 'active'
+         AND (expires_at IS NULL OR datetime(expires_at) > datetime('now')) LIMIT 1`,
+      ).bind(user.id).first();
+      premium = Boolean(sub);
+    }
+  } catch (error) {
+    return json({ error: error instanceof Error ? error.message : 'Membership lookup failed' },
+      { status: error instanceof PersonalAuthError ? error.status : 503 });
+  }
+  if (!premium) return json({ error: "Premium subscription required" }, { status: 403 });
   const row = await env.DB.prepare(
     `SELECT action_system, practice_tracker, reflection_questions, real_life_example
      FROM books WHERE id = ? AND is_draft = 0 AND status IN ('published','published_noindex') LIMIT 1`,
@@ -109,6 +124,10 @@ export default {
     if (requestUrl.hostname === "booknomics.com") {
       requestUrl.hostname = "www.booknomics.com";
       return Response.redirect(requestUrl.toString(), 308);
+    }
+
+    if (blocksLegacyPersonalRouteForSupabase(request)) {
+      return json({ error: 'This personal feature is not yet connected to your new Supabase account. Your older Cloudflare data has not been changed.' }, { status: 409 });
     }
 
     const oauthMcp = await handleOAuthMcpRoute(request, env);

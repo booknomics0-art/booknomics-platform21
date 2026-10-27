@@ -193,6 +193,9 @@ async function webhook(req: Request, env: Env) {
   if (!allowedEvents.has(event.event)) return text("ok");
   const providerSub = event.payload?.subscription?.entity;
   if (!validId(providerSub?.id,"sub")) return text("Invalid subscription",400);
+  // The new Supabase billing function owns subscriptions explicitly tagged
+  // at creation time. Never query or mutate a D1 user for those events.
+  if (providerSub.notes?.booknomics_backend === 'new_supabase_v1') return text('ignored');
   const row = await env.DB!.prepare("SELECT * FROM subscriptions WHERE razorpay_subscription_id=? LIMIT 1").bind(providerSub.id).first() as Subscription | null;
   if (!row) return text("Untracked subscription",404);
   const previous = await env.DB!.prepare("SELECT processed_at FROM razorpay_webhook_events WHERE event_id=? LIMIT 1").bind(eventId).first();

@@ -7,6 +7,7 @@ import { apiFetch } from "@/lib/cloudflareApi";
 import { useAuth } from "@/hooks/useAuth";
 import { useTier } from "@/hooks/useTier";
 import { toast } from "sonner";
+import { isPersonalSupabaseEnabled, isPersonalBillingEnabled, personalSupabase, personalBillingFetch } from '@/lib/personalSupabase';
 
 type Subscription = {
   id: string; plan: string; amount: number; status: string;
@@ -26,6 +27,15 @@ export default function SubscriptionAccount() {
   const load = async () => {
     if (!user) { setFetching(false); return; }
     try {
+      if (isPersonalSupabaseEnabled) {
+        if (!personalSupabase) throw new Error('Supabase authentication is not configured');
+        const { data, error } = await personalSupabase.from('subscriptions')
+          .select('id,plan,amount,status,expires_at,created_at,razorpay_subscription_id,cancel_at_cycle_end,provider_status')
+          .eq('user_id', user.id).order('created_at', { ascending: false }).limit(20);
+        if (error) throw error;
+        setRows(data || []);
+        return;
+      }
       const data = await apiFetch<{ subscriptions: Subscription[] }>("/api/payments/razorpay/subscription");
       setRows(data.subscriptions || []);
     } catch { toast.error("Could not load billing details"); }
@@ -36,15 +46,22 @@ export default function SubscriptionAccount() {
   const current = rows.find((r) => r.status === "active" && r.expires_at && new Date(r.expires_at) > new Date()) || rows[0];
   const active = !!current && current.status === "active" && !!current.expires_at && new Date(current.expires_at) > new Date();
   const cancel = async () => {
+    if (isPersonalSupabaseEnabled && !isPersonalBillingEnabled) {
+      toast.error('Cancellation is temporarily unavailable. Contact billing support for help.');
+      return;
+    }
     if (!current?.razorpay_subscription_id || !(active || current.status === "pending") || current.cancel_at_cycle_end) return;
     const pending = current.status === "pending";
     if (!window.confirm(pending ? "Cancel this unconfirmed mandate so you can select a plan again?" : "Stop future automatic renewals? You will retain access through the already-paid period.")) return;
     setCancelling(true);
     try {
-      const data = await apiFetch<{ ok: boolean }>("/api/payments/razorpay/manage", {
+      const request = {
         method: "POST",
         body: JSON.stringify({ action: pending ? "cancel_pending" : "cancel_at_period_end", subscription_id: current.razorpay_subscription_id }),
-      });
+      };
+      const data = isPersonalSupabaseEnabled
+        ? await personalBillingFetch<{ ok: boolean }>('manage', request)
+        : await apiFetch<{ ok: boolean }>("/api/payments/razorpay/manage", request);
       if (!data.ok) throw new Error("Could not cancel subscription");
       toast.success(pending ? "Pending mandate cancelled. You can select a new plan." : "Future renewals cancelled. Current paid access remains.");
       await load();
@@ -74,8 +91,8 @@ export default function SubscriptionAccount() {
             <div className="flex gap-2 items-center text-sm"><CalendarClock className="w-4 h-4 text-primary" />
               {current.cancel_at_cycle_end ? "Auto-renewal is scheduled to stop." : "This membership renews automatically unless you cancel."}
             </div>
-            {!current.cancel_at_cycle_end && <Button variant="outline" disabled={cancelling} onClick={cancel}>{cancelling ? "Cancelling..." : "Cancel future renewals"}</Button>}
-          </div> : <div className="pt-6 space-y-3"><p className="text-sm text-muted-foreground">{current.status === "pending" ? "Razorpay is processing your mandate/payment. If you paid, check your payment status with support before cancelling or paying again." : "This membership is not currently active."}</p>{current.status === "pending" && current.razorpay_subscription_id && !current.cancel_at_cycle_end && <Button variant="outline" disabled={cancelling} onClick={cancel}>{cancelling ? "Cancelling..." : "Cancel pending mandate"}</Button>}</div>}
+            {!current.cancel_at_cycle_end && <Button variant="outline" disabled={cancelling || (isPersonalSupabaseEnabled && !isPersonalBillingEnabled)} onClick={cancel}>{isPersonalSupabaseEnabled && !isPersonalBillingEnabled ? "Contact support to cancel" : cancelling ? "Cancelling..." : "Cancel future renewals"}</Button>}
+          </div> : <div className="pt-6 space-y-3"><p className="text-sm text-muted-foreground">{current.status === "pending" ? "Razorpay is processing your mandate/payment. If you paid, check your payment status with support before cancelling or paying again." : "This membership is not currently active."}</p>{current.status === "pending" && current.razorpay_subscription_id && !current.cancel_at_cycle_end && <Button variant="outline" disabled={cancelling || (isPersonalSupabaseEnabled && !isPersonalBillingEnabled)} onClick={cancel}>{isPersonalSupabaseEnabled && !isPersonalBillingEnabled ? "Contact support to cancel" : cancelling ? "Cancelling..." : "Cancel pending mandate"}</Button>}</div>}
           <div className="flex items-start gap-2 text-xs text-muted-foreground pt-6"><ShieldCheck className="w-4 h-4 shrink-0" /> Billing is verified on the server. Previous one-time plans keep their original validity and do not auto-renew.</div>
         </div>}
       <div className="flex gap-5 mt-8 text-sm"><Link to="/pricing" className="underline text-primary">View pricing</Link><Link to="/contact" className="underline text-primary">Billing support</Link><Link to="/terms" className="underline text-primary">Terms</Link></div>

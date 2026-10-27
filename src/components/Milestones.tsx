@@ -4,6 +4,8 @@ import { Slider } from "@/components/ui/slider";
 import { Button } from "@/components/ui/button";
 import { Award, Lock, Bell, BellOff, Target, Sparkles } from "lucide-react";
 import { apiFetch } from "@/lib/cloudflareApi";
+import { isPersonalSupabaseEnabled } from '@/lib/personalSupabase';
+import { getReadingGoal, saveReadingGoal } from '@/lib/personalData';
 import { toast } from "sonner";
 
 interface Milestone { id: string; label: string; threshold: number; icon: string; }
@@ -22,18 +24,23 @@ export function Milestones({ userId, completed, streak }: { userId: string; comp
 
   useEffect(() => {
     if (!userId) return;
-    apiFetch<{ daily_goal_minutes: number }>("/api/profile/reading-goal")
-      .then((data) => { if (data.daily_goal_minutes) setGoal(data.daily_goal_minutes); })
+    (isPersonalSupabaseEnabled
+      ? getReadingGoal(userId)
+      : apiFetch<{ daily_goal_minutes: number }>("/api/profile/reading-goal").then(data => data.daily_goal_minutes))
+      .then((minutes) => { if (minutes) setGoal(minutes); })
       .catch(() => {});
   }, [userId]);
 
   const saveGoal = async (v: number) => {
     setGoal(v);
     try {
-      await apiFetch<{ daily_goal_minutes: number }>("/api/profile/reading-goal", {
-        method: "POST",
-        body: JSON.stringify({ daily_goal_minutes: v }),
-      });
+      if (isPersonalSupabaseEnabled) {
+        await saveReadingGoal(userId, v);
+      } else {
+        await apiFetch<{ daily_goal_minutes: number }>("/api/profile/reading-goal", {
+          method: "POST", body: JSON.stringify({ daily_goal_minutes: v }),
+        });
+      }
     } catch {
       toast.error("Couldn't save reading goal");
     }

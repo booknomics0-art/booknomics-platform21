@@ -2,6 +2,8 @@ import { useEffect, useRef, useState } from "react";
 import { Check, Loader2, Pencil, Save, Trophy, X, ArrowRight, Lightbulb } from "lucide-react";
 import confetti from "canvas-confetti";
 import { apiFetch } from "@/lib/cloudflareApi";
+import { isPersonalSupabaseEnabled } from '@/lib/personalSupabase';
+import { addBookNote, deleteBookNote, getBookNotes, getHabitEntries, markBookCompleted, saveHabitEntry } from '@/lib/personalData';
 import { useAuth } from "@/hooks/useAuth";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -123,8 +125,10 @@ export const HabitTracker = ({ bookId }: { bookId: string }) => {
     if (!user) { setEntries({}); setLoading(false); return; }
     let alive = true;
     setLoading(true);
-    void apiFetch<{ data: Entry[] }>(`/api/habits?book_id=${encodeURIComponent(bookId)}`)
-      .then(({ data }) => {
+    void (isPersonalSupabaseEnabled
+      ? getHabitEntries(user.id, bookId)
+      : apiFetch<{ data: Entry[] }>(`/api/habits?book_id=${encodeURIComponent(bookId)}`).then(({ data }) => data))
+      .then((data) => {
         if (!alive) return;
         const map: Record<number, Entry> = {};
         (data || []).forEach((entry) => { map[Number(entry.day_number)] = { ...entry, done: Boolean(entry.done) }; });
@@ -156,16 +160,14 @@ export const HabitTracker = ({ bookId }: { bookId: string }) => {
     const nextMap = { ...entries, [day]: next };
     setEntries(nextMap);
     try {
-      await apiFetch<{ ok: boolean }>("/api/habits", {
-        method: "POST",
-        body: JSON.stringify({
-          book_id: bookId,
-          day_number: day,
-          done: next.done,
-          score: next.score,
-          notes: next.notes,
-        }),
-      });
+      if (isPersonalSupabaseEnabled) {
+        await saveHabitEntry(user.id, bookId, next);
+      } else {
+        await apiFetch<{ ok: boolean }>("/api/habits", {
+          method: "POST",
+          body: JSON.stringify({ book_id: bookId, day_number: day, done: next.done, score: next.score, notes: next.notes }),
+        });
+      }
     } catch {
       setEntries(entries);
       toast.error(copy(hi, "Save failed", "सेव नहीं हो पाया"));
@@ -177,10 +179,13 @@ export const HabitTracker = ({ bookId }: { bookId: string }) => {
       celebratedRef.current = true;
       fireConfetti();
       toast.success(copy(hi, "7-day practice complete — keep the one idea that worked best.", "7-दिन की प्रैक्टिस पूरी — अब वही एक सीख रखें जो सबसे काम आई।"));
-      void apiFetch<{ ok: boolean }>("/api/reading-progress", {
-        method: "POST",
-        body: JSON.stringify({ book_id: bookId, completed: true }),
-      }).catch(() => {});
+      if (isPersonalSupabaseEnabled) {
+        void markBookCompleted(user.id, bookId).catch(() => toast.error(copy(hi, 'Could not mark the book complete', 'किताब पूरी होने की स्थिति सेव नहीं हुई')));
+      } else {
+        void apiFetch<{ ok: boolean }>("/api/reading-progress", {
+          method: "POST", body: JSON.stringify({ book_id: bookId, completed: true }),
+        }).catch(() => {});
+      }
     }
   };
 
@@ -282,8 +287,10 @@ export const BookNotes = ({ bookId }: { bookId: string }) => {
   useEffect(() => {
     if (!user) { setNotes([]); return; }
     let alive = true;
-    void apiFetch<{ data: Note[] }>(`/api/notes?book_id=${encodeURIComponent(bookId)}`)
-      .then(({ data }) => { if (alive) setNotes(data || []); })
+    void (isPersonalSupabaseEnabled
+      ? getBookNotes(user.id, bookId)
+      : apiFetch<{ data: Note[] }>(`/api/notes?book_id=${encodeURIComponent(bookId)}`).then(({ data }) => data))
+      .then((data) => { if (alive) setNotes(data || []); })
       .catch(() => { if (alive) toast.error(copy(hi, "Could not load notes", "नोट्स लोड नहीं हो पाए")); });
     return () => { alive = false; };
   }, [user, bookId, hi]);
@@ -298,10 +305,11 @@ export const BookNotes = ({ bookId }: { bookId: string }) => {
     if (!content.trim()) return;
     setSaving(true);
     try {
-      const { data } = await apiFetch<{ data: Note }>("/api/notes", {
-        method: "POST",
-        body: JSON.stringify({ book_id: bookId, content: content.trim() }),
-      });
+      const data = isPersonalSupabaseEnabled
+        ? await addBookNote(user.id, bookId, content)
+        : (await apiFetch<{ data: Note }>("/api/notes", {
+          method: "POST", body: JSON.stringify({ book_id: bookId, content: content.trim() }),
+        })).data;
       setNotes((current) => [data, ...current]);
       setContent("");
     } catch {
@@ -313,10 +321,8 @@ export const BookNotes = ({ bookId }: { bookId: string }) => {
 
   const del = async (id: string) => {
     try {
-      await apiFetch<{ ok: boolean }>("/api/notes", {
-        method: "DELETE",
-        body: JSON.stringify({ id }),
-      });
+      if (isPersonalSupabaseEnabled) await deleteBookNote(user.id, id);
+      else await apiFetch<{ ok: boolean }>("/api/notes", { method: "DELETE", body: JSON.stringify({ id }) });
       setNotes((current) => current.filter((note) => note.id !== id));
     } catch {
       toast.error(copy(hi, "Could not delete note", "नोट हटाया नहीं जा सका"));

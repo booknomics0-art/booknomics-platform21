@@ -91,7 +91,19 @@ export async function handleCatalogRoute(request: Request, env: CatalogEnv): Pro
   if (!env.DB) return json({ error: "D1 binding not configured" }, { status: 503 });
 
   try {
-    if (url.pathname === "/api/catalog/category-directory") return categoryDirectory(url, env);
+    // Only public catalog data is cached. Build a URL-only key so that the
+    // frontend's Supabase bearer header never creates a user-specific variant.
+    const workerCache: Cache | undefined = (globalThis as any).caches?.default;
+    const cacheKey = new Request(url.toString());
+    if (workerCache) {
+      const cached = await workerCache.match(cacheKey).catch(() => undefined);
+      if (cached) return cached;
+    }
+    if (url.pathname === "/api/catalog/category-directory") {
+      const response = await categoryDirectory(url, env);
+      if (response.ok && workerCache) await workerCache.put(cacheKey, response.clone()).catch(() => {});
+      return response;
+    }
     const language = url.searchParams.get("language")?.trim();
     const category = url.searchParams.get("category")?.trim();
     const author = url.searchParams.get("author")?.trim().slice(0, 200);
@@ -149,17 +161,23 @@ export async function handleCatalogRoute(request: Request, env: CatalogEnv): Pro
           ? "category ASC, title ASC"
           : "title ASC";
     const whereSql = `WHERE ${where.join(" AND ")}`;
-    const count = await env.DB.prepare(`SELECT COUNT(*) AS total FROM books ${whereSql}`).bind(...binds).first();
+    // SEO prerender's keyset client consumes only the data array, never count.
+    // Scanning thousands of rows for COUNT once per 100-row page consumed a
+    // large portion of D1's free-tier daily row-read quota during builds.
+    const count = view === "prerender" ? null
+      : await env.DB.prepare(`SELECT COUNT(*) AS total FROM books ${whereSql}`).bind(...binds).first();
     const result = await env.DB.prepare(
       `SELECT ${fields} FROM books ${whereSql} ORDER BY ${orderBy} LIMIT ? OFFSET ?`,
     ).bind(...binds, limit, offset).all();
 
-    return json({
+    const response = json({
       data: result.results || [],
-      count: Number(count?.total || 0),
+      count: view === "prerender" ? null : Number(count?.total || 0),
       limit,
       offset,
     });
+    if (workerCache) await workerCache.put(cacheKey, response.clone()).catch(() => {});
+    return response;
   } catch (error) {
     console.error("catalog route failed", error);
     return json({ error: "Unable to load catalog" }, { status: 500 });

@@ -10,6 +10,8 @@ import { Milestones } from "@/components/Milestones";
 import { KnowledgeMap } from "@/components/KnowledgeMap";
 import { NotesArchive } from "@/components/NotesArchive";
 import { apiFetch } from "@/lib/cloudflareApi";
+import { isPersonalSupabaseEnabled } from '@/lib/personalSupabase';
+import { getPersonalDashboard } from '@/lib/personalData';
 
 interface Stats {
   completed: number;
@@ -53,7 +55,9 @@ const Dashboard = () => {
     let cancelled = false;
     (async () => {
       try {
-        const payload = await apiFetch<DashboardPayload>("/api/dashboard");
+        const payload: DashboardPayload = isPersonalSupabaseEnabled
+          ? await getPersonalDashboard(user.id)
+          : await apiFetch<DashboardPayload>("/api/dashboard");
         if (cancelled) return;
         setStats(payload.stats);
         setStreak(payload.streak);
@@ -61,7 +65,7 @@ const Dashboard = () => {
         setCategoryMap(payload.categoryMap ?? []);
         setBadges(payload.badges ?? []);
       } catch (error) {
-        console.error("[Dashboard] Cloudflare data load failed", error);
+        console.error("[Dashboard] Personal data load failed", error);
       }
     })();
     return () => { cancelled = true; };

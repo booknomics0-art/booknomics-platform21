@@ -1,6 +1,7 @@
 import { useEffect, useState, useCallback } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import { apiFetch } from "@/lib/cloudflareApi";
+import { isPersonalSupabaseEnabled, personalSupabase } from '@/lib/personalSupabase';
 
 export type Tier = "free" | "weekly" | "monthly" | "quarterly";
 
@@ -38,6 +39,18 @@ export function useTier() {
       return;
     }
     try {
+      if (isPersonalSupabaseEnabled) {
+        if (!personalSupabase) throw new Error('Supabase authentication is not configured');
+        const { data, error } = await personalSupabase.from('subscriptions')
+          .select('plan,expires_at')
+          .eq('user_id', user.id).eq('status', 'active')
+          .gt('expires_at', new Date().toISOString())
+          .order('expires_at', { ascending: false }).limit(1);
+        if (error) throw error;
+        const plan = data?.[0]?.plan;
+        setDbTier(plan === 'weekly' || plan === 'monthly' ? plan : 'free');
+        return;
+      }
       const data = await apiFetch<{ tier: Tier }>("/api/me/tier");
       setDbTier(data.tier || "free");
     } catch {

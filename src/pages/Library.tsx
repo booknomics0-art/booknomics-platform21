@@ -8,6 +8,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { Bookmark, CheckCircle2, Circle } from "lucide-react";
 import { toast } from "sonner";
 import { apiFetch } from "@/lib/cloudflareApi";
+import { isPersonalSupabaseEnabled, personalSupabase } from '@/lib/personalSupabase';
 
 type LibBook = BookCardData & { read: boolean };
 
@@ -24,6 +25,37 @@ const Library = () => {
     let cancelled = false;
     (async () => {
       try {
+        if (isPersonalSupabaseEnabled) {
+          if (!personalSupabase) throw new Error('Supabase authentication is not configured');
+          const { data: saved, error: savedError } = await personalSupabase
+            .from('library')
+            .select('book_id,book_title,book_slug,book_author,book_category,book_cover_color,book_cover_url')
+            .eq('user_id', user.id)
+            .order('created_at', { ascending: false })
+            .limit(100);
+          if (savedError) throw savedError;
+          const ids = (saved || []).map(row => row.book_id);
+          const { data: completed, error: completedError } = ids.length
+            ? await personalSupabase.from('reading_progress').select('book_id,completed').eq('user_id', user.id).in('book_id', ids)
+            : { data: [], error: null };
+          if (completedError) throw completedError;
+          const readIds = new Set((completed || []).filter(row => row.completed).map(row => row.book_id));
+          const rows: LibBook[] = (saved || []).map(row => ({
+            id: row.book_id,
+            title: row.book_title,
+            slug: row.book_slug,
+            author: row.book_author,
+            category: row.book_category,
+            cover_color: row.book_cover_color,
+            cover_url: row.book_cover_url,
+            tagline: null,
+            rating: null,
+            reading_time: null,
+            read: readIds.has(row.book_id),
+          }));
+          if (!cancelled) setBooks(rows);
+          return;
+        }
         const payload = await apiFetch<{ data: LibBook[] }>("/api/library");
         if (!cancelled) setBooks(payload.data ?? []);
       } catch (error: any) {
@@ -41,6 +73,18 @@ const Library = () => {
     const next = !book.read;
     setBooks(prev => prev.map(b => b.id === book.id ? { ...b, read: next } : b));
     try {
+      if (isPersonalSupabaseEnabled) {
+        if (!personalSupabase) throw new Error('Supabase authentication is not configured');
+        const { error } = await personalSupabase.from('reading_progress').upsert({
+          user_id: user.id,
+          book_id: book.id,
+          completed: next,
+          last_read_at: new Date().toISOString(),
+        }, { onConflict: 'user_id,book_id' });
+        if (error) throw error;
+        toast.success(next ? 'Marked as read' : 'Marked as unread');
+        return;
+      }
       await apiFetch<{ ok: boolean; completed: boolean }>("/api/reading-progress", {
         method: "POST",
         body: JSON.stringify({ book_id: book.id, completed: next }),
