@@ -1,5 +1,6 @@
 import { DocPage } from "@/components/DocPage";
 import { BookOpen, Globe, Heart, Target } from "lucide-react";
+import { socialSameAs } from "@/config/social";
 
 const values = [
   { icon: BookOpen, title: "Quality before scale", body: "A public page should be useful, book-specific, and accurate enough to earn indexing. Lower-confidence pages can stay out of search while they are improved." },
@@ -19,6 +20,7 @@ const orgLd = {
     url: "https://www.booknomics.com/booknomics-icon-512.png",
   },
   description: "Booknomics is a bilingual learning platform for practical book summaries, deeper analysis, reflection, and action in Hindi and English.",
+  sameAs: socialSameAs(),
   areaServed: { "@type": "Country", name: "India" },
   knowsLanguage: ["hi", "en"],
   knowsAbout: [

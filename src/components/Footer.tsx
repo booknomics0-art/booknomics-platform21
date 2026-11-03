@@ -1,5 +1,6 @@
 import { Link, useLocation } from "react-router-dom";
-import { SOCIAL_LINKS, SOCIAL_REL, withUtm } from "@/config/social";
+import { ExternalLink } from "lucide-react";
+import { SOCIAL_LINKS, SOCIAL_REL, withUtm, BUSINESS_PROFILES, BUSINESS_PROFILE_REL } from "@/config/social";
 import { SocialIcon } from "./SocialIcon";
 import { BrandLogo } from "./BrandLogo";
 
@@ -84,6 +85,23 @@ export const Footer = () => {
                     className="grid place-items-center h-11 w-11 rounded-full border border-border bg-card/70 text-foreground/70 hover:text-primary hover:border-primary transition-colors"
                   >
                     <SocialIcon platform={s.platform} className="h-4 w-4" />
+                  </a>
+                </li>
+              ))}
+              {/* Business profiles: clean dofollow links (no UTM) so Google can
+                  verify the website ↔ Crunchbase entity connection. */}
+              {BUSINESS_PROFILES.map((p) => (
+                <li key={p.url}>
+                  <a
+                    href={p.url}
+                    target="_blank"
+                    rel={BUSINESS_PROFILE_REL}
+                    aria-label={p.ariaLabel}
+                    title={p.name}
+                    className="inline-flex items-center gap-1.5 h-11 px-4 rounded-full border border-border bg-card/70 text-xs md:text-sm text-foreground/70 hover:text-primary hover:border-primary transition-colors"
+                  >
+                    {p.name}
+                    <ExternalLink className="h-3.5 w-3.5" aria-hidden="true" />
                   </a>
                 </li>
               ))}
