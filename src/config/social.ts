@@ -75,6 +75,32 @@ export const SOCIAL_LINKS: SocialLink[] = [
  */
 export const SOCIAL_REL = "nofollow noopener noreferrer";
 
+/**
+ * Business registry profiles (e.g. Crunchbase) that verify Booknomics' identity
+ * for Google's Knowledge Graph via Organization `sameAs`. Kept separate from
+ * SOCIAL_LINKS because these are not "follow us" destinations: their links must
+ * stay dofollow and UTM-free so search engines can connect the website to the
+ * profile cleanly.
+ */
+export interface BusinessProfile {
+  name: string;
+  url: string;
+  ariaLabel: string;
+}
+
+export const CRUNCHBASE_URL = "https://www.crunchbase.com/organization/booknomics";
+
+export const BUSINESS_PROFILES: BusinessProfile[] = [
+  {
+    name: "Crunchbase",
+    url: CRUNCHBASE_URL,
+    ariaLabel: "Booknomics company profile on Crunchbase",
+  },
+];
+
+/** rel for business profile links: dofollow (entity verification) + safe new-tab behaviour. */
+export const BUSINESS_PROFILE_REL = "noopener noreferrer";
+
 export type SocialPlacement =
   | "footer_social"
   | "homepage_social_section"
@@ -95,5 +121,8 @@ export const withUtm = (url: string, placement: SocialPlacement): string => {
   }
 };
 
-/** Absolute URLs (no UTM) for SEO sameAs JSON-LD. */
-export const socialSameAs = (): string[] => SOCIAL_LINKS.map((s) => s.url);
+/** Absolute URLs (no UTM) for SEO sameAs JSON-LD: social channels + business profiles. */
+export const socialSameAs = (): string[] => [
+  ...SOCIAL_LINKS.map((s) => s.url),
+  ...BUSINESS_PROFILES.map((p) => p.url),
+];

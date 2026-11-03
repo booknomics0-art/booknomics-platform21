@@ -9,7 +9,7 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import { SEO } from "@/components/SEO";
-import { SOCIAL_LINKS } from "@/config/social";
+import { socialSameAs } from "@/config/social";
 
 const PAGE_URL = "https://booknomics.com/press";
 
@@ -65,7 +65,7 @@ const Press = () => {
     name: "Booknomics",
     url: "https://booknomics.com/",
     description: CITATION,
-    sameAs: SOCIAL_LINKS.map((s) => s.url),
+    sameAs: socialSameAs(),
     contactPoint: [
       {
         "@type": "ContactPoint",
