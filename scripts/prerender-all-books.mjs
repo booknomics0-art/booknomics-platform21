@@ -15,9 +15,9 @@ const SUPABASE_KEY = process.env.VITE_SUPABASE_PUBLISHABLE_KEY?.trim();
 // summary, key ideas, deep analysis, practical application) so crawlers that
 // do not execute JavaScript index the same content readers see. Premium-only
 // fields (practice tracker, action system, reflections, real-life example)
-// stay client-side by design. Pages are fetched in smaller batches because
-// the deep text columns make each row much larger than before.
-const PAGE_SIZE = 100;
+// stay client-side by design. Pages are fetched in small batches because the
+// deep text columns make each row much larger than plain metadata.
+const PAGE_SIZE = 50;
 
 const esc = (v="") => String(v).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;").replace(/'/g,"&#039;");
 const strip = (v="") => String(v).replace(/```[\s\S]*?```/g," ").replace(/^#{1,6}\s+/gm,"").replace(/^[-*•]+\s+/gm,"").replace(/\*\*|__|\*|_/g,"").replace(/`([^`]+)`/g,"$1").replace(/\[([^\]]+)\]\([^)]+\)/g,"$1").replace(/\s+/g," ").trim();
@@ -178,6 +178,30 @@ async function api(path) {
   throw new Error("prerender-all-books: retry attempts exhausted");
 }
 
+// Cloudflare D1 occasionally rejects a heavy read (query timeout / transient
+// capacity) with an opaque HTTP 500. The Supabase path above already retries
+// transient errors; wrap the Cloudflare bridge the same way. Field
+// rejections (HTTP 400) are never retried here so the caller can degrade the
+// field list immediately.
+async function apiWithRetry(path) {
+  if (!cloudflarePrerender) return api(path);
+  let lastError;
+  for (let attempt = 0; attempt < 3; attempt++) {
+    try {
+      return await fetchCloudflarePrerenderBooks(path);
+    } catch (err) {
+      lastError = err;
+      const message = String(err?.message || err);
+      const retryable = /^Cloudflare prerender catalog HTTP (429|5\d\d)/.test(message) ||
+        /TimeoutError|AbortError|fetch failed|network error/i.test(message);
+      if (!retryable || attempt === 2) throw err;
+      console.warn(`[prerender-all-books] transient catalog failure; retry ${attempt + 1}/2 (${message.slice(0, 120)})`);
+      await pause(1500 * (attempt + 1));
+    }
+  }
+  throw lastError;
+}
+
 function articleBody(book) {
   const isHi = book.language === "hi";
   const lang = isHi ? "hi" : "en";
@@ -201,7 +225,10 @@ function articleBody(book) {
 // current production worker was deployed. If the catalog bridge is rejected
 // with HTTP 400 (unknown field), degrade to the older field list instead of
 // failing the whole build; deep_summary is simply omitted from the static
-// article until the upgraded worker is live.
+// article until the upgraded worker is live. The downgrade is only allowed
+// before any row has been served: with the upgraded worker every page uses
+// the same field list, so a mid-build 400 is unexpected and must fail the
+// build instead of silently dropping a content section.
 const SELECT_FIELDS = (withDeepSummary) => `id,slug,seo_slug,title,author,category,cover_url,og_image,tagline,overview${withDeepSummary ? ",deep_summary" : ""},key_ideas,deep_analysis,daily_application,meta_title,meta_description,reading_time,year,language,created_at`;
 
 async function fetchCatalog() {
@@ -209,16 +236,27 @@ async function fetchCatalog() {
   for (;;) {
     const books = [];
     try {
-      for (let offset = 0; ; offset += PAGE_SIZE) {
-        const page = await api(`books?select=${SELECT_FIELDS(withDeepSummary)}&is_draft=eq.false&status=eq.published&order=id&limit=${PAGE_SIZE}&offset=${offset}`);
+      // UUID keyset pagination (same pattern as prerender-en-crawl): each
+      // query scans exactly one page of rows. OFFSET pagination re-scanned up
+      // to 5,000 rows per page and the D1 read was rejected (HTTP 500) once
+      // the pages carried the large deep text columns.
+      let lastId = "";
+      for (;;) {
+        const page = await apiWithRetry(
+          `books?select=${SELECT_FIELDS(withDeepSummary)}&is_draft=eq.false&status=eq.published&order=id&limit=${PAGE_SIZE}` +
+          (lastId ? `&id=gt.${lastId}` : "")
+        );
+        if (!Array.isArray(page)) throw new Error("prerender-all-books: catalog response is not an array");
         books.push(...page);
         if (page.length < PAGE_SIZE) break;
+        lastId = page[page.length - 1]?.id;
+        if (!lastId) throw new Error("prerender-all-books: missing ID in paginated catalog");
       }
       return books;
     } catch (err) {
       const message = String(err?.message || err);
       const rejectedFields = /HTTP 400/i.test(message) && /field|prerender/i.test(message);
-      if (cloudflarePrerender && withDeepSummary && rejectedFields) {
+      if (cloudflarePrerender && withDeepSummary && books.length === 0 && rejectedFields) {
         withDeepSummary = false;
         console.warn("[prerender-all-books] catalog rejected the deep_summary field (older worker); retrying without it");
         continue;
