@@ -197,17 +197,42 @@ function articleBody(book) {
   };
 }
 
+// deep_summary was added to the worker's prerender column allowlist after the
+// current production worker was deployed. If the catalog bridge is rejected
+// with HTTP 400 (unknown field), degrade to the older field list instead of
+// failing the whole build; deep_summary is simply omitted from the static
+// article until the upgraded worker is live.
+const SELECT_FIELDS = (withDeepSummary) => `id,slug,seo_slug,title,author,category,cover_url,og_image,tagline,overview${withDeepSummary ? ",deep_summary" : ""},key_ideas,deep_analysis,daily_application,meta_title,meta_description,reading_time,year,language,created_at`;
+
+async function fetchCatalog() {
+  let withDeepSummary = true;
+  for (;;) {
+    const books = [];
+    try {
+      for (let offset = 0; ; offset += PAGE_SIZE) {
+        const page = await api(`books?select=${SELECT_FIELDS(withDeepSummary)}&is_draft=eq.false&status=eq.published&order=id&limit=${PAGE_SIZE}&offset=${offset}`);
+        books.push(...page);
+        if (page.length < PAGE_SIZE) break;
+      }
+      return books;
+    } catch (err) {
+      const message = String(err?.message || err);
+      const rejectedFields = /HTTP 400/i.test(message) && /field|prerender/i.test(message);
+      if (cloudflarePrerender && withDeepSummary && rejectedFields) {
+        withDeepSummary = false;
+        console.warn("[prerender-all-books] catalog rejected the deep_summary field (older worker); retrying without it");
+        continue;
+      }
+      throw err;
+    }
+  }
+}
+
 async function main() {
   if (!cloudflarePrerender && (!SUPABASE_URL || !SUPABASE_KEY)) throw new Error("prerender-all-books: missing Supabase rollback env");
   const template = readFileSync(INDEX, "utf8");
 
-  const books=[];
-  for(let offset=0;;offset+=PAGE_SIZE){
-    const select="id,slug,seo_slug,title,author,category,cover_url,og_image,tagline,overview,deep_summary,key_ideas,deep_analysis,daily_application,meta_title,meta_description,reading_time,year,language,created_at";
-    const page=await api(`books?select=${select}&is_draft=eq.false&status=eq.published&order=id&limit=${PAGE_SIZE}&offset=${offset}`);
-    books.push(...page);
-    if(page.length<PAGE_SIZE)break;
-  }
+  const books = await fetchCatalog();
   if(books.length<100)throw new Error(`prerender-all-books: suspicious published count ${books.length}`);
 
   let covers=0,pages=0,totalBodyChars=0;
