@@ -18,9 +18,12 @@ const PUBLIC_CARD_FIELDS = `
 `;
 const PUBLIC_META_FIELDS = "category, status, title, slug, seo_slug";
 // Prerender-only public article fields: never expose premium modules or drafts.
+// deep_summary is included in the anon SELECT grant and the public
+// /api/book-detail-data route; the full article is prerendered so crawlers
+// index the same content readers see.
 const PRERENDER_COLUMNS = new Set([
   "id", "slug", "seo_slug", "title", "author", "category", "cover_url", "og_image", "tagline",
-  "overview", "key_ideas", "deep_analysis", "daily_application", "meta_title", "meta_description",
+  "overview", "key_ideas", "deep_summary", "deep_analysis", "daily_application", "meta_title", "meta_description",
   "reading_time", "rating", "year", "seo_keywords", "status", "language", "created_at",
 ]);
 
