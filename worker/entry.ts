@@ -246,14 +246,26 @@ async function handleGoogleCallback(request: Request, env: Env) {
     headers: { "content-type": "application/x-www-form-urlencoded" },
     body: tokenBody,
   });
-  if (!tokenResponse.ok) return json({ error: "Google token exchange failed" }, { status: 502 });
+  if (!tokenResponse.ok) {
+    // Surface Google's actual error code (e.g. redirect_uri_mismatch,
+    // invalid_client, invalid_grant) instead of an opaque 502; also log it
+    // for Workers observability. The body only echoes our own client/URI
+    // values, so nothing sensitive is exposed.
+    const detail = (await tokenResponse.text()).slice(0, 200);
+    console.error(`google token exchange failed: ${tokenResponse.status} ${detail}`);
+    return json({ error: "Google token exchange failed", detail }, { status: 502 });
+  }
   const tokenData = (await tokenResponse.json()) as { access_token?: string };
   if (!tokenData.access_token) return json({ error: "Google access token missing" }, { status: 502 });
 
   const profileResponse = await fetch("https://openidconnect.googleapis.com/v1/userinfo", {
     headers: { authorization: `Bearer ${tokenData.access_token}` },
   });
-  if (!profileResponse.ok) return json({ error: "Google profile request failed" }, { status: 502 });
+  if (!profileResponse.ok) {
+    const detail = (await profileResponse.text()).slice(0, 200);
+    console.error(`google profile request failed: ${profileResponse.status} ${detail}`);
+    return json({ error: "Google profile request failed", detail }, { status: 502 });
+  }
   const profile = (await profileResponse.json()) as {
     sub?: string;
     email?: string;
